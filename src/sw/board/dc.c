@@ -3,7 +3,7 @@
 #include <string.h>
 
 
-static uint32_t dc_v2dac_code(double v) {
+static inline uint32_t dc_v2dac_code(double v) {
     const double span = (VMAX - VMIN);
     const double fullscale   = (double)((1u << DC_DAC_BITS) - 1u);
     if (span <= 0.0) return 0;
@@ -16,7 +16,7 @@ static uint32_t dc_v2dac_code(double v) {
     return (uint32_t)llround(scaled);
 }
 
-static uint32_t dc_t2cycles(uint32_t t_ns) {
+static inline uint32_t dc_t2cycles(uint32_t t_ns) {
     const uint64_t max_cycles = (1ull << DC_CYCLE_BITS) - 1ull;
     uint64_t cycles = ( (uint64_t)t_ns + (NS_PER_CYCLE/2) ) / (uint64_t)NS_PER_CYCLE;
     if (cycles == 0) cycles = 1;
@@ -35,7 +35,7 @@ dc_insn_t dc_sweep2insn(dc_sweep_t s) {
 
     const uint32_t start_code = dc_v2dac_code(s.vstart);
     const uint32_t end_code   = dc_v2dac_code(s.vend);
-    const uint32_t cycles     = dc_t2cycles(s.dt);
+    const uint32_t cycles     = dc_t2cycles(s.dt_ns);
 
     if (s.num_points == 1) {
         return (dc_insn_t){ .dv = 0, .iters = 1, 
@@ -63,7 +63,7 @@ dc_insn_t dc_sweep2insn(dc_sweep_t s) {
 
 dc_insn_t dc_level2insn(dc_level_t lvl) {
     const uint32_t code   = dc_v2dac_code(lvl.v);
-    const uint32_t cycles = dc_t2cycles(lvl.t);
+    const uint32_t cycles = dc_t2cycles(lvl.t_ns);
     return (dc_insn_t){ .dv = 0, .iters = 1, .dac_code = code, .cycles = cycles };
 }
 

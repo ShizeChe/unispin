@@ -1,3 +1,6 @@
+#ifndef DC_H
+#define DC_H
+
 #include <stdint.h>
 
 #define NUM_DC_CHANNEL 16
@@ -34,3 +37,4 @@ int dc_program_stream(int dc_channel, int stream_len, dc_insn_t *dc_stream);
 dc_insn_t dc_sweep2insn(dc_sweep_t dc_sweep);
 dc_insn_t dc_level2insn(dc_level_t dc_level);
 
+#endif

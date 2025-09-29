@@ -11,6 +11,9 @@ OBJS := dc.o
 dc.o: dc.c dc.h
 	$(CC) $(CFLAGS) $(INCS) -c dc.c -o $@
 
+rf.o: rf.c rf.h
+	$(CC) $(CFLAGS) $(INCS) -c rf.c -o $@
+
 tests/test_dc: tests/dc_tests.c $(OBJS)
 	$(CC) $(CFLAGS) $(INCS) $^ -o $@ $(LDFLAGS) -lm
 
