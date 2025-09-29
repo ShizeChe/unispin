@@ -1,7 +1,7 @@
 #include <stdint.h>
 
-#define NUM_DC 16
-#define REG_PER_DC 64
+#define NUM_DC_CHANNEL 16
+#define REG_PER_DC_CHANNEL 64
 
 #define DC_DAC_BITS 16
 #define DC_CYCLE_BITS 30
