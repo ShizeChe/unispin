@@ -4,6 +4,7 @@
 #include <stdint.h>
 
 #define NUM_DC_CHANNEL 16
+#define INSN_PER_DC_CHANNEL 20
 #define REG_PER_DC_CHANNEL 64
 
 #define DC_DAC_BITS 16
@@ -33,8 +34,13 @@ typedef struct {
     uint32_t t;
 } dc_level_t;
 
-int dc_program_stream(int dc_channel, int stream_len, dc_insn_t *dc_stream);
 dc_insn_t dc_sweep2insn(dc_sweep_t dc_sweep);
 dc_insn_t dc_level2insn(dc_level_t dc_level);
+
+void dc_pack_stream(int stream_iters, int stream_len, dc_insn_t *dc_stream, 
+                    uint32_t *dc_regs);
+
+int dc_program_stream(int dc_channel, int stream_iters, int stream_len, 
+                      dc_insn_t *dc_stream, int test);
 
 #endif

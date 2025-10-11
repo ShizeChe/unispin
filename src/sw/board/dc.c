@@ -1,6 +1,7 @@
 #include "dc.h"
 #include <math.h>
 #include <string.h>
+#include <assert.h>
 
 
 static inline uint32_t dc_v2dac_code(double v) {
@@ -24,9 +25,10 @@ static inline uint32_t dc_t2cycles(uint32_t t_ns) {
     return (uint32_t)cycles;
 }
 
-int dc_program_stream(int dc_channel, int stream_len, dc_insn_t *dc_stream) {
-    (void) dc_channel; (void) stream_len; (void) dc_stream;
-    return 0;
+static inline void print_binary(FILE *f, uint32_t value) {
+    for (int i = 31; i >= 0; --i) {
+        fprintf(f, "%d\n", (value >> i) & 1);
+    }
 }
 
 
@@ -65,5 +67,79 @@ dc_insn_t dc_level2insn(dc_level_t lvl) {
     const uint32_t code   = dc_v2dac_code(lvl.v);
     const uint32_t cycles = dc_t2cycles(lvl.t_ns);
     return (dc_insn_t){ .dv = 0, .iters = 1, .dac_code = code, .cycles = cycles };
+}
+
+void dc_pack_stream(int stream_iters, int stream_len, dc_insn_t *dc_stream, 
+                    uint32_t *dc_regs) {
+
+    assert(stream_len <= INSN_PER_DC_CHANNEL);
+
+    for (int i = 0; i < stream_len; i++) {
+        dc_regs[i * 3 + 2] = dc_stream[i].dv >> 8;
+        dc_regs[i * 3 + 1] = (dc_stream[i].dv << 24) | (dc_stream[i].iters << 14) |
+                             (dc_stream[i].dac_code >> 2);
+        dc_regs[i * 3] = (dc_stream[i].dac_code << 30) | dc_stream[i].cycles;
+    }
+    for (int i = stream_len * 3; i < REG_PER_DC_CHANNEL - 4; i++) {
+        dc_regs[i] = 0;
+    }
+
+    dc_regs[REG_PER_DC_CHANNEL - 4] = stream_iters;
+    dc_regs[REG_PER_DC_CHANNEL - 3] = 0;
+    dc_regs[REG_PER_DC_CHANNEL - 2] = 0;
+    dc_regs[REG_PER_DC_CHANNEL - 1] = 1;
+}
+
+int dc_program_stream(int dc_channel, int stream_iters, int stream_len, 
+                      dc_insn_t *dc_stream, int test) {
+
+    uint32_t dc_regs[REG_PER_DC_CHANNEL];
+    dc_pack_stream(stream_len, dc_stream, dc_regs);
+    
+    if (test) {
+
+        char fp[32];
+        snprintf(fp, sizeof(fp), "regval/dc%d.txt", dc_channel);
+
+        FILE *f = fopen(fp, "w");
+        if (f == NULL) {
+            perror("Error opening file");
+            return 1;
+        }
+
+        for (int i = 0; i < REG_PER_DC_CHANNEL; i++) {
+            print_binary(f, dc_regs[i]);
+        }
+
+        fclose(f);
+
+    } else {
+
+        char uio_path[32];
+        snprintf(uio_path, sizeof(uio_path), "/dev/uio%d", DC_UIO_BASE + dc_channel);
+
+        int dc_fd = open(uio_path, O_RDWR);
+        if (dc_fd < 0) {
+            perror("open %s", uio_path);
+            return 1;
+        }
+
+        void *dc_va = mmap(NULL, 0x1000, PROT_READ | PROT_WRITE, MAP_SHARED, dc_fd, 0);
+        if (dc_va == MAP_FAILED) {
+            perror("dc0 mmap");
+            close(dc_fd);
+            return 1;
+        }
+
+        volatile uint32_t *dc_base = (volatile uint32_t *)((char *)dc_va);
+        for (int i = 0; i < REG_PER_DC_CHANNEL; i++) {
+            *(dc_base + i) = dc_regs[i];
+        }
+
+        __asm__ __volatile__("dsb oshst" ::: "memory");
+
+    }
+
+    return 0;
 }
 
