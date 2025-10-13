@@ -26,12 +26,12 @@ typedef struct {
     double vstart;
     double vend;
     uint32_t num_points;
-    uint32_t dt;
+    uint32_t dt_ns;
 } dc_sweep_t;
 
 typedef struct {
     double v;
-    uint32_t t;
+    uint32_t t_ns;
 } dc_level_t;
 
 dc_insn_t dc_sweep2insn(dc_sweep_t dc_sweep);
@@ -41,6 +41,6 @@ void dc_pack_stream(int stream_iters, int stream_len, dc_insn_t *dc_stream,
                     uint32_t *dc_regs);
 
 int dc_program_stream(int dc_channel, int stream_iters, int stream_len, 
-                      dc_insn_t *dc_stream, int test);
+                      dc_insn_t *dc_stream);
 
 #endif

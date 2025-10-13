@@ -1,0 +1,33 @@
+#include "rf.h"
+#include <stdint.h>
+#include <assert.h>
+#include <stdlib.h>
+#include <stdio.h>
+
+int main(int argc, char **argv) {
+
+    assert(argc == 5);
+
+    int rf_channel = atoi(argv[1]);
+    uint32_t f_span_hz = atoi(argv[2]);
+    uint32_t f_nco_hz = atoi(argv[3]);
+    uint32_t t_ns = atoi(argv[4]);
+
+    rf_chirp_t chp = (rf_chirp_t){
+        .f_span_hz = f_span_hz,
+        .f_nco_hz = f_nco_hz,
+        .t_ns = t_ns
+    };
+
+    rf_insn_t rf_insn = rf_chirp2insn(chp);
+    uint8_t rf_iptr_buf[1] = {0};
+
+    int err = rf_program_stream(rf_channel, 1, 1, &rf_insn, 1, rf_iptr_buf);
+    if (err) {
+        printf("rf channel %d program failed", rf_channel);
+        return -1;
+    }
+
+    return 0;
+
+}

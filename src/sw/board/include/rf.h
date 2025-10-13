@@ -63,7 +63,6 @@ void rf_pack_stream(int stream_iters, int insn_len, rf_insn_t *rf_insn_buf,
                     int iptr_len, uint8_t *rf_iptr_buf, uint32_t *rf_regs);
 
 int rf_program_stream(int rf_channel, int stream_iters, int insn_len, 
-                      rf_insn_t *rf_insn_buf, int iptr_len, uint8_t *rf_iptr_buf,
-                      int test);
+                      rf_insn_t *rf_insn_buf, int iptr_len, uint8_t *rf_iptr_buf);
 
 #endif

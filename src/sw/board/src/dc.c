@@ -1,7 +1,13 @@
 #include "dc.h"
+#include "def.h"
+#include <stdio.h>
 #include <math.h>
 #include <string.h>
 #include <assert.h>
+#include <fcntl.h>
+#include <unistd.h>
+#include <errno.h>
+#include <sys/mman.h>
 
 
 static inline uint32_t dc_v2dac_code(double v) {
@@ -27,8 +33,9 @@ static inline uint32_t dc_t2cycles(uint32_t t_ns) {
 
 static inline void print_binary(FILE *f, uint32_t value) {
     for (int i = 31; i >= 0; --i) {
-        fprintf(f, "%d\n", (value >> i) & 1);
+        fprintf(f, "%d", (value >> i) & 1);
     }
+    fprintf(f, "\n");
 }
 
 
@@ -91,54 +98,56 @@ void dc_pack_stream(int stream_iters, int stream_len, dc_insn_t *dc_stream,
 }
 
 int dc_program_stream(int dc_channel, int stream_iters, int stream_len, 
-                      dc_insn_t *dc_stream, int test) {
+                      dc_insn_t *dc_stream) {
+
+    assert(0 <= dc_channel && dc_channel <= RF_UIO_BASE - DC_UIO_BASE - 1);
 
     uint32_t dc_regs[REG_PER_DC_CHANNEL];
-    dc_pack_stream(stream_len, dc_stream, dc_regs);
+    dc_pack_stream(stream_iters, stream_len, dc_stream, dc_regs);
     
-    if (test) {
+#if TEST
 
-        char fp[32];
-        snprintf(fp, sizeof(fp), "regval/dc%d.txt", dc_channel);
+    char fp[32];
+    snprintf(fp, sizeof(fp), "dump/dc%d.txt", dc_channel);
 
-        FILE *f = fopen(fp, "w");
-        if (f == NULL) {
-            perror("Error opening file");
-            return 1;
-        }
-
-        for (int i = 0; i < REG_PER_DC_CHANNEL; i++) {
-            print_binary(f, dc_regs[i]);
-        }
-
-        fclose(f);
-
-    } else {
-
-        char uio_path[32];
-        snprintf(uio_path, sizeof(uio_path), "/dev/uio%d", DC_UIO_BASE + dc_channel);
-
-        int dc_fd = open(uio_path, O_RDWR);
-        if (dc_fd < 0) {
-            perror("open %s", uio_path);
-            return 1;
-        }
-
-        void *dc_va = mmap(NULL, 0x1000, PROT_READ | PROT_WRITE, MAP_SHARED, dc_fd, 0);
-        if (dc_va == MAP_FAILED) {
-            perror("dc0 mmap");
-            close(dc_fd);
-            return 1;
-        }
-
-        volatile uint32_t *dc_base = (volatile uint32_t *)((char *)dc_va);
-        for (int i = 0; i < REG_PER_DC_CHANNEL; i++) {
-            *(dc_base + i) = dc_regs[i];
-        }
-
-        __asm__ __volatile__("dsb oshst" ::: "memory");
-
+    FILE *f = fopen(fp, "w");
+    if (f == NULL) {
+        fprintf(stderr, "fopen(\"%s\") failed: %s\n", fp, strerror(errno));
+        return 1;
     }
+
+    for (int i = 0; i < REG_PER_DC_CHANNEL; i++) {
+        print_binary(f, dc_regs[i]);
+    }
+
+    fclose(f);
+
+#else
+
+    char uio_path[32];
+    snprintf(uio_path, sizeof(uio_path), "/dev/uio%d", DC_UIO_BASE + dc_channel);
+
+    int dc_fd = open(uio_path, O_RDWR);
+    if (dc_fd < 0) {
+        fprintf(stderr, "open(\"%s\") failed: %s\n", uio_path, strerror(errno));
+        return 1;
+    }
+
+    void *dc_va = mmap(NULL, 0x1000, PROT_READ | PROT_WRITE, MAP_SHARED, dc_fd, 0);
+    if (dc_va == MAP_FAILED) {
+        fprintf(stderr, "mmap() %s failed: %s\n", uio_path, strerror(errno));
+        close(dc_fd);
+        return 1;
+    }
+
+    volatile uint32_t *dc_base = (volatile uint32_t *)((char *)dc_va);
+    for (int i = 0; i < REG_PER_DC_CHANNEL; i++) {
+        *(dc_base + i) = dc_regs[i];
+    }
+
+    __asm__ __volatile__("dsb oshst" ::: "memory");
+
+#endif
 
     return 0;
 }
