@@ -1,7 +1,7 @@
 # Top-level variables
 SIM = vcs
 SRC ?= design/launch.sv
-TB ?= launch_tb.sv
+TB ?= swashispin_tb.sv
 TB_SRC := tb/$(TB)
 TARGET = $(TB)
 CORES = $(shell getconf _NPROCESSORS_ONLN)
@@ -14,7 +14,7 @@ all: $(TARGET)
 $(TARGET):
 	@echo "[VCS] Compiling for $(MODULE)..."
 	@echo "SRC=$(SRC), TB_SRC=$(TB_SRC)"
-	$(SIM) $(VCS_FLAGS) $(SRC) $(TB_SRC) -o $@
+	$(SIM) $(VCS_FLAGS) $(TB_SRC) -o $@
 
 .PHONY: clean run list gui
 
