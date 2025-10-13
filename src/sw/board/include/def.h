@@ -15,4 +15,6 @@
 
 #define LI_UIO_BASE 35
 
+#define LAUNCH_UIO 37
+
 #endif

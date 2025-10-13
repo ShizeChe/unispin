@@ -18,7 +18,7 @@ module launcher_tb;
     logic [NUM_RF_CHANNEL-1:0] w_rf_start;
     logic [NUM_LI_CHANNEL-1:0] w_li_start;
 
-    launcher #(
+    launch #(
         .NUM_DC_CHANNEL(NUM_DC_CHANNEL),
         .NUM_RF_CHANNEL(NUM_RF_CHANNEL),
         .NUM_LI_CHANNEL(NUM_LI_CHANNEL)

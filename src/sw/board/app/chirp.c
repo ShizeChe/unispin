@@ -1,4 +1,5 @@
 #include "rf.h"
+#include "launch.h"
 #include <stdint.h>
 #include <assert.h>
 #include <stdlib.h>
@@ -22,11 +23,28 @@ int main(int argc, char **argv) {
     rf_insn_t rf_insn = rf_chirp2insn(chp);
     uint8_t rf_iptr_buf[1] = {0};
 
+    launch_chs_t *launch_chs = (launch_chs_t *)malloc(
+        sizeof(launch_chs_t) + sizeof(char)
+    );
+    launch_chs->num_dc_chs = 0;
+    launch_chs->num_rf_chs = 1;
+    launch_chs->num_li_chs = 0;
+    launch_chs->chs[0] = rf_channel;
+    launch_insn_t launch_insn = launch_chs2insn(launch_chs);
+
     int err = rf_program_stream(rf_channel, 1, 1, &rf_insn, 1, rf_iptr_buf);
     if (err) {
         printf("rf channel %d program failed", rf_channel);
         return -1;
     }
+
+    err = launch_program_stream(&launch_insn);
+    if (err) {
+        printf("launch program failed\n");
+        return -1;
+    }
+
+    free(launch_chs);
 
     return 0;
 

@@ -1,7 +1,7 @@
 # Top-level variables
 SIM = vcs
-SRC ?= design/launcher.sv
-TB ?= launcher_tb.sv
+SRC ?= design/launch.sv
+TB ?= launch_tb.sv
 TB_SRC := tb/$(TB)
 TARGET = $(TB)
 CORES = $(shell getconf _NPROCESSORS_ONLN)
