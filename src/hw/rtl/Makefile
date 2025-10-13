@@ -1,8 +1,8 @@
 # Top-level variables
 SIM = vcs
-SRC ?= src/rf_stream.sv src/rf_core.sv
-TB ?= rf_core_tb
-TB_SRC := tb/$(TB).sv
+SRC ?= design/launcher.sv
+TB ?= launcher_tb.sv
+TB_SRC := tb/$(TB)
 TARGET = $(TB)
 CORES = $(shell getconf _NPROCESSORS_ONLN)
 
@@ -14,7 +14,7 @@ all: $(TARGET)
 $(TARGET):
 	@echo "[VCS] Compiling for $(MODULE)..."
 	@echo "SRC=$(SRC), TB_SRC=$(TB_SRC)"
-	$(SIM) $(VCS_FLAGS) $(CORDIC_SRC) $(SRC) $(TB_SRC) -o $@
+	$(SIM) $(VCS_FLAGS) $(SRC) $(TB_SRC) -o $@
 
 .PHONY: clean run list gui
 
