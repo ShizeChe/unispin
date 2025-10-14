@@ -3,10 +3,11 @@
 module dc_stream
    #(parameter INSN_WIDTH=72,
      parameter ITER_WIDTH=10,
-     parameter DEPTH=20)
+     parameter DEPTH=20,
+     parameter TOTAL_REGS=DEPTH*3+2)
     (input  i_clk, i_rst,
 
-     input  logic [63:0][31:0] i_reg64,
+     input  logic [TOTAL_REGS-1:0][31:0] i_regs,
 
      input  logic i_next,
      output logic o_empty,
@@ -14,7 +15,7 @@ module dc_stream
 
     logic w_last0, w_last0_ff1, w_last0_ff2;
 
-    assign w_last0 = (i_reg64[63] == 'h0);
+    assign w_last0 = (i_regs[TOTAL_REGS-1] == 'h0);
 
     always_ff @(posedge i_clk) begin
         w_last0_ff1 <= w_last0;
@@ -33,9 +34,9 @@ module dc_stream
             if (i_rst)
                 r_dc_stream[i] <= 'h0;
             else if (w_new_stream)
-                r_dc_stream[i] <= {i_reg64[i*3+2], 
-                                   i_reg64[i*3+1], 
-                                   i_reg64[i*3]}[INSN_WIDTH-1:0];
+                r_dc_stream[i] <= {i_regs[i*3+2], 
+                                   i_regs[i*3+1], 
+                                   i_regs[i*3]}[INSN_WIDTH-1:0];
         end
     end
 
@@ -53,7 +54,7 @@ module dc_stream
         if (i_rst)
             r_iters <= 'd0;
         else if (w_new_stream)
-            r_iters <= i_reg64[DEPTH*3][ITER_WIDTH-1:0];
+            r_iters <= i_regs[DEPTH*3][ITER_WIDTH-1:0];
         else if (w_next_null && i_next)
             r_iters <= (r_iters == 'd0) ? 'd0 : r_iters - 'd1;
     end

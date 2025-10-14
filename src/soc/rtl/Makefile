@@ -1,6 +1,6 @@
 # Top-level variables
 SIM = vcs
-SRC ?= design/launch.sv
+SRC = $(wildcard lib/*.sv design/*.sv)
 TB ?= swashispin_tb.sv
 TB_SRC := tb/$(TB)
 TARGET = $(TB)
@@ -14,7 +14,7 @@ all: $(TARGET)
 $(TARGET):
 	@echo "[VCS] Compiling for $(MODULE)..."
 	@echo "SRC=$(SRC), TB_SRC=$(TB_SRC)"
-	$(SIM) $(VCS_FLAGS) $(TB_SRC) -o $@
+	$(SIM) $(VCS_FLAGS) $(SRC) $(TB_SRC) -o $@
 
 .PHONY: clean run list gui
 

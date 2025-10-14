@@ -9,10 +9,11 @@ module dc_core_tb;
     localparam ITER_WIDTH=10;
     localparam INSN_WIDTH=DAC_WIDTH*2+ITER_WIDTH+CYCLE_WIDTH;
     localparam DEPTH=20;
+    localparam NUM_REG=DEPTH*3+2;
 
     logic w_clk, w_rst;
 
-    logic [63:0][31:0] w_reg64 [0:CHANNELS-1];
+    logic [NUM_REG-1:0][31:0] w_regs [0:CHANNELS-1];
     logic [INSN_WIDTH-1:0] w_insn [0:CHANNELS-1];
     logic [CHANNELS-1:0] w_next;
     logic [CHANNELS-1:0] w_empty;
@@ -34,7 +35,7 @@ module dc_core_tb;
         ) stream (
             .i_clk(w_clk),
             .i_rst(w_rst),
-            .i_reg64(w_reg64[i]),
+            .i_regs(w_regs[i]),
             .i_next(w_next[i]),
             .o_empty(w_empty[i]),
             .o_insn(w_insn[i])
@@ -88,7 +89,7 @@ module dc_core_tb;
 
     task clear;
         for (int ch = 0; ch < CHANNELS; ch++) begin
-            w_reg64[ch] = 'h0;
+            w_regs[ch] = 'h0;
             w_core_start[ch] = 1'b0;
         end
     endtask
@@ -113,13 +114,13 @@ module dc_core_tb;
 
             insn = {dv_arr[i], steps, vstart_arr[i], step_cycles - CYCLE_WIDTH'('d1)};
 
-            {w_reg64[ch][2], w_reg64[ch][1], w_reg64[ch][0]} = {{(96-INSN_WIDTH){1'b0}}, insn};
+            {w_regs[ch][2], w_regs[ch][1], w_regs[ch][0]} = {{(96-INSN_WIDTH){1'b0}}, insn};
 
-            for (int j = 3; j < 64; j++)
-                w_reg64[ch][j] = 'h0;
+            for (int j = 3; j < DEPTH*3; j++)
+                w_regs[ch][j] = 'h0;
 
-            w_reg64[ch][DEPTH*3] = 'd1;
-            w_reg64[ch][63] = 'd1;
+            w_regs[ch][DEPTH*3] = 'd1;
+            w_regs[ch][DEPTH*3+1] = 'd1;
 
         end
 
@@ -200,13 +201,13 @@ module dc_core_tb;
 
             insn = {dv_arr1[i], steps1, vstart_arr1[i], step_cycles2 * steps2 - CYCLE_WIDTH'('d1)};
 
-            {w_reg64[ch][2], w_reg64[ch][1], w_reg64[ch][0]} = {{(96-INSN_WIDTH){1'b0}}, insn};
+            {w_regs[ch][2], w_regs[ch][1], w_regs[ch][0]} = {{(96-INSN_WIDTH){1'b0}}, insn};
 
-            for (int j = 3; j < 64; j++)
-                w_reg64[ch][j] = 'h0;
+            for (int j = 3; j < DEPTH*3; j++)
+                w_regs[ch][j] = 'h0;
 
-            w_reg64[ch][DEPTH*3] = 'd1;
-            w_reg64[ch][63] = 'd1;
+            w_regs[ch][DEPTH*3] = 'd1;
+            w_regs[ch][DEPTH*3+1] = 'd1;
 
         end
         for (int i = 0; i < ch_arr2.size(); i++) begin
@@ -215,13 +216,13 @@ module dc_core_tb;
 
             insn = {dv_arr2[i], steps2, vstart_arr2[i], step_cycles2 - CYCLE_WIDTH'('d1)};
 
-            {w_reg64[ch][2], w_reg64[ch][1], w_reg64[ch][0]} = {{(96-INSN_WIDTH){1'b0}}, insn};
+            {w_regs[ch][2], w_regs[ch][1], w_regs[ch][0]} = {{(96-INSN_WIDTH){1'b0}}, insn};
 
-            for (int j = 3; j < 64; j++)
-                w_reg64[ch][j] = 'h0;
+            for (int j = 3; j < DEPTH*3; j++)
+                w_regs[ch][j] = 'h0;
 
-            w_reg64[ch][DEPTH*3] = steps1;
-            w_reg64[ch][63] = 'd1;
+            w_regs[ch][DEPTH*3] = steps1;
+            w_regs[ch][DEPTH*3+1] = 'd1;
 
         end
 
@@ -425,9 +426,9 @@ module dc_core_tb;
                 dv_arr2[i] = $urandom_range(0, 16'hffff);
             end
 
-            steps1 = $urandom_range(1, 10'h3ff);
-            steps2 = $urandom_range(1, 10'h3ff);
-            step_cycles2 = $urandom_range(30'd70, 30'hfff);
+            steps1 = $urandom_range(1, 10'd100);
+            steps2 = $urandom_range(1, 10'd100);
+            step_cycles2 = $urandom_range(30'd70, 30'd10000);
 
             $display("ch_arr1: %p", ch_arr1);
             $display("vstart_arr1: %p", vstart_arr1);
