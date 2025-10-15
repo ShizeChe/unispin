@@ -455,7 +455,8 @@ module dc_core_tb;
         @(negedge w_clk);
         w_rst = 1'b0;
 
-        // random_sweep_1d;
+        random_sweep_1d;
+        random_sweep_2d;
         // ch_arr1 = {0};
         // vstart_arr1 = {'h0};
         // dv_arr1 = {'h100};

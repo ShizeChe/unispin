@@ -1,6 +1,6 @@
 `timescale 1ns / 1ps
 
-module launcher
+module launch
    #(NUM_DC_CHANNEL=24,
      NUM_RF_CHANNEL=7,
      NUM_LI_CHANNEL=2)

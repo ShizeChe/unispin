@@ -1,6 +1,6 @@
 `timescale 1ns / 1ps
 
-module launcher_tb;
+module launch_tb;
 
     localparam NUM_DC_CHANNEL = 24;
     localparam NUM_RF_CHANNEL = 7;
