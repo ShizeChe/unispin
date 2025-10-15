@@ -91,9 +91,7 @@ void dc_pack_stream(int stream_iters, int stream_len, dc_insn_t *dc_stream,
         dc_regs[i] = 0;
     }
 
-    dc_regs[REG_PER_DC_CHANNEL - 4] = stream_iters;
-    dc_regs[REG_PER_DC_CHANNEL - 3] = 0;
-    dc_regs[REG_PER_DC_CHANNEL - 2] = 0;
+    dc_regs[REG_PER_DC_CHANNEL - 2] = stream_iters;
     dc_regs[REG_PER_DC_CHANNEL - 1] = 1;
 }
 

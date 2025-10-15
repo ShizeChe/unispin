@@ -34,13 +34,14 @@ module swashispin_tb;
     localparam RF_IPTR_PER_REG = 32 / RF_IPTR_WIDTH;
 
     // define number of dc/rf/li channels
-    localparam NUM_DC_CHANNEL=24;
-    localparam NUM_RF_CHANNEL=7;
-    localparam NUM_LI_CHANNEL=2;
+    localparam NUM_DC_CHANNEL=4;
+    localparam NUM_RF_CHANNEL=2;
+    localparam NUM_LI_CHANNEL=1;
 
     // instantiate modules
     logic w_clk, w_rf_dac_clk, w_rst;
 
+    logic [31:0] dc_regs_unpacked [0:NUM_DC_CHANNEL-1][0:DC_TOTAL_REGS-1];
     logic [NUM_DC_CHANNEL-1:0][DC_TOTAL_REGS-1:0][31:0] w_dc_regs;
 
     logic [NUM_DC_CHANNEL-1:0] w_dc_sclk_bus;
@@ -51,7 +52,15 @@ module swashispin_tb;
     logic [NUM_DC_CHANNEL-1:0] w_dc_start_bus;
     logic [NUM_DC_CHANNEL-1:0] w_dc_armed_bus;
 
-    for (genvar i = 0; i < NUM_DC_CHANNEL; i++) begin
+    logic [NUM_DC_CHANNEL-1:0] w_dc_empty_bus;
+    logic [NUM_DC_CHANNEL-1:0] w_dc_idle_bus;
+
+    for (genvar i = 0; i < NUM_DC_CHANNEL; i++) begin : DC_GEN
+
+        for (genvar j = 0; j < DC_TOTAL_REGS; j++) begin : DC_REG_GEN
+            assign w_dc_regs[i][j] = dc_regs_unpacked[i][j];
+        end
+
         dc #(
             .DAC_WIDTH(DC_DAC_WIDTH),
             .CYCLE_WIDTH(DC_CYCLE_WIDTH),
@@ -69,8 +78,13 @@ module swashispin_tb;
             .i_start(w_dc_start_bus[i]),
             .o_armed(w_dc_armed_bus[i])
         );
+
+        assign w_dc_empty_bus[i] = DC.w_empty;
+        assign w_dc_idle_bus[i] = DC.core.r_state == DC.core.IDLE;
+
     end
 
+    logic [31:0] rf_regs_unpacked [0:NUM_RF_CHANNEL-1][0:RF_TOTAL_REGS-1];
     logic [NUM_RF_CHANNEL-1:0][RF_TOTAL_REGS-1:0][31:0] w_rf_regs;
 
     logic [NUM_RF_CHANNEL-1:0][RF_DAC_WIDTH*16-1:0] w_rf_QIx8_bus;
@@ -78,7 +92,15 @@ module swashispin_tb;
     logic [NUM_RF_CHANNEL-1:0] w_rf_start_bus;
     logic [NUM_RF_CHANNEL-1:0] w_rf_armed_bus;
 
-    for (genvar i = 0; i < NUM_RF_CHANNEL; i++) begin
+    logic [NUM_RF_CHANNEL-1:0] w_rf_empty_bus;
+    logic [NUM_RF_CHANNEL-1:0] w_rf_idle_bus;
+
+    for (genvar i = 0; i < NUM_RF_CHANNEL; i++) begin : RF_GEN
+
+        for (genvar j = 0; j < RF_TOTAL_REGS; j++) begin : RF_REG_GEN
+            assign w_rf_regs[i][j] = rf_regs_unpacked[i][j];
+        end
+
         rf #(
             .KBC_WIDTH(RF_KBC_WIDTH),
             .NUM_SAMPLE_WIDTH(RF_NUM_SAMPLE_WIDTH),
@@ -99,18 +121,27 @@ module swashispin_tb;
             .i_start(w_rf_start_bus[i]),
             .o_armed(w_rf_armed_bus[i])
         );
+
+        assign w_rf_empty_bus[i] = RF.w_empty;
+        assign w_rf_idle_bus[i] = RF.core.w_obubble;
+
     end
 
     logic [NUM_LI_CHANNEL-1:0] w_li_start_bus;
     logic [NUM_LI_CHANNEL-1:0] w_li_armed_bus;
 
+    logic [31:0] launch_regs_unpacked [0:3];
     logic [3:0][31:0] w_launch_regs;
+
+    for (genvar i = 0; i <= 3; i++) begin
+        assign w_launch_regs[i] = launch_regs_unpacked[i];
+    end
 
     launch #(
         .NUM_DC_CHANNEL(NUM_DC_CHANNEL),
         .NUM_RF_CHANNEL(NUM_RF_CHANNEL),
         .NUM_LI_CHANNEL(NUM_LI_CHANNEL)
-    ) LAUNCH (
+    ) LCH (
         .i_clk(w_clk),
         .i_rst(w_rst),
         .i_regs(w_launch_regs),
@@ -125,52 +156,25 @@ module swashispin_tb;
     // simulated analog frontend
     logic [NUM_DC_CHANNEL-1:0][DC_DAC_WIDTH-1:0] vdc;
 
-    for (genvar i = 0; i < NUM_DC_CHANNEL; i++) begin
+    for (genvar i = 0; i < NUM_DC_CHANNEL; i++) begin : DC_DAC_GEN
         ad4451a DC_DAC (
             .i_sclk(w_dc_sclk_bus[i]),
             .i_mosi(w_dc_mosi_bus[i]),
             .i_cs_n(w_dc_cs_n_bus[i]),
-            .i_ldac_n(w_dc_ldac_n_bus[i])
+            .i_ldac_n(w_dc_ldac_n_bus[i]),
             .o_vdc(vdc[i])
         );
     end
 
     real vrf [NUM_RF_CHANNEL-1:0];
 
-    for (genvar i = 0; i < NUM_RF_CHANNEL; i++) begin
+    for (genvar i = 0; i < NUM_RF_CHANNEL; i++) begin : RF_DAC_GEN
         zcu216_dac RF_DAC (
             .i_clk(w_clk),
             .i_dac_clk(w_rf_dac_clk),
-            .i_QIx8(w_dc_QIx8_bus[i]),
+            .i_QIx8(w_rf_QIx8_bus[i]),
             .o_vrf(vrf[i])
         );
-    end
-
-    // init register values
-    logic [NUM_DC_CHANNEL-1:0] dc_channel_mask;
-    logic [NUM_RF_CHANNEL-1:0] rf_channel_mask;
-    string path;
-
-    initial begin
-
-        reg_init_done = 0;
-        $value$plusargs("DC_CHANNEL_MASK=%b", dc_channel_mask);
-        $value$plusargs("RF_CHANNEL_MASK=%b", rf_channel_mask);
-
-        for (int i = 0; i < NUM_DC_CHANNEL; i++) begin
-            if (dc_channel_mask[i]) begin
-                path = $sformatf("../sw/board/dump/dc%d.txt", i);
-                $readmemb(path, w_dc_regs[i]);
-            end
-            else begin
-                w_dc_regs[i] = 'h0;
-            end
-        end
-
-        w_rst = 1'b1;
-        @(negedge w_clk);
-        w_rst = 1'b0;
-
     end
 
     // clocks
@@ -182,6 +186,57 @@ module swashispin_tb;
     initial begin
         w_rf_dac_clk = 1'b1;
         forever #0.25 w_rf_dac_clk = !w_rf_dac_clk;
+    end
+
+    // init register values
+    string path;
+
+    initial begin
+        
+        w_li_armed_bus = 'h0;
+
+        for (int i = 0; i < NUM_DC_CHANNEL; i++)
+            for (int j = 0; j < DC_TOTAL_REGS; j++)
+                dc_regs_unpacked[i][j] = 'h0;
+
+        for (int i = 0; i < NUM_RF_CHANNEL; i++)
+            for (int j = 0; j < RF_TOTAL_REGS; j++)
+                rf_regs_unpacked[i][j] = 'h0;
+
+        for (int i = 0; i <= 3; i++)
+            launch_regs_unpacked[i] = 'h0;
+
+        w_rst = 1'b1;
+        @(negedge w_clk);
+        w_rst = 1'b0;
+
+        repeat(5) @(negedge w_clk);
+
+        $readmemb("../sw/dump/launch.txt", launch_regs_unpacked);
+
+        for (int i = 0; i < NUM_DC_CHANNEL; i++) begin
+            if (w_launch_regs[0][i]) begin
+                path = $sformatf("../sw/dump/dc%0d.txt", i);
+                $readmemb(path, dc_regs_unpacked[i]);
+            end
+        end
+
+        for (int i = 0; i < NUM_RF_CHANNEL; i++) begin
+            if (w_launch_regs[1][i]) begin
+                path = $sformatf("../sw/dump/rf%d.txt", i);
+                $readmemb(path, rf_regs_unpacked[i]);
+            end
+        end
+
+
+        wait(LCH.r_state == LCH.LAUNCH);
+        wait(w_dc_empty_bus == {(NUM_DC_CHANNEL){1'b1}});
+        wait(w_dc_idle_bus == {(NUM_DC_CHANNEL){1'b1}});
+        wait(w_rf_empty_bus == {(NUM_RF_CHANNEL){1'b1}});
+        wait(w_rf_idle_bus == {(NUM_RF_CHANNEL){1'b1}});
+
+        $finish;
+
     end
 
 endmodule

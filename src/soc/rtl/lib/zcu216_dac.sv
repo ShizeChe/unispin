@@ -12,7 +12,7 @@ module zcu216_dac
         @(posedge i_clk);
         dac_cycle = 0;
         forever begin
-            @(posedge w_dac_clk);
+            @(posedge i_dac_clk);
             dac_cycle = (dac_cycle == 7) ? 0 : (dac_cycle + 1);
         end
     end
@@ -36,7 +36,7 @@ module zcu216_dac
         deg = 0;
         @(posedge i_clk);
         forever begin
-            @(negedge w_dac_clk);
+            @(negedge i_dac_clk);
             w_I = w_Ix8[dac_cycle];
             w_Q = w_Qx8[dac_cycle];
             I = iq2real(IQ_WIDTH, w_I);

@@ -12,16 +12,16 @@ module ad4451a
     logic [15:0] ad4451a_spi_reg;
     logic [15:0] ad4451a_dac_reg;
 
-    always_ff @(negedge w_ldac_n) begin
+    always_ff @(negedge i_ldac_n) begin
         ad4451a_dac_reg <= ad4451a_spi_reg;
     end
 
     initial begin
         forever begin
-            @(negedge w_cs_n);
+            @(negedge i_cs_n);
             for (int i = 15; i >= 0; i--) begin
-                @(posedge w_sclk);
-                ad4451a_spi_reg[i] = w_mosi;
+                @(posedge i_sclk);
+                ad4451a_spi_reg[i] = i_mosi;
             end
         end
     end
