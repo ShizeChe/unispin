@@ -153,6 +153,12 @@ module swashispin_tb;
         .o_li_start(w_li_start_bus)
     );
 
+    logic dc_empty, dc_idle, rf_empty, rf_idle;
+    assign dc_empty = w_dc_empty_bus == {(NUM_DC_CHANNEL){1'b1}};
+    assign dc_idle = w_dc_idle_bus == {(NUM_DC_CHANNEL){1'b1}};
+    assign rf_empty = w_rf_empty_bus == {(NUM_RF_CHANNEL){1'b1}};
+    assign rf_idle = w_rf_idle_bus == {(NUM_RF_CHANNEL){1'b1}};
+
     // simulated analog frontend
     logic [NUM_DC_CHANNEL-1:0][DC_DAC_WIDTH-1:0] vdc;
 
@@ -228,15 +234,110 @@ module swashispin_tb;
             end
         end
 
-
         wait(LCH.r_state == LCH.LAUNCH);
-        wait(w_dc_empty_bus == {(NUM_DC_CHANNEL){1'b1}});
-        wait(w_dc_idle_bus == {(NUM_DC_CHANNEL){1'b1}});
-        wait(w_rf_empty_bus == {(NUM_RF_CHANNEL){1'b1}});
-        wait(w_rf_idle_bus == {(NUM_RF_CHANNEL){1'b1}});
+        wait(LCH.w_all_ready);
+        wait(dc_empty && dc_idle && rf_empty && rf_idle);
 
         $finish;
 
+    end
+
+    // export dc trace
+    int dc_trace_chs [$];
+    int dc_trace_fds [$];
+    int dc_trace_cycles[$];
+    logic [DC_DAC_WIDTH-1:0] dc_trace_vprev [$];
+
+    int dc_ch, dc_fd;
+    logic [DC_DAC_WIDTH-1:0] dc_vprev;
+
+    string dc_trace_path;
+
+    initial begin
+        
+        wait(LCH.r_state == LCH.LAUNCH);
+        wait(LCH.w_all_ready);
+
+        @(negedge w_clk);
+        @(negedge w_clk);
+        @(negedge w_clk);
+
+        for (int i = 0; i < NUM_DC_CHANNEL; i++) begin
+
+            if (w_launch_regs[0][i]) begin
+
+                dc_trace_path = $sformatf("../sim/traces/dc%0d_trace.txt", i);
+
+                dc_trace_chs.push_back(i);
+                dc_trace_fds.push_back($fopen(dc_trace_path, "w"));
+                dc_trace_cycles.push_back(0);
+                dc_trace_vprev.push_back(vdc[i]);
+            end
+
+        end
+
+        
+        while (!(dc_empty && dc_idle)) begin
+
+            @(negedge w_clk);
+
+            for (int i = 0; i < dc_trace_chs.size(); i++) begin
+
+                dc_ch = dc_trace_chs[i];
+                dc_vprev = dc_trace_vprev[i];
+                
+                // dc voltage shifted, save v and cycles and reset
+                if (vdc[dc_ch] != dc_vprev) begin
+                    dc_fd = dc_trace_fds[i];
+                    $fdisplay(dc_fd, "%0h %0h", dc_vprev, dc_trace_cycles[i]);
+                    dc_trace_cycles[i] = 0;
+                end
+                else begin
+                    dc_trace_cycles[i]++;
+                end
+
+                dc_trace_vprev[i] = vdc[dc_ch];
+
+            end
+                
+        end
+    end
+
+    // export rf trace
+    int rf_trace_chs [$];
+    int rf_trace_fds [$];
+    int rf_ch, rf_fd;
+
+    string rf_trace_path;
+
+    initial begin
+
+        wait(LCH.r_state == LCH.LAUNCH);
+        wait(LCH.w_all_ready);
+
+        for (int i = 0; i < NUM_RF_CHANNEL; i++) begin
+
+            if (w_launch_regs[1][i]) begin
+
+                rf_trace_path = $sformatf("../sim/traces/rf%0d_trace.txt", i);
+
+                rf_trace_chs.push_back(i);
+                rf_trace_fds.push_back($fopen(rf_trace_path, "w"));
+            end
+
+        end
+
+        while (!(rf_empty && rf_idle)) begin
+
+            @(negedge w_rf_dac_clk);
+
+            for (int i = 0; i < rf_trace_chs.size(); i++) begin
+                rf_ch = rf_trace_chs[i];
+                rf_fd = rf_trace_fds[i];
+                $fdisplay(rf_fd, "%h\n", vrf[rf_ch]);
+            end
+                
+        end
     end
 
 endmodule
