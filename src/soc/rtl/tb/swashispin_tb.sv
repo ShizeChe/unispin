@@ -229,7 +229,7 @@ module swashispin_tb;
 
         for (int i = 0; i < NUM_RF_CHANNEL; i++) begin
             if (w_launch_regs[1][i]) begin
-                path = $sformatf("../sw/dump/rf%d.txt", i);
+                path = $sformatf("../sw/dump/rf%0d.txt", i);
                 $readmemb(path, rf_regs_unpacked[i]);
             end
         end
@@ -334,7 +334,7 @@ module swashispin_tb;
             for (int i = 0; i < rf_trace_chs.size(); i++) begin
                 rf_ch = rf_trace_chs[i];
                 rf_fd = rf_trace_fds[i];
-                $fdisplay(rf_fd, "%h\n", vrf[rf_ch]);
+                $fdisplay(rf_fd, "%f\n", vrf[rf_ch]);
             end
                 
         end

@@ -32,6 +32,8 @@ int main(int argc, char **argv) {
     launch_chs->chs[0] = rf_channel;
     launch_insn_t launch_insn = launch_chs2insn(launch_chs);
 
+    free(launch_chs);
+
     int err = rf_program_stream(rf_channel, 1, 1, &rf_insn, 1, rf_iptr_buf);
     if (err) {
         printf("rf channel %d program failed", rf_channel);
@@ -43,8 +45,6 @@ int main(int argc, char **argv) {
         printf("launch program failed\n");
         return -1;
     }
-
-    free(launch_chs);
 
     return 0;
 
