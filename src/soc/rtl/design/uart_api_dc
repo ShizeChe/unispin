@@ -1,0 +1,155 @@
+`timescale 1ns / 1ps
+
+module uart_api_dc
+#(parameter DAC_WIDTH=16,
+     parameter CYCLE_WIDTH=30,
+     parameter DAC_CHANNEL=24,
+     parameter CHANNEL_MES_WIDTH=96,
+     parameter STREAM_ITER_WIDTH=10,
+     parameter CORE_ITER_WIDTH=10,
+     parameter DEPTH=20,
+     parameter INSN_WIDTH=DAC_WIDTH*2+CORE_ITER_WIDTH+CYCLE_WIDTH,
+     parameter TOTAL_REGS=DEPTH*3+2)
+     (input  logic i_clk, i_rst,
+
+     input  logic i_rx,
+     output logic o_tx,
+
+     input  logic i_trigger,
+     
+     output logic o_sclk,
+     output logic o_mosi,
+     output logic [DAC_CHANNEL-1:0]o_cs_n,
+     output logic o_ldac_n);
+
+    logic w_deq_rxq, w_rxq_empty;
+    logic [7:0] w_rxq_data;
+    
+    localparam NUM_BYTES = INSN_WIDTH / 8;
+    localparam FRAME_BYTES = 62 * 4; 
+    uart #(
+        .DATA_WIDTH(8),
+        .RX_FIFO_DEPTH(100),
+        .RX_FIFO_AF_DEPTH(16),
+        .RX_FIFO_AE_DEPTH(4),
+        .TX_FIFO_DEPTH(20),
+        .TX_FIFO_AF_DEPTH(16),
+        .TX_FIFO_AE_DEPTH(4)
+    ) U (
+        .i_clk(i_clk),
+        .i_rst(!i_rst),
+        .i_rx(i_rx),
+        .o_tx(o_tx),
+        .i_deq_rxq(w_deq_rxq),
+        .o_rxq_data(w_rxq_data),
+        .o_rxq_empty(w_rxq_empty),
+        /* verilator lint_off PINCONNECTEMPTY */
+        .o_rxq_ae(),
+        .o_rxq_full(),
+        .o_rxq_af(),
+        .i_enq_txq(),
+        .i_txq_data(),
+        .o_txq_empty(),
+        .o_txq_ae(),
+        .o_txq_full(),
+        .o_txq_af()
+    );
+
+    logic w_enq_insn_fifo, w_deq_insn_fifo;
+    logic w_insn_fifo_full;
+    logic w_insn_fifo_empty;
+
+    logic [32:0] w_insn_recv, w_insn_exec;
+
+    fifo #(
+        .WIDTH(8),
+        .DEPTH(256),
+        .AF_DEPTH(240),
+        .AE_DEPTH(8)
+    ) insn_fifo (
+        .i_clk(i_clk),
+        .i_rst(!i_rst),
+        .i_data(w_insn_recv),
+        .i_enq(w_enq_insn_fifo),
+        .i_deq(w_deq_insn_fifo),
+        .o_data(w_insn_exec),
+        .o_full(w_insn_fifo_full),
+        .o_empty(w_insn_fifo_empty),
+        .o_almost_full(),
+        .o_almost_empty()
+    );
+
+    
+
+    genvar i;
+    generate
+        for (i = 0; i < DAC_CHANNEL; i++) begin : GEN_DC
+            dc #(
+                .DAC_WIDTH(DAC_WIDTH),
+                .CYCLE_WIDTH(CYCLE_WIDTH),
+                .STREAM_ITER_WIDTH(STREAM_ITER_WIDTH),
+                .CORE_ITER_WIDTH(CORE_ITER_WIDTH),
+                .DEPTH(DEPTH)
+            ) u_dc (
+                .i_clk(i_clk),
+                .i_rst(i_rst),
+                .i_regs(r_dc_regs[i]),
+                .i_start(r_start[i]),
+                .o_armed(w_armed[i]),
+                .o_sclk(o_sclk),
+                .o_mosi(o_mosi),
+                .o_cs_n(o_cs_n[i]),
+                .o_ldac_n(o_ldac_n)
+            );
+        end
+    endgenerate
+
+    logic [15:0] r_byte_cnt;
+    logic frame_ready;
+
+    always_ff @(posedge i_clk or negedge i_rst) begin
+        if (!i_rst) begin
+            r_byte_cnt  <= 0;
+            frame_ready <= 0;
+        end else begin
+            frame_ready <= 0;
+            if (!w_rxq_empty && !u_uart_fifo.o_full)
+                r_byte_cnt <= r_byte_cnt + 1;
+            if (r_byte_cnt == FRAME_BYTES) begin
+                frame_ready <= 1;
+                r_byte_cnt  <= 0;
+            end
+        end
+    end
+
+
+    logic [3:0] r_recv_counter;
+    logic [CHANNEL_MES_WIDTH-1:0] r_byte_shift_reg;
+    logic r_enq_insn_fifo;
+
+    always_ff @(posedge i_clk) begin
+        if (!i_rst) begin
+            r_recv_counter <= 'd0;
+            r_byte_shift_reg <= 'd0;
+            r_enq_insn_fifo <= 1'b0;
+        end
+        else if (!w_rxq_empty) begin
+            r_byte_shift_reg <= {r_byte_shift_reg[CHANNEL_MES_WIDTH-9:0], w_rxq_data};
+            if (r_recv_counter == 'd11) begin // 12 bytes total = 96 bits
+                r_enq_insn_fifo <= 1'b1;
+                r_recv_counter <= 'd0;
+            end
+            else begin
+                r_enq_insn_fifo <= 1'b0;
+                r_recv_counter <= r_recv_counter + 'd1;
+            end
+        end
+        else 
+            r_enq_insn_fifo <= 1'b0;
+    end
+
+    assign w_deq_rxq = !w_rxq_empty;
+    assign w_enq_insn_fifo = r_enq_insn_fifo;
+    assign w_insn_recv = r_byte_shift_reg[32:0]; 
+
+endmodule
