@@ -27,6 +27,8 @@ module uart_api_dc
     
     localparam NUM_BYTES = INSN_WIDTH / 8;
     localparam FRAME_BYTES = 62 * 4; 
+    localparam FRAME_WORDS = 62;
+    
     uart #(
         .DATA_WIDTH(8),
         .RX_FIFO_DEPTH(100),
@@ -55,39 +57,68 @@ module uart_api_dc
         .o_txq_af()
     );
 
-    logic [7:0] fifo_din;
-    logic fifo_enq, fifo_deq;
-    logic [7:0] fifo_dout;
-    logic fifo_full, fifo_empty;
-    logic [15:0] r_byte_cnt;
-    logic frame_ready;
+    assign w_deq_rxq = !w_rxq_empty;
+// ================================================================
+// UART-----FIFO32 
+// ================================================================
+    logic [1:0]  r_byte_cnt;
+    logic [31:0] r_word_buf;
+    logic        w_fifo32_enq;
 
+    always_ff @(posedge i_clk or negedge i_rst) begin
+        if (!i_rst) begin
+            r_byte_cnt    <= 0;
+            r_word_buf    <= 32'h0;
+            w_fifo32_enq  <= 1'b0;
+            w_deq_rxq     <= 1'b0;
+        end
+        else begin
+            w_fifo32_enq <= 1'b0;
+            w_deq_rxq    <= 1'b0;
+
+            if (!w_rxq_empty) begin
+                w_deq_rxq   <= 1'b1;
+                r_word_buf  <= {w_rxq_data, r_word_buf[31:8]};
+                r_byte_cnt  <= r_byte_cnt + 1'b1;
+
+                //32bit word
+                if (r_byte_cnt == 2'd3) begin
+                    w_fifo32_enq <= 1'b1;  // write FIFO32
+                    r_byte_cnt   <= 0;
+                end
+            end
+        end
+    end
+// ================================================================
+// 32-bit FIFO 
+// ================================================================
+
+    logic        w_fifo32_full, w_fifo32_empty;
+    logic [31:0] w_fifo32_dout;
+    logic        w_fifo32_deq;
 
     fifo #(
-        .WIDTH(8),
-        .DEPTH(256),
-        .AF_DEPTH(240),
+        .WIDTH(32),
+        .DEPTH(64),       
+        .AF_DEPTH(56),
         .AE_DEPTH(8)
-    ) u_uart_fifo (
+    ) u_fifo32 (
         .i_clk(i_clk),
         .i_rst(i_rst),
-        .i_data(w_rxq_data),
-        .i_enq(!w_rxq_empty),  
-        .i_deq(w_fifo_deq),
-        .o_data(w_fifo_dout),
-        .o_full(),
-        .o_empty(w_fifo_empty),
+        .i_data(r_word_buf),
+        .i_enq(w_fifo32_enq),
+        .i_deq(w_fifo32_deq),   
+        .o_data(w_fifo32_dout),
+        .o_full(w_fifo32_full),
+        .o_empty(w_fifo32_empty),
         .o_almost_full(),
         .o_almost_empty()
     );
 
-    logic [7:0]  w_fifo_dout;
-    logic        w_fifo_deq;
-    logic [31:0] r_word_accum;
-    logic [5:0]  word_index;
-    logic [1:0]  byte_in_word;
-    
-    logic [4:0]  r_channel_id;
+
+    assign o_data_to_dc  = w_fifo32_dout;    
+    assign o_empty_to_dc = w_fifo32_empty;   
+    assign i_deq_from_dc = w_fifo32_deq;     
 
     
     genvar i;
@@ -171,7 +202,7 @@ module uart_api_dc
             end
 
             WRITE_DONE: begin
-                // 62*32bit后，dc_stream
+                // 62*32bit，dc_stream
                 r_ch_regs[r_channel_id][61] <= 32'h0;  // new_stream trigger
                 r_state <= IDLE;
             end
