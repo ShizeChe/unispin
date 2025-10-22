@@ -72,7 +72,7 @@ rf_insn_t rf_chirp2insn(rf_chirp_t chp) {
     int64_t k = k_formula(chp.f_span_hz, chp.t_ns);
     int64_t b = b_formula(chp.f_span_hz, chp.f_nco_hz, chp.t_ns);
 
-    uint32_t samples = (chp.t_ns * RF_DAC_GHZ + 4) / 8;
+    uint32_t samples = (chp.t_ns * RF_DAC_GHZ + 4) / 8 * 8;
 
     return (rf_insn_t){.k = k, .b = b, .c = 0, .iters = 0,
                        .dkbc_samples = 0, .kbc_samples = samples,

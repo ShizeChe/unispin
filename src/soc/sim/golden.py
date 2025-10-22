@@ -2,6 +2,8 @@ from dataclasses import dataclass
 from scipy.signal import chirp
 import numpy as np
 import subprocess
+import matplotlib as mpl
+mpl.use("TkAgg")
 import matplotlib.pyplot as plt
 
 @dataclass
@@ -64,19 +66,25 @@ def chirp_test(channel: int, chp: RF.Chirp, samplerate=2):
         cwd="../rtl", check=True
     )
 
-    vrf = np.loadtxt(f"traces/rf{channel}.txt", dtype=float)
+    vrf = np.loadtxt(f"traces/rf{channel}_trace.txt", dtype=float)
 
     t = np.arange(0, chp.t_ns, 1 / samplerate)
     f_span_ghz = chp.f_span_hz / 1e9
     golden = chirp(t, t1=chp.t_ns, f0=-f_span_ghz / 2, f1=f_span_ghz / 2, method='linear', phi=0)
 
+    golden_fft = np.fft.rfft(golden)
+    f_golden = np.fft.rfftfreq(len(golden), d=1/2)
+
+    vrf_fft = np.fft.rfft(vrf)
+    f_vrf = np.fft.rfftfreq(len(vrf), d=1/2)
+
     plt.figure("vrf")
-    plt.plot(vrf)
-    plt.xlabel("Index"); plt.ylabel("[V]"); plt.title("vrf"); plt.grid(True)
+    plt.plot(f_vrf, vrf_fft)
+    plt.xlabel("freq"); plt.ylabel("[V]"); plt.title("vrf"); plt.grid(True)
 
     plt.figure("golden")
-    plt.plot(golden)
-    plt.xlabel("Index"); plt.ylabel("[V]"); plt.title("golden"); plt.grid(True)
+    plt.plot(f_golden, golden_fft)
+    plt.xlabel("freq"); plt.ylabel("[V]"); plt.title("golden"); plt.grid(True)
 
     plt.show()  # displays all open figures at once
 
