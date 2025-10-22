@@ -123,7 +123,7 @@ module swashispin_tb;
         );
 
         assign w_rf_empty_bus[i] = RF.w_empty;
-        assign w_rf_idle_bus[i] = RF.core.w_obubble;
+        assign w_rf_idle_bus[i] = RF.core.w_propagate_bubble;
 
     end
 
