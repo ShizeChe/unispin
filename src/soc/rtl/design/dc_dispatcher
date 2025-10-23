@@ -59,7 +59,6 @@ module dc_dispatcher_single
                         r_channel_sel <= j[4:0];
                 end
 
-                // 准备读剩余payload
                 r_word_cnt <= 6'd1;
                 r_state    <= READ_PAYLOAD;
             end
@@ -72,7 +71,6 @@ module dc_dispatcher_single
                     r_frame_buf[r_word_cnt] <= i_fifo_data;
                     r_word_cnt <= r_word_cnt + 1;
 
-                    // 已经收够62个word
                     if (r_word_cnt == FRAME_WORDS-1) begin
                         r_state       <= IDLE;
                         r_word_cnt    <= 6'd0;
