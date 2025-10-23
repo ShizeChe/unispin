@@ -78,7 +78,7 @@ module uart_api_dc
 
             if (!w_rxq_empty) begin
                 w_deq_rxq   <= 1'b1;
-                r_word_buf  <= {w_rxq_data, r_word_buf[31:8]};
+                r_word_buf  <= {r_word_buf[31:8],w_rxq_data};
                 r_byte_cnt  <= r_byte_cnt + 1'b1;
 
                 //32bit word
@@ -199,6 +199,23 @@ end
     endgenerate
 
     
+    launch #(NUM_DC_CHANNEL=24,
+     NUM_RF_CHANNEL=7,
+     NUM_LI_CHANNEL=2)
+    (
+        .i_clk(i_clk), 
+        .i_rst(i_rst),
+
+        .i_regs(),
+
+     input  logic [NUM_DC_CHANNEL-1:0] i_dc_armed,
+     input  logic [NUM_RF_CHANNEL-1:0] i_rf_armed,
+     input  logic [NUM_LI_CHANNEL-1:0] i_li_armed,
+
+     output logic [NUM_DC_CHANNEL-1:0] o_dc_start,
+     output logic [NUM_RF_CHANNEL-1:0] o_rf_start,
+     output logic [NUM_LI_CHANNEL-1:0] o_li_start);
+
 
 
 endmodule
