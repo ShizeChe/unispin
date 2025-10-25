@@ -40,7 +40,7 @@ module axi_lite_slave
 
     localparam ADDR_LSB = (C_S_AXI_DATA_WIDTH/32) + 1;
     localparam OPT_MEM_ADDR_BITS = C_S_AXI_ADDR_WIDTH - ADDR_LSB - 1;
-    logic [C_S_AXI_DATA_WIDTH-1:0] slv_regs [NUM_REGS-1:0];
+    logic [C_S_AXI_DATA_WIDTH-1:0] slv_regs [NUM_REGS];
 
     assign S_AXI_AWREADY= axi_awready;
     assign S_AXI_WREADY= axi_wready;
@@ -140,7 +140,7 @@ module axi_lite_slave
     // one special counter down register
     always_ff @(posedge S_AXI_ACLK) begin
 
-        if (S_AXI_ARESETN) slv_regs[NUM_REGS-1] <= 'd0;
+        if (S_AXI_ARESETN == 1'b0) slv_regs[NUM_REGS-1] <= 'd0;
         else begin
 
             if (S_AXI_WVALID && (S_AXI_AWVALID ? 
