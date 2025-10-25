@@ -27,6 +27,8 @@ module uart_api_dc
     
     localparam NUM_BYTES = INSN_WIDTH / 8;
     localparam FRAME_BYTES = 62 * 4; 
+    localparam FRAME_WORDS = 62;
+    
     uart #(
         .DATA_WIDTH(8),
         .RX_FIFO_DEPTH(100),
@@ -55,41 +57,124 @@ module uart_api_dc
         .o_txq_af()
     );
 
-    logic [7:0] fifo_din;
-    logic fifo_enq, fifo_deq;
-    logic [7:0] fifo_dout;
-    logic fifo_full, fifo_empty;
-    logic [15:0] r_byte_cnt;
-    logic frame_ready;
+    assign w_deq_rxq = !w_rxq_empty;
+// ================================================================
+// UART-----FIFO32 
+// ================================================================
+    logic [1:0]  r_byte_cnt;
+    logic [31:0] r_word_buf;
+    logic        w_fifo32_enq;
 
+    always_ff @(posedge i_clk or negedge i_rst) begin
+        if (!i_rst) begin
+            r_byte_cnt    <= 0;
+            r_word_buf    <= 32'h0;
+            w_fifo32_enq  <= 1'b0;
+            w_deq_rxq     <= 1'b0;
+        end
+        else begin
+            w_fifo32_enq <= 1'b0;
+            w_deq_rxq    <= 1'b0;
+
+            if (!w_rxq_empty) begin
+                w_deq_rxq   <= 1'b1;
+                r_word_buf  <= {r_word_buf[31:8],w_rxq_data};
+                r_byte_cnt  <= r_byte_cnt + 1'b1;
+
+                //32bit word
+                if (r_byte_cnt == 2'd3) begin
+                    w_fifo32_enq <= 1'b1;  // write FIFO32
+                    r_byte_cnt   <= 0;
+                end
+            end
+        end
+    end
+// ================================================================
+// 32-bit FIFO 
+// ================================================================
+
+    logic        w_fifo32_full, w_fifo32_empty;
+    logic [31:0] w_fifo32_dout;
+    logic        w_fifo32_deq;
 
     fifo #(
-        .WIDTH(8),
-        .DEPTH(256),
-        .AF_DEPTH(240),
+        .WIDTH(32),
+        .DEPTH(64),       
+        .AF_DEPTH(56),
         .AE_DEPTH(8)
-    ) u_uart_fifo (
+    ) u_fifo32 (
         .i_clk(i_clk),
         .i_rst(i_rst),
-        .i_data(w_rxq_data),
-        .i_enq(!w_rxq_empty),  
-        .i_deq(w_fifo_deq),
-        .o_data(w_fifo_dout),
-        .o_full(),
-        .o_empty(w_fifo_empty),
+        .i_data(r_word_buf),
+        .i_enq(w_fifo32_enq),
+        .i_deq(w_fifo32_deq),   
+        .o_data(w_fifo32_dout),
+        .o_full(w_fifo32_full),
+        .o_empty(w_fifo32_empty),
         .o_almost_full(),
         .o_almost_empty()
     );
+// ================================================================
+// 62*32 register from fifo
+// ================================================================
 
-    logic [7:0]  w_fifo_dout;
-    logic        w_fifo_deq;
-    logic [31:0] r_word_accum;
-    logic [5:0]  word_index;
-    logic [1:0]  byte_in_word;
-    
-    logic [4:0]  r_channel_id;
+    dc_dispatcher_single #(
+        .DAC_CHANNEL(24),
+        .FRAME_WORDS(62)
+    ) u_dispatcher (
+        .i_clk(i_clk),
+        .i_rst(i_rst),
+        .i_fifo_data(w_fifo32_dout),
+        .i_fifo_empty(w_fifo32_empty),
+        .o_fifo_deq(w_fifo32_deq),
+        .o_dc_regs(w_dc_regs),
+        .o_channel_sel(w_channel_sel),
+        .o_valid_frame(w_valid_frame)
+    );
 
-    
+    logic [61:0][31:0]   w_dc_regs;       
+    logic [4:0]          w_channel_sel;   
+    logic                w_valid_frame; 
+
+    logic [DAC_CHANNEL-1:0][61:0][31:0] r_dc_regs;  
+    logic [DAC_CHANNEL-1:0]             r_start;     
+    logic [DAC_CHANNEL-1:0]             w_armed;     
+
+    logic [DAC_CHANNEL-1:0][61:0][31:0] r_dc_regs;
+
+    always_ff @(posedge i_clk or negedge i_rst) begin
+    if (!i_rst) begin
+        r_dc_regs <= '0;
+    end else if (w_valid_frame) begin
+        case (w_channel_sel)
+            5'd0 :  r_dc_regs[0]  <= w_dc_regs;
+            5'd1 :  r_dc_regs[1]  <= w_dc_regs;
+            5'd2 :  r_dc_regs[2]  <= w_dc_regs;
+            5'd3 :  r_dc_regs[3]  <= w_dc_regs;
+            5'd4 :  r_dc_regs[4]  <= w_dc_regs;
+            5'd5 :  r_dc_regs[5]  <= w_dc_regs;
+            5'd6 :  r_dc_regs[6]  <= w_dc_regs;
+            5'd7 :  r_dc_regs[7]  <= w_dc_regs;
+            5'd8 :  r_dc_regs[8]  <= w_dc_regs;
+            5'd9 :  r_dc_regs[9]  <= w_dc_regs;
+            5'd10:  r_dc_regs[10] <= w_dc_regs;
+            5'd11:  r_dc_regs[11] <= w_dc_regs;
+            5'd12:  r_dc_regs[12] <= w_dc_regs;
+            5'd13:  r_dc_regs[13] <= w_dc_regs;
+            5'd14:  r_dc_regs[14] <= w_dc_regs;
+            5'd15:  r_dc_regs[15] <= w_dc_regs;
+            5'd16:  r_dc_regs[16] <= w_dc_regs;
+            5'd17:  r_dc_regs[17] <= w_dc_regs;
+            5'd18:  r_dc_regs[18] <= w_dc_regs;
+            5'd19:  r_dc_regs[19] <= w_dc_regs;
+            5'd20:  r_dc_regs[20] <= w_dc_regs;
+            5'd21:  r_dc_regs[21] <= w_dc_regs;
+            5'd22:  r_dc_regs[22] <= w_dc_regs;
+            5'd23:  r_dc_regs[23] <= w_dc_regs;
+            default: ;
+        endcase
+    end
+end
     genvar i;
     generate
         for (i = 0; i < DAC_CHANNEL; i++) begin : GEN_DC
@@ -113,70 +198,24 @@ module uart_api_dc
         end
     endgenerate
 
-    logic [15:0] r_byte_cnt;
-    logic frame_ready;
+    
+    launch #(NUM_DC_CHANNEL=24,
+     NUM_RF_CHANNEL=7,
+     NUM_LI_CHANNEL=2)
+    (
+        .i_clk(i_clk), 
+        .i_rst(i_rst),
 
-    always_ff @(posedge i_clk or negedge i_rst) begin
-        if (!i_rst) begin
-            r_byte_cnt  <= 1'b0;
-            frame_ready <= 1'b0;
-        end else begin
-            frame_ready <= 1'b0;
-            if (!w_rxq_empty && !u_uart_fifo.o_full)
-                r_byte_cnt <= r_byte_cnt + 1;
-            if (r_byte_cnt == FRAME_BYTES) begin
-                frame_ready <= 1'b1;
-                r_byte_cnt  <= 0;
-            end
-        end
-    end
+        .i_regs(),
+
+     input  logic [NUM_DC_CHANNEL-1:0] i_dc_armed,
+     input  logic [NUM_RF_CHANNEL-1:0] i_rf_armed,
+     input  logic [NUM_LI_CHANNEL-1:0] i_li_armed,
+
+     output logic [NUM_DC_CHANNEL-1:0] o_dc_start,
+     output logic [NUM_RF_CHANNEL-1:0] o_rf_start,
+     output logic [NUM_LI_CHANNEL-1:0] o_li_start);
 
 
-    typedef enum logic [1:0] {IDLE, READ_FRAME, WRITE_DONE} state_t;
-    state_t r_state;
-
-    always_ff @(posedge i_clk or negedge i_rst) begin
-        if (!i_rst) begin
-            r_state <= IDLE;
-            w_fifo_deq <= 0;
-            word_index <= 0;
-            byte_in_word <= 0;
-        end else begin
-            w_fifo_deq <= 0;
-
-            case (r_state)
-            IDLE: begin
-                if (frame_ready) begin
-                    r_state <= READ_FRAME;
-                    word_index <= 0;
-                    byte_in_word <= 0;
-                    w_fifo_deq <= 1;
-                end
-            end
-
-            READ_FRAME: begin
-                if (!w_fifo_empty) begin
-                    w_fifo_deq <= 1;
-                    r_word_accum <= {w_fifo_dout, r_word_accum[31:8]};
-                    byte_in_word <= byte_in_word + 1;
-                    if (byte_in_word == 2'b11) begin  // 4bit word
-                        r_ch_regs[r_channel_id][word_index] <= r_word_accum;
-                        word_index <= word_index + 1;
-                        if (word_index == 6'd61) begin
-                            r_state <= WRITE_DONE;
-                            w_fifo_deq <= 0;
-                        end
-                    end
-                end
-            end
-
-            WRITE_DONE: begin
-                // 62*32bit后，dc_stream
-                r_ch_regs[r_channel_id][61] <= 32'h0;  // new_stream trigger
-                r_state <= IDLE;
-            end
-            endcase
-        end
-    end
 
 endmodule
