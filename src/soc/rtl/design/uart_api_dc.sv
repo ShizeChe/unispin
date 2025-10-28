@@ -129,12 +129,14 @@ module uart_api_dc
         .o_fifo_deq(w_fifo32_deq),
         .o_dc_regs(w_dc_regs),
         .o_channel_sel(w_channel_sel),
-        .o_valid_frame(w_valid_frame)
+        .o_valid_frame(w_valid_frame),
+        .o_launch_cmd(w_launch_cmd_reg)
     );
 
     logic [61:0][31:0]   w_dc_regs;       
     logic [4:0]          w_channel_sel;   
     logic                w_valid_frame; 
+    logic [3:0][31:0]    w_launch_cmd_reg;
 
     logic [DAC_CHANNEL-1:0][61:0][31:0] r_dc_regs;  
     logic [DAC_CHANNEL-1:0]             r_start;     
@@ -206,15 +208,16 @@ end
         .i_clk(i_clk), 
         .i_rst(i_rst),
 
-        .i_regs(),
+        .i_regs(w_launch_cmd_reg),
 
-     input  logic [NUM_DC_CHANNEL-1:0] i_dc_armed,
-     input  logic [NUM_RF_CHANNEL-1:0] i_rf_armed,
-     input  logic [NUM_LI_CHANNEL-1:0] i_li_armed,
+        .i_dc_armed(w_armed),
+        //.i_rf_armed(),
+        //.i_li_armed(),
 
-     output logic [NUM_DC_CHANNEL-1:0] o_dc_start,
-     output logic [NUM_RF_CHANNEL-1:0] o_rf_start,
-     output logic [NUM_LI_CHANNEL-1:0] o_li_start);
+        .o_dc_start(r_start),
+        //.o_rf_start(),
+        //.o_li_start()
+        );
 
 
 

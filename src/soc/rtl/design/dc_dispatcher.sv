@@ -16,12 +16,17 @@ module dc_dispatcher_single
 
     output logic [FRAME_WORDS-1:0][31:0] o_dc_regs,    
     output logic [4:0]                   o_channel_sel, 
-    output logic                         o_valid_frame  )
+    output logic                         o_valid_frame,
+    // -------------------- launch interface --------------------
+    output logic [3:0][31:0]             o_launch_cmd,     
+    output logic                         o_launch_valid    
+    )
 
     typedef enum logic [1:0] {
         IDLE        = 2'b00,
         READ_HDR    = 2'b01,
-        READ_PAYLOAD= 2'b10
+        READ_PAYLOAD= 2'b10,
+        READ_LAUNCH_CMD = 2'b11
     } state_t;
 
     state_t r_state;
@@ -53,12 +58,16 @@ module dc_dispatcher_single
             READ_HDR: begin
                 // first word
                 r_frame_buf[0] <= i_fifo_data;
-
-                for (int j = 0; j < DAC_CHANNEL; j++) begin
-                    if (i_fifo_data[8+j] == 1'b0)
-                        r_channel_sel <= j[4:0];
+                if (&i_fifo_data) begin
+                    r_word_cnt <= 0;
+                    r_state    <= READ_LAUNCH_CMD;
                 end
-
+                else begin
+                    for (int j = 0; j < DAC_CHANNEL; j++) begin
+                        if (i_fifo_data[8+j] == 1'b0)
+                            r_channel_sel <= j[4:0];
+                    end
+                end
                 r_word_cnt <= 6'd1;
                 r_state    <= READ_PAYLOAD;
             end
@@ -79,6 +88,20 @@ module dc_dispatcher_single
                 end
             end
 
+            // ====================================================
+            READ_LAUNCH_CMD: begin
+                if (!i_fifo_empty) begin
+                    o_fifo_deq <= 1'b1;
+                    r_launch_buf[r_word_cnt] <= i_fifo_data;
+                    r_word_cnt <= r_word_cnt + 1;
+
+                    if (r_word_cnt == 3) begin   
+                        r_state        <= IDLE;
+                        o_launch_valid <= 1'b1;
+                        r_word_cnt     <= 0;
+                    end
+                end
+            end
             default: r_state <= IDLE;
             endcase
         end
