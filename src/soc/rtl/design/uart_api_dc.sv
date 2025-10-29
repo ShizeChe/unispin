@@ -15,7 +15,7 @@ module uart_api_dc
      input  logic i_rx,
      output logic o_tx,
 
-     input  logic i_trigger,
+     //input  logic i_trigger,
      
      output logic o_sclk,
      output logic o_mosi,
@@ -57,7 +57,7 @@ module uart_api_dc
         .o_txq_af()
     );
 
-    assign w_deq_rxq = !w_rxq_empty;
+    //assign w_deq_rxq = !w_rxq_empty;
 // ================================================================
 // UART-----FIFO32 
 // ================================================================
@@ -201,10 +201,11 @@ end
     endgenerate
 
     
-    launch #(NUM_DC_CHANNEL=24,
-     NUM_RF_CHANNEL=7,
-     NUM_LI_CHANNEL=2)
-    (
+    launch #(
+     .NUM_DC_CHANNEL(24),
+     .NUM_RF_CHANNEL(7),
+     .NUM_LI_CHANNEL(2)
+     )u_launch(
         .i_clk(i_clk), 
         .i_rst(i_rst),
 
@@ -214,7 +215,7 @@ end
         //.i_rf_armed(),
         //.i_li_armed(),
 
-        .o_dc_start(r_start),
+        .o_dc_start(r_start)
         //.o_rf_start(),
         //.o_li_start()
         );
