@@ -118,7 +118,7 @@ module uart_api_dc
 // 62*32 register from fifo
 // ================================================================
 
-    dc_dispatcher_single #(
+    dc_dispatcher #(
         .DAC_CHANNEL(24),
         .FRAME_WORDS(62)
     ) u_dispatcher (
