@@ -55,8 +55,10 @@ module rf_stream
     logic [IPTR_WIDTH-1:0] w_iptr;
     logic [$clog2(IPTR_BUF_DEPTH)-1:0] r_iptr_ptr; 
 
+    // this has high logic delay
+    logic [INSN_WIDTH-1:0] w_insn_fetch;
     assign w_iptr = r_iptr_buffer[r_iptr_ptr];
-    assign o_insn = r_insn_buffer[w_iptr];
+    assign w_insn_fetch = r_insn_buffer[w_iptr];
 
     localparam REG_PER_INSN = (INSN_WIDTH + 31) / 32;
     localparam IPTR_PER_REG = 32 / IPTR_WIDTH;
@@ -94,6 +96,25 @@ module rf_stream
             r_iptr_last <= w_iptr_last_bits;
     end
 
+    // small fetch pipeline
+    logic w_fetch_bubble;
+    assign w_fetch_bubble = (r_iters == 'd0);
+
+    always_ff @(posedge i_clk) begin
+        if (i_rst) begin
+            o_insn <= 'h0;
+            o_empty <= 1'b1;
+        end
+        else if (o_empty && r_iters > 'd0) begin
+            o_insn <= w_insn_fetch;
+            o_empty <= 1'b0;
+        end
+        else if (!o_empty && i_next) begin
+            o_insn <= w_fetch_bubble ? 'h0 : w_insn_fetch;
+            o_empty <= w_fetch_bubble;
+        end
+    end
+
     logic w_next_null;
     assign w_next_null = (r_iptr_ptr == r_iptr_last);
 
@@ -114,8 +135,6 @@ module rf_stream
         else if (i_next)
             r_iptr_ptr <= w_next_null ? 'd0 : w_iptr_ptr_plus1;
     end
-
-    assign o_empty = (r_iters == 'd0);
 
 endmodule
 
