@@ -8,7 +8,8 @@ module rf_stream
      parameter INSN_REGS=(INSN_WIDTH+31)/32*INSN_BUF_DEPTH,
      parameter IPTR_REGS=(IPTR_BUF_DEPTH+32/IPTR_WIDTH-1)/(32/IPTR_WIDTH),
      parameter ITER_WIDTH=10,
-     parameter TOTAL_REGS=INSN_REGS+IPTR_REGS+2)
+     parameter TOTAL_REGS=INSN_REGS+IPTR_REGS+2,
+     parameter FETCH_STAGES=2)
     (input  logic i_clk, i_rst,
 
      input  logic [TOTAL_REGS-1:0][31:0] i_regs,
@@ -55,10 +56,14 @@ module rf_stream
     logic [IPTR_WIDTH-1:0] w_iptr;
     logic [$clog2(IPTR_BUF_DEPTH)-1:0] r_iptr_ptr; 
 
+    assign w_iptr = r_iptr_buffer[r_iptr_ptr];
+
     // this has high logic delay
     logic [INSN_WIDTH-1:0] w_insn_fetch;
-    assign w_iptr = r_iptr_buffer[r_iptr_ptr];
+    logic w_fetch_bubble;
+
     assign w_insn_fetch = r_insn_buffer[w_iptr];
+    assign w_fetch_bubble = (r_iters == 'd0);
 
     localparam REG_PER_INSN = (INSN_WIDTH + 31) / 32;
     localparam IPTR_PER_REG = 32 / IPTR_WIDTH;
@@ -96,22 +101,39 @@ module rf_stream
             r_iptr_last <= w_iptr_last_bits;
     end
 
-    // small fetch pipeline
-    logic w_fetch_bubble;
-    assign w_fetch_bubble = (r_iters == 'd0);
+    // fetch pipeline
+    logic [INSN_WIDTH-1:0] r_insn_fetch [0:FETCH_STAGES];
+    logic [FETCH_STAGES:0] r_fetch_bubble; 
+
+    logic w_all_bubble, w_propagate;
+    assign w_all_bubble = &r_fetch_bubble;
+    assign w_propagate = (!w_all_bubble && o_empty) || 
+                         (!o_empty && i_next);
+
+    assign r_insn_fetch[0] = w_insn_fetch;
+    assign r_fetch_bubble[0] = w_fetch_bubble;
+
+    for (genvar i = 1; i < FETCH_STAGES; i++) begin
+        always_ff @(posedge i_clk) begin
+            if (i_rst) begin
+                r_insn_fetch[i] <= 'h0;
+                r_fetch_bubble[i] <= 1'b1;
+            end
+            else if (w_propagate) begin
+                r_insn_fetch[i] <= r_insn_fetch[i - 1];
+                r_fetch_bubble[i] <= r_fetch_bubble[i - 1];
+            end
+        end
+    end
 
     always_ff @(posedge i_clk) begin
         if (i_rst) begin
             o_insn <= 'h0;
             o_empty <= 1'b1;
         end
-        else if (o_empty && r_iters > 'd0) begin
-            o_insn <= w_insn_fetch;
-            o_empty <= 1'b0;
-        end
-        else if (!o_empty && i_next) begin
-            o_insn <= w_fetch_bubble ? 'h0 : w_insn_fetch;
-            o_empty <= w_fetch_bubble;
+        else if (w_propagate) begin
+            o_insn <= r_insn_fetch[FETCH_STAGES];
+            o_empty <= r_fetch_bubble[FETCH_STAGES];
         end
     end
 
@@ -122,7 +144,7 @@ module rf_stream
         if (i_rst) r_iters <= 'd0;
         else if (w_new_stream)
             r_iters <= w_iters_bits;
-        else if (!o_empty && i_next && w_next_null)
+        else if (w_propagate && w_next_null)
             r_iters <= (r_iters == 'd0) ? 'd0 : r_iters - 'd1;
     end
 
@@ -132,7 +154,7 @@ module rf_stream
 
     always_ff @(posedge i_clk) begin
         if (i_rst) r_iptr_ptr <= 'd0;
-        else if (i_next)
+        else if (w_propagate)
             r_iptr_ptr <= w_next_null ? 'd0 : w_iptr_ptr_plus1;
     end
 
