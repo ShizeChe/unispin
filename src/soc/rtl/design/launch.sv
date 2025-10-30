@@ -1,9 +1,9 @@
 `timescale 1ns / 1ps
 
 module launch
-   #(NUM_DC_CHANNEL=24,
-     NUM_RF_CHANNEL=7,
-     NUM_LI_CHANNEL=2)
+   #(parameter NUM_DC_CHANNEL=24,
+     parameter NUM_RF_CHANNEL=7,
+     parameter NUM_LI_CHANNEL=2)
     (input  logic i_clk, i_rst,
 
      input  logic [3:0][31:0] i_regs,
@@ -11,6 +11,8 @@ module launch
      input  logic [NUM_DC_CHANNEL-1:0] i_dc_armed,
      input  logic [NUM_RF_CHANNEL-1:0] i_rf_armed,
      input  logic [NUM_LI_CHANNEL-1:0] i_li_armed,
+
+     input  logic i_trigger,
 
      output logic [NUM_DC_CHANNEL-1:0] o_dc_start,
      output logic [NUM_RF_CHANNEL-1:0] o_rf_start,
@@ -68,7 +70,7 @@ module launch
     assign w_li_ready = ((r_li_active_mask ^ r_li_armed) == 'h0);
 
     logic w_all_ready;
-    assign w_all_ready = w_dc_ready && w_rf_ready && w_li_ready;
+    assign w_all_ready = w_dc_ready && w_rf_ready && w_li_ready && i_trigger;
 
     enum {IDLE, LAUNCH} r_state, w_next_state;
 
