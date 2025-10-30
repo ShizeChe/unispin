@@ -45,10 +45,27 @@ module launch
         end
     end
 
+    logic [NUM_DC_CHANNEL-1:0] r_dc_armed;
+    logic [NUM_RF_CHANNEL-1:0] r_rf_armed;
+    logic [NUM_LI_CHANNEL-1:0] r_li_armed;
+
+    always_ff @(posedge i_clk) begin
+        if (i_rst) begin
+            r_dc_armed <= 'h0;
+            r_rf_armed <= 'h0;
+            r_li_armed <= 'h0;
+        end
+        else begin
+            r_dc_armed <= i_dc_armed;
+            r_rf_armed <= i_rf_armed;
+            r_li_armed <= i_li_armed;
+        end
+    end
+
     logic w_dc_ready, w_rf_ready, w_li_ready;
-    assign w_dc_ready = ((r_dc_active_mask ^ i_dc_armed) == 'h0);
-    assign w_rf_ready = ((r_rf_active_mask ^ i_rf_armed) == 'h0);
-    assign w_li_ready = ((r_li_active_mask ^ i_li_armed) == 'h0);
+    assign w_dc_ready = ((r_dc_active_mask ^ r_dc_armed) == 'h0);
+    assign w_rf_ready = ((r_rf_active_mask ^ r_rf_armed) == 'h0);
+    assign w_li_ready = ((r_li_active_mask ^ r_li_armed) == 'h0);
 
     logic w_all_ready;
     assign w_all_ready = w_dc_ready && w_rf_ready && w_li_ready;
@@ -59,11 +76,28 @@ module launch
         r_state <= i_rst ? IDLE : w_next_state;
     end
 
+    logic w_start;
+    always_ff @(posedge i_clk) begin
+        if (i_rst) begin
+            o_dc_start <= 'h0;
+            o_rf_start <= 'h0;
+            o_li_start <= 'h0;
+        end
+        else if (w_start) begin
+            o_dc_start <= r_dc_active_mask;
+            o_rf_start <= r_rf_active_mask;
+            o_li_start <= r_li_active_mask;
+        end
+        else begin
+            o_dc_start <= 'h0;
+            o_rf_start <= 'h0;
+            o_li_start <= 'h0;
+        end
+    end
+
     always_comb begin
 
-        o_dc_start = 'h0;
-        o_rf_start = 'h0;
-        o_li_start = 'h0;
+        w_start = 1'b0;
 
         case (r_state)
             IDLE: begin
@@ -71,9 +105,7 @@ module launch
             end
             default: begin
                 w_next_state = w_all_ready ? IDLE : LAUNCH;
-                o_dc_start = w_all_ready ? r_dc_active_mask : 'h0;
-                o_rf_start = w_all_ready ? r_rf_active_mask : 'h0;
-                o_li_start = w_all_ready ? r_li_active_mask : 'h0;
+                w_start = w_all_ready;
             end
         endcase
 

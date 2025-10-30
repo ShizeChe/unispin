@@ -53,18 +53,6 @@ module rf_stream
     logic [$clog2(IPTR_BUF_DEPTH)-1:0] r_iptr_last;
     logic [ITER_WIDTH-1:0] r_iters;
 
-    logic [IPTR_WIDTH-1:0] w_iptr;
-    logic [$clog2(IPTR_BUF_DEPTH)-1:0] r_iptr_ptr; 
-
-    assign w_iptr = r_iptr_buffer[r_iptr_ptr];
-
-    // this has high logic delay
-    logic [INSN_WIDTH-1:0] w_insn_fetch;
-    logic w_fetch_bubble;
-
-    assign w_insn_fetch = r_insn_buffer[w_iptr];
-    assign w_fetch_bubble = (r_iters == 'd0);
-
     localparam REG_PER_INSN = (INSN_WIDTH + 31) / 32;
     localparam IPTR_PER_REG = 32 / IPTR_WIDTH;
 
@@ -101,41 +89,11 @@ module rf_stream
             r_iptr_last <= w_iptr_last_bits;
     end
 
-    // fetch pipeline
-    logic [INSN_WIDTH-1:0] r_insn_fetch [0:FETCH_STAGES];
-    logic [FETCH_STAGES:0] r_fetch_bubble; 
+    // fetch insn ptr
+    logic w_propagate;
 
-    logic w_all_bubble, w_propagate;
-    assign w_all_bubble = &r_fetch_bubble;
-    assign w_propagate = (!w_all_bubble && o_empty) || 
-                         (!o_empty && i_next);
-
-    assign r_insn_fetch[0] = w_insn_fetch;
-    assign r_fetch_bubble[0] = w_fetch_bubble;
-
-    for (genvar i = 1; i < FETCH_STAGES; i++) begin
-        always_ff @(posedge i_clk) begin
-            if (i_rst) begin
-                r_insn_fetch[i] <= 'h0;
-                r_fetch_bubble[i] <= 1'b1;
-            end
-            else if (w_propagate) begin
-                r_insn_fetch[i] <= r_insn_fetch[i - 1];
-                r_fetch_bubble[i] <= r_fetch_bubble[i - 1];
-            end
-        end
-    end
-
-    always_ff @(posedge i_clk) begin
-        if (i_rst) begin
-            o_insn <= 'h0;
-            o_empty <= 1'b1;
-        end
-        else if (w_propagate) begin
-            o_insn <= r_insn_fetch[FETCH_STAGES];
-            o_empty <= r_fetch_bubble[FETCH_STAGES];
-        end
-    end
+    // r_iters and r_iptr_ptr logic
+    logic [$clog2(IPTR_BUF_DEPTH)-1:0] r_iptr_ptr; 
 
     logic w_next_null;
     assign w_next_null = (r_iptr_ptr == r_iptr_last);
@@ -156,6 +114,62 @@ module rf_stream
         if (i_rst) r_iptr_ptr <= 'd0;
         else if (w_propagate)
             r_iptr_ptr <= w_next_null ? 'd0 : w_iptr_ptr_plus1;
+    end
+
+    // fetch insn ptr
+    logic [IPTR_WIDTH-1:0] w_iptr_fetch;
+    assign w_iptr_fetch = r_iptr_buffer[r_iptr_ptr];
+
+    logic w_iptr_bubble;
+    assign w_iptr_bubble = (r_iters == 'd0);
+
+    logic r_iptr_bubble;
+    logic [IPTR_WIDTH-1:0] r_iptr;
+
+    always_ff @(posedge i_clk) begin
+        if (i_rst) begin
+            r_iptr <= 'h0;
+            r_iptr_bubble <= 1'b1;
+        end
+        else if (w_propagate) begin
+            r_iptr <= w_iptr_fetch;
+            r_iptr_bubble <= w_iptr_bubble;
+        end
+    end
+
+    // fetch insn
+    logic [INSN_WIDTH-1:0] w_insn_fetch;
+    assign w_insn_fetch = r_insn_buffer[r_iptr];
+
+    logic w_insn_bubble;
+    assign w_insn_bubble = r_iptr_bubble;
+
+    logic [INSN_WIDTH-1:0] r_insn_fetch;
+    logic r_insn_bubble; 
+
+    always_ff @(posedge i_clk) begin
+        if (i_rst) begin
+            r_insn_fetch <= 'h0;
+            r_insn_bubble <= 1'b1;
+        end
+        else begin
+            r_insn_fetch <= w_insn_fetch;
+            r_insn_bubble <= w_insn_bubble;
+        end
+    end
+
+    assign w_propagate = (!(w_iptr_bubble && w_insn_bubble && r_insn_bubble) && o_empty) || 
+                         (!o_empty && i_next);
+
+    always_ff @(posedge i_clk) begin
+        if (i_rst) begin
+            o_insn <= 'h0;
+            o_empty <= 1'b1;
+        end
+        else if (w_propagate) begin
+            o_insn <= r_insn_fetch;
+            o_empty <= r_insn_bubble;
+        end
     end
 
 endmodule

@@ -7,7 +7,7 @@ module swashispin_tb;
     localparam DC_CYCLE_WIDTH=30;
     localparam DC_STREAM_ITER_WIDTH=10;
     localparam DC_CORE_ITER_WIDTH=10;
-    localparam DC_STREAM_DEPTH=20;
+    localparam DC_STREAM_DEPTH=10;
     localparam DC_INSN_WIDTH=DC_DAC_WIDTH*2+DC_CORE_ITER_WIDTH+DC_CYCLE_WIDTH;
     localparam DC_TOTAL_REGS=DC_STREAM_DEPTH*3+2;
 
@@ -22,11 +22,11 @@ module swashispin_tb;
     localparam RF_CORDIC_STAGES=15;
     localparam RF_CORDIC_PAD_ZEROS=8;
 
-    localparam RF_INSN_BUF_DEPTH=16;
+    localparam RF_INSN_BUF_DEPTH=4;
     localparam RF_IPTR_WIDTH=$clog2(RF_INSN_BUF_DEPTH);
-    localparam RF_IPTR_BUF_DEPTH=1024;
+    localparam RF_IPTR_BUF_DEPTH=512;
     localparam RF_INSN_REGS=(RF_INSN_WIDTH+31)/32*RF_INSN_BUF_DEPTH;
-    localparam RF_IPTR_REGS=(1024+32/RF_IPTR_WIDTH-1)/(32/RF_IPTR_WIDTH);
+    localparam RF_IPTR_REGS=(RF_IPTR_BUF_DEPTH+32/RF_IPTR_WIDTH-1)/(32/RF_IPTR_WIDTH);
     localparam RF_STREAM_ITER_WIDTH=10;
     localparam RF_TOTAL_REGS=RF_INSN_REGS+RF_IPTR_REGS+2;
 
@@ -235,6 +235,7 @@ module swashispin_tb;
         end
 
         wait(LCH.r_state == LCH.LAUNCH);
+        @(negedge w_clk);
         wait(LCH.w_all_ready);
         wait(dc_empty && dc_idle && rf_empty && rf_idle);
 

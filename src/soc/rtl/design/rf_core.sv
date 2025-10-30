@@ -192,7 +192,6 @@ module rf_core
 
     always_ff @(posedge i_clk)
         o_armed <= r_prev_obubble && !w_obubble;
-    // assign o_armed = r_prev_obubble && !w_obubble;
 
     always_comb begin
         case ({w_big_propagate, w_small_propagate,

@@ -13,9 +13,9 @@ static inline int clog2_u32(uint32_t n) {
     return r;
 }
 
-#define INSN_PER_RF_CHANNEL 16
-#define IPTR_PER_RF_CHANNEL 1024
-#define REG_PER_RF_CHANNEL 258
+#define INSN_PER_RF_CHANNEL 4
+#define IPTR_PER_RF_CHANNEL 512
+#define REG_PER_RF_CHANNEL 66
 #define IPTR_BITS (clog2_u32(INSN_PER_RF_CHANNEL))
 #define IPTR_PER_REG (32 / IPTR_BITS)
 
