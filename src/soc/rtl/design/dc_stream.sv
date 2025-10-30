@@ -27,8 +27,6 @@ module dc_stream
 
     logic [INSN_WIDTH-1:0] r_dc_stream [0:DEPTH-1];
 
-    logic [$clog2(DEPTH)-1:0] r_load_ptr, w_load_ptr_plus1;
-
     for (genvar i = 0; i < DEPTH; i++) begin
         always_ff @(posedge i_clk) begin
             if (i_rst)
@@ -40,13 +38,17 @@ module dc_stream
         end
     end
 
-    assign o_insn = r_dc_stream[r_load_ptr];
+    // fetch insn pipeline
+    logic w_propagate;
 
-    assign w_load_ptr_plus1 = (r_load_ptr == DEPTH - 1) ? 'd0 : r_load_ptr + 'd1;
+    // r_iters and r_iptr logic
+    logic [$clog2(DEPTH)-1:0] r_iptr, w_iptr_plus1;
+
+    assign w_iptr_plus1 = (r_iptr == DEPTH - 1) ? 'd0 : r_iptr + 'd1;
 
     logic w_next_null;
-    assign w_next_null = (r_dc_stream[w_load_ptr_plus1] == 'h0) || 
-                         (w_load_ptr_plus1 == 'd0);
+    assign w_next_null = (r_dc_stream[w_iptr_plus1] == 'h0) || 
+                         (w_iptr_plus1 == 'd0);
 
     logic [ITER_WIDTH:0] r_iters;
 
@@ -55,17 +57,36 @@ module dc_stream
             r_iters <= 'd0;
         else if (w_new_stream)
             r_iters <= i_regs[DEPTH*3][ITER_WIDTH-1:0];
-        else if (w_next_null && i_next)
+        else if (w_propagate && w_next_null)
             r_iters <= (r_iters == 'd0) ? 'd0 : r_iters - 'd1;
     end
 
     always_ff @(posedge i_clk) begin
-        if (i_rst) r_load_ptr <= 'd0;
+        if (i_rst) r_iptr <= 'd0;
         else if (i_next) begin
-            r_load_ptr <= w_next_null ? 'd0 : w_load_ptr_plus1;
+            r_iptr <= w_next_null ? 'd0 : w_iptr_plus1;
         end
     end
 
-    assign o_empty = (r_iters == 'd0);
+    // fetch insn
+    logic [INSN_WIDTH-1:0] w_insn_fetch;
+    logic w_insn_bubble;
+    
+    assign w_insn_fetch = r_dc_stream[r_iptr];
+    assign w_insn_bubble = (r_iters == 'd0);
+
+    assign w_propagate = (!w_insn_bubble && o_empty) ||
+                         (!o_empty && i_next);
+
+    always_ff @(posedge i_clk) begin
+        if (i_rst) begin
+            o_insn <= 'h0;
+            o_empty <= 1'b1;
+        end
+        else if (w_propagate) begin
+            o_insn <= w_insn_fetch;
+            o_empty <= w_insn_bubble;
+        end
+    end
      
 endmodule

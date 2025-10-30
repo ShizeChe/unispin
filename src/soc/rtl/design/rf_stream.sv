@@ -89,7 +89,7 @@ module rf_stream
             r_iptr_last <= w_iptr_last_bits;
     end
 
-    // fetch insn ptr
+    // fetch insn pipeline
     logic w_propagate;
 
     // r_iters and r_iptr_ptr logic

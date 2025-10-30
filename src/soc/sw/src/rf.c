@@ -95,7 +95,7 @@ rf_insn_t rf_drive2insn(rf_drive_t d) {
     dzero_samples = (dkbc_samples + dzero_samples + 4) / 8 * 8 - dkbc_samples;
 
     return (rf_insn_t){.k = 0, .b = 0, .c = round_clamp(c), 
-                       .iters = 0,
+                       .iters = d.iters,
                        .dkbc_samples = dkbc_samples, 
                        .kbc_samples = kbc_samples,
                        .dzero_samples = dzero_samples, 
