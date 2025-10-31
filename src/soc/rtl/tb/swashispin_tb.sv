@@ -148,6 +148,7 @@ module swashispin_tb;
         .i_dc_armed(w_dc_armed_bus),
         .i_rf_armed(w_rf_armed_bus),
         .i_li_armed(w_li_armed_bus),
+        .i_trigger(1'b1),
         .o_dc_start(w_dc_start_bus),
         .o_rf_start(w_rf_start_bus),
         .o_li_start(w_li_start_bus)

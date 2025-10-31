@@ -15,7 +15,7 @@ module rf
      parameter IPTR_WIDTH=$clog2(INSN_BUF_DEPTH),
      parameter IPTR_BUF_DEPTH=1024,
      parameter INSN_REGS=(INSN_WIDTH+31)/32*INSN_BUF_DEPTH,
-     parameter IPTR_REGS=(1024+32/IPTR_WIDTH-1)/(32/IPTR_WIDTH),
+     parameter IPTR_REGS=(IPTR_BUF_DEPTH+32/IPTR_WIDTH-1)/(32/IPTR_WIDTH),
      parameter STREAM_ITER_WIDTH=10,
      parameter TOTAL_REGS=INSN_REGS+IPTR_REGS+2,
 

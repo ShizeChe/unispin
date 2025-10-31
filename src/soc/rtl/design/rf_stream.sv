@@ -8,8 +8,7 @@ module rf_stream
      parameter INSN_REGS=(INSN_WIDTH+31)/32*INSN_BUF_DEPTH,
      parameter IPTR_REGS=(IPTR_BUF_DEPTH+32/IPTR_WIDTH-1)/(32/IPTR_WIDTH),
      parameter ITER_WIDTH=10,
-     parameter TOTAL_REGS=INSN_REGS+IPTR_REGS+2,
-     parameter FETCH_STAGES=2)
+     parameter TOTAL_REGS=INSN_REGS+IPTR_REGS+2)
     (input  logic i_clk, i_rst,
 
      input  logic [TOTAL_REGS-1:0][31:0] i_regs,
