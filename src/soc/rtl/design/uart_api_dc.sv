@@ -57,7 +57,7 @@ module uart_api_dc
         .o_txq_af()
     );
 
-    //assign w_deq_rxq = !w_rxq_empty;
+    assign w_deq_rxq = !w_rxq_empty;
 // ================================================================
 // UART-----FIFO32 
 // ================================================================
@@ -65,30 +65,29 @@ module uart_api_dc
     logic [31:0] r_word_buf;
     logic        w_fifo32_enq;
 
-    always_ff @(posedge i_clk or negedge i_rst) begin
+     always_ff @(posedge i_clk or negedge i_rst) begin
         if (!i_rst) begin
-            r_byte_cnt    <= 0;
-            r_word_buf    <= 32'h0;
-            w_fifo32_enq  <= 1'b0;
-            w_deq_rxq     <= 1'b0;
-        end
-        else begin
+            r_byte_cnt   <= 'd0;
+            r_word_buf   <= 'd0;
             w_fifo32_enq <= 1'b0;
-            w_deq_rxq    <= 1'b0;
-
-            if (!w_rxq_empty) begin
-                w_deq_rxq   <= 1'b1;
-                r_word_buf  <= {r_word_buf[31:8],w_rxq_data};
-                r_byte_cnt  <= r_byte_cnt + 1'b1;
-
-                //32bit word
-                if (r_byte_cnt == 2'd3) begin
-                    w_fifo32_enq <= 1'b1;  // write FIFO32
-                    r_byte_cnt   <= 0;
-                end
+        end
+        else if (!w_rxq_empty) begin
+            r_word_buf <= {r_word_buf[31:8],w_rxq_data };
+    
+            if (r_byte_cnt == 'd3) begin
+                w_fifo32_enq <= 1'b1;   // write FIFO32
+                r_byte_cnt   <= 'd0;
+            end
+            else begin
+                w_fifo32_enq <= 1'b0;
+                r_byte_cnt   <= r_byte_cnt + 'd1;
             end
         end
+        else begin
+            w_fifo32_enq <= 1'b0;  
+        end
     end
+
 // ================================================================
 // 32-bit FIFO 
 // ================================================================
@@ -177,48 +176,48 @@ module uart_api_dc
         endcase
     end
 end
-    genvar i;
-    generate
-        for (i = 0; i < DAC_CHANNEL; i++) begin : GEN_DC
-            dc #(
-                .DAC_WIDTH(DAC_WIDTH),
-                .CYCLE_WIDTH(CYCLE_WIDTH),
-                .STREAM_ITER_WIDTH(STREAM_ITER_WIDTH),
-                .CORE_ITER_WIDTH(CORE_ITER_WIDTH),
-                .DEPTH(DEPTH)
-            ) u_dc (
-                .i_clk(i_clk),
-                .i_rst(i_rst),
-                .i_regs(r_dc_regs[i]),
-                .i_start(r_start[i]),
-                .o_armed(w_armed[i]),
-                .o_sclk(o_sclk),
-                .o_mosi(o_mosi),
-                .o_cs_n(o_cs_n[i]),
-                .o_ldac_n(o_ldac_n)
-            );
-        end
-    endgenerate
+   genvar i;
+   generate
+       for (i = 0; i < DAC_CHANNEL; i++) begin : GEN_DC
+           dc #(
+               .DAC_WIDTH(DAC_WIDTH),
+               .CYCLE_WIDTH(CYCLE_WIDTH),
+               .STREAM_ITER_WIDTH(STREAM_ITER_WIDTH),
+               .CORE_ITER_WIDTH(CORE_ITER_WIDTH),
+               .DEPTH(DEPTH)
+           ) u_dc (
+               .i_clk(i_clk),
+               .i_rst(i_rst),
+               .i_regs(r_dc_regs[i]),
+               .i_start(r_start[i]),
+               .o_armed(w_armed[i]),
+               .o_sclk(o_sclk),
+               .o_mosi(o_mosi),
+               .o_cs_n(o_cs_n[i]),
+               .o_ldac_n(o_ldac_n)
+           );
+       end
+   endgenerate
 
     
-    launch #(
-     .NUM_DC_CHANNEL(24),
-     .NUM_RF_CHANNEL(7),
-     .NUM_LI_CHANNEL(2)
-     )u_launch(
-        .i_clk(i_clk), 
-        .i_rst(i_rst),
+   launch #(
+    .NUM_DC_CHANNEL(24),
+    .NUM_RF_CHANNEL(7),
+    .NUM_LI_CHANNEL(2)
+    )u_launch(
+       .i_clk(i_clk), 
+       .i_rst(i_rst),
 
-        .i_regs(w_launch_cmd_reg),
+       .i_regs(w_launch_cmd_reg),
 
-        .i_dc_armed(w_armed),
-        //.i_rf_armed(),
-        //.i_li_armed(),
+       .i_dc_armed(w_armed),
+       //.i_rf_armed(),
+       //.i_li_armed(),
 
-        .o_dc_start(r_start)
-        //.o_rf_start(),
-        //.o_li_start()
-        );
+       .o_dc_start(r_start)
+       //.o_rf_start(),
+       //.o_li_start()
+       );
 
 
 
