@@ -25,8 +25,8 @@ module zcu216_dac
 
     logic [7:0][IQ_WIDTH-1:0] w_Ix8, w_Qx8;
     for (genvar i = 0; i < 8; i++) begin
-        assign w_Ix8[i] = i_QIx8[32*i+IQ_WIDTH-1:32*i];
-        assign w_Qx8[i] = i_QIx8[32*i+16+IQ_WIDTH-1:32*i+16];
+        assign w_Ix8[i] = i_QIx8[32*i+2+IQ_WIDTH-1:32*i+2];
+        assign w_Qx8[i] = i_QIx8[32*i+16+2+IQ_WIDTH-1:32*i+16+2];
     end
 
     real I, Q;

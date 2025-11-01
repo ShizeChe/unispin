@@ -18,8 +18,10 @@ module cordic
     // arithmatic pad 1-bit at front for cordic gain
     // pad zeros at the end to increase resolution
     logic [IQ_WIDTH-1:0] w_pre_gain_pos, w_pre_gain_neg;
-    assign  w_pre_gain_pos = 14'h1b7b;
-    assign  w_pre_gain_neg = ~w_pre_gain_pos + 'h1;
+    // assign  w_pre_gain_pos = 14'h1b7b;
+    // assign  w_pre_gain_neg = ~w_pre_gain_pos + 'h1;
+    assign  w_pre_gain_pos = 14'h1b7b + 14'h2000;
+    assign  w_pre_gain_neg = ~(14'h1b7b) + 14'h1 + 14'h2000;
     logic [IQ_WIDTH+PAD_ZEROS-1:0] w_hi, w_lo;
     assign w_hi = {w_pre_gain_pos, {(PAD_ZEROS){1'b0}}};
     assign w_lo = {w_pre_gain_neg, {(PAD_ZEROS){1'b0}}};

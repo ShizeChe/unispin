@@ -123,7 +123,7 @@ module rf_core
                 r_masks[CORDIC_STAGES+1][i] == 2'b01) begin
 
                 o_QIx8[DAC_WIDTH*2*(i+1)-1:DAC_WIDTH*2*i] <=
-                {2'b00, w_Qx8_cordic[i], 2'b00, w_Ix8_cordic[i]};
+                {w_Qx8_cordic[i], 2'b00, w_Ix8_cordic[i], 2'b00};
 
             end
             else begin

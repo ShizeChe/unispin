@@ -35,7 +35,7 @@ module uart
     baudx16_generator baud_gen (
         .i_clk(i_clk),
         .i_rst(i_rst),
-        .i_dvsr(11'd53), // baudrate = 115200, clock period = 100Mhz
+        .i_dvsr(11'd16), // baudrate = 115200, clock period = 100Mhz
         .o_sample_tick(w_sample_tick)
     );
     
