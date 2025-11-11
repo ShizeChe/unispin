@@ -31,7 +31,9 @@ module axil_slave_regs
      output logic o_rvalid,
      input  logic i_rready,
      output logic [31:0] o_rdata,
-     output logic [1:0] o_rresp);
+     output logic [1:0] o_rresp,
+
+     output logic [NUM_REGS-1:0][31:0] o_regs);
 
     logic [31:0] r_regs [NUM_REGS];
 
@@ -158,6 +160,11 @@ module axil_slave_regs
         end
     end
 
+    always_comb begin
+        for (int i = 0; i < NUM_REGS; i++)
+            o_regs[i] = r_regs[i];
+    end
+
 `ifdef FORMAL
 
     logic [3:0] f_axi_rd_outstanding;
@@ -262,7 +269,7 @@ module axil_slave_regs
             .S_AXIL_ARADDR(i_araddr),
             .S_AXIL_RVALID(o_rvalid),
             .S_AXIL_RDATA(o_rdata),
-            .i_register(r_regs[i])
+            .i_register(o_regs[i])
             // }}}
         );
     end
