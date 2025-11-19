@@ -1,0 +1,224 @@
+(kicad_sch
+	(version 20250114)
+	(generator "eeschema")
+	(generator_version "9.0")
+	(uuid "35cb74e4-0f64-454b-9b50-bfac13ed28a5")
+	(paper "A4")
+	(lib_symbols)
+	(sheet
+		(at 101.6 73.66)
+		(size 25.4 25.4)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(stroke
+			(width 0.1524)
+			(type solid)
+		)
+		(fill
+			(color 0 0 0 0.0000)
+		)
+		(uuid "40dec0c3-ad5f-493b-813b-faaee90d807a")
+		(property "Sheetname" "vref"
+			(at 101.6 72.9484 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left bottom)
+			)
+		)
+		(property "Sheetfile" "vref.kicad_sch"
+			(at 101.6 99.6446 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+			)
+		)
+		(instances
+			(project "dacboard"
+				(path "/35cb74e4-0f64-454b-9b50-bfac13ed28a5"
+					(page "2")
+				)
+			)
+		)
+	)
+	(sheet
+		(at 134.62 73.66)
+		(size 25.4 25.4)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(stroke
+			(width 0.1524)
+			(type solid)
+		)
+		(fill
+			(color 0 0 0 0.0000)
+		)
+		(uuid "78597d6c-f167-4e25-99ec-27c10aa3b74b")
+		(property "Sheetname" "dac"
+			(at 134.62 72.9484 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left bottom)
+			)
+		)
+		(property "Sheetfile" "dac.kicad_sch"
+			(at 134.62 99.6446 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+			)
+		)
+		(instances
+			(project "dacboard"
+				(path "/35cb74e4-0f64-454b-9b50-bfac13ed28a5"
+					(page "3")
+				)
+			)
+		)
+	)
+	(sheet
+		(at 167.64 73.66)
+		(size 25.4 25.4)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(stroke
+			(width 0.1524)
+			(type solid)
+		)
+		(fill
+			(color 0 0 0 0.0000)
+		)
+		(uuid "7ae8c1dd-5c28-4985-bc49-d575e389aef0")
+		(property "Sheetname" "header"
+			(at 167.64 72.9484 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left bottom)
+			)
+		)
+		(property "Sheetfile" "header.kicad_sch"
+			(at 167.64 99.6446 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+			)
+		)
+		(instances
+			(project "dacboard"
+				(path "/35cb74e4-0f64-454b-9b50-bfac13ed28a5"
+					(page "18")
+				)
+			)
+		)
+	)
+	(sheet
+		(at 101.6 106.68)
+		(size 25.4 25.4)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(stroke
+			(width 0.1524)
+			(type solid)
+		)
+		(fill
+			(color 0 0 0 0.0000)
+		)
+		(uuid "aa29c8cf-30d3-42fb-af9f-76a3f2cfb7cd")
+		(property "Sheetname" "isolator"
+			(at 101.6 105.9684 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left bottom)
+			)
+		)
+		(property "Sheetfile" "isolator.kicad_sch"
+			(at 101.6 132.6646 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+			)
+		)
+		(instances
+			(project "dacboard"
+				(path "/35cb74e4-0f64-454b-9b50-bfac13ed28a5"
+					(page "4")
+				)
+			)
+		)
+	)
+	(sheet
+		(at 134.62 106.68)
+		(size 25.4 25.4)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(stroke
+			(width 0.1524)
+			(type solid)
+		)
+		(fill
+			(color 0 0 0 0.0000)
+		)
+		(uuid "bd8434a7-c0ce-4f3b-9044-1b0b4487f900")
+		(property "Sheetname" "outbuf"
+			(at 134.62 105.9684 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left bottom)
+			)
+		)
+		(property "Sheetfile" "outbuf.kicad_sch"
+			(at 134.62 132.6646 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+			)
+		)
+		(instances
+			(project "dacboard"
+				(path "/35cb74e4-0f64-454b-9b50-bfac13ed28a5"
+					(page "9")
+				)
+			)
+		)
+	)
+	(sheet_instances
+		(path "/"
+			(page "1")
+		)
+	)
+	(embedded_fonts no)
+)

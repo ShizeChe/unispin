@@ -1,0 +1,9610 @@
+(kicad_sch
+	(version 20250114)
+	(generator "eeschema")
+	(generator_version "9.0")
+	(uuid "f45a1195-7b6a-4c37-b04c-c2c52076d44f")
+	(paper "A4")
+	(lib_symbols
+		(symbol "2025-11-19_00-21-39:AD5791BRUZ"
+			(pin_names
+				(offset 0.254)
+			)
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(property "Reference" "U"
+				(at 25.4 10.16 0)
+				(effects
+					(font
+						(size 1.524 1.524)
+					)
+				)
+			)
+			(property "Value" "AD5791BRUZ"
+				(at 25.4 7.62 0)
+				(effects
+					(font
+						(size 1.524 1.524)
+					)
+				)
+			)
+			(property "Footprint" "RU_20_ADI"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+						(italic yes)
+					)
+					(hide yes)
+				)
+			)
+			(property "Datasheet" "https://www.analog.com/media/en/technical-documentation/data-sheets/AD5791-EP.pdf"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+						(italic yes)
+					)
+					(hide yes)
+				)
+			)
+			(property "Description" ""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "ki_locked" ""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "ki_keywords" "AD5791BRUZ"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "ki_fp_filters" "RU_20_ADI RU_20_ADI-M RU_20_ADI-L"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(symbol "AD5791BRUZ_0_1"
+				(polyline
+					(pts
+						(xy 7.62 5.08) (xy 7.62 -27.94)
+					)
+					(stroke
+						(width 0.127)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy 7.62 -27.94) (xy 43.18 -27.94)
+					)
+					(stroke
+						(width 0.127)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy 43.18 5.08) (xy 7.62 5.08)
+					)
+					(stroke
+						(width 0.127)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy 43.18 -27.94) (xy 43.18 5.08)
+					)
+					(stroke
+						(width 0.127)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(pin input line
+					(at 0 0 0)
+					(length 7.62)
+					(name "INV"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin output line
+					(at 0 -2.54 0)
+					(length 7.62)
+					(name "VOUT"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "2"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin power_in line
+					(at 0 -5.08 0)
+					(length 7.62)
+					(name "VREFPS"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "3"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin power_in line
+					(at 0 -7.62 0)
+					(length 7.62)
+					(name "VREFPF"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "4"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin power_in line
+					(at 0 -10.16 0)
+					(length 7.62)
+					(name "VDD"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "5"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin input line
+					(at 0 -12.7 0)
+					(length 7.62)
+					(name "*RESET"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "6"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin input line
+					(at 0 -15.24 0)
+					(length 7.62)
+					(name "*CLR"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "7"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin input line
+					(at 0 -17.78 0)
+					(length 7.62)
+					(name "*LDAC"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "8"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin power_in line
+					(at 0 -20.32 0)
+					(length 7.62)
+					(name "VCC"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "9"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin power_in line
+					(at 0 -22.86 0)
+					(length 7.62)
+					(name "IOVCC"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "10"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin unspecified line
+					(at 50.8 0 180)
+					(length 7.62)
+					(name "RFB"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "20"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin power_out line
+					(at 50.8 -2.54 180)
+					(length 7.62)
+					(name "AGND"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "19"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin power_out line
+					(at 50.8 -5.08 180)
+					(length 7.62)
+					(name "VSS"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "18"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin power_in line
+					(at 50.8 -7.62 180)
+					(length 7.62)
+					(name "VREFNS"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "17"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin power_in line
+					(at 50.8 -10.16 180)
+					(length 7.62)
+					(name "VREFNF"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "16"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin power_out line
+					(at 50.8 -12.7 180)
+					(length 7.62)
+					(name "DGND"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "15"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin input line
+					(at 50.8 -15.24 180)
+					(length 7.62)
+					(name "*SYNC"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "14"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin input line
+					(at 50.8 -17.78 180)
+					(length 7.62)
+					(name "SCLK"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "13"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin input line
+					(at 50.8 -20.32 180)
+					(length 7.62)
+					(name "SDIN"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "12"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin output line
+					(at 50.8 -22.86 180)
+					(length 7.62)
+					(name "SDO"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "11"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+			)
+			(embedded_fonts no)
+		)
+		(symbol "Amplifier_Operational:AD8676xR"
+			(pin_names
+				(offset 0.127)
+			)
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(property "Reference" "U"
+				(at 2.54 6.35 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(justify left)
+				)
+			)
+			(property "Value" "AD8676xR"
+				(at 2.54 3.81 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(justify left)
+				)
+			)
+			(property "Footprint" "Package_SO:SOIC-8_3.9x4.9mm_P1.27mm"
+				(at 2.54 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Datasheet" "https://www.analog.com/media/en/technical-documentation/data-sheets/AD8676.pdf"
+				(at 6.35 3.81 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Description" "Dual operational amplifier, Ultra-precision, 36V, Rail-to-rail output, SOIC-8"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "ki_locked" ""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "ki_keywords" "dual opamp precision high-voltage RRO RTR"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "ki_fp_filters" "SOIC*3.9x4.9mm*P1.27mm*"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(symbol "AD8676xR_1_1"
+				(polyline
+					(pts
+						(xy 5.08 0) (xy -5.08 5.08) (xy -5.08 -5.08) (xy 5.08 0)
+					)
+					(stroke
+						(width 0.254)
+						(type default)
+					)
+					(fill
+						(type background)
+					)
+				)
+				(pin input line
+					(at -7.62 2.54 0)
+					(length 2.54)
+					(name "+"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "3"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin input line
+					(at -7.62 -2.54 0)
+					(length 2.54)
+					(name "-"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "2"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin output line
+					(at 7.62 0 180)
+					(length 2.54)
+					(name "~"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+			)
+			(symbol "AD8676xR_2_1"
+				(polyline
+					(pts
+						(xy 5.08 0) (xy -5.08 5.08) (xy -5.08 -5.08) (xy 5.08 0)
+					)
+					(stroke
+						(width 0.254)
+						(type default)
+					)
+					(fill
+						(type background)
+					)
+				)
+				(pin input line
+					(at -7.62 2.54 0)
+					(length 2.54)
+					(name "+"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "5"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin input line
+					(at -7.62 -2.54 0)
+					(length 2.54)
+					(name "-"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "6"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin output line
+					(at 7.62 0 180)
+					(length 2.54)
+					(name "~"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "7"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+			)
+			(symbol "AD8676xR_3_1"
+				(pin power_in line
+					(at 0 7.62 270)
+					(length 3.81)
+					(name "V+"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "8"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin power_in line
+					(at 0 -7.62 90)
+					(length 3.81)
+					(name "V-"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "4"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+			)
+			(embedded_fonts no)
+		)
+		(symbol "Device:C"
+			(pin_numbers
+				(hide yes)
+			)
+			(pin_names
+				(offset 0.254)
+			)
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(property "Reference" "C"
+				(at 0.635 2.54 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(justify left)
+				)
+			)
+			(property "Value" "C"
+				(at 0.635 -2.54 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(justify left)
+				)
+			)
+			(property "Footprint" ""
+				(at 0.9652 -3.81 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Datasheet" "~"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Description" "Unpolarized capacitor"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "ki_keywords" "cap capacitor"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "ki_fp_filters" "C_*"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(symbol "C_0_1"
+				(polyline
+					(pts
+						(xy -2.032 0.762) (xy 2.032 0.762)
+					)
+					(stroke
+						(width 0.508)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy -2.032 -0.762) (xy 2.032 -0.762)
+					)
+					(stroke
+						(width 0.508)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+			)
+			(symbol "C_1_1"
+				(pin passive line
+					(at 0 3.81 270)
+					(length 2.794)
+					(name "~"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at 0 -3.81 90)
+					(length 2.794)
+					(name "~"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "2"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+			)
+			(embedded_fonts no)
+		)
+		(symbol "power:+5V"
+			(power)
+			(pin_numbers
+				(hide yes)
+			)
+			(pin_names
+				(offset 0)
+				(hide yes)
+			)
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(property "Reference" "#PWR"
+				(at 0 -3.81 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Value" "+5V"
+				(at 0 3.556 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Footprint" ""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Datasheet" ""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Description" "Power symbol creates a global label with name \"+5V\""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "ki_keywords" "global power"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(symbol "+5V_0_1"
+				(polyline
+					(pts
+						(xy -0.762 1.27) (xy 0 2.54)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy 0 2.54) (xy 0.762 1.27)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy 0 0) (xy 0 2.54)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+			)
+			(symbol "+5V_1_1"
+				(pin power_in line
+					(at 0 0 90)
+					(length 0)
+					(name "~"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+			)
+			(embedded_fonts no)
+		)
+		(symbol "power:GND"
+			(power)
+			(pin_numbers
+				(hide yes)
+			)
+			(pin_names
+				(offset 0)
+				(hide yes)
+			)
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(property "Reference" "#PWR"
+				(at 0 -6.35 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Value" "GND"
+				(at 0 -3.81 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Footprint" ""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Datasheet" ""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "ki_keywords" "global power"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(symbol "GND_0_1"
+				(polyline
+					(pts
+						(xy 0 0) (xy 0 -1.27) (xy 1.27 -1.27) (xy 0 -2.54) (xy -1.27 -1.27) (xy 0 -1.27)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+			)
+			(symbol "GND_1_1"
+				(pin power_in line
+					(at 0 0 270)
+					(length 0)
+					(name "~"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+			)
+			(embedded_fonts no)
+		)
+		(symbol "power:GNDD"
+			(power)
+			(pin_numbers
+				(hide yes)
+			)
+			(pin_names
+				(offset 0)
+				(hide yes)
+			)
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(property "Reference" "#PWR"
+				(at 0 -6.35 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Value" "GNDD"
+				(at 0 -3.175 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Footprint" ""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Datasheet" ""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Description" "Power symbol creates a global label with name \"GNDD\" , digital ground"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "ki_keywords" "global power"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(symbol "GNDD_0_1"
+				(rectangle
+					(start -1.27 -1.524)
+					(end 1.27 -2.032)
+					(stroke
+						(width 0.254)
+						(type default)
+					)
+					(fill
+						(type outline)
+					)
+				)
+				(polyline
+					(pts
+						(xy 0 0) (xy 0 -1.524)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+			)
+			(symbol "GNDD_1_1"
+				(pin power_in line
+					(at 0 0 270)
+					(length 0)
+					(name "~"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+			)
+			(embedded_fonts no)
+		)
+		(symbol "power:VDD"
+			(power)
+			(pin_numbers
+				(hide yes)
+			)
+			(pin_names
+				(offset 0)
+				(hide yes)
+			)
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(property "Reference" "#PWR"
+				(at 0 -3.81 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Value" "VDD"
+				(at 0 3.556 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Footprint" ""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Datasheet" ""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Description" "Power symbol creates a global label with name \"VDD\""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "ki_keywords" "global power"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(symbol "VDD_0_1"
+				(polyline
+					(pts
+						(xy -0.762 1.27) (xy 0 2.54)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy 0 2.54) (xy 0.762 1.27)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy 0 0) (xy 0 2.54)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+			)
+			(symbol "VDD_1_1"
+				(pin power_in line
+					(at 0 0 90)
+					(length 0)
+					(name "~"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+			)
+			(embedded_fonts no)
+		)
+		(symbol "power:VSS"
+			(power)
+			(pin_numbers
+				(hide yes)
+			)
+			(pin_names
+				(offset 0)
+				(hide yes)
+			)
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(property "Reference" "#PWR"
+				(at 0 -3.81 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Value" "VSS"
+				(at 0 3.556 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Footprint" ""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Datasheet" ""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Description" "Power symbol creates a global label with name \"VSS\""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "ki_keywords" "global power"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(symbol "VSS_0_1"
+				(polyline
+					(pts
+						(xy 0 0) (xy 0 2.54)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy 0.762 1.27) (xy -0.762 1.27) (xy 0 2.54) (xy 0.762 1.27)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type outline)
+					)
+				)
+			)
+			(symbol "VSS_1_1"
+				(pin power_in line
+					(at 0 0 90)
+					(length 0)
+					(name "~"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+			)
+			(embedded_fonts no)
+		)
+	)
+	(junction
+		(at 175.26 88.9)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "22116582-b4c6-473b-aa50-d25b5af52190")
+	)
+	(junction
+		(at 34.29 132.08)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "2d2a02a5-de94-4b57-b3f7-c20462730420")
+	)
+	(junction
+		(at 34.29 46.99)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "48a41968-adfd-4642-8cd7-cdf214aa4a27")
+	)
+	(junction
+		(at 34.29 88.9)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "56d0f873-457d-4110-a836-cf63f22a3597")
+	)
+	(junction
+		(at 175.26 46.99)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "bf6b2682-c194-4ef4-941a-ea884e05830d")
+	)
+	(junction
+		(at 34.29 175.26)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "e77c691b-f8d5-4322-8e27-0af590566244")
+	)
+	(wire
+		(pts
+			(xy 262.89 39.37) (xy 245.11 39.37)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "00e8a86b-aaec-4d5a-843b-7dcb6769b962")
+	)
+	(wire
+		(pts
+			(xy 104.14 165.1) (xy 140.97 165.1)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "0af4a626-463c-4f77-bc84-eb19fa5706aa")
+	)
+	(wire
+		(pts
+			(xy 245.11 76.2) (xy 266.7 76.2)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "0b67c6ed-d77e-4a89-81d0-79b3d1e67a4f")
+	)
+	(wire
+		(pts
+			(xy 245.11 34.29) (xy 266.7 34.29)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "18d952d0-2293-4480-ab28-b02929976758")
+	)
+	(wire
+		(pts
+			(xy 156.21 29.21) (xy 156.21 34.29)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "1a767fd0-fca0-4cbe-a338-b421ddcd34d6")
+	)
+	(wire
+		(pts
+			(xy 104.14 162.56) (xy 125.73 162.56)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "1ac60961-b613-4417-84bf-34e066c1a303")
+	)
+	(wire
+		(pts
+			(xy 15.24 162.56) (xy 53.34 162.56)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "24c05235-62d7-4b16-a92c-1d12feb8c795")
+	)
+	(wire
+		(pts
+			(xy 281.94 36.83) (xy 281.94 31.75)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "26789d13-0d2c-433c-801d-071fed3aadc7")
+	)
+	(wire
+		(pts
+			(xy 15.24 119.38) (xy 53.34 119.38)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "2941ce56-9adf-4e11-b98d-07d91dbd1a7d")
+	)
+	(wire
+		(pts
+			(xy 104.14 78.74) (xy 140.97 78.74)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "2a1d5f8e-cf32-434f-aa53-50e4b7f67c10")
+	)
+	(wire
+		(pts
+			(xy 15.24 71.12) (xy 15.24 76.2)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "2bc30ca6-9e70-42e2-a682-5427ae7ef12e")
+	)
+	(wire
+		(pts
+			(xy 104.14 34.29) (xy 125.73 34.29)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "31ba8af7-f86b-4eaf-97af-04ae699ca279")
+	)
+	(wire
+		(pts
+			(xy 245.11 78.74) (xy 281.94 78.74)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "31f17922-9b67-4a2f-a075-2863c9bc9b78")
+	)
+	(wire
+		(pts
+			(xy 30.48 73.66) (xy 53.34 73.66)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "36d53db0-fad1-4c60-9d7e-8a176e27d3e6")
+	)
+	(wire
+		(pts
+			(xy 104.14 36.83) (xy 140.97 36.83)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "3a3721ac-f8ca-4fcf-9e25-a1661d702293")
+	)
+	(wire
+		(pts
+			(xy 104.14 76.2) (xy 125.73 76.2)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "3b6d0fe8-2209-4f68-b7fc-63c717498b38")
+	)
+	(wire
+		(pts
+			(xy 262.89 81.28) (xy 245.11 81.28)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "4105d3af-e44d-4fc5-be88-029743a44798")
+	)
+	(wire
+		(pts
+			(xy 15.24 34.29) (xy 53.34 34.29)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "42672332-c715-4e76-95d9-53130401f5f9")
+	)
+	(wire
+		(pts
+			(xy 140.97 78.74) (xy 140.97 73.66)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "50705752-c72a-47de-970c-e63e30c67302")
+	)
+	(wire
+		(pts
+			(xy 104.14 121.92) (xy 140.97 121.92)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "581106cb-f40d-4c62-9e05-44ae684d8a0b")
+	)
+	(wire
+		(pts
+			(xy 104.14 119.38) (xy 125.73 119.38)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "5d962090-1919-469b-b7b3-c84a1d187af7")
+	)
+	(wire
+		(pts
+			(xy 120.65 39.37) (xy 104.14 39.37)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "5dfe4594-5282-416a-9cf0-8106516bc486")
+	)
+	(wire
+		(pts
+			(xy 281.94 78.74) (xy 281.94 73.66)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "5f855fcd-3c83-41b1-9c6a-14f4db3d2e0f")
+	)
+	(wire
+		(pts
+			(xy 140.97 36.83) (xy 140.97 31.75)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "62568710-a10e-4fa7-a0c8-574952bf5c7d")
+	)
+	(wire
+		(pts
+			(xy 140.97 121.92) (xy 140.97 116.84)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "665596ae-ea96-482b-988d-c2143e04d402")
+	)
+	(wire
+		(pts
+			(xy 34.29 46.99) (xy 53.34 46.99)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "690840a6-10ad-4a5b-8b50-a57d6cde7709")
+	)
+	(wire
+		(pts
+			(xy 245.11 36.83) (xy 281.94 36.83)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "6ec28e1a-7be3-4e3d-956d-a9186dc85134")
+	)
+	(wire
+		(pts
+			(xy 30.48 160.02) (xy 53.34 160.02)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "7ab9a45d-8e07-4a3c-bbdc-1a68ec030c86")
+	)
+	(wire
+		(pts
+			(xy 34.29 175.26) (xy 53.34 175.26)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "7e108f48-152e-41fb-9939-3b9537659597")
+	)
+	(wire
+		(pts
+			(xy 15.24 76.2) (xy 53.34 76.2)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "8035bc95-6575-4189-adee-c5ce9fc35408")
+	)
+	(wire
+		(pts
+			(xy 15.24 157.48) (xy 15.24 162.56)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "826fe43b-1007-421f-9f73-30cc58ddc9d9")
+	)
+	(wire
+		(pts
+			(xy 34.29 132.08) (xy 53.34 132.08)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "8c6195a6-e921-4fe5-af2f-5b570a5e111a")
+	)
+	(wire
+		(pts
+			(xy 175.26 46.99) (xy 194.31 46.99)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "8f1b0c30-d2de-4c21-b826-36ef7a39e2da")
+	)
+	(wire
+		(pts
+			(xy 120.65 81.28) (xy 104.14 81.28)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "900a4548-a781-4cc1-b313-084955115b6c")
+	)
+	(wire
+		(pts
+			(xy 175.26 88.9) (xy 194.31 88.9)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "925bd321-4975-4b93-9892-f3faef777ad6")
+	)
+	(wire
+		(pts
+			(xy 120.65 124.46) (xy 104.14 124.46)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "92ef1afa-965e-4c1a-8b8b-5adc0bbac651")
+	)
+	(wire
+		(pts
+			(xy 171.45 73.66) (xy 194.31 73.66)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "98052b54-a2d7-4344-b673-b6c21d3b877d")
+	)
+	(wire
+		(pts
+			(xy 15.24 29.21) (xy 15.24 34.29)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "9a14712c-adee-4b05-92d9-c3f432b0aebd")
+	)
+	(wire
+		(pts
+			(xy 34.29 88.9) (xy 53.34 88.9)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "b2de1921-33ea-4959-ba0b-8b55e4c4bba7")
+	)
+	(wire
+		(pts
+			(xy 15.24 114.3) (xy 15.24 119.38)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "bc454256-951f-4c1c-af2a-de79d8a12f07")
+	)
+	(wire
+		(pts
+			(xy 156.21 34.29) (xy 194.31 34.29)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "bd2bf5e3-0b55-4520-bf28-cba19b7173f0")
+	)
+	(wire
+		(pts
+			(xy 121.92 167.64) (xy 104.14 167.64)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "c5928071-261d-4abd-829d-21c729c290a2")
+	)
+	(wire
+		(pts
+			(xy 156.21 76.2) (xy 194.31 76.2)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "c6c07b2c-e338-4524-9b43-400ad54a1178")
+	)
+	(wire
+		(pts
+			(xy 30.48 116.84) (xy 53.34 116.84)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "cb5415b7-3c99-47c0-8b33-6a4be39e87a4")
+	)
+	(wire
+		(pts
+			(xy 140.97 165.1) (xy 140.97 160.02)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "ce972f12-fce4-4704-b2e4-b0c518358a2a")
+	)
+	(wire
+		(pts
+			(xy 171.45 31.75) (xy 194.31 31.75)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "dab21401-f97d-4e2d-b0ed-75413e81521a")
+	)
+	(wire
+		(pts
+			(xy 30.48 31.75) (xy 53.34 31.75)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "e3365529-4793-4285-a5dc-298feb311e69")
+	)
+	(wire
+		(pts
+			(xy 156.21 71.12) (xy 156.21 76.2)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "f33fb466-d755-4451-969d-35510d4f2221")
+	)
+	(global_label "DAC10_VOUT"
+		(shape output)
+		(at 53.34 157.48 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "028b0568-fbec-4723-b316-1edfd480655b")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 38.6224 157.48 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+				(hide yes)
+			)
+		)
+	)
+	(global_label "RESET_N"
+		(shape input)
+		(at 53.34 81.28 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "0a9ac8da-9ede-45a4-8e97-26988dc61fde")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 42.3116 81.28 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+				(hide yes)
+			)
+		)
+	)
+	(global_label "DAC10_RFB"
+		(shape passive)
+		(at 104.14 154.94 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "0b1e691d-c8b1-4d61-9d5c-a49f685624d0")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 116.6577 154.94 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+				(hide yes)
+			)
+		)
+	)
+	(global_label "DAC9_RFB"
+		(shape passive)
+		(at 104.14 111.76 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "0cb17b68-06a9-4822-b00d-ce5a122a3af9")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 115.4482 111.76 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+				(hide yes)
+			)
+		)
+	)
+	(global_label "DAC12_SCLK"
+		(shape input)
+		(at 245.11 86.36 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "0de18d0b-c4f7-4209-bd64-e7a6c70fe48b")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 259.888 86.36 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+				(hide yes)
+			)
+		)
+	)
+	(global_label "VREF+"
+		(shape input)
+		(at 171.45 68.58 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "0eeb6018-8242-49bb-9887-51c416c8e031")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 180.2409 68.58 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+				(hide yes)
+			)
+		)
+	)
+	(global_label "DAC11_SYNC_N"
+		(shape input)
+		(at 245.11 41.91 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "0fbb344c-9573-47fb-9c22-dce8649903da")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 262.3071 41.91 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+				(hide yes)
+			)
+		)
+	)
+	(global_label "DAC8_VOUT"
+		(shape output)
+		(at 53.34 71.12 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "12cd6780-8455-43cf-b129-9be981a873ce")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 39.8319 71.12 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+				(hide yes)
+			)
+		)
+	)
+	(global_label "DAC12_SDIN"
+		(shape input)
+		(at 245.11 88.9 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "1cf79512-6d5b-4236-b78f-0b022495d0f0")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 259.5252 88.9 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+				(hide yes)
+			)
+		)
+	)
+	(global_label "DAC11_RFB"
+		(shape passive)
+		(at 245.11 26.67 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "1f018a4f-cb5c-4876-a6cf-0a6a6502ddad")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 257.6277 26.67 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+				(hide yes)
+			)
+		)
+	)
+	(global_label "RESET_N"
+		(shape input)
+		(at 53.34 124.46 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "1f9cb764-917d-4676-8bb0-304a6803ee42")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 42.3116 124.46 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+				(hide yes)
+			)
+		)
+	)
+	(global_label "DAC12_SDO"
+		(shape output)
+		(at 245.11 91.44 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "24cc5757-1986-4f46-9f72-9928b2eb40bc")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 258.9204 91.44 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+				(hide yes)
+			)
+		)
+	)
+	(global_label "RESET_N"
+		(shape input)
+		(at 194.31 39.37 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "26ad2623-cbee-4ee6-a830-b318140c9a8c")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 183.2816 39.37 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+				(hide yes)
+			)
+		)
+	)
+	(global_label "VREF+"
+		(shape input)
+		(at 171.45 26.67 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "27be8881-65fe-4ab6-a566-e7cb43484c09")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 180.2409 26.67 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+				(hide yes)
+			)
+		)
+	)
+	(global_label "LOGIC_LEVEL"
+		(shape input)
+		(at 53.34 134.62 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "30a34f61-ea09-494e-b31f-ea70fdd04ec8")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 38.441 134.62 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+				(hide yes)
+			)
+		)
+	)
+	(global_label "RESET_N"
+		(shape input)
+		(at 53.34 39.37 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "313fc15f-ccc9-42ab-aa19-ce60ccadb12a")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 42.3116 39.37 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+				(hide yes)
+			)
+		)
+	)
+	(global_label "CLR_N"
+		(shape input)
+		(at 53.34 41.91 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "335624a8-e85c-4dec-9525-deb594e3afa5")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 44.4886 41.91 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+				(hide yes)
+			)
+		)
+	)
+	(global_label "DAC10_LDAC_N"
+		(shape input)
+		(at 53.34 172.72 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "340052d2-9adf-4176-984f-c5b4cba93525")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 36.3848 172.72 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+				(hide yes)
+			)
+		)
+	)
+	(global_label "DAC11_LDAC_N"
+		(shape input)
+		(at 194.31 44.45 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "3726b2a7-2429-4809-bef2-f3c476874bd2")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 177.3548 44.45 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+				(hide yes)
+			)
+		)
+	)
+	(global_label "DAC10_SYNC_N"
+		(shape input)
+		(at 104.14 170.18 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "3730d4f6-3382-408c-be3f-20d00148ce55")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 121.3371 170.18 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+				(hide yes)
+			)
+		)
+	)
+	(global_label "VREF+"
+		(shape input)
+		(at 30.48 111.76 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "3845a4a1-8b77-4748-a86f-760602b5dbbf")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 39.2709 111.76 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+				(hide yes)
+			)
+		)
+	)
+	(global_label "DAC9_SDIN"
+		(shape input)
+		(at 104.14 132.08 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "3d34ecdc-b104-45c5-8611-3b5c380145d9")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 117.3457 132.08 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+				(hide yes)
+			)
+		)
+	)
+	(global_label "DAC8_SDIN"
+		(shape input)
+		(at 104.14 88.9 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "3f0d011b-41ee-4783-ad01-d30065fdc851")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 117.3457 88.9 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+				(hide yes)
+			)
+		)
+	)
+	(global_label "CLR_N"
+		(shape input)
+		(at 194.31 83.82 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "40a0993b-6965-4b2f-b0d4-69b332d8508a")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 185.4586 83.82 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+				(hide yes)
+			)
+		)
+	)
+	(global_label "DAC9_VOUT"
+		(shape output)
+		(at 53.34 114.3 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "426c73c1-933a-4a2d-918c-e5af2227ee48")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 39.8319 114.3 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+				(hide yes)
+			)
+		)
+	)
+	(global_label "DAC12_INV"
+		(shape passive)
+		(at 194.31 68.58 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "4397f898-0670-497b-b37a-a066c1550101")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 182.397 68.58 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+				(hide yes)
+			)
+		)
+	)
+	(global_label "VREF-"
+		(shape input)
+		(at 125.73 29.21 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "4564ab61-81a1-4860-96a1-22053edd73de")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 116.9391 29.21 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+				(hide yes)
+			)
+		)
+	)
+	(global_label "VREF-"
+		(shape input)
+		(at 125.73 114.3 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "460f16db-9e23-41c5-a781-2f4b77f8f42e")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 116.9391 114.3 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+				(hide yes)
+			)
+		)
+	)
+	(global_label "CLR_N"
+		(shape input)
+		(at 53.34 127 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "46341b34-58a4-474e-be80-82d21ee6893b")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 44.4886 127 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+				(hide yes)
+			)
+		)
+	)
+	(global_label "DAC10_INV"
+		(shape passive)
+		(at 53.34 154.94 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "4b059fed-4eba-4ffe-b1e7-146a2ba298b6")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 41.427 154.94 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+				(hide yes)
+			)
+		)
+	)
+	(global_label "VREF-"
+		(shape input)
+		(at 125.73 71.12 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "4da4cefa-5cf9-4d30-89fb-f0a20edf0902")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 116.9391 71.12 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+				(hide yes)
+			)
+		)
+	)
+	(global_label "RESET_N"
+		(shape input)
+		(at 53.34 167.64 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "4ff555eb-9e0a-4ef5-8241-d76666cecf90")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 42.3116 167.64 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+				(hide yes)
+			)
+		)
+	)
+	(global_label "DAC9_SYNC_N"
+		(shape input)
+		(at 104.14 127 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "52816f09-3c15-4d55-b2d8-452b3ee43ccd")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 120.1276 127 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+				(hide yes)
+			)
+		)
+	)
+	(global_label "DAC12_RFB"
+		(shape passive)
+		(at 245.11 68.58 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "53f48a05-50f1-42ce-bccd-710e7d5806ca")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 257.6277 68.58 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+				(hide yes)
+			)
+		)
+	)
+	(global_label "DAC7_INV"
+		(shape passive)
+		(at 53.34 26.67 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "5505d52b-babe-4712-af84-746e39157cc6")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 42.6365 26.67 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+				(hide yes)
+			)
+		)
+	)
+	(global_label "DAC7_SDO"
+		(shape output)
+		(at 104.14 49.53 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "56acb7af-13e4-466f-9356-3d6062758570")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 116.7409 49.53 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+				(hide yes)
+			)
+		)
+	)
+	(global_label "VREF-"
+		(shape input)
+		(at 266.7 71.12 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "578eb4c0-ffbf-4766-912b-033ac1b550f0")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 257.9091 71.12 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+				(hide yes)
+			)
+		)
+	)
+	(global_label "CLR_N"
+		(shape input)
+		(at 53.34 170.18 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "5c82175e-45e5-4dca-922c-4bc11ba3181a")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 44.4886 170.18 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+				(hide yes)
+			)
+		)
+	)
+	(global_label "CLR_N"
+		(shape input)
+		(at 53.34 83.82 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "5f55fe31-eb25-477d-80b7-7b83a6afb3d1")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 44.4886 83.82 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+				(hide yes)
+			)
+		)
+	)
+	(global_label "VREF+"
+		(shape input)
+		(at 30.48 68.58 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "64f15ada-6db7-4196-b0f5-af3b106d6564")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 39.2709 68.58 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+				(hide yes)
+			)
+		)
+	)
+	(global_label "LOGIC_LEVEL"
+		(shape input)
+		(at 194.31 49.53 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "6733fe22-ed19-48a6-95a3-7c8d50bca031")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 179.411 49.53 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+				(hide yes)
+			)
+		)
+	)
+	(global_label "VREF+"
+		(shape input)
+		(at 30.48 26.67 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "6777fa70-4805-40f1-8a0d-86d80028f188")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 39.2709 26.67 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+				(hide yes)
+			)
+		)
+	)
+	(global_label "DAC8_SYNC_N"
+		(shape input)
+		(at 104.14 83.82 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "709760b2-66a3-4225-a097-f8b73006b1bf")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 120.1276 83.82 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+				(hide yes)
+			)
+		)
+	)
+	(global_label "DAC9_SDO"
+		(shape output)
+		(at 104.14 134.62 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "7b3a55d4-1d06-45c8-9bd5-f706713d7cf3")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 116.7409 134.62 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+				(hide yes)
+			)
+		)
+	)
+	(global_label "LOGIC_LEVEL"
+		(shape input)
+		(at 53.34 49.53 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "826372ba-77f2-4f53-856c-d94b5cd9db9e")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 38.441 49.53 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+				(hide yes)
+			)
+		)
+	)
+	(global_label "CLR_N"
+		(shape input)
+		(at 194.31 41.91 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "85ab8dca-7428-47d2-a51f-292a9bd60e00")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 185.4586 41.91 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+				(hide yes)
+			)
+		)
+	)
+	(global_label "DAC9_SCLK"
+		(shape input)
+		(at 104.14 129.54 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "899a9acf-047d-403d-8b88-8d9968bbc14d")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 117.7085 129.54 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+				(hide yes)
+			)
+		)
+	)
+	(global_label "DAC8_RFB"
+		(shape passive)
+		(at 104.14 68.58 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "8ecf72a9-98e7-4343-b404-dfabdf78897e")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 115.4482 68.58 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+				(hide yes)
+			)
+		)
+	)
+	(global_label "DAC11_INV"
+		(shape passive)
+		(at 194.31 26.67 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "93141a74-0ce0-46e1-8ba7-c51468e9c4e4")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 182.397 26.67 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+				(hide yes)
+			)
+		)
+	)
+	(global_label "DAC10_SCLK"
+		(shape input)
+		(at 104.14 172.72 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "9d8d9b92-2bd5-4520-9ecd-0dbde03a2faa")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 118.918 172.72 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+				(hide yes)
+			)
+		)
+	)
+	(global_label "DAC10_SDIN"
+		(shape input)
+		(at 104.14 175.26 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "a6589b08-4e03-4c81-9c8f-1539f769e88f")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 118.5552 175.26 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+				(hide yes)
+			)
+		)
+	)
+	(global_label "DAC7_LDAC_N"
+		(shape input)
+		(at 53.34 44.45 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "aa9277f6-fa73-4f83-acde-1cbcbc5c5ebc")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 37.5943 44.45 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+				(hide yes)
+			)
+		)
+	)
+	(global_label "DAC10_SDO"
+		(shape output)
+		(at 104.14 177.8 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "ac405c64-278d-42b8-be6f-da4b11bc57f9")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 117.9504 177.8 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+				(hide yes)
+			)
+		)
+	)
+	(global_label "DAC8_LDAC_N"
+		(shape input)
+		(at 53.34 86.36 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "adb89f1f-02c4-4cd1-8932-13426ca8eb46")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 37.5943 86.36 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+				(hide yes)
+			)
+		)
+	)
+	(global_label "LOGIC_LEVEL"
+		(shape input)
+		(at 53.34 177.8 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "aeeade14-bbb3-4e4a-b4e1-5766f0be3104")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 38.441 177.8 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+				(hide yes)
+			)
+		)
+	)
+	(global_label "DAC8_INV"
+		(shape passive)
+		(at 53.34 68.58 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "bef37c4d-6399-420a-b630-2088ff6258f2")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 42.6365 68.58 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+				(hide yes)
+			)
+		)
+	)
+	(global_label "DAC9_INV"
+		(shape passive)
+		(at 53.34 111.76 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "c05c01c7-e50f-4d48-b8c1-1194873a21c6")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 42.6365 111.76 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+				(hide yes)
+			)
+		)
+	)
+	(global_label "DAC7_RFB"
+		(shape passive)
+		(at 104.14 26.67 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "c09d52fb-acc4-4d8b-b05a-456c1cbd73e7")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 115.4482 26.67 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+				(hide yes)
+			)
+		)
+	)
+	(global_label "DAC11_VOUT"
+		(shape output)
+		(at 194.31 29.21 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "c4d17e74-8793-4ed3-a356-e08a9bd4fd58")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 179.5924 29.21 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+				(hide yes)
+			)
+		)
+	)
+	(global_label "DAC7_VOUT"
+		(shape output)
+		(at 53.34 29.21 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "c9280790-29b8-4fe7-b3bc-adb2983ffbc7")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 39.8319 29.21 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+				(hide yes)
+			)
+		)
+	)
+	(global_label "DAC11_SDO"
+		(shape output)
+		(at 245.11 49.53 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "ca4bbd7a-3edf-4963-8a0d-f7f1d025e87c")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 258.9204 49.53 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+				(hide yes)
+			)
+		)
+	)
+	(global_label "DAC12_VOUT"
+		(shape output)
+		(at 194.31 71.12 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "cb7cced5-2fb2-4947-a13a-c361c2a9f3b4")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 179.5924 71.12 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+				(hide yes)
+			)
+		)
+	)
+	(global_label "VREF-"
+		(shape input)
+		(at 125.73 157.48 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "d4f8e760-3e14-4b58-8bc9-ac1a55993eef")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 116.9391 157.48 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+				(hide yes)
+			)
+		)
+	)
+	(global_label "LOGIC_LEVEL"
+		(shape input)
+		(at 53.34 91.44 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "da600f07-e087-4d77-ac0f-14231feb3a6d")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 38.441 91.44 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+				(hide yes)
+			)
+		)
+	)
+	(global_label "DAC8_SCLK"
+		(shape input)
+		(at 104.14 86.36 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "db49618c-d1ff-4df4-95d2-1dae781d77ce")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 117.7085 86.36 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+				(hide yes)
+			)
+		)
+	)
+	(global_label "DAC11_SDIN"
+		(shape input)
+		(at 245.11 46.99 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "dba34cb0-6071-46db-9762-5276bae7906e")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 259.5252 46.99 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+				(hide yes)
+			)
+		)
+	)
+	(global_label "RESET_N"
+		(shape input)
+		(at 194.31 81.28 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "e3cfe9b5-93e5-4c45-9709-a2fab8905828")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 183.2816 81.28 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+				(hide yes)
+			)
+		)
+	)
+	(global_label "VREF+"
+		(shape input)
+		(at 30.48 154.94 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "e4514bb7-01a3-4f8c-abc9-83af7f23b2ca")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 39.2709 154.94 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+				(hide yes)
+			)
+		)
+	)
+	(global_label "LOGIC_LEVEL"
+		(shape input)
+		(at 194.31 91.44 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "e8d0ac46-8d8b-4e20-a3df-74f2594488a3")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 179.411 91.44 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+				(hide yes)
+			)
+		)
+	)
+	(global_label "DAC9_LDAC_N"
+		(shape input)
+		(at 53.34 129.54 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "ebc6ec18-af06-47b3-b9e8-104716398024")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 37.5943 129.54 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+				(hide yes)
+			)
+		)
+	)
+	(global_label "DAC12_LDAC_N"
+		(shape input)
+		(at 194.31 86.36 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "ef44b8c5-1d45-4f96-8d97-bd68d2c2257d")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 177.3548 86.36 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+				(hide yes)
+			)
+		)
+	)
+	(global_label "DAC7_SDIN"
+		(shape input)
+		(at 104.14 46.99 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "f07f6e0e-9ea2-40eb-a706-0a0aafc14c7d")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 117.3457 46.99 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+				(hide yes)
+			)
+		)
+	)
+	(global_label "DAC12_SYNC_N"
+		(shape input)
+		(at 245.11 83.82 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "f643aedb-44c9-4292-bed2-2a5e60628e75")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 262.3071 83.82 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+				(hide yes)
+			)
+		)
+	)
+	(global_label "DAC7_SYNC_N"
+		(shape input)
+		(at 104.14 41.91 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "f66919bb-73d8-458d-bc57-1eadbcf17a56")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 120.1276 41.91 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+				(hide yes)
+			)
+		)
+	)
+	(global_label "DAC11_SCLK"
+		(shape input)
+		(at 245.11 44.45 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "f678b89b-de7a-4592-bc2b-cff9371bd674")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 259.888 44.45 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+				(hide yes)
+			)
+		)
+	)
+	(global_label "VREF-"
+		(shape input)
+		(at 266.7 29.21 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "fbbe1b47-8b7b-4f96-9d44-8a3a99f7a0a9")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 257.9091 29.21 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+				(hide yes)
+			)
+		)
+	)
+	(global_label "DAC7_SCLK"
+		(shape input)
+		(at 104.14 44.45 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "fbcfb0d1-ea93-47b8-b6cf-81fe71135d2a")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 117.7085 44.45 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+				(hide yes)
+			)
+		)
+	)
+	(global_label "DAC8_SDO"
+		(shape output)
+		(at 104.14 91.44 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "fc4bd04e-a31e-49b0-bc86-1225c62d0826")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 116.7409 91.44 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+				(hide yes)
+			)
+		)
+	)
+	(symbol
+		(lib_id "power:VSS")
+		(at 104.14 73.66 270)
+		(mirror x)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "01c7fa4b-61a6-4872-9202-b8b02529edcc")
+		(property "Reference" "#PWR0103"
+			(at 100.33 73.66 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "VSS"
+			(at 109.22 73.66 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 104.14 73.66 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 104.14 73.66 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Power symbol creates a global label with name \"VSS\""
+			(at 104.14 73.66 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "47663186-5f29-4259-8e66-788e2adec648")
+		)
+		(instances
+			(project "dacboard"
+				(path "/35cb74e4-0f64-454b-9b50-bfac13ed28a5/78597d6c-f167-4e25-99ec-27c10aa3b74b/7256813f-126c-4da9-88ae-b15cd06c6f9a"
+					(reference "#PWR0103")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "2025-11-19_00-21-39:AD5791BRUZ")
+		(at 194.31 26.67 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "02f52995-bad3-47a4-a0ec-810e19bf2803")
+		(property "Reference" "U32"
+			(at 219.71 16.51 0)
+			(effects
+				(font
+					(size 1.524 1.524)
+				)
+			)
+		)
+		(property "Value" "AD5791BRUZ"
+			(at 219.71 19.05 0)
+			(effects
+				(font
+					(size 1.524 1.524)
+				)
+			)
+		)
+		(property "Footprint" "RU_20_ADI"
+			(at 194.31 26.67 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+					(italic yes)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "https://www.analog.com/media/en/technical-documentation/data-sheets/AD5791-EP.pdf"
+			(at 194.31 26.67 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+					(italic yes)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 194.31 26.67 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "5"
+			(uuid "b4acea38-e801-4d2a-a250-e1576d5a4d86")
+		)
+		(pin "6"
+			(uuid "d8644eb9-ef8d-4c89-9a70-abcd8e3fab75")
+		)
+		(pin "4"
+			(uuid "1a16c672-9fe7-46b4-a2db-61b7d1658fbe")
+		)
+		(pin "8"
+			(uuid "05260f4b-3d45-4938-b5f8-d94a2393c90d")
+		)
+		(pin "3"
+			(uuid "57dee5f9-a5fe-4087-bb06-b46eaf2fe640")
+		)
+		(pin "9"
+			(uuid "7afba6dd-c078-46b4-a4f2-43cb6a235666")
+		)
+		(pin "18"
+			(uuid "5ec0c83b-a9a4-4d86-a3c0-af9360fabfa4")
+		)
+		(pin "1"
+			(uuid "9c5a2e42-aca8-49c9-a034-3568ab2d76b9")
+		)
+		(pin "2"
+			(uuid "8bcab038-53d3-4aa9-9587-3511d9300fad")
+		)
+		(pin "7"
+			(uuid "258a2d4a-a1d5-48b4-b961-7446928b8624")
+		)
+		(pin "10"
+			(uuid "b50316d6-d07b-4c2a-b2c7-f15f4cd0ed0f")
+		)
+		(pin "20"
+			(uuid "0cbaab35-bee2-456e-ba6a-54d35d94fd0c")
+		)
+		(pin "19"
+			(uuid "2132815c-e223-4790-82c8-9cdc92cc2d48")
+		)
+		(pin "17"
+			(uuid "cd33beb0-d8ab-4077-bd62-214aa1256339")
+		)
+		(pin "14"
+			(uuid "64c0535f-f6f9-45cb-8064-46f38b5eafe8")
+		)
+		(pin "15"
+			(uuid "4cbb0cc1-d45c-4507-baaf-fe998625603c")
+		)
+		(pin "13"
+			(uuid "dc4c2aa5-97d0-4a46-9c60-c6935bf3cee1")
+		)
+		(pin "16"
+			(uuid "699ac4d6-9202-4fe5-bb2c-5f85edce39c3")
+		)
+		(pin "11"
+			(uuid "8aad2c8d-5fb1-467f-9f38-b6d9fd64bbd2")
+		)
+		(pin "12"
+			(uuid "17a1bd2a-1f9f-4e17-a8fa-042eb5a09dad")
+		)
+		(instances
+			(project "dacboard"
+				(path "/35cb74e4-0f64-454b-9b50-bfac13ed28a5/78597d6c-f167-4e25-99ec-27c10aa3b74b/7256813f-126c-4da9-88ae-b15cd06c6f9a"
+					(reference "U32")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "power:VDD")
+		(at 238.76 114.3 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "0e752a85-5dc1-4bf3-a828-df0aacbc48ff")
+		(property "Reference" "#PWR0123"
+			(at 238.76 118.11 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "VDD"
+			(at 238.76 109.22 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 238.76 114.3 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 238.76 114.3 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Power symbol creates a global label with name \"VDD\""
+			(at 238.76 114.3 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "b792eb45-d40c-41c9-aeb8-c70d06c1f5a5")
+		)
+		(instances
+			(project "dacboard"
+				(path "/35cb74e4-0f64-454b-9b50-bfac13ed28a5/78597d6c-f167-4e25-99ec-27c10aa3b74b/7256813f-126c-4da9-88ae-b15cd06c6f9a"
+					(reference "#PWR0123")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "power:GNDD")
+		(at 34.29 182.88 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "11556b83-f06e-4343-b40a-634b8ba35c8b")
+		(property "Reference" "#PWR094"
+			(at 34.29 189.23 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "DGND"
+			(at 34.29 186.69 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 34.29 182.88 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 34.29 182.88 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Power symbol creates a global label with name \"GNDD\" , digital ground"
+			(at 34.29 182.88 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "e7775312-cdf7-4f89-aecb-6b0eb89c9bb2")
+		)
+		(instances
+			(project "dacboard"
+				(path "/35cb74e4-0f64-454b-9b50-bfac13ed28a5/78597d6c-f167-4e25-99ec-27c10aa3b74b/7256813f-126c-4da9-88ae-b15cd06c6f9a"
+					(reference "#PWR094")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Amplifier_Operational:AD8676xR")
+		(at 238.76 121.92 0)
+		(unit 3)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "13abca3b-319c-4343-94ec-6c2693cb7054")
+		(property "Reference" "U30"
+			(at 240.03 120.6499 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "AD8676xR"
+			(at 240.03 123.1899 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "Package_SO:SOIC-8_3.9x4.9mm_P1.27mm"
+			(at 241.3 121.92 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "https://www.analog.com/media/en/technical-documentation/data-sheets/AD8676.pdf"
+			(at 245.11 118.11 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Dual operational amplifier, Ultra-precision, 36V, Rail-to-rail output, SOIC-8"
+			(at 238.76 121.92 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "5"
+			(uuid "b0a8b05c-f879-4a25-bae9-4e54e91b59c0")
+		)
+		(pin "3"
+			(uuid "88d456f0-7689-4bc0-83a0-36cd722d16e0")
+		)
+		(pin "2"
+			(uuid "881ff16c-34d9-401b-9057-195fd0ea8659")
+		)
+		(pin "1"
+			(uuid "b623188b-c793-4534-924d-0b72c6fdcfea")
+		)
+		(pin "6"
+			(uuid "5e0d8d20-6f89-4475-873a-8891f0cc2303")
+		)
+		(pin "7"
+			(uuid "90626c7b-03a5-4637-8078-718df018a8c4")
+		)
+		(pin "8"
+			(uuid "414254ef-2ea5-43fe-b14e-654b067c93c8")
+		)
+		(pin "4"
+			(uuid "7df49f9d-1a73-44db-aae0-0d743139b6d7")
+		)
+		(instances
+			(project "dacboard"
+				(path "/35cb74e4-0f64-454b-9b50-bfac13ed28a5/78597d6c-f167-4e25-99ec-27c10aa3b74b/7256813f-126c-4da9-88ae-b15cd06c6f9a"
+					(reference "U30")
+					(unit 3)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "power:VDD")
+		(at 53.34 78.74 90)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "147c9bfd-ee0c-4041-8e80-d435ee4d916f")
+		(property "Reference" "#PWR096"
+			(at 57.15 78.74 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "VDD"
+			(at 49.53 78.7399 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" ""
+			(at 53.34 78.74 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 53.34 78.74 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Power symbol creates a global label with name \"VDD\""
+			(at 53.34 78.74 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "0558a9d3-41e3-4f91-987c-6881c528b4b7")
+		)
+		(instances
+			(project "dacboard"
+				(path "/35cb74e4-0f64-454b-9b50-bfac13ed28a5/78597d6c-f167-4e25-99ec-27c10aa3b74b/7256813f-126c-4da9-88ae-b15cd06c6f9a"
+					(reference "#PWR096")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "power:+5V")
+		(at 175.26 88.9 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "15b5c4de-e9a2-4083-915a-37412d4325cc")
+		(property "Reference" "#PWR0278"
+			(at 175.26 92.71 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "+5VD"
+			(at 175.26 83.82 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 175.26 88.9 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 175.26 88.9 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Power symbol creates a global label with name \"+5V\""
+			(at 175.26 88.9 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "8fb167d0-4bed-48ef-b216-89c9bc6ab2a4")
+		)
+		(instances
+			(project "dacboard"
+				(path "/35cb74e4-0f64-454b-9b50-bfac13ed28a5/78597d6c-f167-4e25-99ec-27c10aa3b74b/7256813f-126c-4da9-88ae-b15cd06c6f9a"
+					(reference "#PWR0278")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "power:VDD")
+		(at 210.82 114.3 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "1af8cc85-0f70-4b94-86ed-ea23a45b30c9")
+		(property "Reference" "#PWR0119"
+			(at 210.82 118.11 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "VDD"
+			(at 210.82 109.22 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 210.82 114.3 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 210.82 114.3 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Power symbol creates a global label with name \"VDD\""
+			(at 210.82 114.3 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "8229f9f3-b55a-48aa-8e04-2b0df4120584")
+		)
+		(instances
+			(project "dacboard"
+				(path "/35cb74e4-0f64-454b-9b50-bfac13ed28a5/78597d6c-f167-4e25-99ec-27c10aa3b74b/7256813f-126c-4da9-88ae-b15cd06c6f9a"
+					(reference "#PWR0119")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "power:VSS")
+		(at 252.73 129.54 0)
+		(mirror x)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "1f3cbc72-522c-4659-9e2d-267a51197910")
+		(property "Reference" "#PWR0132"
+			(at 252.73 125.73 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "VSS"
+			(at 252.73 134.62 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 252.73 129.54 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 252.73 129.54 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Power symbol creates a global label with name \"VSS\""
+			(at 252.73 129.54 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "5e521887-f77a-4831-b50a-d66a2e63687d")
+		)
+		(instances
+			(project "dacboard"
+				(path "/35cb74e4-0f64-454b-9b50-bfac13ed28a5/78597d6c-f167-4e25-99ec-27c10aa3b74b/7256813f-126c-4da9-88ae-b15cd06c6f9a"
+					(reference "#PWR0132")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "power:+5V")
+		(at 34.29 88.9 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "1f9236fb-475c-453e-9ccc-0976cadba4a1")
+		(property "Reference" "#PWR0275"
+			(at 34.29 92.71 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "+5VD"
+			(at 34.29 83.82 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 34.29 88.9 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 34.29 88.9 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Power symbol creates a global label with name \"+5V\""
+			(at 34.29 88.9 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "dd2ae71b-7b05-44b5-8189-8556c03cb0f1")
+		)
+		(instances
+			(project "dacboard"
+				(path "/35cb74e4-0f64-454b-9b50-bfac13ed28a5/78597d6c-f167-4e25-99ec-27c10aa3b74b/7256813f-126c-4da9-88ae-b15cd06c6f9a"
+					(reference "#PWR0275")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "2025-11-19_00-21-39:AD5791BRUZ")
+		(at 194.31 68.58 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "1fa02c47-c220-4f63-a453-29fa6d5423f2")
+		(property "Reference" "U33"
+			(at 219.71 58.42 0)
+			(effects
+				(font
+					(size 1.524 1.524)
+				)
+			)
+		)
+		(property "Value" "AD5791BRUZ"
+			(at 219.71 60.96 0)
+			(effects
+				(font
+					(size 1.524 1.524)
+				)
+			)
+		)
+		(property "Footprint" "RU_20_ADI"
+			(at 194.31 68.58 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+					(italic yes)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "https://www.analog.com/media/en/technical-documentation/data-sheets/AD5791-EP.pdf"
+			(at 194.31 68.58 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+					(italic yes)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 194.31 68.58 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "5"
+			(uuid "5d144a39-f594-4ab9-ba5a-08727bb3ef40")
+		)
+		(pin "6"
+			(uuid "32c6a5f8-7727-47f5-b2fb-747cc60ecf3f")
+		)
+		(pin "4"
+			(uuid "4f1d669a-bf15-4500-9c17-b47e9f35c273")
+		)
+		(pin "8"
+			(uuid "bf158c59-ac46-4c2b-8a04-b0cbde2acc30")
+		)
+		(pin "3"
+			(uuid "53f46cf9-05e3-41e1-a464-46df88c3f3bc")
+		)
+		(pin "9"
+			(uuid "081b4781-2f02-40f4-bdc5-4cabcb3b4631")
+		)
+		(pin "18"
+			(uuid "85bb2fb0-1291-4ebe-a45a-a889a956d5e1")
+		)
+		(pin "1"
+			(uuid "c5d9fee5-7922-4819-b6a8-197638d3f468")
+		)
+		(pin "2"
+			(uuid "3c3839ae-1d6b-4b07-8aed-060437d69544")
+		)
+		(pin "7"
+			(uuid "45e90c00-749b-46ff-9541-dffa3461045a")
+		)
+		(pin "10"
+			(uuid "9856c0dc-fca0-4b74-8160-94493b82dafa")
+		)
+		(pin "20"
+			(uuid "1a4bd997-f41f-4834-b25d-7741b7de6704")
+		)
+		(pin "19"
+			(uuid "80a4072a-01e2-4679-8b17-cd13d4a42300")
+		)
+		(pin "17"
+			(uuid "85a9dda2-49a1-4714-9bc9-49eefd6d75d9")
+		)
+		(pin "14"
+			(uuid "c7153b0a-380b-49ba-9572-0bb05d2910cc")
+		)
+		(pin "15"
+			(uuid "8c56990d-7f32-482f-abf7-9b62c4da0b18")
+		)
+		(pin "13"
+			(uuid "f1c78689-0a77-4a33-9165-516da2441ea8")
+		)
+		(pin "16"
+			(uuid "3fa1f159-c7fa-4d06-9d31-6462f576590a")
+		)
+		(pin "11"
+			(uuid "fae9cdb5-47d0-48dc-b47a-8e9214f981da")
+		)
+		(pin "12"
+			(uuid "0a93789c-2e52-492d-8174-2ff9403a6e18")
+		)
+		(instances
+			(project "dacboard"
+				(path "/35cb74e4-0f64-454b-9b50-bfac13ed28a5/78597d6c-f167-4e25-99ec-27c10aa3b74b/7256813f-126c-4da9-88ae-b15cd06c6f9a"
+					(reference "U33")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "power:GNDD")
+		(at 120.65 39.37 90)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "29e1b673-f4a1-4cab-989d-605821dad7c9")
+		(property "Reference" "#PWR0101"
+			(at 127 39.37 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "DGND"
+			(at 124.46 39.3699 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(property "Footprint" ""
+			(at 120.65 39.37 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 120.65 39.37 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Power symbol creates a global label with name \"GNDD\" , digital ground"
+			(at 120.65 39.37 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "aae8e094-ba3f-42ec-b1cb-2db635e55f62")
+		)
+		(instances
+			(project "dacboard"
+				(path "/35cb74e4-0f64-454b-9b50-bfac13ed28a5/78597d6c-f167-4e25-99ec-27c10aa3b74b/7256813f-126c-4da9-88ae-b15cd06c6f9a"
+					(reference "#PWR0101")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "power:VSS")
+		(at 104.14 160.02 270)
+		(mirror x)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "2a25133f-b5e3-4d90-a24b-6428c232138b")
+		(property "Reference" "#PWR0109"
+			(at 100.33 160.02 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "VSS"
+			(at 109.22 160.02 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 104.14 160.02 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 104.14 160.02 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Power symbol creates a global label with name \"VSS\""
+			(at 104.14 160.02 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "a34e749d-35db-477e-aaa7-7d2e52bf1ff4")
+		)
+		(instances
+			(project "dacboard"
+				(path "/35cb74e4-0f64-454b-9b50-bfac13ed28a5/78597d6c-f167-4e25-99ec-27c10aa3b74b/7256813f-126c-4da9-88ae-b15cd06c6f9a"
+					(reference "#PWR0109")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "power:VDD")
+		(at 194.31 78.74 90)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "2b4cbad7-085d-4950-a1e6-abfbc5af722d")
+		(property "Reference" "#PWR0116"
+			(at 198.12 78.74 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "VDD"
+			(at 190.5 78.7399 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" ""
+			(at 194.31 78.74 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 194.31 78.74 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Power symbol creates a global label with name \"VDD\""
+			(at 194.31 78.74 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "94f99f3e-086c-46c9-8a9a-e85910a71e4f")
+		)
+		(instances
+			(project "dacboard"
+				(path "/35cb74e4-0f64-454b-9b50-bfac13ed28a5/78597d6c-f167-4e25-99ec-27c10aa3b74b/7256813f-126c-4da9-88ae-b15cd06c6f9a"
+					(reference "#PWR0116")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "power:GND")
+		(at 104.14 71.12 90)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "2cbcfd47-10bc-44cb-9645-1a42ef447bb3")
+		(property "Reference" "#PWR0102"
+			(at 110.49 71.12 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "AGND"
+			(at 107.95 71.1199 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(property "Footprint" ""
+			(at 104.14 71.12 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 104.14 71.12 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
+			(at 104.14 71.12 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "f3967b46-7a5c-4959-8404-cb50b949e6b3")
+		)
+		(instances
+			(project "dacboard"
+				(path "/35cb74e4-0f64-454b-9b50-bfac13ed28a5/78597d6c-f167-4e25-99ec-27c10aa3b74b/7256813f-126c-4da9-88ae-b15cd06c6f9a"
+					(reference "#PWR0102")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Amplifier_Operational:AD8676xR")
+		(at 274.32 31.75 0)
+		(unit 2)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "2fe1036f-029a-4604-986e-ab9e010aeb5d")
+		(property "Reference" "U30"
+			(at 274.32 21.59 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "AD8676xR"
+			(at 274.32 24.13 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" "Package_SO:SOIC-8_3.9x4.9mm_P1.27mm"
+			(at 276.86 31.75 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "https://www.analog.com/media/en/technical-documentation/data-sheets/AD8676.pdf"
+			(at 280.67 27.94 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Dual operational amplifier, Ultra-precision, 36V, Rail-to-rail output, SOIC-8"
+			(at 274.32 31.75 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "5"
+			(uuid "92402470-dc7a-44dd-bc30-38670a878064")
+		)
+		(pin "3"
+			(uuid "88d456f0-7689-4bc0-83a0-36cd722d16d5")
+		)
+		(pin "2"
+			(uuid "881ff16c-34d9-401b-9057-195fd0ea864e")
+		)
+		(pin "1"
+			(uuid "b623188b-c793-4534-924d-0b72c6fdcfdf")
+		)
+		(pin "6"
+			(uuid "d713213f-7877-4560-91a9-413e2ec822d3")
+		)
+		(pin "7"
+			(uuid "19eab8aa-6491-4cf3-bdb1-4ac635858d87")
+		)
+		(pin "8"
+			(uuid "1a3d9f8c-f3dc-49c7-9db6-853e837da75d")
+		)
+		(pin "4"
+			(uuid "84f97969-d5cb-4bc1-836b-c5fbdb63663a")
+		)
+		(instances
+			(project "dacboard"
+				(path "/35cb74e4-0f64-454b-9b50-bfac13ed28a5/78597d6c-f167-4e25-99ec-27c10aa3b74b/7256813f-126c-4da9-88ae-b15cd06c6f9a"
+					(reference "U30")
+					(unit 2)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "power:GND")
+		(at 245.11 29.21 90)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "31c052ae-63da-4c40-97c2-16b05ac33907")
+		(property "Reference" "#PWR0125"
+			(at 251.46 29.21 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "AGND"
+			(at 248.92 29.2099 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(property "Footprint" ""
+			(at 245.11 29.21 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 245.11 29.21 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
+			(at 245.11 29.21 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "723105d6-6be5-4608-a8b2-8b8c983b6df6")
+		)
+		(instances
+			(project "dacboard"
+				(path "/35cb74e4-0f64-454b-9b50-bfac13ed28a5/78597d6c-f167-4e25-99ec-27c10aa3b74b/7256813f-126c-4da9-88ae-b15cd06c6f9a"
+					(reference "#PWR0125")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "power:GNDD")
+		(at 34.29 54.61 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "33488b68-e4a8-4d88-a45d-0b660e8f5ee3")
+		(property "Reference" "#PWR091"
+			(at 34.29 60.96 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "DGND"
+			(at 34.29 58.42 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 34.29 54.61 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 34.29 54.61 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Power symbol creates a global label with name \"GNDD\" , digital ground"
+			(at 34.29 54.61 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "03d30e7b-65e3-4d1d-b767-e3a22820dfc5")
+		)
+		(instances
+			(project "dacboard"
+				(path "/35cb74e4-0f64-454b-9b50-bfac13ed28a5/78597d6c-f167-4e25-99ec-27c10aa3b74b/7256813f-126c-4da9-88ae-b15cd06c6f9a"
+					(reference "#PWR091")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Device:C")
+		(at 34.29 50.8 0)
+		(mirror y)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "33ac9eff-c03f-4692-a8c4-244fa2df33ce")
+		(property "Reference" "C28"
+			(at 27.686 49.53 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(property "Value" "10uF"
+			(at 26.924 52.07 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(property "Footprint" ""
+			(at 33.3248 54.61 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 34.29 50.8 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Unpolarized capacitor"
+			(at 34.29 50.8 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "12b40e8e-5862-4325-acc9-db91a5936ee6")
+		)
+		(pin "2"
+			(uuid "ef448f84-ae14-463e-af76-f7b2f0dd54ba")
+		)
+		(instances
+			(project "dacboard"
+				(path "/35cb74e4-0f64-454b-9b50-bfac13ed28a5/78597d6c-f167-4e25-99ec-27c10aa3b74b/7256813f-126c-4da9-88ae-b15cd06c6f9a"
+					(reference "C28")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "power:VDD")
+		(at 53.34 165.1 90)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "34fa9815-db35-4f78-9002-b9a540feb22a")
+		(property "Reference" "#PWR098"
+			(at 57.15 165.1 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "VDD"
+			(at 49.53 165.0999 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" ""
+			(at 53.34 165.1 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 53.34 165.1 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Power symbol creates a global label with name \"VDD\""
+			(at 53.34 165.1 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "35aec343-ca28-438c-a698-d398573da286")
+		)
+		(instances
+			(project "dacboard"
+				(path "/35cb74e4-0f64-454b-9b50-bfac13ed28a5/78597d6c-f167-4e25-99ec-27c10aa3b74b/7256813f-126c-4da9-88ae-b15cd06c6f9a"
+					(reference "#PWR098")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Device:C")
+		(at 175.26 50.8 0)
+		(mirror y)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "3537a25e-34bd-415e-a3b2-5b28d8bee34e")
+		(property "Reference" "C32"
+			(at 168.656 49.53 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(property "Value" "10uF"
+			(at 167.894 52.07 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(property "Footprint" ""
+			(at 174.2948 54.61 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 175.26 50.8 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Unpolarized capacitor"
+			(at 175.26 50.8 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "45b30345-2c14-4147-ac77-f7f6e5eb66e0")
+		)
+		(pin "2"
+			(uuid "3ae469d8-2bf8-44b2-a169-8430d280ab5c")
+		)
+		(instances
+			(project "dacboard"
+				(path "/35cb74e4-0f64-454b-9b50-bfac13ed28a5/78597d6c-f167-4e25-99ec-27c10aa3b74b/7256813f-126c-4da9-88ae-b15cd06c6f9a"
+					(reference "C32")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "power:VSS")
+		(at 224.79 129.54 0)
+		(mirror x)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "3a25cd87-1ce5-455d-a409-739b0b5a143e")
+		(property "Reference" "#PWR0122"
+			(at 224.79 125.73 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "VSS"
+			(at 224.79 134.62 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 224.79 129.54 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 224.79 129.54 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Power symbol creates a global label with name \"VSS\""
+			(at 224.79 129.54 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "bb200477-8480-48af-af09-b4e7de2fb798")
+		)
+		(instances
+			(project "dacboard"
+				(path "/35cb74e4-0f64-454b-9b50-bfac13ed28a5/78597d6c-f167-4e25-99ec-27c10aa3b74b/7256813f-126c-4da9-88ae-b15cd06c6f9a"
+					(reference "#PWR0122")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "power:GNDD")
+		(at 121.92 167.64 90)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "4410de46-8127-461c-ba1f-5ce33fbaad58")
+		(property "Reference" "#PWR0110"
+			(at 128.27 167.64 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "DGND"
+			(at 125.73 167.6399 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(property "Footprint" ""
+			(at 121.92 167.64 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 121.92 167.64 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Power symbol creates a global label with name \"GNDD\" , digital ground"
+			(at 121.92 167.64 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "8bd20f47-6795-440d-9570-fdd392c7c9b1")
+		)
+		(instances
+			(project "dacboard"
+				(path "/35cb74e4-0f64-454b-9b50-bfac13ed28a5/78597d6c-f167-4e25-99ec-27c10aa3b74b/7256813f-126c-4da9-88ae-b15cd06c6f9a"
+					(reference "#PWR0110")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Device:C")
+		(at 34.29 92.71 0)
+		(mirror y)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "4b2d34e5-84db-4e3b-a3c2-6056ff82b96b")
+		(property "Reference" "C29"
+			(at 27.686 91.44 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(property "Value" "10uF"
+			(at 26.924 93.98 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(property "Footprint" ""
+			(at 33.3248 96.52 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 34.29 92.71 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Unpolarized capacitor"
+			(at 34.29 92.71 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "878c698f-311a-4706-96cb-0dc21f0bc996")
+		)
+		(pin "2"
+			(uuid "a4e4d429-c56f-43c4-9a70-c4e99a56e8ef")
+		)
+		(instances
+			(project "dacboard"
+				(path "/35cb74e4-0f64-454b-9b50-bfac13ed28a5/78597d6c-f167-4e25-99ec-27c10aa3b74b/7256813f-126c-4da9-88ae-b15cd06c6f9a"
+					(reference "C29")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "power:GNDD")
+		(at 34.29 139.7 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "5152be54-28ac-47e5-8cac-bf15d92d7230")
+		(property "Reference" "#PWR093"
+			(at 34.29 146.05 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "DGND"
+			(at 34.29 143.51 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 34.29 139.7 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 34.29 139.7 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Power symbol creates a global label with name \"GNDD\" , digital ground"
+			(at 34.29 139.7 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "a04a6df9-1be0-4bee-a5d2-ee5a8c59a41a")
+		)
+		(instances
+			(project "dacboard"
+				(path "/35cb74e4-0f64-454b-9b50-bfac13ed28a5/78597d6c-f167-4e25-99ec-27c10aa3b74b/7256813f-126c-4da9-88ae-b15cd06c6f9a"
+					(reference "#PWR093")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Amplifier_Operational:AD8676xR")
+		(at 210.82 121.92 0)
+		(unit 3)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "527e767a-d0c4-43e9-a0fb-a9a587bb00be")
+		(property "Reference" "U24"
+			(at 212.09 120.6499 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "AD8676xR"
+			(at 212.09 123.1899 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "Package_SO:SOIC-8_3.9x4.9mm_P1.27mm"
+			(at 213.36 121.92 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "https://www.analog.com/media/en/technical-documentation/data-sheets/AD8676.pdf"
+			(at 217.17 118.11 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Dual operational amplifier, Ultra-precision, 36V, Rail-to-rail output, SOIC-8"
+			(at 210.82 121.92 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "5"
+			(uuid "b0a8b05c-f879-4a25-bae9-4e54e91b59ba")
+		)
+		(pin "3"
+			(uuid "88d456f0-7689-4bc0-83a0-36cd722d16db")
+		)
+		(pin "2"
+			(uuid "881ff16c-34d9-401b-9057-195fd0ea8654")
+		)
+		(pin "1"
+			(uuid "b623188b-c793-4534-924d-0b72c6fdcfe5")
+		)
+		(pin "6"
+			(uuid "5e0d8d20-6f89-4475-873a-8891f0cc22fd")
+		)
+		(pin "7"
+			(uuid "90626c7b-03a5-4637-8078-718df018a8be")
+		)
+		(pin "8"
+			(uuid "d8995b6e-4800-4adf-85da-9311951bfd1c")
+		)
+		(pin "4"
+			(uuid "dd5cd3b2-ab4b-40b8-8f1a-a09adf31d638")
+		)
+		(instances
+			(project "dacboard"
+				(path "/35cb74e4-0f64-454b-9b50-bfac13ed28a5/78597d6c-f167-4e25-99ec-27c10aa3b74b/7256813f-126c-4da9-88ae-b15cd06c6f9a"
+					(reference "U24")
+					(unit 3)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "power:GND")
+		(at 104.14 29.21 90)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "542f97b6-81cd-41be-92b0-c55d692ffc63")
+		(property "Reference" "#PWR099"
+			(at 110.49 29.21 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "AGND"
+			(at 107.95 29.2099 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(property "Footprint" ""
+			(at 104.14 29.21 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 104.14 29.21 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
+			(at 104.14 29.21 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "80d50923-1630-4a9e-866c-24174666363a")
+		)
+		(instances
+			(project "dacboard"
+				(path "/35cb74e4-0f64-454b-9b50-bfac13ed28a5/78597d6c-f167-4e25-99ec-27c10aa3b74b/7256813f-126c-4da9-88ae-b15cd06c6f9a"
+					(reference "#PWR099")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Amplifier_Operational:AD8676xR")
+		(at 224.79 121.92 0)
+		(unit 3)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "5677c464-018c-4650-83d9-3fb03f57d085")
+		(property "Reference" "U25"
+			(at 226.06 120.6499 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "AD8676xR"
+			(at 226.06 123.1899 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "Package_SO:SOIC-8_3.9x4.9mm_P1.27mm"
+			(at 227.33 121.92 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "https://www.analog.com/media/en/technical-documentation/data-sheets/AD8676.pdf"
+			(at 231.14 118.11 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Dual operational amplifier, Ultra-precision, 36V, Rail-to-rail output, SOIC-8"
+			(at 224.79 121.92 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "5"
+			(uuid "b0a8b05c-f879-4a25-bae9-4e54e91b59be")
+		)
+		(pin "3"
+			(uuid "88d456f0-7689-4bc0-83a0-36cd722d16de")
+		)
+		(pin "2"
+			(uuid "881ff16c-34d9-401b-9057-195fd0ea8657")
+		)
+		(pin "1"
+			(uuid "b623188b-c793-4534-924d-0b72c6fdcfe8")
+		)
+		(pin "6"
+			(uuid "5e0d8d20-6f89-4475-873a-8891f0cc2301")
+		)
+		(pin "7"
+			(uuid "90626c7b-03a5-4637-8078-718df018a8c2")
+		)
+		(pin "8"
+			(uuid "12d3ba0d-a02d-4515-b944-e429f41ad6f3")
+		)
+		(pin "4"
+			(uuid "f45c390e-c50f-4f1f-8f8d-af901009bb26")
+		)
+		(instances
+			(project "dacboard"
+				(path "/35cb74e4-0f64-454b-9b50-bfac13ed28a5/78597d6c-f167-4e25-99ec-27c10aa3b74b/7256813f-126c-4da9-88ae-b15cd06c6f9a"
+					(reference "U25")
+					(unit 3)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "power:GNDD")
+		(at 175.26 54.61 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "5959a31e-83ff-497d-9eda-4a1be4d066e2")
+		(property "Reference" "#PWR0111"
+			(at 175.26 60.96 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "DGND"
+			(at 175.26 58.42 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 175.26 54.61 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 175.26 54.61 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Power symbol creates a global label with name \"GNDD\" , digital ground"
+			(at 175.26 54.61 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "1f58a03d-8a16-496a-b895-abfcc559caaf")
+		)
+		(instances
+			(project "dacboard"
+				(path "/35cb74e4-0f64-454b-9b50-bfac13ed28a5/78597d6c-f167-4e25-99ec-27c10aa3b74b/7256813f-126c-4da9-88ae-b15cd06c6f9a"
+					(reference "#PWR0111")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "power:GNDD")
+		(at 262.89 39.37 90)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "5c54bcb3-5352-42d0-b3f7-eeb77f66eadc")
+		(property "Reference" "#PWR0127"
+			(at 269.24 39.37 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "DGND"
+			(at 266.7 39.3699 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(property "Footprint" ""
+			(at 262.89 39.37 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 262.89 39.37 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Power symbol creates a global label with name \"GNDD\" , digital ground"
+			(at 262.89 39.37 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "f294bb53-7339-4201-8724-33d9778cb95b")
+		)
+		(instances
+			(project "dacboard"
+				(path "/35cb74e4-0f64-454b-9b50-bfac13ed28a5/78597d6c-f167-4e25-99ec-27c10aa3b74b/7256813f-126c-4da9-88ae-b15cd06c6f9a"
+					(reference "#PWR0127")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "power:VDD")
+		(at 194.31 36.83 90)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "5eb0f04d-05f2-4257-93d9-9470b4c03cbb")
+		(property "Reference" "#PWR0115"
+			(at 198.12 36.83 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "VDD"
+			(at 190.5 36.8299 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" ""
+			(at 194.31 36.83 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 194.31 36.83 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Power symbol creates a global label with name \"VDD\""
+			(at 194.31 36.83 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "400558df-f2f1-4b5e-9b57-09248095ebd4")
+		)
+		(instances
+			(project "dacboard"
+				(path "/35cb74e4-0f64-454b-9b50-bfac13ed28a5/78597d6c-f167-4e25-99ec-27c10aa3b74b/7256813f-126c-4da9-88ae-b15cd06c6f9a"
+					(reference "#PWR0115")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Amplifier_Operational:AD8676xR")
+		(at 182.88 121.92 0)
+		(unit 3)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "612df82f-e48f-4ab4-9c0b-94ec70c09c2f")
+		(property "Reference" "U22"
+			(at 184.15 120.6499 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "AD8676xR"
+			(at 184.15 123.1899 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "Package_SO:SOIC-8_3.9x4.9mm_P1.27mm"
+			(at 185.42 121.92 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "https://www.analog.com/media/en/technical-documentation/data-sheets/AD8676.pdf"
+			(at 189.23 118.11 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Dual operational amplifier, Ultra-precision, 36V, Rail-to-rail output, SOIC-8"
+			(at 182.88 121.92 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "5"
+			(uuid "b0a8b05c-f879-4a25-bae9-4e54e91b59b4")
+		)
+		(pin "3"
+			(uuid "88d456f0-7689-4bc0-83a0-36cd722d16d4")
+		)
+		(pin "2"
+			(uuid "881ff16c-34d9-401b-9057-195fd0ea864d")
+		)
+		(pin "1"
+			(uuid "b623188b-c793-4534-924d-0b72c6fdcfde")
+		)
+		(pin "6"
+			(uuid "5e0d8d20-6f89-4475-873a-8891f0cc22f7")
+		)
+		(pin "7"
+			(uuid "90626c7b-03a5-4637-8078-718df018a8b8")
+		)
+		(pin "8"
+			(uuid "eaa1079a-b3d8-4259-a03f-31a5fd36a875")
+		)
+		(pin "4"
+			(uuid "5d8d7f49-57aa-45d5-8d11-699e7831740a")
+		)
+		(instances
+			(project "dacboard"
+				(path "/35cb74e4-0f64-454b-9b50-bfac13ed28a5/78597d6c-f167-4e25-99ec-27c10aa3b74b/7256813f-126c-4da9-88ae-b15cd06c6f9a"
+					(reference "U22")
+					(unit 3)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "power:VSS")
+		(at 182.88 129.54 0)
+		(mirror x)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "62dab52e-57fa-4c1f-94b7-681d35da45b8")
+		(property "Reference" "#PWR0114"
+			(at 182.88 125.73 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "VSS"
+			(at 182.88 134.62 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 182.88 129.54 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 182.88 129.54 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Power symbol creates a global label with name \"VSS\""
+			(at 182.88 129.54 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "f62df1ce-05e2-4a73-ae4e-c553c4de3df8")
+		)
+		(instances
+			(project "dacboard"
+				(path "/35cb74e4-0f64-454b-9b50-bfac13ed28a5/78597d6c-f167-4e25-99ec-27c10aa3b74b/7256813f-126c-4da9-88ae-b15cd06c6f9a"
+					(reference "#PWR0114")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Device:C")
+		(at 34.29 135.89 0)
+		(mirror y)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "68ce8581-08a3-46ef-bf09-1bae291f8997")
+		(property "Reference" "C30"
+			(at 27.686 134.62 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(property "Value" "10uF"
+			(at 26.924 137.16 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(property "Footprint" ""
+			(at 33.3248 139.7 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 34.29 135.89 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Unpolarized capacitor"
+			(at 34.29 135.89 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "b6706f98-bf62-461b-8681-93ff53b5a0ab")
+		)
+		(pin "2"
+			(uuid "3c6a5638-8a54-4448-8172-72a281382ee4")
+		)
+		(instances
+			(project "dacboard"
+				(path "/35cb74e4-0f64-454b-9b50-bfac13ed28a5/78597d6c-f167-4e25-99ec-27c10aa3b74b/7256813f-126c-4da9-88ae-b15cd06c6f9a"
+					(reference "C30")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Device:C")
+		(at 175.26 92.71 0)
+		(mirror y)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "6c352033-fa10-4225-98df-6589b34825aa")
+		(property "Reference" "C33"
+			(at 168.656 91.44 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(property "Value" "10uF"
+			(at 167.894 93.98 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(property "Footprint" ""
+			(at 174.2948 96.52 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 175.26 92.71 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Unpolarized capacitor"
+			(at 175.26 92.71 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "9cce22a9-83e8-4f21-a79e-4d30a0b5a3bd")
+		)
+		(pin "2"
+			(uuid "6b0bd98d-4e10-43d6-8418-40140ed33174")
+		)
+		(instances
+			(project "dacboard"
+				(path "/35cb74e4-0f64-454b-9b50-bfac13ed28a5/78597d6c-f167-4e25-99ec-27c10aa3b74b/7256813f-126c-4da9-88ae-b15cd06c6f9a"
+					(reference "C33")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "power:GNDD")
+		(at 120.65 124.46 90)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "6cdb31d7-38c3-4287-ba31-4c5789a4a87d")
+		(property "Reference" "#PWR0107"
+			(at 127 124.46 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "DGND"
+			(at 124.46 124.4599 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(property "Footprint" ""
+			(at 120.65 124.46 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 120.65 124.46 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Power symbol creates a global label with name \"GNDD\" , digital ground"
+			(at 120.65 124.46 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "8eb8362d-f89b-4a7f-9ae0-226e9f2d8358")
+		)
+		(instances
+			(project "dacboard"
+				(path "/35cb74e4-0f64-454b-9b50-bfac13ed28a5/78597d6c-f167-4e25-99ec-27c10aa3b74b/7256813f-126c-4da9-88ae-b15cd06c6f9a"
+					(reference "#PWR0107")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "power:+5V")
+		(at 34.29 175.26 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "7049e9c1-e59a-4f35-9ca8-b5e9cb0b7562")
+		(property "Reference" "#PWR0277"
+			(at 34.29 179.07 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "+5VD"
+			(at 34.29 170.18 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 34.29 175.26 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 34.29 175.26 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Power symbol creates a global label with name \"+5V\""
+			(at 34.29 175.26 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "639e409b-c625-4a78-966b-ee364787412a")
+		)
+		(instances
+			(project "dacboard"
+				(path "/35cb74e4-0f64-454b-9b50-bfac13ed28a5/78597d6c-f167-4e25-99ec-27c10aa3b74b/7256813f-126c-4da9-88ae-b15cd06c6f9a"
+					(reference "#PWR0277")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "power:GNDD")
+		(at 34.29 96.52 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "74bd5e43-672f-4a72-bd5a-6342a7d546a7")
+		(property "Reference" "#PWR092"
+			(at 34.29 102.87 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "DGND"
+			(at 34.29 100.33 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 34.29 96.52 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 34.29 96.52 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Power symbol creates a global label with name \"GNDD\" , digital ground"
+			(at 34.29 96.52 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "27eb09eb-2727-4c51-81c2-e6c054bb4dbe")
+		)
+		(instances
+			(project "dacboard"
+				(path "/35cb74e4-0f64-454b-9b50-bfac13ed28a5/78597d6c-f167-4e25-99ec-27c10aa3b74b/7256813f-126c-4da9-88ae-b15cd06c6f9a"
+					(reference "#PWR092")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Amplifier_Operational:AD8676xR")
+		(at 252.73 121.92 0)
+		(unit 3)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "79b8a7bc-abf6-45c7-ba95-9770a8550b66")
+		(property "Reference" "U31"
+			(at 254 120.6499 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "AD8676xR"
+			(at 254 123.1899 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "Package_SO:SOIC-8_3.9x4.9mm_P1.27mm"
+			(at 255.27 121.92 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "https://www.analog.com/media/en/technical-documentation/data-sheets/AD8676.pdf"
+			(at 259.08 118.11 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Dual operational amplifier, Ultra-precision, 36V, Rail-to-rail output, SOIC-8"
+			(at 252.73 121.92 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "5"
+			(uuid "b0a8b05c-f879-4a25-bae9-4e54e91b59b5")
+		)
+		(pin "3"
+			(uuid "88d456f0-7689-4bc0-83a0-36cd722d16d8")
+		)
+		(pin "2"
+			(uuid "881ff16c-34d9-401b-9057-195fd0ea8651")
+		)
+		(pin "1"
+			(uuid "b623188b-c793-4534-924d-0b72c6fdcfe2")
+		)
+		(pin "6"
+			(uuid "5e0d8d20-6f89-4475-873a-8891f0cc22f8")
+		)
+		(pin "7"
+			(uuid "90626c7b-03a5-4637-8078-718df018a8b9")
+		)
+		(pin "8"
+			(uuid "37c065f4-083a-4118-9597-fd9174c916c6")
+		)
+		(pin "4"
+			(uuid "e90d669b-7505-44ea-b690-6e4e4158379e")
+		)
+		(instances
+			(project "dacboard"
+				(path "/35cb74e4-0f64-454b-9b50-bfac13ed28a5/78597d6c-f167-4e25-99ec-27c10aa3b74b/7256813f-126c-4da9-88ae-b15cd06c6f9a"
+					(reference "U31")
+					(unit 3)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Amplifier_Operational:AD8676xR")
+		(at 22.86 29.21 0)
+		(mirror y)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "7b51cac1-0ddc-4441-acd5-6cedcef8f9c2")
+		(property "Reference" "U22"
+			(at 22.86 19.05 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "AD8676xR"
+			(at 22.86 21.59 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" "Package_SO:SOIC-8_3.9x4.9mm_P1.27mm"
+			(at 20.32 29.21 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "https://www.analog.com/media/en/technical-documentation/data-sheets/AD8676.pdf"
+			(at 16.51 25.4 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Dual operational amplifier, Ultra-precision, 36V, Rail-to-rail output, SOIC-8"
+			(at 22.86 29.21 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "5"
+			(uuid "b0a8b05c-f879-4a25-bae9-4e54e91b59bb")
+		)
+		(pin "3"
+			(uuid "a515e78e-d0bb-4d99-93fe-25d9af56c27a")
+		)
+		(pin "2"
+			(uuid "fbf98165-a445-4c8d-93e6-0acaf2af0bca")
+		)
+		(pin "1"
+			(uuid "ddc64e77-2195-4ff6-9211-c580faa7b7ba")
+		)
+		(pin "6"
+			(uuid "5e0d8d20-6f89-4475-873a-8891f0cc22fe")
+		)
+		(pin "7"
+			(uuid "90626c7b-03a5-4637-8078-718df018a8bf")
+		)
+		(pin "8"
+			(uuid "1a3d9f8c-f3dc-49c7-9db6-853e837da764")
+		)
+		(pin "4"
+			(uuid "84f97969-d5cb-4bc1-836b-c5fbdb636641")
+		)
+		(instances
+			(project "dacboard"
+				(path "/35cb74e4-0f64-454b-9b50-bfac13ed28a5/78597d6c-f167-4e25-99ec-27c10aa3b74b/7256813f-126c-4da9-88ae-b15cd06c6f9a"
+					(reference "U22")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "power:GND")
+		(at 104.14 114.3 90)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "833002dc-831d-4501-8991-9bde418e6026")
+		(property "Reference" "#PWR0105"
+			(at 110.49 114.3 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "AGND"
+			(at 107.95 114.2999 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(property "Footprint" ""
+			(at 104.14 114.3 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 104.14 114.3 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
+			(at 104.14 114.3 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "f9ecc75f-1ab4-4315-b4a1-b8245298e7d8")
+		)
+		(instances
+			(project "dacboard"
+				(path "/35cb74e4-0f64-454b-9b50-bfac13ed28a5/78597d6c-f167-4e25-99ec-27c10aa3b74b/7256813f-126c-4da9-88ae-b15cd06c6f9a"
+					(reference "#PWR0105")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Amplifier_Operational:AD8676xR")
+		(at 274.32 73.66 0)
+		(unit 2)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "8695b14c-566b-4f4f-a4d9-cacbfe176457")
+		(property "Reference" "U31"
+			(at 274.32 63.5 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "AD8676xR"
+			(at 274.32 66.04 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" "Package_SO:SOIC-8_3.9x4.9mm_P1.27mm"
+			(at 276.86 73.66 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "https://www.analog.com/media/en/technical-documentation/data-sheets/AD8676.pdf"
+			(at 280.67 69.85 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Dual operational amplifier, Ultra-precision, 36V, Rail-to-rail output, SOIC-8"
+			(at 274.32 73.66 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "5"
+			(uuid "4074826d-be81-4609-9b67-f88bd5bec238")
+		)
+		(pin "3"
+			(uuid "88d456f0-7689-4bc0-83a0-36cd722d16df")
+		)
+		(pin "2"
+			(uuid "881ff16c-34d9-401b-9057-195fd0ea8658")
+		)
+		(pin "1"
+			(uuid "b623188b-c793-4534-924d-0b72c6fdcfe9")
+		)
+		(pin "6"
+			(uuid "415d47a8-aa35-46c9-9574-33e0d41c3e85")
+		)
+		(pin "7"
+			(uuid "e3ff52ef-b3b1-4b6f-8445-252df1b0cd4b")
+		)
+		(pin "8"
+			(uuid "1a3d9f8c-f3dc-49c7-9db6-853e837da768")
+		)
+		(pin "4"
+			(uuid "84f97969-d5cb-4bc1-836b-c5fbdb636645")
+		)
+		(instances
+			(project "dacboard"
+				(path "/35cb74e4-0f64-454b-9b50-bfac13ed28a5/78597d6c-f167-4e25-99ec-27c10aa3b74b/7256813f-126c-4da9-88ae-b15cd06c6f9a"
+					(reference "U31")
+					(unit 2)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "power:GND")
+		(at 245.11 71.12 90)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "87015478-0508-4ca7-8980-39d5b1994121")
+		(property "Reference" "#PWR0128"
+			(at 251.46 71.12 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "AGND"
+			(at 248.92 71.1199 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(property "Footprint" ""
+			(at 245.11 71.12 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 245.11 71.12 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
+			(at 245.11 71.12 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "1e5ca316-7639-4cb0-9d6d-9e1198d1dd3f")
+		)
+		(instances
+			(project "dacboard"
+				(path "/35cb74e4-0f64-454b-9b50-bfac13ed28a5/78597d6c-f167-4e25-99ec-27c10aa3b74b/7256813f-126c-4da9-88ae-b15cd06c6f9a"
+					(reference "#PWR0128")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "2025-11-19_00-21-39:AD5791BRUZ")
+		(at 53.34 26.67 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "8f24eeba-2f60-4ecd-884a-bc8c0c11646d")
+		(property "Reference" "U26"
+			(at 78.74 16.51 0)
+			(effects
+				(font
+					(size 1.524 1.524)
+				)
+			)
+		)
+		(property "Value" "AD5791BRUZ"
+			(at 78.74 19.05 0)
+			(effects
+				(font
+					(size 1.524 1.524)
+				)
+			)
+		)
+		(property "Footprint" "RU_20_ADI"
+			(at 53.34 26.67 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+					(italic yes)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "https://www.analog.com/media/en/technical-documentation/data-sheets/AD5791-EP.pdf"
+			(at 53.34 26.67 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+					(italic yes)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 53.34 26.67 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "5"
+			(uuid "b13894e1-0371-464f-817c-274e0a301044")
+		)
+		(pin "6"
+			(uuid "a5a4ff4d-6553-42a6-91c4-8df63e1f7a0e")
+		)
+		(pin "4"
+			(uuid "c59fbf8a-20ab-4a3e-b8cf-8156df624c83")
+		)
+		(pin "8"
+			(uuid "d794f81c-2c73-4076-b0d2-fb2edc3679b8")
+		)
+		(pin "3"
+			(uuid "b3593686-c22a-4ac7-b887-8716da5ee7eb")
+		)
+		(pin "9"
+			(uuid "05faa8a9-7095-4982-8028-3e8eb5f20157")
+		)
+		(pin "18"
+			(uuid "cacdaaac-ae8b-4797-90cf-d96e1ff0ffd9")
+		)
+		(pin "1"
+			(uuid "4673416f-c07c-4672-816e-d1ef40f2ca18")
+		)
+		(pin "2"
+			(uuid "e88c250a-c721-4e8f-830e-fe6168065a84")
+		)
+		(pin "7"
+			(uuid "9e21425d-feed-4a01-9ecc-616909188c96")
+		)
+		(pin "10"
+			(uuid "004a6853-b791-4b22-956e-b4a1723ba89a")
+		)
+		(pin "20"
+			(uuid "5c0c148d-e4fb-47fa-b898-2c2409eade28")
+		)
+		(pin "19"
+			(uuid "793ffc48-1698-41a6-9826-6a672c8ddca7")
+		)
+		(pin "17"
+			(uuid "3ad1e157-fd48-45c0-bc8a-7a97ebbf7d11")
+		)
+		(pin "14"
+			(uuid "233d2491-8973-4528-921c-ae1cad30b1d6")
+		)
+		(pin "15"
+			(uuid "db8d78f3-e879-41b8-bff2-d1ab182ae742")
+		)
+		(pin "13"
+			(uuid "3118d97d-e21e-4c0e-a2c1-ef0006c1a681")
+		)
+		(pin "16"
+			(uuid "70f3e9fd-fbc4-4188-84aa-e9e6214d3e89")
+		)
+		(pin "11"
+			(uuid "236f8448-046b-4a79-9316-89b8998ea33d")
+		)
+		(pin "12"
+			(uuid "96cd6790-3c7c-4ca1-8ae3-f495ced5b007")
+		)
+		(instances
+			(project "dacboard"
+				(path "/35cb74e4-0f64-454b-9b50-bfac13ed28a5/78597d6c-f167-4e25-99ec-27c10aa3b74b/7256813f-126c-4da9-88ae-b15cd06c6f9a"
+					(reference "U26")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Amplifier_Operational:AD8676xR")
+		(at 133.35 31.75 0)
+		(unit 2)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "947ce1b5-1672-454d-a367-9a23243d771a")
+		(property "Reference" "U22"
+			(at 133.35 21.59 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "AD8676xR"
+			(at 133.35 24.13 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" "Package_SO:SOIC-8_3.9x4.9mm_P1.27mm"
+			(at 135.89 31.75 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "https://www.analog.com/media/en/technical-documentation/data-sheets/AD8676.pdf"
+			(at 139.7 27.94 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Dual operational amplifier, Ultra-precision, 36V, Rail-to-rail output, SOIC-8"
+			(at 133.35 31.75 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "5"
+			(uuid "4c853203-53d3-48c9-8ded-cea02b6cb5a8")
+		)
+		(pin "3"
+			(uuid "88d456f0-7689-4bc0-83a0-36cd722d16da")
+		)
+		(pin "2"
+			(uuid "881ff16c-34d9-401b-9057-195fd0ea8653")
+		)
+		(pin "1"
+			(uuid "b623188b-c793-4534-924d-0b72c6fdcfe4")
+		)
+		(pin "6"
+			(uuid "d5bf5c92-26a1-45a7-ae67-0e4354317609")
+		)
+		(pin "7"
+			(uuid "430a86f7-7dab-4779-9b9a-e859bbd846d4")
+		)
+		(pin "8"
+			(uuid "1a3d9f8c-f3dc-49c7-9db6-853e837da761")
+		)
+		(pin "4"
+			(uuid "84f97969-d5cb-4bc1-836b-c5fbdb63663e")
+		)
+		(instances
+			(project "dacboard"
+				(path "/35cb74e4-0f64-454b-9b50-bfac13ed28a5/78597d6c-f167-4e25-99ec-27c10aa3b74b/7256813f-126c-4da9-88ae-b15cd06c6f9a"
+					(reference "U22")
+					(unit 2)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "2025-11-19_00-21-39:AD5791BRUZ")
+		(at 53.34 111.76 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "9a896031-7b84-4f1d-8cf1-9e8dd97476f5")
+		(property "Reference" "U28"
+			(at 78.74 101.6 0)
+			(effects
+				(font
+					(size 1.524 1.524)
+				)
+			)
+		)
+		(property "Value" "AD5791BRUZ"
+			(at 78.74 104.14 0)
+			(effects
+				(font
+					(size 1.524 1.524)
+				)
+			)
+		)
+		(property "Footprint" "RU_20_ADI"
+			(at 53.34 111.76 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+					(italic yes)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "https://www.analog.com/media/en/technical-documentation/data-sheets/AD5791-EP.pdf"
+			(at 53.34 111.76 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+					(italic yes)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 53.34 111.76 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "5"
+			(uuid "b4df2fb2-21ca-4c16-b7ed-5a7d26838b51")
+		)
+		(pin "6"
+			(uuid "eaf53aa4-8963-4c33-83a7-1e167e5d1a2d")
+		)
+		(pin "4"
+			(uuid "8d88c2e8-09aa-429e-849b-b0d3abc7eddc")
+		)
+		(pin "8"
+			(uuid "48807354-d15c-4b2c-94bd-b0c5d0ef4a15")
+		)
+		(pin "3"
+			(uuid "96e7acd2-cafd-4a97-8985-c5ed6ca2d49c")
+		)
+		(pin "9"
+			(uuid "e81bfae9-092a-47ad-a614-96e7f08a2ec8")
+		)
+		(pin "18"
+			(uuid "91bd3229-2152-40c6-9a4a-cd43006a90b9")
+		)
+		(pin "1"
+			(uuid "1870f632-cdbd-4577-889c-1ad8a5c7ecbb")
+		)
+		(pin "2"
+			(uuid "e393e4f2-0913-41f2-b213-8d5f98c08fcf")
+		)
+		(pin "7"
+			(uuid "c128ee11-2c40-4e6b-8038-765799ccb4c8")
+		)
+		(pin "10"
+			(uuid "b508a7cf-f0a2-4700-93a6-d811d8cdf044")
+		)
+		(pin "20"
+			(uuid "ee186134-be72-4dad-a66d-9beb110c2281")
+		)
+		(pin "19"
+			(uuid "06c59005-6dce-4995-8a55-c10faeaf0f1c")
+		)
+		(pin "17"
+			(uuid "53cde75e-db9d-4a92-8aaf-5960d49d3551")
+		)
+		(pin "14"
+			(uuid "fb109fac-8c3a-4cc2-8683-7b4a93660b31")
+		)
+		(pin "15"
+			(uuid "38d26d4a-5008-48d6-adba-ced33b2a35f8")
+		)
+		(pin "13"
+			(uuid "545006d7-4f35-43b9-ac84-76f8c0fa5369")
+		)
+		(pin "16"
+			(uuid "62ee3fd3-4896-4ae3-a57a-235c5d78a032")
+		)
+		(pin "11"
+			(uuid "ca2ce2c3-c65c-489c-b7fc-b4b4714b47ad")
+		)
+		(pin "12"
+			(uuid "55c6a177-43e4-4d67-8fa2-fef84f6baa29")
+		)
+		(instances
+			(project "dacboard"
+				(path "/35cb74e4-0f64-454b-9b50-bfac13ed28a5/78597d6c-f167-4e25-99ec-27c10aa3b74b/7256813f-126c-4da9-88ae-b15cd06c6f9a"
+					(reference "U28")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "power:VSS")
+		(at 210.82 129.54 0)
+		(mirror x)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "9c6db350-a1f0-4af3-ae33-c71a71f450f1")
+		(property "Reference" "#PWR0120"
+			(at 210.82 125.73 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "VSS"
+			(at 210.82 134.62 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 210.82 129.54 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 210.82 129.54 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Power symbol creates a global label with name \"VSS\""
+			(at 210.82 129.54 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "dbaad1d8-652e-4ce0-b269-0dba106527c1")
+		)
+		(instances
+			(project "dacboard"
+				(path "/35cb74e4-0f64-454b-9b50-bfac13ed28a5/78597d6c-f167-4e25-99ec-27c10aa3b74b/7256813f-126c-4da9-88ae-b15cd06c6f9a"
+					(reference "#PWR0120")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "power:VSS")
+		(at 245.11 73.66 270)
+		(mirror x)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "9c99468d-3108-4b47-9bfe-820cf7af15fb")
+		(property "Reference" "#PWR0129"
+			(at 241.3 73.66 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "VSS"
+			(at 250.19 73.66 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 245.11 73.66 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 245.11 73.66 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Power symbol creates a global label with name \"VSS\""
+			(at 245.11 73.66 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "aacae082-7994-4f6b-bb73-864c4366fbd8")
+		)
+		(instances
+			(project "dacboard"
+				(path "/35cb74e4-0f64-454b-9b50-bfac13ed28a5/78597d6c-f167-4e25-99ec-27c10aa3b74b/7256813f-126c-4da9-88ae-b15cd06c6f9a"
+					(reference "#PWR0129")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Amplifier_Operational:AD8676xR")
+		(at 133.35 73.66 0)
+		(unit 2)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "a1119df5-2d16-4675-ad87-f640026e6fbd")
+		(property "Reference" "U23"
+			(at 133.35 63.5 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "AD8676xR"
+			(at 133.35 66.04 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" "Package_SO:SOIC-8_3.9x4.9mm_P1.27mm"
+			(at 135.89 73.66 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "https://www.analog.com/media/en/technical-documentation/data-sheets/AD8676.pdf"
+			(at 139.7 69.85 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Dual operational amplifier, Ultra-precision, 36V, Rail-to-rail output, SOIC-8"
+			(at 133.35 73.66 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "5"
+			(uuid "e0f4c721-855a-4cd1-a01c-702e4c5a854d")
+		)
+		(pin "3"
+			(uuid "88d456f0-7689-4bc0-83a0-36cd722d16d7")
+		)
+		(pin "2"
+			(uuid "881ff16c-34d9-401b-9057-195fd0ea8650")
+		)
+		(pin "1"
+			(uuid "b623188b-c793-4534-924d-0b72c6fdcfe1")
+		)
+		(pin "6"
+			(uuid "220e86cf-1715-4861-9d55-167591b377b4")
+		)
+		(pin "7"
+			(uuid "66978bbf-7fc8-4d1a-893b-2cad4a508bc8")
+		)
+		(pin "8"
+			(uuid "1a3d9f8c-f3dc-49c7-9db6-853e837da760")
+		)
+		(pin "4"
+			(uuid "84f97969-d5cb-4bc1-836b-c5fbdb63663d")
+		)
+		(instances
+			(project "dacboard"
+				(path "/35cb74e4-0f64-454b-9b50-bfac13ed28a5/78597d6c-f167-4e25-99ec-27c10aa3b74b/7256813f-126c-4da9-88ae-b15cd06c6f9a"
+					(reference "U23")
+					(unit 2)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "power:GNDD")
+		(at 175.26 96.52 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "a31e510c-25f0-448b-9a96-276e934a7192")
+		(property "Reference" "#PWR0112"
+			(at 175.26 102.87 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "DGND"
+			(at 175.26 100.33 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 175.26 96.52 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 175.26 96.52 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Power symbol creates a global label with name \"GNDD\" , digital ground"
+			(at 175.26 96.52 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "26cfc210-2b38-4676-b250-baa86c5f6295")
+		)
+		(instances
+			(project "dacboard"
+				(path "/35cb74e4-0f64-454b-9b50-bfac13ed28a5/78597d6c-f167-4e25-99ec-27c10aa3b74b/7256813f-126c-4da9-88ae-b15cd06c6f9a"
+					(reference "#PWR0112")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "power:+5V")
+		(at 34.29 132.08 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "a411ff55-a81f-4038-84e6-e3f1ea1a54c5")
+		(property "Reference" "#PWR0276"
+			(at 34.29 135.89 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "+5VD"
+			(at 34.29 127 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 34.29 132.08 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 34.29 132.08 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Power symbol creates a global label with name \"+5V\""
+			(at 34.29 132.08 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "559cc6da-4b91-475a-8e3a-4f049e445790")
+		)
+		(instances
+			(project "dacboard"
+				(path "/35cb74e4-0f64-454b-9b50-bfac13ed28a5/78597d6c-f167-4e25-99ec-27c10aa3b74b/7256813f-126c-4da9-88ae-b15cd06c6f9a"
+					(reference "#PWR0276")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Amplifier_Operational:AD8676xR")
+		(at 133.35 160.02 0)
+		(unit 2)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "a55875d0-88f8-45a1-ae94-13052ee5312c")
+		(property "Reference" "U25"
+			(at 133.35 149.86 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "AD8676xR"
+			(at 133.35 152.4 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" "Package_SO:SOIC-8_3.9x4.9mm_P1.27mm"
+			(at 135.89 160.02 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "https://www.analog.com/media/en/technical-documentation/data-sheets/AD8676.pdf"
+			(at 139.7 156.21 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Dual operational amplifier, Ultra-precision, 36V, Rail-to-rail output, SOIC-8"
+			(at 133.35 160.02 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "5"
+			(uuid "29cb02e8-f751-497d-8d4a-f8daa7dd151a")
+		)
+		(pin "3"
+			(uuid "88d456f0-7689-4bc0-83a0-36cd722d16d6")
+		)
+		(pin "2"
+			(uuid "881ff16c-34d9-401b-9057-195fd0ea864f")
+		)
+		(pin "1"
+			(uuid "b623188b-c793-4534-924d-0b72c6fdcfe0")
+		)
+		(pin "6"
+			(uuid "98ad85a7-6f29-4ea4-af35-aa1a91fcd631")
+		)
+		(pin "7"
+			(uuid "a2acf0ed-8319-4048-9961-7aac4ad5520c")
+		)
+		(pin "8"
+			(uuid "1a3d9f8c-f3dc-49c7-9db6-853e837da75f")
+		)
+		(pin "4"
+			(uuid "84f97969-d5cb-4bc1-836b-c5fbdb63663c")
+		)
+		(instances
+			(project "dacboard"
+				(path "/35cb74e4-0f64-454b-9b50-bfac13ed28a5/78597d6c-f167-4e25-99ec-27c10aa3b74b/7256813f-126c-4da9-88ae-b15cd06c6f9a"
+					(reference "U25")
+					(unit 2)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "power:VSS")
+		(at 238.76 129.54 0)
+		(mirror x)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "b0e08487-25af-4453-8146-8f57ea027224")
+		(property "Reference" "#PWR0124"
+			(at 238.76 125.73 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "VSS"
+			(at 238.76 134.62 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 238.76 129.54 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 238.76 129.54 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Power symbol creates a global label with name \"VSS\""
+			(at 238.76 129.54 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "8b1a4a2d-da93-4921-971c-f090ed737ab0")
+		)
+		(instances
+			(project "dacboard"
+				(path "/35cb74e4-0f64-454b-9b50-bfac13ed28a5/78597d6c-f167-4e25-99ec-27c10aa3b74b/7256813f-126c-4da9-88ae-b15cd06c6f9a"
+					(reference "#PWR0124")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Amplifier_Operational:AD8676xR")
+		(at 133.35 116.84 0)
+		(unit 2)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "b39f6ce7-df98-4728-8c08-5b09ededf324")
+		(property "Reference" "U24"
+			(at 133.35 106.68 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "AD8676xR"
+			(at 133.35 109.22 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" "Package_SO:SOIC-8_3.9x4.9mm_P1.27mm"
+			(at 135.89 116.84 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "https://www.analog.com/media/en/technical-documentation/data-sheets/AD8676.pdf"
+			(at 139.7 113.03 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Dual operational amplifier, Ultra-precision, 36V, Rail-to-rail output, SOIC-8"
+			(at 133.35 116.84 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "5"
+			(uuid "7d6facbf-cf4e-4a4f-96ab-8f3594f69c00")
+		)
+		(pin "3"
+			(uuid "88d456f0-7689-4bc0-83a0-36cd722d16dc")
+		)
+		(pin "2"
+			(uuid "881ff16c-34d9-401b-9057-195fd0ea8655")
+		)
+		(pin "1"
+			(uuid "b623188b-c793-4534-924d-0b72c6fdcfe6")
+		)
+		(pin "6"
+			(uuid "6e53b305-565c-4b35-a73c-0f17d6de7a31")
+		)
+		(pin "7"
+			(uuid "97daa5f8-6536-4992-b8fc-9ba33f0b3169")
+		)
+		(pin "8"
+			(uuid "1a3d9f8c-f3dc-49c7-9db6-853e837da763")
+		)
+		(pin "4"
+			(uuid "84f97969-d5cb-4bc1-836b-c5fbdb636640")
+		)
+		(instances
+			(project "dacboard"
+				(path "/35cb74e4-0f64-454b-9b50-bfac13ed28a5/78597d6c-f167-4e25-99ec-27c10aa3b74b/7256813f-126c-4da9-88ae-b15cd06c6f9a"
+					(reference "U24")
+					(unit 2)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "power:VDD")
+		(at 196.85 114.3 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "b6145fc1-6a2d-4c7b-a0e0-a611cffdcbdf")
+		(property "Reference" "#PWR0117"
+			(at 196.85 118.11 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "VDD"
+			(at 196.85 109.22 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 196.85 114.3 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 196.85 114.3 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Power symbol creates a global label with name \"VDD\""
+			(at 196.85 114.3 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "8a9a15b3-bd5d-4049-b2fe-520e5588c7f2")
+		)
+		(instances
+			(project "dacboard"
+				(path "/35cb74e4-0f64-454b-9b50-bfac13ed28a5/78597d6c-f167-4e25-99ec-27c10aa3b74b/7256813f-126c-4da9-88ae-b15cd06c6f9a"
+					(reference "#PWR0117")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "power:VSS")
+		(at 104.14 116.84 270)
+		(mirror x)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "b750e8c0-2c42-4941-acc7-82c7c6c0350f")
+		(property "Reference" "#PWR0106"
+			(at 100.33 116.84 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "VSS"
+			(at 109.22 116.84 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 104.14 116.84 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 104.14 116.84 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Power symbol creates a global label with name \"VSS\""
+			(at 104.14 116.84 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "781b91c6-046f-479c-bacb-1a4e5acfa228")
+		)
+		(instances
+			(project "dacboard"
+				(path "/35cb74e4-0f64-454b-9b50-bfac13ed28a5/78597d6c-f167-4e25-99ec-27c10aa3b74b/7256813f-126c-4da9-88ae-b15cd06c6f9a"
+					(reference "#PWR0106")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Amplifier_Operational:AD8676xR")
+		(at 163.83 29.21 0)
+		(mirror y)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "bc291ff3-7aaa-4cff-aead-cac579675937")
+		(property "Reference" "U30"
+			(at 163.83 19.05 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "AD8676xR"
+			(at 163.83 21.59 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" "Package_SO:SOIC-8_3.9x4.9mm_P1.27mm"
+			(at 161.29 29.21 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "https://www.analog.com/media/en/technical-documentation/data-sheets/AD8676.pdf"
+			(at 157.48 25.4 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Dual operational amplifier, Ultra-precision, 36V, Rail-to-rail output, SOIC-8"
+			(at 163.83 29.21 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "5"
+			(uuid "b0a8b05c-f879-4a25-bae9-4e54e91b59bf")
+		)
+		(pin "3"
+			(uuid "52a9915d-b504-4426-89d0-95947dc866ce")
+		)
+		(pin "2"
+			(uuid "8a666aed-90ae-412a-9605-432dbff5e03c")
+		)
+		(pin "1"
+			(uuid "b165ea8e-a9a9-42de-b45a-7ca7d6e6bfae")
+		)
+		(pin "6"
+			(uuid "5e0d8d20-6f89-4475-873a-8891f0cc2302")
+		)
+		(pin "7"
+			(uuid "90626c7b-03a5-4637-8078-718df018a8c3")
+		)
+		(pin "8"
+			(uuid "1a3d9f8c-f3dc-49c7-9db6-853e837da767")
+		)
+		(pin "4"
+			(uuid "84f97969-d5cb-4bc1-836b-c5fbdb636644")
+		)
+		(instances
+			(project "dacboard"
+				(path "/35cb74e4-0f64-454b-9b50-bfac13ed28a5/78597d6c-f167-4e25-99ec-27c10aa3b74b/7256813f-126c-4da9-88ae-b15cd06c6f9a"
+					(reference "U30")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "power:VSS")
+		(at 196.85 129.54 0)
+		(mirror x)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "c0164168-1c1c-4517-ac96-3e26d8ab62ee")
+		(property "Reference" "#PWR0118"
+			(at 196.85 125.73 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "VSS"
+			(at 196.85 134.62 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 196.85 129.54 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 196.85 129.54 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Power symbol creates a global label with name \"VSS\""
+			(at 196.85 129.54 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "295c350e-ae04-4420-a68f-6191493d8e7e")
+		)
+		(instances
+			(project "dacboard"
+				(path "/35cb74e4-0f64-454b-9b50-bfac13ed28a5/78597d6c-f167-4e25-99ec-27c10aa3b74b/7256813f-126c-4da9-88ae-b15cd06c6f9a"
+					(reference "#PWR0118")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Amplifier_Operational:AD8676xR")
+		(at 163.83 71.12 0)
+		(mirror y)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "c2d98858-5f19-4f49-81f8-d86a64660afc")
+		(property "Reference" "U31"
+			(at 163.83 60.96 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "AD8676xR"
+			(at 163.83 63.5 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" "Package_SO:SOIC-8_3.9x4.9mm_P1.27mm"
+			(at 161.29 71.12 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "https://www.analog.com/media/en/technical-documentation/data-sheets/AD8676.pdf"
+			(at 157.48 67.31 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Dual operational amplifier, Ultra-precision, 36V, Rail-to-rail output, SOIC-8"
+			(at 163.83 71.12 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "5"
+			(uuid "b0a8b05c-f879-4a25-bae9-4e54e91b59bc")
+		)
+		(pin "3"
+			(uuid "4b6a5986-750f-405f-8c9d-51a65c44a015")
+		)
+		(pin "2"
+			(uuid "49eacdbe-0f0e-47ef-811e-b23efbe7b9c8")
+		)
+		(pin "1"
+			(uuid "a019552a-4eac-40d2-b39a-f01e2930bf2f")
+		)
+		(pin "6"
+			(uuid "5e0d8d20-6f89-4475-873a-8891f0cc22ff")
+		)
+		(pin "7"
+			(uuid "90626c7b-03a5-4637-8078-718df018a8c0")
+		)
+		(pin "8"
+			(uuid "1a3d9f8c-f3dc-49c7-9db6-853e837da765")
+		)
+		(pin "4"
+			(uuid "84f97969-d5cb-4bc1-836b-c5fbdb636642")
+		)
+		(instances
+			(project "dacboard"
+				(path "/35cb74e4-0f64-454b-9b50-bfac13ed28a5/78597d6c-f167-4e25-99ec-27c10aa3b74b/7256813f-126c-4da9-88ae-b15cd06c6f9a"
+					(reference "U31")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "power:VSS")
+		(at 104.14 31.75 270)
+		(mirror x)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "c3017f92-cb86-46d2-ad38-99538ecc4efd")
+		(property "Reference" "#PWR0100"
+			(at 100.33 31.75 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "VSS"
+			(at 109.22 31.75 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 104.14 31.75 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 104.14 31.75 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Power symbol creates a global label with name \"VSS\""
+			(at 104.14 31.75 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "51bf26c5-8fb1-4722-85e2-dcaec5850143")
+		)
+		(instances
+			(project "dacboard"
+				(path "/35cb74e4-0f64-454b-9b50-bfac13ed28a5/78597d6c-f167-4e25-99ec-27c10aa3b74b/7256813f-126c-4da9-88ae-b15cd06c6f9a"
+					(reference "#PWR0100")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "power:+5V")
+		(at 34.29 46.99 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "c5632760-46c7-4374-b896-8746fcff7642")
+		(property "Reference" "#PWR0274"
+			(at 34.29 50.8 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "+5VD"
+			(at 34.29 41.91 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 34.29 46.99 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 34.29 46.99 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Power symbol creates a global label with name \"+5V\""
+			(at 34.29 46.99 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "2d124f88-c013-4b37-b8c7-49356ed22402")
+		)
+		(instances
+			(project "dacboard"
+				(path "/35cb74e4-0f64-454b-9b50-bfac13ed28a5/78597d6c-f167-4e25-99ec-27c10aa3b74b/7256813f-126c-4da9-88ae-b15cd06c6f9a"
+					(reference "#PWR0274")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "2025-11-19_00-21-39:AD5791BRUZ")
+		(at 53.34 68.58 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "c76d5c05-71f1-4730-a90b-19e258942d8c")
+		(property "Reference" "U27"
+			(at 78.74 58.42 0)
+			(effects
+				(font
+					(size 1.524 1.524)
+				)
+			)
+		)
+		(property "Value" "AD5791BRUZ"
+			(at 78.74 60.96 0)
+			(effects
+				(font
+					(size 1.524 1.524)
+				)
+			)
+		)
+		(property "Footprint" "RU_20_ADI"
+			(at 53.34 68.58 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+					(italic yes)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "https://www.analog.com/media/en/technical-documentation/data-sheets/AD5791-EP.pdf"
+			(at 53.34 68.58 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+					(italic yes)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 53.34 68.58 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "5"
+			(uuid "6b9462ed-deb1-4fa9-a432-c627fc637403")
+		)
+		(pin "6"
+			(uuid "2933df62-04da-4147-b739-49f668e1f6dc")
+		)
+		(pin "4"
+			(uuid "5046f92f-0c73-41b1-b8b8-9ddf0bc9c71d")
+		)
+		(pin "8"
+			(uuid "b58c33ed-94ae-42a1-8006-87308eb96340")
+		)
+		(pin "3"
+			(uuid "51ac507d-f028-451c-bfa3-89e89f61ebf5")
+		)
+		(pin "9"
+			(uuid "6d900ae6-1606-46fd-b9a5-137e8f41f426")
+		)
+		(pin "18"
+			(uuid "6ab064e2-454d-42de-bd80-5a1ec3184fd9")
+		)
+		(pin "1"
+			(uuid "dae5d2ce-e2af-49f0-a7ca-73e137af2c44")
+		)
+		(pin "2"
+			(uuid "536a6d5e-4afa-4e2b-a6c9-4b16f0fd8a03")
+		)
+		(pin "7"
+			(uuid "ee35dd16-ec22-468d-b345-60d39b6d2917")
+		)
+		(pin "10"
+			(uuid "dbf03a07-f0ea-4611-9768-d497fb30aa88")
+		)
+		(pin "20"
+			(uuid "994ec123-1713-4bb4-8e72-db038b6f7a97")
+		)
+		(pin "19"
+			(uuid "5b320c08-ce7b-4616-9946-8474473f742c")
+		)
+		(pin "17"
+			(uuid "17b40f32-f066-4e1d-9a7d-7a66d2a1fad6")
+		)
+		(pin "14"
+			(uuid "0319bbcf-4533-4f94-b809-f7083eaabbb0")
+		)
+		(pin "15"
+			(uuid "110316b6-d259-4f1f-b0bd-55e036e29319")
+		)
+		(pin "13"
+			(uuid "d5894841-37c5-40a6-b625-39bd6a519565")
+		)
+		(pin "16"
+			(uuid "3fb3109d-1d65-43a9-91d7-286e1b22d7d5")
+		)
+		(pin "11"
+			(uuid "9bd05fbf-1c18-462f-b9c2-fd3d6eee5af5")
+		)
+		(pin "12"
+			(uuid "174a1f2d-6e4a-46db-9466-92dfcd2d319d")
+		)
+		(instances
+			(project "dacboard"
+				(path "/35cb74e4-0f64-454b-9b50-bfac13ed28a5/78597d6c-f167-4e25-99ec-27c10aa3b74b/7256813f-126c-4da9-88ae-b15cd06c6f9a"
+					(reference "U27")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Amplifier_Operational:AD8676xR")
+		(at 196.85 121.92 0)
+		(unit 3)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "ccd177d5-f9e7-48f4-8375-fbc5dbad42e6")
+		(property "Reference" "U23"
+			(at 198.12 120.6499 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "AD8676xR"
+			(at 198.12 123.1899 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "Package_SO:SOIC-8_3.9x4.9mm_P1.27mm"
+			(at 199.39 121.92 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "https://www.analog.com/media/en/technical-documentation/data-sheets/AD8676.pdf"
+			(at 203.2 118.11 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Dual operational amplifier, Ultra-precision, 36V, Rail-to-rail output, SOIC-8"
+			(at 196.85 121.92 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "5"
+			(uuid "b0a8b05c-f879-4a25-bae9-4e54e91b59b7")
+		)
+		(pin "3"
+			(uuid "88d456f0-7689-4bc0-83a0-36cd722d16d9")
+		)
+		(pin "2"
+			(uuid "881ff16c-34d9-401b-9057-195fd0ea8652")
+		)
+		(pin "1"
+			(uuid "b623188b-c793-4534-924d-0b72c6fdcfe3")
+		)
+		(pin "6"
+			(uuid "5e0d8d20-6f89-4475-873a-8891f0cc22fa")
+		)
+		(pin "7"
+			(uuid "90626c7b-03a5-4637-8078-718df018a8bb")
+		)
+		(pin "8"
+			(uuid "802b84b2-c259-4d04-9491-fe0ba13eb35c")
+		)
+		(pin "4"
+			(uuid "b7b8a26c-86b0-4d98-86e6-147d03f10c16")
+		)
+		(instances
+			(project "dacboard"
+				(path "/35cb74e4-0f64-454b-9b50-bfac13ed28a5/78597d6c-f167-4e25-99ec-27c10aa3b74b/7256813f-126c-4da9-88ae-b15cd06c6f9a"
+					(reference "U23")
+					(unit 3)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "power:GND")
+		(at 104.14 157.48 90)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "d3163d84-3ddf-48db-9a45-17f0d2f35b2a")
+		(property "Reference" "#PWR0108"
+			(at 110.49 157.48 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "AGND"
+			(at 107.95 157.4799 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(property "Footprint" ""
+			(at 104.14 157.48 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 104.14 157.48 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
+			(at 104.14 157.48 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "a2ee9553-b891-457a-bf6c-fa1e1270161b")
+		)
+		(instances
+			(project "dacboard"
+				(path "/35cb74e4-0f64-454b-9b50-bfac13ed28a5/78597d6c-f167-4e25-99ec-27c10aa3b74b/7256813f-126c-4da9-88ae-b15cd06c6f9a"
+					(reference "#PWR0108")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Amplifier_Operational:AD8676xR")
+		(at 22.86 114.3 0)
+		(mirror y)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "d53e05e0-0248-41fa-aa22-44143ad7acbd")
+		(property "Reference" "U24"
+			(at 22.86 104.14 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "AD8676xR"
+			(at 22.86 106.68 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" "Package_SO:SOIC-8_3.9x4.9mm_P1.27mm"
+			(at 20.32 114.3 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "https://www.analog.com/media/en/technical-documentation/data-sheets/AD8676.pdf"
+			(at 16.51 110.49 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Dual operational amplifier, Ultra-precision, 36V, Rail-to-rail output, SOIC-8"
+			(at 22.86 114.3 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "5"
+			(uuid "b0a8b05c-f879-4a25-bae9-4e54e91b59bd")
+		)
+		(pin "3"
+			(uuid "43708382-fa45-4b15-8ab7-c41706b9fac1")
+		)
+		(pin "2"
+			(uuid "7562bcd9-1bea-4ab1-9b8b-382666b5a3e9")
+		)
+		(pin "1"
+			(uuid "0bbdb4b9-4a16-4f2e-b8de-a50f352527bd")
+		)
+		(pin "6"
+			(uuid "5e0d8d20-6f89-4475-873a-8891f0cc2300")
+		)
+		(pin "7"
+			(uuid "90626c7b-03a5-4637-8078-718df018a8c1")
+		)
+		(pin "8"
+			(uuid "1a3d9f8c-f3dc-49c7-9db6-853e837da766")
+		)
+		(pin "4"
+			(uuid "84f97969-d5cb-4bc1-836b-c5fbdb636643")
+		)
+		(instances
+			(project "dacboard"
+				(path "/35cb74e4-0f64-454b-9b50-bfac13ed28a5/78597d6c-f167-4e25-99ec-27c10aa3b74b/7256813f-126c-4da9-88ae-b15cd06c6f9a"
+					(reference "U24")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "power:VDD")
+		(at 182.88 114.3 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "d868826a-faa3-408c-bf6f-0f20c07d27b9")
+		(property "Reference" "#PWR0113"
+			(at 182.88 118.11 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "VDD"
+			(at 182.88 109.22 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 182.88 114.3 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 182.88 114.3 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Power symbol creates a global label with name \"VDD\""
+			(at 182.88 114.3 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "b16937f9-df58-48e6-99aa-41bdb5749c50")
+		)
+		(instances
+			(project "dacboard"
+				(path "/35cb74e4-0f64-454b-9b50-bfac13ed28a5/78597d6c-f167-4e25-99ec-27c10aa3b74b/7256813f-126c-4da9-88ae-b15cd06c6f9a"
+					(reference "#PWR0113")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "power:VSS")
+		(at 245.11 31.75 270)
+		(mirror x)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "db1f0814-3603-4837-9407-ce4c742e92b3")
+		(property "Reference" "#PWR0126"
+			(at 241.3 31.75 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "VSS"
+			(at 250.19 31.75 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 245.11 31.75 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 245.11 31.75 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Power symbol creates a global label with name \"VSS\""
+			(at 245.11 31.75 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "fc115202-83ea-4697-81d7-88711f656ec7")
+		)
+		(instances
+			(project "dacboard"
+				(path "/35cb74e4-0f64-454b-9b50-bfac13ed28a5/78597d6c-f167-4e25-99ec-27c10aa3b74b/7256813f-126c-4da9-88ae-b15cd06c6f9a"
+					(reference "#PWR0126")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "2025-11-19_00-21-39:AD5791BRUZ")
+		(at 53.34 154.94 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "ddf7b1bd-597d-4dd1-bd89-7bf90d25e383")
+		(property "Reference" "U29"
+			(at 78.74 144.78 0)
+			(effects
+				(font
+					(size 1.524 1.524)
+				)
+			)
+		)
+		(property "Value" "AD5791BRUZ"
+			(at 78.74 147.32 0)
+			(effects
+				(font
+					(size 1.524 1.524)
+				)
+			)
+		)
+		(property "Footprint" "RU_20_ADI"
+			(at 53.34 154.94 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+					(italic yes)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "https://www.analog.com/media/en/technical-documentation/data-sheets/AD5791-EP.pdf"
+			(at 53.34 154.94 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+					(italic yes)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 53.34 154.94 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "5"
+			(uuid "81acd618-e2a5-4dfc-a2b1-79e66c5646d8")
+		)
+		(pin "6"
+			(uuid "84b2d60e-1a87-4733-b01a-689bc1973984")
+		)
+		(pin "4"
+			(uuid "49bd346b-51cb-4656-8e96-8e15bb2f5449")
+		)
+		(pin "8"
+			(uuid "b066c408-0072-478f-9e98-a63c63175797")
+		)
+		(pin "3"
+			(uuid "f1bc54b3-e0cd-4322-9b02-88d0838b5db2")
+		)
+		(pin "9"
+			(uuid "997c533e-7369-4b12-9963-08f8b33e6674")
+		)
+		(pin "18"
+			(uuid "ddff9a05-1ebe-4e2e-b37e-b6bc6659b212")
+		)
+		(pin "1"
+			(uuid "3a32f881-4175-418e-8408-61050638b446")
+		)
+		(pin "2"
+			(uuid "2b3aa448-9ea3-464f-b1f0-761fded4fa71")
+		)
+		(pin "7"
+			(uuid "2ec99015-4157-4e59-b560-1ff992706c18")
+		)
+		(pin "10"
+			(uuid "64a8323f-541b-4abb-9ba8-866b8aed5cf3")
+		)
+		(pin "20"
+			(uuid "d5045824-59e7-49e5-b7dd-c6f4b7d3c589")
+		)
+		(pin "19"
+			(uuid "ac78a157-0e79-420c-9a4c-33861fb9d047")
+		)
+		(pin "17"
+			(uuid "823354ec-6619-410f-aad8-a96ba3c7fef6")
+		)
+		(pin "14"
+			(uuid "dd644f81-a71e-4d57-9f94-15f47fa5b1d2")
+		)
+		(pin "15"
+			(uuid "8a6d3d5f-84ba-4e83-9f89-9aef10a9c9d5")
+		)
+		(pin "13"
+			(uuid "962b8318-4a50-473a-8948-e545c2a72511")
+		)
+		(pin "16"
+			(uuid "e012c398-dc3b-4b64-b87c-ca860506213c")
+		)
+		(pin "11"
+			(uuid "c80b38ab-8d3c-4398-b758-369a1eeb7c0d")
+		)
+		(pin "12"
+			(uuid "2304554f-ace9-4a10-ba4b-5a6f75ef14e9")
+		)
+		(instances
+			(project "dacboard"
+				(path "/35cb74e4-0f64-454b-9b50-bfac13ed28a5/78597d6c-f167-4e25-99ec-27c10aa3b74b/7256813f-126c-4da9-88ae-b15cd06c6f9a"
+					(reference "U29")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Amplifier_Operational:AD8676xR")
+		(at 22.86 157.48 0)
+		(mirror y)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "dfa14ca1-ddef-4b41-a54a-f1910a599854")
+		(property "Reference" "U25"
+			(at 22.86 147.32 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "AD8676xR"
+			(at 22.86 149.86 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" "Package_SO:SOIC-8_3.9x4.9mm_P1.27mm"
+			(at 20.32 157.48 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "https://www.analog.com/media/en/technical-documentation/data-sheets/AD8676.pdf"
+			(at 16.51 153.67 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Dual operational amplifier, Ultra-precision, 36V, Rail-to-rail output, SOIC-8"
+			(at 22.86 157.48 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "5"
+			(uuid "b0a8b05c-f879-4a25-bae9-4e54e91b59b9")
+		)
+		(pin "3"
+			(uuid "180cda80-4484-4e56-8a39-ae2da940bb82")
+		)
+		(pin "2"
+			(uuid "82d13b7a-35ab-43b5-856e-cbe055b59c6c")
+		)
+		(pin "1"
+			(uuid "2eefa935-3878-46ff-801d-c972048ac4aa")
+		)
+		(pin "6"
+			(uuid "5e0d8d20-6f89-4475-873a-8891f0cc22fc")
+		)
+		(pin "7"
+			(uuid "90626c7b-03a5-4637-8078-718df018a8bd")
+		)
+		(pin "8"
+			(uuid "1a3d9f8c-f3dc-49c7-9db6-853e837da762")
+		)
+		(pin "4"
+			(uuid "84f97969-d5cb-4bc1-836b-c5fbdb63663f")
+		)
+		(instances
+			(project "dacboard"
+				(path "/35cb74e4-0f64-454b-9b50-bfac13ed28a5/78597d6c-f167-4e25-99ec-27c10aa3b74b/7256813f-126c-4da9-88ae-b15cd06c6f9a"
+					(reference "U25")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "power:GNDD")
+		(at 120.65 81.28 90)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "dfadbbf9-ff50-41de-ae1c-819c505084cf")
+		(property "Reference" "#PWR0104"
+			(at 127 81.28 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "DGND"
+			(at 124.46 81.2799 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(property "Footprint" ""
+			(at 120.65 81.28 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 120.65 81.28 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Power symbol creates a global label with name \"GNDD\" , digital ground"
+			(at 120.65 81.28 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "18eb6b2b-d04d-4a44-98e8-ce05edf11f6b")
+		)
+		(instances
+			(project "dacboard"
+				(path "/35cb74e4-0f64-454b-9b50-bfac13ed28a5/78597d6c-f167-4e25-99ec-27c10aa3b74b/7256813f-126c-4da9-88ae-b15cd06c6f9a"
+					(reference "#PWR0104")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "power:VDD")
+		(at 252.73 114.3 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "ea305ce4-accf-4dab-b3e6-62425e111fa5")
+		(property "Reference" "#PWR0131"
+			(at 252.73 118.11 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "VDD"
+			(at 252.73 109.22 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 252.73 114.3 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 252.73 114.3 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Power symbol creates a global label with name \"VDD\""
+			(at 252.73 114.3 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "262cc58f-b006-4d7e-9701-1b19fe352695")
+		)
+		(instances
+			(project "dacboard"
+				(path "/35cb74e4-0f64-454b-9b50-bfac13ed28a5/78597d6c-f167-4e25-99ec-27c10aa3b74b/7256813f-126c-4da9-88ae-b15cd06c6f9a"
+					(reference "#PWR0131")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Device:C")
+		(at 34.29 179.07 0)
+		(mirror y)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "eae329b5-c129-4046-aa37-1dda94ff46ca")
+		(property "Reference" "C31"
+			(at 27.686 177.8 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(property "Value" "10uF"
+			(at 26.924 180.34 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(property "Footprint" ""
+			(at 33.3248 182.88 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 34.29 179.07 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Unpolarized capacitor"
+			(at 34.29 179.07 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "6b16eacb-ffbe-439e-ab6a-75a0b4dfede4")
+		)
+		(pin "2"
+			(uuid "7a1282dd-6bd5-482e-9d89-e05075e56d7d")
+		)
+		(instances
+			(project "dacboard"
+				(path "/35cb74e4-0f64-454b-9b50-bfac13ed28a5/78597d6c-f167-4e25-99ec-27c10aa3b74b/7256813f-126c-4da9-88ae-b15cd06c6f9a"
+					(reference "C31")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "power:GNDD")
+		(at 262.89 81.28 90)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "eb1eb136-0ac5-4c8e-9962-5e4776390a04")
+		(property "Reference" "#PWR0130"
+			(at 269.24 81.28 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "DGND"
+			(at 266.7 81.2799 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(property "Footprint" ""
+			(at 262.89 81.28 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 262.89 81.28 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Power symbol creates a global label with name \"GNDD\" , digital ground"
+			(at 262.89 81.28 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "e712c2e1-d9da-4744-8714-c9c4aa2b8ff8")
+		)
+		(instances
+			(project "dacboard"
+				(path "/35cb74e4-0f64-454b-9b50-bfac13ed28a5/78597d6c-f167-4e25-99ec-27c10aa3b74b/7256813f-126c-4da9-88ae-b15cd06c6f9a"
+					(reference "#PWR0130")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "power:VDD")
+		(at 53.34 121.92 90)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "ebf0e6bc-0804-494d-baf6-fe431f1c9d81")
+		(property "Reference" "#PWR097"
+			(at 57.15 121.92 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "VDD"
+			(at 49.53 121.9199 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" ""
+			(at 53.34 121.92 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 53.34 121.92 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Power symbol creates a global label with name \"VDD\""
+			(at 53.34 121.92 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "2ba5bd18-20eb-40e1-bf9b-cbd9bd084cd8")
+		)
+		(instances
+			(project "dacboard"
+				(path "/35cb74e4-0f64-454b-9b50-bfac13ed28a5/78597d6c-f167-4e25-99ec-27c10aa3b74b/7256813f-126c-4da9-88ae-b15cd06c6f9a"
+					(reference "#PWR097")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "power:VDD")
+		(at 53.34 36.83 90)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "fbaeda96-86d0-4151-920d-350eb561be5b")
+		(property "Reference" "#PWR095"
+			(at 57.15 36.83 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "VDD"
+			(at 49.53 36.8299 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" ""
+			(at 53.34 36.83 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 53.34 36.83 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Power symbol creates a global label with name \"VDD\""
+			(at 53.34 36.83 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "7cc66260-9cfd-4974-9720-c44a34b47889")
+		)
+		(instances
+			(project "dacboard"
+				(path "/35cb74e4-0f64-454b-9b50-bfac13ed28a5/78597d6c-f167-4e25-99ec-27c10aa3b74b/7256813f-126c-4da9-88ae-b15cd06c6f9a"
+					(reference "#PWR095")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Amplifier_Operational:AD8676xR")
+		(at 22.86 71.12 0)
+		(mirror y)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "fbd19854-23a4-4570-946f-bbc286ef5bc8")
+		(property "Reference" "U23"
+			(at 22.86 60.96 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "AD8676xR"
+			(at 22.86 63.5 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" "Package_SO:SOIC-8_3.9x4.9mm_P1.27mm"
+			(at 20.32 71.12 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "https://www.analog.com/media/en/technical-documentation/data-sheets/AD8676.pdf"
+			(at 16.51 67.31 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Dual operational amplifier, Ultra-precision, 36V, Rail-to-rail output, SOIC-8"
+			(at 22.86 71.12 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "5"
+			(uuid "b0a8b05c-f879-4a25-bae9-4e54e91b59b6")
+		)
+		(pin "3"
+			(uuid "84908138-c020-491d-8b29-bca32025e92b")
+		)
+		(pin "2"
+			(uuid "4b1646ae-1f8e-4cb1-99e5-c2426cdc77cf")
+		)
+		(pin "1"
+			(uuid "d19d5c50-743c-4d38-9a37-de0eb753c992")
+		)
+		(pin "6"
+			(uuid "5e0d8d20-6f89-4475-873a-8891f0cc22f9")
+		)
+		(pin "7"
+			(uuid "90626c7b-03a5-4637-8078-718df018a8ba")
+		)
+		(pin "8"
+			(uuid "1a3d9f8c-f3dc-49c7-9db6-853e837da75e")
+		)
+		(pin "4"
+			(uuid "84f97969-d5cb-4bc1-836b-c5fbdb63663b")
+		)
+		(instances
+			(project "dacboard"
+				(path "/35cb74e4-0f64-454b-9b50-bfac13ed28a5/78597d6c-f167-4e25-99ec-27c10aa3b74b/7256813f-126c-4da9-88ae-b15cd06c6f9a"
+					(reference "U23")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "power:+5V")
+		(at 175.26 46.99 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "ffcfa840-e926-4302-be01-f0e1025e7cdf")
+		(property "Reference" "#PWR0279"
+			(at 175.26 50.8 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "+5VD"
+			(at 175.26 41.91 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 175.26 46.99 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 175.26 46.99 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Power symbol creates a global label with name \"+5V\""
+			(at 175.26 46.99 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "95fd8f29-7b74-4735-942c-a4614f6f8117")
+		)
+		(instances
+			(project "dacboard"
+				(path "/35cb74e4-0f64-454b-9b50-bfac13ed28a5/78597d6c-f167-4e25-99ec-27c10aa3b74b/7256813f-126c-4da9-88ae-b15cd06c6f9a"
+					(reference "#PWR0279")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "power:VDD")
+		(at 224.79 114.3 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "ffd026e0-a268-4533-b3fa-d26bda50db09")
+		(property "Reference" "#PWR0121"
+			(at 224.79 118.11 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "VDD"
+			(at 224.79 109.22 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 224.79 114.3 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 224.79 114.3 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Power symbol creates a global label with name \"VDD\""
+			(at 224.79 114.3 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "2ba78e6c-4379-4dee-884f-7d8446600ae8")
+		)
+		(instances
+			(project "dacboard"
+				(path "/35cb74e4-0f64-454b-9b50-bfac13ed28a5/78597d6c-f167-4e25-99ec-27c10aa3b74b/7256813f-126c-4da9-88ae-b15cd06c6f9a"
+					(reference "#PWR0121")
+					(unit 1)
+				)
+			)
+		)
+	)
+)
