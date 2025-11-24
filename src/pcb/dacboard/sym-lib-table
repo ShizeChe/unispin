@@ -7,4 +7,5 @@
   (lib (name "LT5400BCMS8E-7_PBF")(type "KiCad")(uri "C:/Users/ShizeChe/Downloads/LT5400BCMS8E_7_PBF/LT5400BCMS8E-7_PBF.kicad_sym")(options "")(descr ""))
   (lib (name "2025-11-19_00-21-39")(type "KiCad")(uri "C:/Users/ShizeChe/Downloads/AD5791BRUZ/KiCADv6/2025-11-19_00-21-39.kicad_sym")(options "")(descr ""))
   (lib (name "2025-11-19_01-14-20")(type "KiCad")(uri "C:/Users/ShizeChe/Downloads/AD8675ARZ/KiCADv6/2025-11-19_01-14-20.kicad_sym")(options "")(descr ""))
+  (lib (name "2025-11-20_00-47-15")(type "KiCad")(uri "C:/Users/ShizeChe/Downloads/ISO6761FQDWRQ1/KiCADv6/2025-11-20_00-47-15.kicad_sym")(options "")(descr ""))
 )

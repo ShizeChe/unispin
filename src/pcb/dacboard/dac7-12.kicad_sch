@@ -5,14 +5,14 @@
 	(uuid "f45a1195-7b6a-4c37-b04c-c2c52076d44f")
 	(paper "A4")
 	(lib_symbols
-		(symbol "2025-11-19_00-21-39:AD5791BRUZ"
+		(symbol "AD5791BRUZ_1"
 			(pin_names
 				(offset 0.254)
 			)
 			(exclude_from_sim no)
 			(in_bom yes)
 			(on_board yes)
-			(property "Reference" "U"
+			(property "Reference" "U10"
 				(at 25.4 10.16 0)
 				(effects
 					(font
@@ -28,7 +28,7 @@
 					)
 				)
 			)
-			(property "Footprint" "RU_20_ADI"
+			(property "Footprint" "Package_SO:TSSOP-20_4.4x6.5mm_P0.65mm"
 				(at 0 0 0)
 				(effects
 					(font
@@ -83,7 +83,7 @@
 					(hide yes)
 				)
 			)
-			(symbol "AD5791BRUZ_0_1"
+			(symbol "AD5791BRUZ_1_0_1"
 				(polyline
 					(pts
 						(xy 7.62 5.08) (xy 7.62 -27.94)
@@ -132,7 +132,7 @@
 						(type none)
 					)
 				)
-				(pin input line
+				(pin passive line
 					(at 0 0 0)
 					(length 7.62)
 					(name "INV"
@@ -168,7 +168,7 @@
 						)
 					)
 				)
-				(pin power_in line
+				(pin passive line
 					(at 0 -5.08 0)
 					(length 7.62)
 					(name "VREFPS"
@@ -186,7 +186,7 @@
 						)
 					)
 				)
-				(pin power_in line
+				(pin passive line
 					(at 0 -7.62 0)
 					(length 7.62)
 					(name "VREFPF"
@@ -294,7 +294,7 @@
 						)
 					)
 				)
-				(pin power_in line
+				(pin passive line
 					(at 0 -22.86 0)
 					(length 7.62)
 					(name "IOVCC"
@@ -312,7 +312,7 @@
 						)
 					)
 				)
-				(pin unspecified line
+				(pin passive line
 					(at 50.8 0 180)
 					(length 7.62)
 					(name "RFB"
@@ -330,7 +330,7 @@
 						)
 					)
 				)
-				(pin power_out line
+				(pin passive line
 					(at 50.8 -2.54 180)
 					(length 7.62)
 					(name "AGND"
@@ -348,7 +348,7 @@
 						)
 					)
 				)
-				(pin power_out line
+				(pin passive line
 					(at 50.8 -5.08 180)
 					(length 7.62)
 					(name "VSS"
@@ -366,7 +366,7 @@
 						)
 					)
 				)
-				(pin power_in line
+				(pin passive line
 					(at 50.8 -7.62 180)
 					(length 7.62)
 					(name "VREFNS"
@@ -384,7 +384,7 @@
 						)
 					)
 				)
-				(pin power_in line
+				(pin passive line
 					(at 50.8 -10.16 180)
 					(length 7.62)
 					(name "VREFNF"
@@ -402,7 +402,7 @@
 						)
 					)
 				)
-				(pin power_out line
+				(pin passive line
 					(at 50.8 -12.7 180)
 					(length 7.62)
 					(name "DGND"
@@ -3764,17 +3764,18 @@
 		)
 	)
 	(symbol
+		(lib_name "AD5791BRUZ_1")
 		(lib_id "2025-11-19_00-21-39:AD5791BRUZ")
-		(at 194.31 26.67 0)
+		(at 53.34 26.67 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
 		(fields_autoplaced yes)
-		(uuid "02f52995-bad3-47a4-a0ec-810e19bf2803")
-		(property "Reference" "U32"
-			(at 219.71 16.51 0)
+		(uuid "0d4dff10-aa94-489b-9d3e-5328992c0a9a")
+		(property "Reference" "U26"
+			(at 78.74 16.51 0)
 			(effects
 				(font
 					(size 1.524 1.524)
@@ -3782,15 +3783,15 @@
 			)
 		)
 		(property "Value" "AD5791BRUZ"
-			(at 219.71 19.05 0)
+			(at 78.74 19.05 0)
 			(effects
 				(font
 					(size 1.524 1.524)
 				)
 			)
 		)
-		(property "Footprint" "RU_20_ADI"
-			(at 194.31 26.67 0)
+		(property "Footprint" "Package_SO:TSSOP-20_4.4x6.5mm_P0.65mm"
+			(at 53.34 26.67 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3800,7 +3801,7 @@
 			)
 		)
 		(property "Datasheet" "https://www.analog.com/media/en/technical-documentation/data-sheets/AD5791-EP.pdf"
-			(at 194.31 26.67 0)
+			(at 53.34 26.67 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3810,7 +3811,7 @@
 			)
 		)
 		(property "Description" ""
-			(at 194.31 26.67 0)
+			(at 53.34 26.67 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3819,69 +3820,69 @@
 			)
 		)
 		(pin "5"
-			(uuid "b4acea38-e801-4d2a-a250-e1576d5a4d86")
+			(uuid "ebe361a0-8fab-4fe0-abc9-128322b3bd1a")
 		)
 		(pin "6"
-			(uuid "d8644eb9-ef8d-4c89-9a70-abcd8e3fab75")
+			(uuid "2192ecad-1cfd-40ea-aff5-12be5667eb87")
 		)
 		(pin "4"
-			(uuid "1a16c672-9fe7-46b4-a2db-61b7d1658fbe")
+			(uuid "ec115c71-109e-4dc6-8588-2898ea66b500")
 		)
 		(pin "8"
-			(uuid "05260f4b-3d45-4938-b5f8-d94a2393c90d")
+			(uuid "31a67f2e-f8ca-496f-af70-694c7e27a816")
 		)
 		(pin "3"
-			(uuid "57dee5f9-a5fe-4087-bb06-b46eaf2fe640")
+			(uuid "9c585a17-582d-4ef9-85eb-c92d028b91f3")
 		)
 		(pin "9"
-			(uuid "7afba6dd-c078-46b4-a4f2-43cb6a235666")
+			(uuid "b61e21ff-a9a0-4546-9cc8-b6dd4c2b2983")
 		)
 		(pin "18"
-			(uuid "5ec0c83b-a9a4-4d86-a3c0-af9360fabfa4")
+			(uuid "5918ec68-770c-41b7-aef8-9f848ea808a9")
 		)
 		(pin "1"
-			(uuid "9c5a2e42-aca8-49c9-a034-3568ab2d76b9")
+			(uuid "7131f1c4-5cf9-4547-96d3-1fee37daaee0")
 		)
 		(pin "2"
-			(uuid "8bcab038-53d3-4aa9-9587-3511d9300fad")
+			(uuid "a1c65535-7a36-4def-a517-252b2bdaf6e3")
 		)
 		(pin "7"
-			(uuid "258a2d4a-a1d5-48b4-b961-7446928b8624")
+			(uuid "85d32bce-e38c-4bc0-b2a2-3d37096efe7e")
 		)
 		(pin "10"
-			(uuid "b50316d6-d07b-4c2a-b2c7-f15f4cd0ed0f")
+			(uuid "13425922-a1b4-4072-92e6-1f257b5ca2df")
 		)
 		(pin "20"
-			(uuid "0cbaab35-bee2-456e-ba6a-54d35d94fd0c")
+			(uuid "6e9aaa9a-e9bc-4f03-af1f-2d6945c0dd69")
 		)
 		(pin "19"
-			(uuid "2132815c-e223-4790-82c8-9cdc92cc2d48")
+			(uuid "14518e26-2dcc-4447-a706-bd6ddef8df42")
 		)
 		(pin "17"
-			(uuid "cd33beb0-d8ab-4077-bd62-214aa1256339")
+			(uuid "3a92d997-a62c-4c38-b3ec-81170da69ab5")
 		)
 		(pin "14"
-			(uuid "64c0535f-f6f9-45cb-8064-46f38b5eafe8")
+			(uuid "064e2097-9f93-40ae-b581-debcd83e2be7")
 		)
 		(pin "15"
-			(uuid "4cbb0cc1-d45c-4507-baaf-fe998625603c")
+			(uuid "f3df39cd-9990-498a-ae66-eddd1d2614c8")
 		)
 		(pin "13"
-			(uuid "dc4c2aa5-97d0-4a46-9c60-c6935bf3cee1")
+			(uuid "398a16c9-8535-4a54-9a5e-f15820ba5ca6")
 		)
 		(pin "16"
-			(uuid "699ac4d6-9202-4fe5-bb2c-5f85edce39c3")
+			(uuid "d68cf3b3-cef1-4a49-91bd-116826309b19")
 		)
 		(pin "11"
-			(uuid "8aad2c8d-5fb1-467f-9f38-b6d9fd64bbd2")
+			(uuid "5f350d23-3cc1-4cd4-a988-3cc29d14ed74")
 		)
 		(pin "12"
-			(uuid "17a1bd2a-1f9f-4e17-a8fa-042eb5a09dad")
+			(uuid "20d8439c-0f80-40f6-b098-e65adf3ca423")
 		)
 		(instances
 			(project "dacboard"
 				(path "/35cb74e4-0f64-454b-9b50-bfac13ed28a5/78597d6c-f167-4e25-99ec-27c10aa3b74b/7256813f-126c-4da9-88ae-b15cd06c6f9a"
-					(reference "U32")
+					(reference "U26")
 					(unit 1)
 				)
 			)
@@ -4439,17 +4440,18 @@
 		)
 	)
 	(symbol
+		(lib_name "AD5791BRUZ_1")
 		(lib_id "2025-11-19_00-21-39:AD5791BRUZ")
-		(at 194.31 68.58 0)
+		(at 194.31 26.67 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
 		(fields_autoplaced yes)
-		(uuid "1fa02c47-c220-4f63-a453-29fa6d5423f2")
-		(property "Reference" "U33"
-			(at 219.71 58.42 0)
+		(uuid "268c3afe-0937-479e-a854-8feb58f745c5")
+		(property "Reference" "U32"
+			(at 219.71 16.51 0)
 			(effects
 				(font
 					(size 1.524 1.524)
@@ -4457,15 +4459,15 @@
 			)
 		)
 		(property "Value" "AD5791BRUZ"
-			(at 219.71 60.96 0)
+			(at 219.71 19.05 0)
 			(effects
 				(font
 					(size 1.524 1.524)
 				)
 			)
 		)
-		(property "Footprint" "RU_20_ADI"
-			(at 194.31 68.58 0)
+		(property "Footprint" "Package_SO:TSSOP-20_4.4x6.5mm_P0.65mm"
+			(at 194.31 26.67 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4475,7 +4477,7 @@
 			)
 		)
 		(property "Datasheet" "https://www.analog.com/media/en/technical-documentation/data-sheets/AD5791-EP.pdf"
-			(at 194.31 68.58 0)
+			(at 194.31 26.67 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4485,7 +4487,7 @@
 			)
 		)
 		(property "Description" ""
-			(at 194.31 68.58 0)
+			(at 194.31 26.67 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4494,69 +4496,69 @@
 			)
 		)
 		(pin "5"
-			(uuid "5d144a39-f594-4ab9-ba5a-08727bb3ef40")
+			(uuid "7dd459f0-f138-4b1c-891d-eb74e750d565")
 		)
 		(pin "6"
-			(uuid "32c6a5f8-7727-47f5-b2fb-747cc60ecf3f")
+			(uuid "2ee111b9-1f0f-4302-b90c-996d09a76e27")
 		)
 		(pin "4"
-			(uuid "4f1d669a-bf15-4500-9c17-b47e9f35c273")
+			(uuid "bfbb8b08-e4f0-49b5-b911-7906f0f2f0c0")
 		)
 		(pin "8"
-			(uuid "bf158c59-ac46-4c2b-8a04-b0cbde2acc30")
+			(uuid "0fedc3df-abd6-467a-8ee1-422c9c90dd08")
 		)
 		(pin "3"
-			(uuid "53f46cf9-05e3-41e1-a464-46df88c3f3bc")
+			(uuid "fbbdb7f7-5395-4070-bbc2-1373fbe01bc3")
 		)
 		(pin "9"
-			(uuid "081b4781-2f02-40f4-bdc5-4cabcb3b4631")
+			(uuid "ca7b126b-0008-4725-9d16-af359d321929")
 		)
 		(pin "18"
-			(uuid "85bb2fb0-1291-4ebe-a45a-a889a956d5e1")
+			(uuid "7675ebf0-5c1a-453c-8e9f-c5e0891a2ee2")
 		)
 		(pin "1"
-			(uuid "c5d9fee5-7922-4819-b6a8-197638d3f468")
+			(uuid "e5f65e8c-9db8-4ef9-bfa6-0b8a53570364")
 		)
 		(pin "2"
-			(uuid "3c3839ae-1d6b-4b07-8aed-060437d69544")
+			(uuid "94667369-d06c-450c-b880-e9b89b28f292")
 		)
 		(pin "7"
-			(uuid "45e90c00-749b-46ff-9541-dffa3461045a")
+			(uuid "40a06ea9-e1c6-4b76-bbb6-89df6d20969c")
 		)
 		(pin "10"
-			(uuid "9856c0dc-fca0-4b74-8160-94493b82dafa")
+			(uuid "be6dea95-5aec-4571-b141-feb6f38ce1cc")
 		)
 		(pin "20"
-			(uuid "1a4bd997-f41f-4834-b25d-7741b7de6704")
+			(uuid "07082aaf-1cb3-420c-98eb-913fa62a5481")
 		)
 		(pin "19"
-			(uuid "80a4072a-01e2-4679-8b17-cd13d4a42300")
+			(uuid "5b3be8ee-a631-4e9e-86dd-16358ce945cc")
 		)
 		(pin "17"
-			(uuid "85a9dda2-49a1-4714-9bc9-49eefd6d75d9")
+			(uuid "29d544f1-03d5-4bac-aed4-05004a84cef1")
 		)
 		(pin "14"
-			(uuid "c7153b0a-380b-49ba-9572-0bb05d2910cc")
+			(uuid "161779dc-304b-4606-b5f6-58c7f5758c08")
 		)
 		(pin "15"
-			(uuid "8c56990d-7f32-482f-abf7-9b62c4da0b18")
+			(uuid "2a110528-1118-4cf8-8b7c-6bda22165aba")
 		)
 		(pin "13"
-			(uuid "f1c78689-0a77-4a33-9165-516da2441ea8")
+			(uuid "facf3400-1707-475a-9c54-3613d7171429")
 		)
 		(pin "16"
-			(uuid "3fa1f159-c7fa-4d06-9d31-6462f576590a")
+			(uuid "99c697a4-f3ee-4a78-95e4-1d0ef702dca6")
 		)
 		(pin "11"
-			(uuid "fae9cdb5-47d0-48dc-b47a-8e9214f981da")
+			(uuid "a44c8590-3088-4f56-8cb7-8285ff4004ac")
 		)
 		(pin "12"
-			(uuid "0a93789c-2e52-492d-8174-2ff9403a6e18")
+			(uuid "e9c112fa-4c6b-40b2-8390-fd4d24c4d0ae")
 		)
 		(instances
 			(project "dacboard"
 				(path "/35cb74e4-0f64-454b-9b50-bfac13ed28a5/78597d6c-f167-4e25-99ec-27c10aa3b74b/7256813f-126c-4da9-88ae-b15cd06c6f9a"
-					(reference "U33")
+					(reference "U32")
 					(unit 1)
 				)
 			)
@@ -5076,7 +5078,7 @@
 				(justify right)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Capacitor_SMD:C_0603_1608Metric_Pad1.08x0.95mm_HandSolder"
 			(at 33.3248 54.61 0)
 			(effects
 				(font
@@ -5213,7 +5215,7 @@
 				(justify right)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Capacitor_SMD:C_0603_1608Metric_Pad1.08x0.95mm_HandSolder"
 			(at 174.2948 54.61 0)
 			(effects
 				(font
@@ -5416,7 +5418,7 @@
 				(justify right)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Capacitor_SMD:C_0603_1608Metric_Pad1.08x0.95mm_HandSolder"
 			(at 33.3248 96.52 0)
 			(effects
 				(font
@@ -6149,7 +6151,7 @@
 				(justify right)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Capacitor_SMD:C_0603_1608Metric_Pad1.08x0.95mm_HandSolder"
 			(at 33.3248 139.7 0)
 			(effects
 				(font
@@ -6219,7 +6221,7 @@
 				(justify right)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Capacitor_SMD:C_0603_1608Metric_Pad1.08x0.95mm_HandSolder"
 			(at 174.2948 96.52 0)
 			(effects
 				(font
@@ -6323,6 +6325,381 @@
 			(project "dacboard"
 				(path "/35cb74e4-0f64-454b-9b50-bfac13ed28a5/78597d6c-f167-4e25-99ec-27c10aa3b74b/7256813f-126c-4da9-88ae-b15cd06c6f9a"
 					(reference "#PWR0107")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_name "AD5791BRUZ_1")
+		(lib_id "2025-11-19_00-21-39:AD5791BRUZ")
+		(at 194.31 68.58 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "6cf3c96d-0368-4475-98f5-82138a6084ef")
+		(property "Reference" "U33"
+			(at 219.71 58.42 0)
+			(effects
+				(font
+					(size 1.524 1.524)
+				)
+			)
+		)
+		(property "Value" "AD5791BRUZ"
+			(at 219.71 60.96 0)
+			(effects
+				(font
+					(size 1.524 1.524)
+				)
+			)
+		)
+		(property "Footprint" "Package_SO:TSSOP-20_4.4x6.5mm_P0.65mm"
+			(at 194.31 68.58 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+					(italic yes)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "https://www.analog.com/media/en/technical-documentation/data-sheets/AD5791-EP.pdf"
+			(at 194.31 68.58 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+					(italic yes)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 194.31 68.58 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "5"
+			(uuid "f4020cd4-f6a4-4539-aaac-639c899231c9")
+		)
+		(pin "6"
+			(uuid "0e8aa5f5-7bec-4c60-b184-45d1b6b5beee")
+		)
+		(pin "4"
+			(uuid "7fc6d2dc-f6a0-42cc-9940-4e7be43bd1a6")
+		)
+		(pin "8"
+			(uuid "db254ed9-cbf8-4440-83a3-ed72ce48dafa")
+		)
+		(pin "3"
+			(uuid "16d48deb-ad0f-4802-89b6-a5ab4ec80427")
+		)
+		(pin "9"
+			(uuid "c9e6837a-0b03-4e6b-8725-614856931b8c")
+		)
+		(pin "18"
+			(uuid "0d3f8f00-de36-4ee6-a7fc-38b84976e16a")
+		)
+		(pin "1"
+			(uuid "70d79582-d3a6-4ffd-aa51-ee21565df90a")
+		)
+		(pin "2"
+			(uuid "f1672634-65f1-4844-9323-16f262d07418")
+		)
+		(pin "7"
+			(uuid "faee2b9c-1f2d-47bd-9c63-6b4fcc5cf337")
+		)
+		(pin "10"
+			(uuid "ef69f8fb-217b-4cf2-acb2-d5af974c548f")
+		)
+		(pin "20"
+			(uuid "d4045f85-4685-424b-b2fe-0e8231776213")
+		)
+		(pin "19"
+			(uuid "309ce5d1-6075-467e-a34a-3612bc0fa36f")
+		)
+		(pin "17"
+			(uuid "ce014a57-1bdd-4fdd-89d6-4d7b77e5dd4d")
+		)
+		(pin "14"
+			(uuid "524dc739-20c1-4cc3-aad0-c5abf5a1ac65")
+		)
+		(pin "15"
+			(uuid "c821d933-6d69-443b-ac12-d8a73189690b")
+		)
+		(pin "13"
+			(uuid "10572655-3ce3-499c-9e79-e1e3a9c2125c")
+		)
+		(pin "16"
+			(uuid "0fb1471d-ee91-4acd-8241-564c0a0bb1a3")
+		)
+		(pin "11"
+			(uuid "76e66e2f-27a6-42f0-afa0-f61fc03f9392")
+		)
+		(pin "12"
+			(uuid "92124835-19f3-4af5-8642-2ef301563e8f")
+		)
+		(instances
+			(project "dacboard"
+				(path "/35cb74e4-0f64-454b-9b50-bfac13ed28a5/78597d6c-f167-4e25-99ec-27c10aa3b74b/7256813f-126c-4da9-88ae-b15cd06c6f9a"
+					(reference "U33")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_name "AD5791BRUZ_1")
+		(lib_id "2025-11-19_00-21-39:AD5791BRUZ")
+		(at 53.34 154.94 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "6e19e9c8-779f-498e-aae4-9803dd2db075")
+		(property "Reference" "U29"
+			(at 78.74 144.78 0)
+			(effects
+				(font
+					(size 1.524 1.524)
+				)
+			)
+		)
+		(property "Value" "AD5791BRUZ"
+			(at 78.74 147.32 0)
+			(effects
+				(font
+					(size 1.524 1.524)
+				)
+			)
+		)
+		(property "Footprint" "Package_SO:TSSOP-20_4.4x6.5mm_P0.65mm"
+			(at 53.34 154.94 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+					(italic yes)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "https://www.analog.com/media/en/technical-documentation/data-sheets/AD5791-EP.pdf"
+			(at 53.34 154.94 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+					(italic yes)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 53.34 154.94 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "5"
+			(uuid "a2817c05-e21a-4252-a100-d7a55c3e705b")
+		)
+		(pin "6"
+			(uuid "4f8d7a57-c07b-4519-9715-58a123b323c5")
+		)
+		(pin "4"
+			(uuid "bcbef687-ca35-48a1-9f8d-0044e11643f9")
+		)
+		(pin "8"
+			(uuid "0a35acad-ade9-4245-ad9c-e04c89bcd528")
+		)
+		(pin "3"
+			(uuid "c41e4928-334e-42a5-992c-d132bba8b946")
+		)
+		(pin "9"
+			(uuid "625192eb-fb27-4128-832d-6879044e97be")
+		)
+		(pin "18"
+			(uuid "bc77a79c-0b4e-486e-a23a-269ee11ae0c2")
+		)
+		(pin "1"
+			(uuid "ee227ad2-0034-46e8-bd2a-0c14b4640320")
+		)
+		(pin "2"
+			(uuid "de3675f8-d4f5-45d5-bcf7-10116f3a78c4")
+		)
+		(pin "7"
+			(uuid "5ba448c6-0076-46d8-a2e0-e828b4355637")
+		)
+		(pin "10"
+			(uuid "25871ddd-cf9f-4b22-896c-94038f0c9c8f")
+		)
+		(pin "20"
+			(uuid "e8783a4b-c655-453e-8ee4-286c7f9c3464")
+		)
+		(pin "19"
+			(uuid "8c4bdb2a-4e8f-49d6-ace6-fdc451d1257c")
+		)
+		(pin "17"
+			(uuid "60b95fd3-10c7-43c8-be78-40311372fec7")
+		)
+		(pin "14"
+			(uuid "b42f92cc-527b-4a72-907e-5466a5882124")
+		)
+		(pin "15"
+			(uuid "edd10b2f-48c8-4f6c-976d-a7fc2eb00894")
+		)
+		(pin "13"
+			(uuid "95e7a817-764b-4734-8d5c-fcab59a244b6")
+		)
+		(pin "16"
+			(uuid "abf232e2-0d5e-4d31-b95f-7ac512f63c99")
+		)
+		(pin "11"
+			(uuid "dea9019f-1752-4a1e-ae40-2b360e7d890e")
+		)
+		(pin "12"
+			(uuid "d23da962-ea6e-472d-8abc-8c4ab468654a")
+		)
+		(instances
+			(project "dacboard"
+				(path "/35cb74e4-0f64-454b-9b50-bfac13ed28a5/78597d6c-f167-4e25-99ec-27c10aa3b74b/7256813f-126c-4da9-88ae-b15cd06c6f9a"
+					(reference "U29")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_name "AD5791BRUZ_1")
+		(lib_id "2025-11-19_00-21-39:AD5791BRUZ")
+		(at 53.34 111.76 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "6e94ffc0-1398-4b85-ad42-6d7cc60b34de")
+		(property "Reference" "U28"
+			(at 78.74 101.6 0)
+			(effects
+				(font
+					(size 1.524 1.524)
+				)
+			)
+		)
+		(property "Value" "AD5791BRUZ"
+			(at 78.74 104.14 0)
+			(effects
+				(font
+					(size 1.524 1.524)
+				)
+			)
+		)
+		(property "Footprint" "Package_SO:TSSOP-20_4.4x6.5mm_P0.65mm"
+			(at 53.34 111.76 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+					(italic yes)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "https://www.analog.com/media/en/technical-documentation/data-sheets/AD5791-EP.pdf"
+			(at 53.34 111.76 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+					(italic yes)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 53.34 111.76 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "5"
+			(uuid "0c2ff37c-cbd7-4c93-ab5e-7114b064f956")
+		)
+		(pin "6"
+			(uuid "e2ddbd67-dccf-405b-8c1b-fb1ac1698dba")
+		)
+		(pin "4"
+			(uuid "12081e21-31a7-4457-b4fa-107ea933dc05")
+		)
+		(pin "8"
+			(uuid "c25d3463-b011-49a6-b471-95050e29cf89")
+		)
+		(pin "3"
+			(uuid "dd396fa7-1e72-47d8-a1d3-220d3575f34b")
+		)
+		(pin "9"
+			(uuid "8e9acae8-a630-40be-bddb-4c2dfc337614")
+		)
+		(pin "18"
+			(uuid "3cc3aa92-8acd-4683-a749-c170ff7696d2")
+		)
+		(pin "1"
+			(uuid "39ed9209-100e-4cda-aecf-cfb1ebbcb94b")
+		)
+		(pin "2"
+			(uuid "ed918029-73c4-4f32-bfb5-96a40f925cd2")
+		)
+		(pin "7"
+			(uuid "def5e318-0fa5-4c1f-8b7a-4f8fd14fb5e2")
+		)
+		(pin "10"
+			(uuid "c9dad649-5591-4784-92eb-13357f55dadd")
+		)
+		(pin "20"
+			(uuid "6e7874bd-ab52-4ceb-beee-df8395b683d9")
+		)
+		(pin "19"
+			(uuid "5d863a14-da0e-4eb8-b2c7-c23fece2d060")
+		)
+		(pin "17"
+			(uuid "df6e08d0-6776-4f5b-a0db-9d8e76268374")
+		)
+		(pin "14"
+			(uuid "55b29006-bc8d-40f7-8b93-09638d942412")
+		)
+		(pin "15"
+			(uuid "586a1685-ad3b-4336-b06a-181f32a6d189")
+		)
+		(pin "13"
+			(uuid "239e7943-69dc-4821-8748-7600f11f5d59")
+		)
+		(pin "16"
+			(uuid "6b04157f-df7f-4be1-a1a8-5ba4f2be4759")
+		)
+		(pin "11"
+			(uuid "f36df442-ea2f-4c41-975a-aa2975014c76")
+		)
+		(pin "12"
+			(uuid "5f01bd60-7ea5-478e-8cd7-96a4f4933763")
+		)
+		(instances
+			(project "dacboard"
+				(path "/35cb74e4-0f64-454b-9b50-bfac13ed28a5/78597d6c-f167-4e25-99ec-27c10aa3b74b/7256813f-126c-4da9-88ae-b15cd06c6f9a"
+					(reference "U28")
 					(unit 1)
 				)
 			)
@@ -6855,130 +7232,6 @@
 		)
 	)
 	(symbol
-		(lib_id "2025-11-19_00-21-39:AD5791BRUZ")
-		(at 53.34 26.67 0)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(fields_autoplaced yes)
-		(uuid "8f24eeba-2f60-4ecd-884a-bc8c0c11646d")
-		(property "Reference" "U26"
-			(at 78.74 16.51 0)
-			(effects
-				(font
-					(size 1.524 1.524)
-				)
-			)
-		)
-		(property "Value" "AD5791BRUZ"
-			(at 78.74 19.05 0)
-			(effects
-				(font
-					(size 1.524 1.524)
-				)
-			)
-		)
-		(property "Footprint" "RU_20_ADI"
-			(at 53.34 26.67 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-					(italic yes)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" "https://www.analog.com/media/en/technical-documentation/data-sheets/AD5791-EP.pdf"
-			(at 53.34 26.67 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-					(italic yes)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" ""
-			(at 53.34 26.67 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "5"
-			(uuid "b13894e1-0371-464f-817c-274e0a301044")
-		)
-		(pin "6"
-			(uuid "a5a4ff4d-6553-42a6-91c4-8df63e1f7a0e")
-		)
-		(pin "4"
-			(uuid "c59fbf8a-20ab-4a3e-b8cf-8156df624c83")
-		)
-		(pin "8"
-			(uuid "d794f81c-2c73-4076-b0d2-fb2edc3679b8")
-		)
-		(pin "3"
-			(uuid "b3593686-c22a-4ac7-b887-8716da5ee7eb")
-		)
-		(pin "9"
-			(uuid "05faa8a9-7095-4982-8028-3e8eb5f20157")
-		)
-		(pin "18"
-			(uuid "cacdaaac-ae8b-4797-90cf-d96e1ff0ffd9")
-		)
-		(pin "1"
-			(uuid "4673416f-c07c-4672-816e-d1ef40f2ca18")
-		)
-		(pin "2"
-			(uuid "e88c250a-c721-4e8f-830e-fe6168065a84")
-		)
-		(pin "7"
-			(uuid "9e21425d-feed-4a01-9ecc-616909188c96")
-		)
-		(pin "10"
-			(uuid "004a6853-b791-4b22-956e-b4a1723ba89a")
-		)
-		(pin "20"
-			(uuid "5c0c148d-e4fb-47fa-b898-2c2409eade28")
-		)
-		(pin "19"
-			(uuid "793ffc48-1698-41a6-9826-6a672c8ddca7")
-		)
-		(pin "17"
-			(uuid "3ad1e157-fd48-45c0-bc8a-7a97ebbf7d11")
-		)
-		(pin "14"
-			(uuid "233d2491-8973-4528-921c-ae1cad30b1d6")
-		)
-		(pin "15"
-			(uuid "db8d78f3-e879-41b8-bff2-d1ab182ae742")
-		)
-		(pin "13"
-			(uuid "3118d97d-e21e-4c0e-a2c1-ef0006c1a681")
-		)
-		(pin "16"
-			(uuid "70f3e9fd-fbc4-4188-84aa-e9e6214d3e89")
-		)
-		(pin "11"
-			(uuid "236f8448-046b-4a79-9316-89b8998ea33d")
-		)
-		(pin "12"
-			(uuid "96cd6790-3c7c-4ca1-8ae3-f495ced5b007")
-		)
-		(instances
-			(project "dacboard"
-				(path "/35cb74e4-0f64-454b-9b50-bfac13ed28a5/78597d6c-f167-4e25-99ec-27c10aa3b74b/7256813f-126c-4da9-88ae-b15cd06c6f9a"
-					(reference "U26")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
 		(lib_id "Amplifier_Operational:AD8676xR")
 		(at 133.35 31.75 0)
 		(unit 2)
@@ -7060,130 +7313,6 @@
 				(path "/35cb74e4-0f64-454b-9b50-bfac13ed28a5/78597d6c-f167-4e25-99ec-27c10aa3b74b/7256813f-126c-4da9-88ae-b15cd06c6f9a"
 					(reference "U22")
 					(unit 2)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "2025-11-19_00-21-39:AD5791BRUZ")
-		(at 53.34 111.76 0)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(fields_autoplaced yes)
-		(uuid "9a896031-7b84-4f1d-8cf1-9e8dd97476f5")
-		(property "Reference" "U28"
-			(at 78.74 101.6 0)
-			(effects
-				(font
-					(size 1.524 1.524)
-				)
-			)
-		)
-		(property "Value" "AD5791BRUZ"
-			(at 78.74 104.14 0)
-			(effects
-				(font
-					(size 1.524 1.524)
-				)
-			)
-		)
-		(property "Footprint" "RU_20_ADI"
-			(at 53.34 111.76 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-					(italic yes)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" "https://www.analog.com/media/en/technical-documentation/data-sheets/AD5791-EP.pdf"
-			(at 53.34 111.76 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-					(italic yes)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" ""
-			(at 53.34 111.76 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "5"
-			(uuid "b4df2fb2-21ca-4c16-b7ed-5a7d26838b51")
-		)
-		(pin "6"
-			(uuid "eaf53aa4-8963-4c33-83a7-1e167e5d1a2d")
-		)
-		(pin "4"
-			(uuid "8d88c2e8-09aa-429e-849b-b0d3abc7eddc")
-		)
-		(pin "8"
-			(uuid "48807354-d15c-4b2c-94bd-b0c5d0ef4a15")
-		)
-		(pin "3"
-			(uuid "96e7acd2-cafd-4a97-8985-c5ed6ca2d49c")
-		)
-		(pin "9"
-			(uuid "e81bfae9-092a-47ad-a614-96e7f08a2ec8")
-		)
-		(pin "18"
-			(uuid "91bd3229-2152-40c6-9a4a-cd43006a90b9")
-		)
-		(pin "1"
-			(uuid "1870f632-cdbd-4577-889c-1ad8a5c7ecbb")
-		)
-		(pin "2"
-			(uuid "e393e4f2-0913-41f2-b213-8d5f98c08fcf")
-		)
-		(pin "7"
-			(uuid "c128ee11-2c40-4e6b-8038-765799ccb4c8")
-		)
-		(pin "10"
-			(uuid "b508a7cf-f0a2-4700-93a6-d811d8cdf044")
-		)
-		(pin "20"
-			(uuid "ee186134-be72-4dad-a66d-9beb110c2281")
-		)
-		(pin "19"
-			(uuid "06c59005-6dce-4995-8a55-c10faeaf0f1c")
-		)
-		(pin "17"
-			(uuid "53cde75e-db9d-4a92-8aaf-5960d49d3551")
-		)
-		(pin "14"
-			(uuid "fb109fac-8c3a-4cc2-8683-7b4a93660b31")
-		)
-		(pin "15"
-			(uuid "38d26d4a-5008-48d6-adba-ced33b2a35f8")
-		)
-		(pin "13"
-			(uuid "545006d7-4f35-43b9-ac84-76f8c0fa5369")
-		)
-		(pin "16"
-			(uuid "62ee3fd3-4896-4ae3-a57a-235c5d78a032")
-		)
-		(pin "11"
-			(uuid "ca2ce2c3-c65c-489c-b7fc-b4b4714b47ad")
-		)
-		(pin "12"
-			(uuid "55c6a177-43e4-4d67-8fa2-fef84f6baa29")
-		)
-		(instances
-			(project "dacboard"
-				(path "/35cb74e4-0f64-454b-9b50-bfac13ed28a5/78597d6c-f167-4e25-99ec-27c10aa3b74b/7256813f-126c-4da9-88ae-b15cd06c6f9a"
-					(reference "U28")
-					(unit 1)
 				)
 			)
 		)
@@ -8279,130 +8408,6 @@
 		)
 	)
 	(symbol
-		(lib_id "2025-11-19_00-21-39:AD5791BRUZ")
-		(at 53.34 68.58 0)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(fields_autoplaced yes)
-		(uuid "c76d5c05-71f1-4730-a90b-19e258942d8c")
-		(property "Reference" "U27"
-			(at 78.74 58.42 0)
-			(effects
-				(font
-					(size 1.524 1.524)
-				)
-			)
-		)
-		(property "Value" "AD5791BRUZ"
-			(at 78.74 60.96 0)
-			(effects
-				(font
-					(size 1.524 1.524)
-				)
-			)
-		)
-		(property "Footprint" "RU_20_ADI"
-			(at 53.34 68.58 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-					(italic yes)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" "https://www.analog.com/media/en/technical-documentation/data-sheets/AD5791-EP.pdf"
-			(at 53.34 68.58 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-					(italic yes)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" ""
-			(at 53.34 68.58 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "5"
-			(uuid "6b9462ed-deb1-4fa9-a432-c627fc637403")
-		)
-		(pin "6"
-			(uuid "2933df62-04da-4147-b739-49f668e1f6dc")
-		)
-		(pin "4"
-			(uuid "5046f92f-0c73-41b1-b8b8-9ddf0bc9c71d")
-		)
-		(pin "8"
-			(uuid "b58c33ed-94ae-42a1-8006-87308eb96340")
-		)
-		(pin "3"
-			(uuid "51ac507d-f028-451c-bfa3-89e89f61ebf5")
-		)
-		(pin "9"
-			(uuid "6d900ae6-1606-46fd-b9a5-137e8f41f426")
-		)
-		(pin "18"
-			(uuid "6ab064e2-454d-42de-bd80-5a1ec3184fd9")
-		)
-		(pin "1"
-			(uuid "dae5d2ce-e2af-49f0-a7ca-73e137af2c44")
-		)
-		(pin "2"
-			(uuid "536a6d5e-4afa-4e2b-a6c9-4b16f0fd8a03")
-		)
-		(pin "7"
-			(uuid "ee35dd16-ec22-468d-b345-60d39b6d2917")
-		)
-		(pin "10"
-			(uuid "dbf03a07-f0ea-4611-9768-d497fb30aa88")
-		)
-		(pin "20"
-			(uuid "994ec123-1713-4bb4-8e72-db038b6f7a97")
-		)
-		(pin "19"
-			(uuid "5b320c08-ce7b-4616-9946-8474473f742c")
-		)
-		(pin "17"
-			(uuid "17b40f32-f066-4e1d-9a7d-7a66d2a1fad6")
-		)
-		(pin "14"
-			(uuid "0319bbcf-4533-4f94-b809-f7083eaabbb0")
-		)
-		(pin "15"
-			(uuid "110316b6-d259-4f1f-b0bd-55e036e29319")
-		)
-		(pin "13"
-			(uuid "d5894841-37c5-40a6-b625-39bd6a519565")
-		)
-		(pin "16"
-			(uuid "3fb3109d-1d65-43a9-91d7-286e1b22d7d5")
-		)
-		(pin "11"
-			(uuid "9bd05fbf-1c18-462f-b9c2-fd3d6eee5af5")
-		)
-		(pin "12"
-			(uuid "174a1f2d-6e4a-46db-9466-92dfcd2d319d")
-		)
-		(instances
-			(project "dacboard"
-				(path "/35cb74e4-0f64-454b-9b50-bfac13ed28a5/78597d6c-f167-4e25-99ec-27c10aa3b74b/7256813f-126c-4da9-88ae-b15cd06c6f9a"
-					(reference "U27")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
 		(lib_id "Amplifier_Operational:AD8676xR")
 		(at 196.85 121.92 0)
 		(unit 3)
@@ -8486,6 +8491,131 @@
 				(path "/35cb74e4-0f64-454b-9b50-bfac13ed28a5/78597d6c-f167-4e25-99ec-27c10aa3b74b/7256813f-126c-4da9-88ae-b15cd06c6f9a"
 					(reference "U23")
 					(unit 3)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_name "AD5791BRUZ_1")
+		(lib_id "2025-11-19_00-21-39:AD5791BRUZ")
+		(at 53.34 68.58 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "cec87004-03e6-4317-9e2e-c28ff45fb1fe")
+		(property "Reference" "U27"
+			(at 78.74 58.42 0)
+			(effects
+				(font
+					(size 1.524 1.524)
+				)
+			)
+		)
+		(property "Value" "AD5791BRUZ"
+			(at 78.74 60.96 0)
+			(effects
+				(font
+					(size 1.524 1.524)
+				)
+			)
+		)
+		(property "Footprint" "Package_SO:TSSOP-20_4.4x6.5mm_P0.65mm"
+			(at 53.34 68.58 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+					(italic yes)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "https://www.analog.com/media/en/technical-documentation/data-sheets/AD5791-EP.pdf"
+			(at 53.34 68.58 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+					(italic yes)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 53.34 68.58 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "5"
+			(uuid "af9263c7-eae2-4f54-b9ea-875cae77f5ad")
+		)
+		(pin "6"
+			(uuid "26f8bbf0-c296-4f40-bf48-ee87ba86b81f")
+		)
+		(pin "4"
+			(uuid "e810c8f1-a06e-4b3c-ae84-0ec39a92641c")
+		)
+		(pin "8"
+			(uuid "17a8b54c-8267-46a6-baa0-7198b0aa46e5")
+		)
+		(pin "3"
+			(uuid "827e74f5-ef37-40bd-a7c4-482a7be6aead")
+		)
+		(pin "9"
+			(uuid "2989a1be-48a8-46a4-a873-a5d2467f375a")
+		)
+		(pin "18"
+			(uuid "5b2bb216-d581-4999-b992-62a83dec7337")
+		)
+		(pin "1"
+			(uuid "baf07da3-e098-4eb3-846d-8edd252d82c6")
+		)
+		(pin "2"
+			(uuid "0d24b4aa-ca24-4ad8-8e3a-9a02dc2949ff")
+		)
+		(pin "7"
+			(uuid "c7dfa4de-771b-4c22-9d54-d8bccdc8ba89")
+		)
+		(pin "10"
+			(uuid "e99acd8c-9a99-4fbd-9782-e0d2fafab7a0")
+		)
+		(pin "20"
+			(uuid "f20fedde-9a33-402d-bc99-e094862536c7")
+		)
+		(pin "19"
+			(uuid "3d2258c4-8050-410b-b8f0-6ecf18774902")
+		)
+		(pin "17"
+			(uuid "5eca8850-c05c-4aef-b504-a793aa3618b0")
+		)
+		(pin "14"
+			(uuid "8b0ec208-e32e-40a2-b57b-fdb8f26d5e42")
+		)
+		(pin "15"
+			(uuid "da010718-6fa9-495b-9f04-366cd015cc99")
+		)
+		(pin "13"
+			(uuid "4e5c4b79-b07e-4789-acce-ea6fb21f7eca")
+		)
+		(pin "16"
+			(uuid "13272f83-a5f3-4cc2-b681-7b62e2fec7fd")
+		)
+		(pin "11"
+			(uuid "a53c8e73-5ba7-45f9-a2c4-bded36ae9351")
+		)
+		(pin "12"
+			(uuid "1f3c6082-5c9f-4d0c-8c08-711e14416f15")
+		)
+		(instances
+			(project "dacboard"
+				(path "/35cb74e4-0f64-454b-9b50-bfac13ed28a5/78597d6c-f167-4e25-99ec-27c10aa3b74b/7256813f-126c-4da9-88ae-b15cd06c6f9a"
+					(reference "U27")
+					(unit 1)
 				)
 			)
 		)
@@ -8776,130 +8906,6 @@
 		)
 	)
 	(symbol
-		(lib_id "2025-11-19_00-21-39:AD5791BRUZ")
-		(at 53.34 154.94 0)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(fields_autoplaced yes)
-		(uuid "ddf7b1bd-597d-4dd1-bd89-7bf90d25e383")
-		(property "Reference" "U29"
-			(at 78.74 144.78 0)
-			(effects
-				(font
-					(size 1.524 1.524)
-				)
-			)
-		)
-		(property "Value" "AD5791BRUZ"
-			(at 78.74 147.32 0)
-			(effects
-				(font
-					(size 1.524 1.524)
-				)
-			)
-		)
-		(property "Footprint" "RU_20_ADI"
-			(at 53.34 154.94 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-					(italic yes)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" "https://www.analog.com/media/en/technical-documentation/data-sheets/AD5791-EP.pdf"
-			(at 53.34 154.94 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-					(italic yes)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" ""
-			(at 53.34 154.94 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "5"
-			(uuid "81acd618-e2a5-4dfc-a2b1-79e66c5646d8")
-		)
-		(pin "6"
-			(uuid "84b2d60e-1a87-4733-b01a-689bc1973984")
-		)
-		(pin "4"
-			(uuid "49bd346b-51cb-4656-8e96-8e15bb2f5449")
-		)
-		(pin "8"
-			(uuid "b066c408-0072-478f-9e98-a63c63175797")
-		)
-		(pin "3"
-			(uuid "f1bc54b3-e0cd-4322-9b02-88d0838b5db2")
-		)
-		(pin "9"
-			(uuid "997c533e-7369-4b12-9963-08f8b33e6674")
-		)
-		(pin "18"
-			(uuid "ddff9a05-1ebe-4e2e-b37e-b6bc6659b212")
-		)
-		(pin "1"
-			(uuid "3a32f881-4175-418e-8408-61050638b446")
-		)
-		(pin "2"
-			(uuid "2b3aa448-9ea3-464f-b1f0-761fded4fa71")
-		)
-		(pin "7"
-			(uuid "2ec99015-4157-4e59-b560-1ff992706c18")
-		)
-		(pin "10"
-			(uuid "64a8323f-541b-4abb-9ba8-866b8aed5cf3")
-		)
-		(pin "20"
-			(uuid "d5045824-59e7-49e5-b7dd-c6f4b7d3c589")
-		)
-		(pin "19"
-			(uuid "ac78a157-0e79-420c-9a4c-33861fb9d047")
-		)
-		(pin "17"
-			(uuid "823354ec-6619-410f-aad8-a96ba3c7fef6")
-		)
-		(pin "14"
-			(uuid "dd644f81-a71e-4d57-9f94-15f47fa5b1d2")
-		)
-		(pin "15"
-			(uuid "8a6d3d5f-84ba-4e83-9f89-9aef10a9c9d5")
-		)
-		(pin "13"
-			(uuid "962b8318-4a50-473a-8948-e545c2a72511")
-		)
-		(pin "16"
-			(uuid "e012c398-dc3b-4b64-b87c-ca860506213c")
-		)
-		(pin "11"
-			(uuid "c80b38ab-8d3c-4398-b758-369a1eeb7c0d")
-		)
-		(pin "12"
-			(uuid "2304554f-ace9-4a10-ba4b-5a6f75ef14e9")
-		)
-		(instances
-			(project "dacboard"
-				(path "/35cb74e4-0f64-454b-9b50-bfac13ed28a5/78597d6c-f167-4e25-99ec-27c10aa3b74b/7256813f-126c-4da9-88ae-b15cd06c6f9a"
-					(reference "U29")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
 		(lib_id "Amplifier_Operational:AD8676xR")
 		(at 22.86 157.48 0)
 		(mirror y)
@@ -9146,7 +9152,7 @@
 				(justify right)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Capacitor_SMD:C_0603_1608Metric_Pad1.08x0.95mm_HandSolder"
 			(at 33.3248 182.88 0)
 			(effects
 				(font
