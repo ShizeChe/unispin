@@ -1466,10 +1466,70 @@
 		)
 	)
 	(junction
+		(at 245.11 139.7)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "1f80e7e6-85f9-44f5-b207-d2141759be1f")
+	)
+	(junction
+		(at 217.17 132.08)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "2139031d-faea-4ec7-8914-341f388fd86b")
+	)
+	(junction
+		(at 217.17 152.4)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "32e67d4a-5d6f-4709-96cc-887f63474079")
+	)
+	(junction
 		(at 35.56 173.99)
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "345ef3c1-b4d0-4789-836b-4cb1c9db08a0")
+	)
+	(junction
+		(at 189.23 160.02)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "3a602a7d-f719-4f4a-b078-9f1b5797c7cd")
+	)
+	(junction
+		(at 203.2 139.7)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "3f57b5db-5400-4466-954a-84553259d3ef")
+	)
+	(junction
+		(at 189.23 132.08)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "441c990d-8e07-4364-ba45-0f62c191f746")
+	)
+	(junction
+		(at 189.23 152.4)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "44a60e02-4e3f-4764-aed8-f622d3fcb413")
+	)
+	(junction
+		(at 203.2 160.02)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "55d375e3-a2f6-48b7-8eb5-82a3948e9893")
+	)
+	(junction
+		(at 245.11 160.02)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "7cdb9493-ca8d-4aa7-ba17-9d14b1adcdbb")
+	)
+	(junction
+		(at 203.2 132.08)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "84cd4eb4-0f86-4ecc-b9da-6703e7d28721")
 	)
 	(junction
 		(at 35.56 130.81)
@@ -1478,10 +1538,40 @@
 		(uuid "8e9ad1f6-f13f-40a8-97c9-474c33dcf075")
 	)
 	(junction
+		(at 203.2 152.4)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "a3ae2117-f820-4cb8-93a1-460d87d7f26e")
+	)
+	(junction
+		(at 245.11 152.4)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "a6348971-2b1f-4336-b579-2e1d6230c115")
+	)
+	(junction
+		(at 231.14 160.02)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "a7530d8c-627a-4749-8afa-596d123ed8c4")
+	)
+	(junction
+		(at 217.17 139.7)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "b816314c-5186-4c8c-a8a9-498d2d5652b0")
+	)
+	(junction
 		(at 176.53 45.72)
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "c3309325-babd-40a7-81e6-b116094eb87d")
+	)
+	(junction
+		(at 231.14 139.7)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "c76eb161-d541-43f9-be1f-c8306c48a0fd")
 	)
 	(junction
 		(at 35.56 87.63)
@@ -1490,16 +1580,46 @@
 		(uuid "c8dcdee3-8c3e-40ba-b6a8-229004d31f5f")
 	)
 	(junction
+		(at 231.14 152.4)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "d29e3147-c2cf-4330-9e18-c024890836d8")
+	)
+	(junction
 		(at 176.53 87.63)
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "d59a3a3f-56a0-4917-bc8c-1adfe5332028")
 	)
 	(junction
+		(at 189.23 139.7)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "d5b22bcd-202a-4b37-8629-64d6ceef92a5")
+	)
+	(junction
+		(at 245.11 132.08)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "d6b3a8db-7c50-43c9-a5a8-ccad0f8a8426")
+	)
+	(junction
+		(at 217.17 160.02)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "e4d7324d-08b9-479b-90a4-d47627a3a107")
+	)
+	(junction
 		(at 35.56 45.72)
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "eba8fce5-fe7b-4418-b676-e9177b090234")
+	)
+	(junction
+		(at 231.14 132.08)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "ec84c558-43b5-435b-8386-2e674ccfde27")
 	)
 	(wire
 		(pts
@@ -1543,6 +1663,16 @@
 	)
 	(wire
 		(pts
+			(xy 203.2 132.08) (xy 217.17 132.08)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "05747f1d-d9ba-4c67-b035-4018a05efb8b")
+	)
+	(wire
+		(pts
 			(xy 35.56 173.99) (xy 54.61 173.99)
 		)
 		(stroke
@@ -1560,6 +1690,16 @@
 			(type default)
 		)
 		(uuid "0a44818f-6f8c-40e6-8d85-4492caa9b7b8")
+	)
+	(wire
+		(pts
+			(xy 189.23 160.02) (xy 203.2 160.02)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "0b696d1b-6c3f-4944-a46b-2af0ed73e28e")
 	)
 	(wire
 		(pts
@@ -1623,6 +1763,16 @@
 	)
 	(wire
 		(pts
+			(xy 231.14 160.02) (xy 245.11 160.02)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "253e3ae5-afc0-4e88-b47e-c3103b8f7d0b")
+	)
+	(wire
+		(pts
 			(xy 16.51 118.11) (xy 54.61 118.11)
 		)
 		(stroke
@@ -1630,6 +1780,16 @@
 			(type default)
 		)
 		(uuid "28200074-c498-46b2-993f-84491a6ad61d")
+	)
+	(wire
+		(pts
+			(xy 217.17 152.4) (xy 231.14 152.4)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "2ab0a966-4b08-4a24-aeb0-5aba2a113342")
 	)
 	(wire
 		(pts
@@ -1650,6 +1810,16 @@
 			(type default)
 		)
 		(uuid "367d0fa5-846c-4dda-897a-677fab5aa403")
+	)
+	(wire
+		(pts
+			(xy 231.14 139.7) (xy 245.11 139.7)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "3892e60f-d2b7-47ed-81ee-b8f1e1c6bd5f")
 	)
 	(wire
 		(pts
@@ -1753,6 +1923,26 @@
 	)
 	(wire
 		(pts
+			(xy 217.17 139.7) (xy 231.14 139.7)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "6baa3b3d-fc87-4589-8bec-796469d378e3")
+	)
+	(wire
+		(pts
+			(xy 217.17 132.08) (xy 231.14 132.08)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "6c0febe3-7341-44d3-b839-d1e5b25cdda8")
+	)
+	(wire
+		(pts
 			(xy 121.92 80.01) (xy 105.41 80.01)
 		)
 		(stroke
@@ -1760,6 +1950,16 @@
 			(type default)
 		)
 		(uuid "6c760086-e94c-4588-9472-c5d186305b5b")
+	)
+	(wire
+		(pts
+			(xy 203.2 152.4) (xy 217.17 152.4)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "6d62f3b7-6421-4101-b080-e57db542a7d3")
 	)
 	(wire
 		(pts
@@ -1780,6 +1980,26 @@
 			(type default)
 		)
 		(uuid "7628ddf2-947d-4731-9e1e-4b216535eaef")
+	)
+	(wire
+		(pts
+			(xy 231.14 132.08) (xy 245.11 132.08)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "7829fa56-fbbc-4681-b7fa-7637fc041dc7")
+	)
+	(wire
+		(pts
+			(xy 189.23 132.08) (xy 203.2 132.08)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "7910636d-8288-42af-be61-b21b3c954972")
 	)
 	(wire
 		(pts
@@ -1813,6 +2033,16 @@
 	)
 	(wire
 		(pts
+			(xy 189.23 152.4) (xy 203.2 152.4)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "7d74141a-005f-4810-a25b-040ac1a3f938")
+	)
+	(wire
+		(pts
 			(xy 142.24 77.47) (xy 142.24 72.39)
 		)
 		(stroke
@@ -1843,6 +2073,16 @@
 	)
 	(wire
 		(pts
+			(xy 245.11 139.7) (xy 259.08 139.7)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "8906b6d0-fc27-443c-8929-8f7b590ecd49")
+	)
+	(wire
+		(pts
 			(xy 31.75 30.48) (xy 54.61 30.48)
 		)
 		(stroke
@@ -1863,6 +2103,16 @@
 	)
 	(wire
 		(pts
+			(xy 231.14 152.4) (xy 245.11 152.4)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "97c82770-d286-4536-b5c9-1248d8e105f3")
+	)
+	(wire
+		(pts
 			(xy 246.38 74.93) (xy 267.97 74.93)
 		)
 		(stroke
@@ -1873,6 +2123,26 @@
 	)
 	(wire
 		(pts
+			(xy 245.11 152.4) (xy 259.08 152.4)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "9d8ba035-de00-417b-899a-79f322c3c74d")
+	)
+	(wire
+		(pts
+			(xy 189.23 139.7) (xy 203.2 139.7)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "a0638390-c11a-4380-9638-daddb35ab9eb")
+	)
+	(wire
+		(pts
 			(xy 142.24 163.83) (xy 142.24 158.75)
 		)
 		(stroke
@@ -1880,6 +2150,16 @@
 			(type default)
 		)
 		(uuid "a287e16a-8f8d-450c-807c-b9866d67a0ac")
+	)
+	(wire
+		(pts
+			(xy 245.11 132.08) (xy 259.08 132.08)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "a39f7d9c-2d73-4d39-9190-2a6357a44d7e")
 	)
 	(wire
 		(pts
@@ -1910,6 +2190,16 @@
 			(type default)
 		)
 		(uuid "bf7d6a3d-787d-4af9-8dd7-d7770c5be6d1")
+	)
+	(wire
+		(pts
+			(xy 217.17 160.02) (xy 231.14 160.02)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "c8ebd3ff-8ef3-4ee4-afd5-6e3987f9c2d4")
 	)
 	(wire
 		(pts
@@ -1950,6 +2240,36 @@
 			(type default)
 		)
 		(uuid "e0860a8b-e9dd-435a-be9d-f34db7083831")
+	)
+	(wire
+		(pts
+			(xy 203.2 160.02) (xy 217.17 160.02)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "e0e40a3b-6f15-4c35-8856-8f577c9991cd")
+	)
+	(wire
+		(pts
+			(xy 203.2 139.7) (xy 217.17 139.7)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "e28e3483-3de3-4515-ba79-fbda4f2397ba")
+	)
+	(wire
+		(pts
+			(xy 245.11 160.02) (xy 259.08 160.02)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "e4ceff76-2a33-4cf8-92d9-f358673c71b7")
 	)
 	(wire
 		(pts
@@ -4531,6 +4851,72 @@
 		)
 	)
 	(symbol
+		(lib_id "power:GND")
+		(at 189.23 160.02 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "1dc21857-9d8e-414b-96c2-4df7b530a508")
+		(property "Reference" "#PWR0511"
+			(at 189.23 166.37 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "AGND"
+			(at 189.23 165.1 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 189.23 160.02 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 189.23 160.02 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
+			(at 189.23 160.02 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "0dba0e39-57dd-4f9f-a886-0cf59c63ad9f")
+		)
+		(instances
+			(project "dacboard"
+				(path "/35cb74e4-0f64-454b-9b50-bfac13ed28a5/78597d6c-f167-4e25-99ec-27c10aa3b74b/6c6b5dde-1189-4157-9e0e-d1987b8752a8"
+					(reference "#PWR0511")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
 		(lib_id "Amplifier_Operational:AD8676xR")
 		(at 134.62 158.75 0)
 		(unit 2)
@@ -4753,6 +5139,75 @@
 		)
 	)
 	(symbol
+		(lib_id "Device:C")
+		(at 231.14 156.21 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "26abed72-92ac-482f-a3e4-55eeff40fc0d")
+		(property "Reference" "C127"
+			(at 234.95 154.9399 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "C"
+			(at 234.95 157.4799 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "Capacitor_SMD:C_0402_1005Metric_Pad0.74x0.62mm_HandSolder"
+			(at 232.1052 160.02 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 231.14 156.21 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Unpolarized capacitor"
+			(at 231.14 156.21 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "2"
+			(uuid "1d47f1a3-d179-4d26-9cb2-3422731da00f")
+		)
+		(pin "1"
+			(uuid "dc3df2ad-565b-4c82-a2c8-8bf40a7515aa")
+		)
+		(instances
+			(project "dacboard"
+				(path "/35cb74e4-0f64-454b-9b50-bfac13ed28a5/78597d6c-f167-4e25-99ec-27c10aa3b74b/6c6b5dde-1189-4157-9e0e-d1987b8752a8"
+					(reference "C127")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
 		(lib_id "Amplifier_Operational:AD8676xR")
 		(at 134.62 72.39 0)
 		(unit 2)
@@ -4840,7 +5295,7 @@
 	)
 	(symbol
 		(lib_id "Amplifier_Operational:AD8676xR")
-		(at 184.15 120.65 0)
+		(at 189.23 111.76 0)
 		(unit 3)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -4849,7 +5304,7 @@
 		(fields_autoplaced yes)
 		(uuid "29136f43-1de1-4f66-815c-95d135615a9f")
 		(property "Reference" "U11"
-			(at 185.42 119.3799 0)
+			(at 190.5 110.4899 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4858,7 +5313,7 @@
 			)
 		)
 		(property "Value" "AD8676xR"
-			(at 185.42 121.9199 0)
+			(at 190.5 113.0299 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4867,7 +5322,7 @@
 			)
 		)
 		(property "Footprint" "Package_SO:SOIC-8_3.9x4.9mm_P1.27mm"
-			(at 186.69 120.65 0)
+			(at 191.77 111.76 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4876,7 +5331,7 @@
 			)
 		)
 		(property "Datasheet" "https://www.analog.com/media/en/technical-documentation/data-sheets/AD8676.pdf"
-			(at 190.5 116.84 0)
+			(at 195.58 107.95 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4885,7 +5340,7 @@
 			)
 		)
 		(property "Description" "Dual operational amplifier, Ultra-precision, 36V, Rail-to-rail output, SOIC-8"
-			(at 184.15 120.65 0)
+			(at 189.23 111.76 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4928,7 +5383,7 @@
 	)
 	(symbol
 		(lib_id "Amplifier_Operational:AD8676xR")
-		(at 254 120.65 0)
+		(at 259.08 111.76 0)
 		(unit 3)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -4937,7 +5392,7 @@
 		(fields_autoplaced yes)
 		(uuid "2bf0c102-7bcf-44e8-b814-72bdacc4df72")
 		(property "Reference" "U20"
-			(at 255.27 119.3799 0)
+			(at 260.35 110.4899 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4946,7 +5401,7 @@
 			)
 		)
 		(property "Value" "AD8676xR"
-			(at 255.27 121.9199 0)
+			(at 260.35 113.0299 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4955,7 +5410,7 @@
 			)
 		)
 		(property "Footprint" "Package_SO:SOIC-8_3.9x4.9mm_P1.27mm"
-			(at 256.54 120.65 0)
+			(at 261.62 111.76 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4964,7 +5419,7 @@
 			)
 		)
 		(property "Datasheet" "https://www.analog.com/media/en/technical-documentation/data-sheets/AD8676.pdf"
-			(at 260.35 116.84 0)
+			(at 265.43 107.95 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4973,7 +5428,7 @@
 			)
 		)
 		(property "Description" "Dual operational amplifier, Ultra-precision, 36V, Rail-to-rail output, SOIC-8"
-			(at 254 120.65 0)
+			(at 259.08 111.76 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5016,7 +5471,7 @@
 	)
 	(symbol
 		(lib_id "power:VSS")
-		(at 226.06 128.27 0)
+		(at 231.14 119.38 0)
 		(mirror x)
 		(unit 1)
 		(exclude_from_sim no)
@@ -5025,7 +5480,7 @@
 		(dnp no)
 		(uuid "2d9ccf88-916c-4a30-b9c6-7f653dda49fe")
 		(property "Reference" "#PWR076"
-			(at 226.06 124.46 0)
+			(at 231.14 115.57 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5034,7 +5489,7 @@
 			)
 		)
 		(property "Value" "VSS"
-			(at 226.06 133.35 0)
+			(at 231.14 124.46 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5042,7 +5497,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 226.06 128.27 0)
+			(at 231.14 119.38 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5051,7 +5506,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 226.06 128.27 0)
+			(at 231.14 119.38 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5060,7 +5515,7 @@
 			)
 		)
 		(property "Description" "Power symbol creates a global label with name \"VSS\""
-			(at 226.06 128.27 0)
+			(at 231.14 119.38 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5218,7 +5673,7 @@
 	)
 	(symbol
 		(lib_id "Amplifier_Operational:AD8676xR")
-		(at 198.12 120.65 0)
+		(at 203.2 111.76 0)
 		(unit 3)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -5227,7 +5682,7 @@
 		(fields_autoplaced yes)
 		(uuid "3dec20c3-997e-4672-8a82-1ac649123a5d")
 		(property "Reference" "U12"
-			(at 199.39 119.3799 0)
+			(at 204.47 110.4899 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5236,7 +5691,7 @@
 			)
 		)
 		(property "Value" "AD8676xR"
-			(at 199.39 121.9199 0)
+			(at 204.47 113.0299 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5245,7 +5700,7 @@
 			)
 		)
 		(property "Footprint" "Package_SO:SOIC-8_3.9x4.9mm_P1.27mm"
-			(at 200.66 120.65 0)
+			(at 205.74 111.76 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5254,7 +5709,7 @@
 			)
 		)
 		(property "Datasheet" "https://www.analog.com/media/en/technical-documentation/data-sheets/AD8676.pdf"
-			(at 204.47 116.84 0)
+			(at 209.55 107.95 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5263,7 +5718,7 @@
 			)
 		)
 		(property "Description" "Dual operational amplifier, Ultra-precision, 36V, Rail-to-rail output, SOIC-8"
-			(at 198.12 120.65 0)
+			(at 203.2 111.76 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5913,6 +6368,75 @@
 		)
 	)
 	(symbol
+		(lib_id "Device:C")
+		(at 189.23 156.21 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "4dbdeef1-d7e6-446c-8ddf-677f88006e7e")
+		(property "Reference" "C124"
+			(at 193.04 154.9399 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "C"
+			(at 193.04 157.4799 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "Capacitor_SMD:C_0402_1005Metric_Pad0.74x0.62mm_HandSolder"
+			(at 190.1952 160.02 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 189.23 156.21 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Unpolarized capacitor"
+			(at 189.23 156.21 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "2"
+			(uuid "67c403f7-a170-4644-a23d-ab954c168388")
+		)
+		(pin "1"
+			(uuid "3f09b03d-c1ef-4abe-b0c7-b585063a9064")
+		)
+		(instances
+			(project "dacboard"
+				(path "/35cb74e4-0f64-454b-9b50-bfac13ed28a5/78597d6c-f167-4e25-99ec-27c10aa3b74b/6c6b5dde-1189-4157-9e0e-d1987b8752a8"
+					(reference "C124")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
 		(lib_id "Amplifier_Operational:AD8676xR")
 		(at 24.13 156.21 0)
 		(mirror y)
@@ -6259,7 +6783,7 @@
 	)
 	(symbol
 		(lib_id "Amplifier_Operational:AD8676xR")
-		(at 212.09 120.65 0)
+		(at 217.17 111.76 0)
 		(unit 3)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -6268,7 +6792,7 @@
 		(fields_autoplaced yes)
 		(uuid "595e0033-6d44-45c8-b6d1-20c46a54102e")
 		(property "Reference" "U14"
-			(at 213.36 119.3799 0)
+			(at 218.44 110.4899 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -6277,7 +6801,7 @@
 			)
 		)
 		(property "Value" "AD8676xR"
-			(at 213.36 121.9199 0)
+			(at 218.44 113.0299 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -6286,7 +6810,7 @@
 			)
 		)
 		(property "Footprint" "Package_SO:SOIC-8_3.9x4.9mm_P1.27mm"
-			(at 214.63 120.65 0)
+			(at 219.71 111.76 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -6295,7 +6819,7 @@
 			)
 		)
 		(property "Datasheet" "https://www.analog.com/media/en/technical-documentation/data-sheets/AD8676.pdf"
-			(at 218.44 116.84 0)
+			(at 223.52 107.95 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -6304,7 +6828,7 @@
 			)
 		)
 		(property "Description" "Dual operational amplifier, Ultra-precision, 36V, Rail-to-rail output, SOIC-8"
-			(at 212.09 120.65 0)
+			(at 217.17 111.76 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -6341,6 +6865,75 @@
 				(path "/35cb74e4-0f64-454b-9b50-bfac13ed28a5/78597d6c-f167-4e25-99ec-27c10aa3b74b/6c6b5dde-1189-4157-9e0e-d1987b8752a8"
 					(reference "U14")
 					(unit 3)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Device:C")
+		(at 245.11 135.89 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "5bc54a56-e3af-4b09-8a5e-9e4cc6128b4d")
+		(property "Reference" "C122"
+			(at 248.92 134.6199 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "C"
+			(at 248.92 137.1599 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "Capacitor_SMD:C_0402_1005Metric_Pad0.74x0.62mm_HandSolder"
+			(at 246.0752 139.7 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 245.11 135.89 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Unpolarized capacitor"
+			(at 245.11 135.89 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "2"
+			(uuid "2302fd82-491c-47e3-a254-c2f7b7759ef3")
+		)
+		(pin "1"
+			(uuid "5eca6e14-79e6-4c17-805a-1c9b6967a737")
+		)
+		(instances
+			(project "dacboard"
+				(path "/35cb74e4-0f64-454b-9b50-bfac13ed28a5/78597d6c-f167-4e25-99ec-27c10aa3b74b/6c6b5dde-1189-4157-9e0e-d1987b8752a8"
+					(reference "C122")
+					(unit 1)
 				)
 			)
 		)
@@ -6413,8 +7006,77 @@
 		)
 	)
 	(symbol
+		(lib_id "Device:C")
+		(at 189.23 135.89 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "61b7345b-c842-49f2-b579-59040ca7ed67")
+		(property "Reference" "C46"
+			(at 193.04 134.6199 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "C"
+			(at 193.04 137.1599 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "Capacitor_SMD:C_0402_1005Metric_Pad0.74x0.62mm_HandSolder"
+			(at 190.1952 139.7 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 189.23 135.89 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Unpolarized capacitor"
+			(at 189.23 135.89 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "2"
+			(uuid "dc364b44-82ad-4368-9f46-2ecc9326a46a")
+		)
+		(pin "1"
+			(uuid "f59b3be4-07a7-4d7f-8094-721840192256")
+		)
+		(instances
+			(project "dacboard"
+				(path "/35cb74e4-0f64-454b-9b50-bfac13ed28a5/78597d6c-f167-4e25-99ec-27c10aa3b74b/6c6b5dde-1189-4157-9e0e-d1987b8752a8"
+					(reference "C46")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
 		(lib_id "power:VDD")
-		(at 226.06 113.03 0)
+		(at 231.14 104.14 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -6423,7 +7085,7 @@
 		(fields_autoplaced yes)
 		(uuid "6c7e0dcb-b5c2-4d70-a3ed-be71fa8436f0")
 		(property "Reference" "#PWR075"
-			(at 226.06 116.84 0)
+			(at 231.14 107.95 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -6432,7 +7094,7 @@
 			)
 		)
 		(property "Value" "VDD"
-			(at 226.06 107.95 0)
+			(at 231.14 99.06 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -6440,7 +7102,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 226.06 113.03 0)
+			(at 231.14 104.14 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -6449,7 +7111,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 226.06 113.03 0)
+			(at 231.14 104.14 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -6458,7 +7120,7 @@
 			)
 		)
 		(property "Description" "Power symbol creates a global label with name \"VDD\""
-			(at 226.06 113.03 0)
+			(at 231.14 104.14 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -6922,7 +7584,7 @@
 	)
 	(symbol
 		(lib_id "power:VDD")
-		(at 198.12 113.03 0)
+		(at 203.2 104.14 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -6931,7 +7593,7 @@
 		(fields_autoplaced yes)
 		(uuid "858c1866-d95e-4f25-a763-b203b0ab5ab1")
 		(property "Reference" "#PWR061"
-			(at 198.12 116.84 0)
+			(at 203.2 107.95 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -6940,7 +7602,7 @@
 			)
 		)
 		(property "Value" "VDD"
-			(at 198.12 107.95 0)
+			(at 203.2 99.06 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -6948,7 +7610,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 198.12 113.03 0)
+			(at 203.2 104.14 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -6957,7 +7619,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 198.12 113.03 0)
+			(at 203.2 104.14 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -6966,7 +7628,7 @@
 			)
 		)
 		(property "Description" "Power symbol creates a global label with name \"VDD\""
-			(at 198.12 113.03 0)
+			(at 203.2 104.14 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -6981,6 +7643,75 @@
 			(project "dacboard"
 				(path "/35cb74e4-0f64-454b-9b50-bfac13ed28a5/78597d6c-f167-4e25-99ec-27c10aa3b74b/6c6b5dde-1189-4157-9e0e-d1987b8752a8"
 					(reference "#PWR061")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Device:C")
+		(at 245.11 156.21 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "870d62a2-02f4-42f5-966e-5c5b5b2aa4e8")
+		(property "Reference" "C128"
+			(at 248.92 154.9399 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "C"
+			(at 248.92 157.4799 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "Capacitor_SMD:C_0402_1005Metric_Pad0.74x0.62mm_HandSolder"
+			(at 246.0752 160.02 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 245.11 156.21 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Unpolarized capacitor"
+			(at 245.11 156.21 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "2"
+			(uuid "13e4afc2-83f8-4dc8-83a6-9b772d0061fd")
+		)
+		(pin "1"
+			(uuid "35b2aead-8b3e-482a-bed2-cac941bcb221")
+		)
+		(instances
+			(project "dacboard"
+				(path "/35cb74e4-0f64-454b-9b50-bfac13ed28a5/78597d6c-f167-4e25-99ec-27c10aa3b74b/6c6b5dde-1189-4157-9e0e-d1987b8752a8"
+					(reference "C128")
 					(unit 1)
 				)
 			)
@@ -7207,7 +7938,7 @@
 	)
 	(symbol
 		(lib_id "power:VSS")
-		(at 184.15 128.27 0)
+		(at 189.23 119.38 0)
 		(mirror x)
 		(unit 1)
 		(exclude_from_sim no)
@@ -7216,7 +7947,7 @@
 		(dnp no)
 		(uuid "8eae65fc-72e9-4928-ab04-f4a757be6080")
 		(property "Reference" "#PWR055"
-			(at 184.15 124.46 0)
+			(at 189.23 115.57 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7225,7 +7956,7 @@
 			)
 		)
 		(property "Value" "VSS"
-			(at 184.15 133.35 0)
+			(at 189.23 124.46 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7233,7 +7964,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 184.15 128.27 0)
+			(at 189.23 119.38 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7242,7 +7973,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 184.15 128.27 0)
+			(at 189.23 119.38 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7251,7 +7982,7 @@
 			)
 		)
 		(property "Description" "Power symbol creates a global label with name \"VSS\""
-			(at 184.15 128.27 0)
+			(at 189.23 119.38 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7399,6 +8130,75 @@
 			(project "dacboard"
 				(path "/35cb74e4-0f64-454b-9b50-bfac13ed28a5/78597d6c-f167-4e25-99ec-27c10aa3b74b/6c6b5dde-1189-4157-9e0e-d1987b8752a8"
 					(reference "#PWR088")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Device:C")
+		(at 217.17 135.89 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "97db697c-51d7-4f6b-bd53-b6fd256f959f")
+		(property "Reference" "C120"
+			(at 220.98 134.6199 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "C"
+			(at 220.98 137.1599 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "Capacitor_SMD:C_0402_1005Metric_Pad0.74x0.62mm_HandSolder"
+			(at 218.1352 139.7 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 217.17 135.89 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Unpolarized capacitor"
+			(at 217.17 135.89 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "2"
+			(uuid "aa6babe3-f945-45d9-8214-2e9046410a2e")
+		)
+		(pin "1"
+			(uuid "b18fa4bf-78d1-4af0-b661-c87caf0b5962")
+		)
+		(instances
+			(project "dacboard"
+				(path "/35cb74e4-0f64-454b-9b50-bfac13ed28a5/78597d6c-f167-4e25-99ec-27c10aa3b74b/6c6b5dde-1189-4157-9e0e-d1987b8752a8"
+					(reference "C120")
 					(unit 1)
 				)
 			)
@@ -7597,7 +8397,7 @@
 	)
 	(symbol
 		(lib_id "power:VSS")
-		(at 240.03 128.27 0)
+		(at 245.11 119.38 0)
 		(mirror x)
 		(unit 1)
 		(exclude_from_sim no)
@@ -7606,7 +8406,7 @@
 		(dnp no)
 		(uuid "a41b0591-44ff-4a9f-b67d-5a4c6f496984")
 		(property "Reference" "#PWR083"
-			(at 240.03 124.46 0)
+			(at 245.11 115.57 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7615,7 +8415,7 @@
 			)
 		)
 		(property "Value" "VSS"
-			(at 240.03 133.35 0)
+			(at 245.11 124.46 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7623,7 +8423,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 240.03 128.27 0)
+			(at 245.11 119.38 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7632,7 +8432,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 240.03 128.27 0)
+			(at 245.11 119.38 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7641,7 +8441,7 @@
 			)
 		)
 		(property "Description" "Power symbol creates a global label with name \"VSS\""
-			(at 240.03 128.27 0)
+			(at 245.11 119.38 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7816,7 +8616,7 @@
 	)
 	(symbol
 		(lib_id "power:VSS")
-		(at 254 128.27 0)
+		(at 259.08 119.38 0)
 		(mirror x)
 		(unit 1)
 		(exclude_from_sim no)
@@ -7825,7 +8625,7 @@
 		(dnp no)
 		(uuid "ae75a760-2d9d-4de1-a248-7e4640e1aa40")
 		(property "Reference" "#PWR090"
-			(at 254 124.46 0)
+			(at 259.08 115.57 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7834,7 +8634,7 @@
 			)
 		)
 		(property "Value" "VSS"
-			(at 254 133.35 0)
+			(at 259.08 124.46 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7842,7 +8642,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 254 128.27 0)
+			(at 259.08 119.38 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7851,7 +8651,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 254 128.27 0)
+			(at 259.08 119.38 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7860,7 +8660,7 @@
 			)
 		)
 		(property "Description" "Power symbol creates a global label with name \"VSS\""
-			(at 254 128.27 0)
+			(at 259.08 119.38 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -8212,6 +9012,144 @@
 		)
 	)
 	(symbol
+		(lib_id "Device:C")
+		(at 203.2 156.21 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "c3be8715-3762-4363-af84-228fa8e4953b")
+		(property "Reference" "C125"
+			(at 207.01 154.9399 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "C"
+			(at 207.01 157.4799 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "Capacitor_SMD:C_0402_1005Metric_Pad0.74x0.62mm_HandSolder"
+			(at 204.1652 160.02 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 203.2 156.21 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Unpolarized capacitor"
+			(at 203.2 156.21 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "2"
+			(uuid "dffae703-b482-4446-8e06-7e93d36157c3")
+		)
+		(pin "1"
+			(uuid "5d7a4fa6-4f9e-452c-8912-c7b464bd519c")
+		)
+		(instances
+			(project "dacboard"
+				(path "/35cb74e4-0f64-454b-9b50-bfac13ed28a5/78597d6c-f167-4e25-99ec-27c10aa3b74b/6c6b5dde-1189-4157-9e0e-d1987b8752a8"
+					(reference "C125")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Device:C")
+		(at 231.14 135.89 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "c8dc4fef-19a3-4df7-9947-1fd73b0db582")
+		(property "Reference" "C121"
+			(at 234.95 134.6199 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "C"
+			(at 234.95 137.1599 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "Capacitor_SMD:C_0402_1005Metric_Pad0.74x0.62mm_HandSolder"
+			(at 232.1052 139.7 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 231.14 135.89 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Unpolarized capacitor"
+			(at 231.14 135.89 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "2"
+			(uuid "c86ce584-0cde-45ff-9d05-c92cb9e00799")
+		)
+		(pin "1"
+			(uuid "7f6e0159-8869-4b88-b6a3-2773a9092f46")
+		)
+		(instances
+			(project "dacboard"
+				(path "/35cb74e4-0f64-454b-9b50-bfac13ed28a5/78597d6c-f167-4e25-99ec-27c10aa3b74b/6c6b5dde-1189-4157-9e0e-d1987b8752a8"
+					(reference "C121")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
 		(lib_id "power:+5V")
 		(at 176.53 45.72 0)
 		(unit 1)
@@ -8279,7 +9217,7 @@
 	)
 	(symbol
 		(lib_id "Amplifier_Operational:AD8676xR")
-		(at 226.06 120.65 0)
+		(at 231.14 111.76 0)
 		(unit 3)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -8288,7 +9226,7 @@
 		(fields_autoplaced yes)
 		(uuid "d23fe4cc-7b0a-4310-a04e-2e76e44e439d")
 		(property "Reference" "U16"
-			(at 227.33 119.3799 0)
+			(at 232.41 110.4899 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -8297,7 +9235,7 @@
 			)
 		)
 		(property "Value" "AD8676xR"
-			(at 227.33 121.9199 0)
+			(at 232.41 113.0299 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -8306,7 +9244,7 @@
 			)
 		)
 		(property "Footprint" "Package_SO:SOIC-8_3.9x4.9mm_P1.27mm"
-			(at 228.6 120.65 0)
+			(at 233.68 111.76 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -8315,7 +9253,7 @@
 			)
 		)
 		(property "Datasheet" "https://www.analog.com/media/en/technical-documentation/data-sheets/AD8676.pdf"
-			(at 232.41 116.84 0)
+			(at 237.49 107.95 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -8324,7 +9262,7 @@
 			)
 		)
 		(property "Description" "Dual operational amplifier, Ultra-precision, 36V, Rail-to-rail output, SOIC-8"
-			(at 226.06 120.65 0)
+			(at 231.14 111.76 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -8499,7 +9437,7 @@
 	)
 	(symbol
 		(lib_id "power:VSS")
-		(at 212.09 128.27 0)
+		(at 217.17 119.38 0)
 		(mirror x)
 		(unit 1)
 		(exclude_from_sim no)
@@ -8508,7 +9446,7 @@
 		(dnp no)
 		(uuid "d9ccc5c9-7a7e-430f-895b-d431f42a782e")
 		(property "Reference" "#PWR069"
-			(at 212.09 124.46 0)
+			(at 217.17 115.57 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -8517,7 +9455,7 @@
 			)
 		)
 		(property "Value" "VSS"
-			(at 212.09 133.35 0)
+			(at 217.17 124.46 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -8525,7 +9463,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 212.09 128.27 0)
+			(at 217.17 119.38 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -8534,7 +9472,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 212.09 128.27 0)
+			(at 217.17 119.38 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -8543,7 +9481,7 @@
 			)
 		)
 		(property "Description" "Power symbol creates a global label with name \"VSS\""
-			(at 212.09 128.27 0)
+			(at 217.17 119.38 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -8565,16 +9503,16 @@
 	)
 	(symbol
 		(lib_id "power:VDD")
-		(at 254 113.03 0)
+		(at 189.23 132.08 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
 		(fields_autoplaced yes)
-		(uuid "dd1e93a7-57bc-4863-8c8c-cf3aa2338691")
-		(property "Reference" "#PWR089"
-			(at 254 116.84 0)
+		(uuid "da5a247f-f1e2-48d7-ba78-213526e41018")
+		(property "Reference" "#PWR0508"
+			(at 189.23 135.89 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -8583,7 +9521,7 @@
 			)
 		)
 		(property "Value" "VDD"
-			(at 254 107.95 0)
+			(at 189.23 127 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -8591,7 +9529,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 254 113.03 0)
+			(at 189.23 132.08 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -8600,7 +9538,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 254 113.03 0)
+			(at 189.23 132.08 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -8609,7 +9547,73 @@
 			)
 		)
 		(property "Description" "Power symbol creates a global label with name \"VDD\""
-			(at 254 113.03 0)
+			(at 189.23 132.08 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "14e3574a-223c-4ae3-bbb2-89ee00a14942")
+		)
+		(instances
+			(project "dacboard"
+				(path "/35cb74e4-0f64-454b-9b50-bfac13ed28a5/78597d6c-f167-4e25-99ec-27c10aa3b74b/6c6b5dde-1189-4157-9e0e-d1987b8752a8"
+					(reference "#PWR0508")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "power:VDD")
+		(at 259.08 104.14 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "dd1e93a7-57bc-4863-8c8c-cf3aa2338691")
+		(property "Reference" "#PWR089"
+			(at 259.08 107.95 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "VDD"
+			(at 259.08 99.06 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 259.08 104.14 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 259.08 104.14 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Power symbol creates a global label with name \"VDD\""
+			(at 259.08 104.14 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -8624,6 +9628,76 @@
 			(project "dacboard"
 				(path "/35cb74e4-0f64-454b-9b50-bfac13ed28a5/78597d6c-f167-4e25-99ec-27c10aa3b74b/6c6b5dde-1189-4157-9e0e-d1987b8752a8"
 					(reference "#PWR089")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Device:C")
+		(at 259.08 135.89 0)
+		(mirror y)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "e0455999-9260-490f-a53f-2c526c79eb7a")
+		(property "Reference" "C123"
+			(at 267.208 134.62 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "C"
+			(at 267.208 137.16 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "Capacitor_SMD:C_0402_1005Metric_Pad0.74x0.62mm_HandSolder"
+			(at 258.1148 139.7 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 259.08 135.89 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Unpolarized capacitor"
+			(at 259.08 135.89 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "2"
+			(uuid "0dd092c0-f0b2-43f1-a4d0-e3e8f25c3a50")
+		)
+		(pin "1"
+			(uuid "e9e25a61-846a-443b-b9b9-77f739c4a72a")
+		)
+		(instances
+			(project "dacboard"
+				(path "/35cb74e4-0f64-454b-9b50-bfac13ed28a5/78597d6c-f167-4e25-99ec-27c10aa3b74b/6c6b5dde-1189-4157-9e0e-d1987b8752a8"
+					(reference "C123")
 					(unit 1)
 				)
 			)
@@ -8842,7 +9916,7 @@
 	)
 	(symbol
 		(lib_id "power:VDD")
-		(at 212.09 113.03 0)
+		(at 217.17 104.14 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -8851,7 +9925,7 @@
 		(fields_autoplaced yes)
 		(uuid "e26da2fa-74ce-498f-8dc8-2252703bcfa2")
 		(property "Reference" "#PWR068"
-			(at 212.09 116.84 0)
+			(at 217.17 107.95 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -8860,7 +9934,7 @@
 			)
 		)
 		(property "Value" "VDD"
-			(at 212.09 107.95 0)
+			(at 217.17 99.06 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -8868,7 +9942,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 212.09 113.03 0)
+			(at 217.17 104.14 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -8877,7 +9951,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 212.09 113.03 0)
+			(at 217.17 104.14 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -8886,7 +9960,7 @@
 			)
 		)
 		(property "Description" "Power symbol creates a global label with name \"VDD\""
-			(at 212.09 113.03 0)
+			(at 217.17 104.14 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -8994,16 +10068,16 @@
 	)
 	(symbol
 		(lib_id "power:VSS")
-		(at 198.12 128.27 0)
-		(mirror x)
+		(at 189.23 152.4 0)
+		(mirror y)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
-		(uuid "f1cf3a8f-02df-4910-b136-0ae759c694db")
-		(property "Reference" "#PWR062"
-			(at 198.12 124.46 0)
+		(uuid "eafd3b66-06c2-4fad-b2f3-32a0bd917366")
+		(property "Reference" "#PWR0510"
+			(at 189.23 156.21 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -9012,7 +10086,7 @@
 			)
 		)
 		(property "Value" "VSS"
-			(at 198.12 133.35 0)
+			(at 189.23 147.32 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -9020,7 +10094,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 198.12 128.27 0)
+			(at 189.23 152.4 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -9029,7 +10103,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 198.12 128.27 0)
+			(at 189.23 152.4 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -9038,7 +10112,73 @@
 			)
 		)
 		(property "Description" "Power symbol creates a global label with name \"VSS\""
-			(at 198.12 128.27 0)
+			(at 189.23 152.4 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "1bc61681-d0e3-4489-9396-4c93e4038667")
+		)
+		(instances
+			(project "dacboard"
+				(path "/35cb74e4-0f64-454b-9b50-bfac13ed28a5/78597d6c-f167-4e25-99ec-27c10aa3b74b/6c6b5dde-1189-4157-9e0e-d1987b8752a8"
+					(reference "#PWR0510")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "power:VSS")
+		(at 203.2 119.38 0)
+		(mirror x)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "f1cf3a8f-02df-4910-b136-0ae759c694db")
+		(property "Reference" "#PWR062"
+			(at 203.2 115.57 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "VSS"
+			(at 203.2 124.46 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 203.2 119.38 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 203.2 119.38 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Power symbol creates a global label with name \"VSS\""
+			(at 203.2 119.38 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -9059,8 +10199,74 @@
 		)
 	)
 	(symbol
+		(lib_id "power:GND")
+		(at 189.23 139.7 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "f1dff227-f3ad-4de4-9c8f-717e931445b1")
+		(property "Reference" "#PWR0509"
+			(at 189.23 146.05 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "AGND"
+			(at 189.23 144.78 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 189.23 139.7 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 189.23 139.7 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
+			(at 189.23 139.7 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "eab59ca9-0195-4edd-96bb-0a2e637ad8d7")
+		)
+		(instances
+			(project "dacboard"
+				(path "/35cb74e4-0f64-454b-9b50-bfac13ed28a5/78597d6c-f167-4e25-99ec-27c10aa3b74b/6c6b5dde-1189-4157-9e0e-d1987b8752a8"
+					(reference "#PWR0509")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
 		(lib_id "Amplifier_Operational:AD8676xR")
-		(at 240.03 120.65 0)
+		(at 245.11 111.76 0)
 		(unit 3)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -9069,7 +10275,7 @@
 		(fields_autoplaced yes)
 		(uuid "f30d8358-0249-41d0-b57e-2ca5aa55983c")
 		(property "Reference" "U18"
-			(at 241.3 119.3799 0)
+			(at 246.38 110.4899 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -9078,7 +10284,7 @@
 			)
 		)
 		(property "Value" "AD8676xR"
-			(at 241.3 121.9199 0)
+			(at 246.38 113.0299 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -9087,7 +10293,7 @@
 			)
 		)
 		(property "Footprint" "Package_SO:SOIC-8_3.9x4.9mm_P1.27mm"
-			(at 242.57 120.65 0)
+			(at 247.65 111.76 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -9096,7 +10302,7 @@
 			)
 		)
 		(property "Datasheet" "https://www.analog.com/media/en/technical-documentation/data-sheets/AD8676.pdf"
-			(at 246.38 116.84 0)
+			(at 251.46 107.95 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -9105,7 +10311,7 @@
 			)
 		)
 		(property "Description" "Dual operational amplifier, Ultra-precision, 36V, Rail-to-rail output, SOIC-8"
-			(at 240.03 120.65 0)
+			(at 245.11 111.76 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -9147,8 +10353,147 @@
 		)
 	)
 	(symbol
+		(lib_id "Device:C")
+		(at 217.17 156.21 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "f42f4975-72bc-474f-b747-1d5e24aa2012")
+		(property "Reference" "C126"
+			(at 220.98 154.9399 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "C"
+			(at 220.98 157.4799 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "Capacitor_SMD:C_0402_1005Metric_Pad0.74x0.62mm_HandSolder"
+			(at 218.1352 160.02 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 217.17 156.21 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Unpolarized capacitor"
+			(at 217.17 156.21 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "2"
+			(uuid "b716f326-6372-4928-abef-8e9ab2fdbc8b")
+		)
+		(pin "1"
+			(uuid "b74a3c72-9768-45ea-8f57-291c469d85af")
+		)
+		(instances
+			(project "dacboard"
+				(path "/35cb74e4-0f64-454b-9b50-bfac13ed28a5/78597d6c-f167-4e25-99ec-27c10aa3b74b/6c6b5dde-1189-4157-9e0e-d1987b8752a8"
+					(reference "C126")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Device:C")
+		(at 259.08 156.21 0)
+		(mirror y)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "f56d8561-adc1-424f-92c8-d68451bcdaf1")
+		(property "Reference" "C129"
+			(at 267.208 154.94 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "C"
+			(at 267.208 157.48 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "Capacitor_SMD:C_0402_1005Metric_Pad0.74x0.62mm_HandSolder"
+			(at 258.1148 160.02 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 259.08 156.21 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Unpolarized capacitor"
+			(at 259.08 156.21 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "2"
+			(uuid "e30ecefd-7080-4424-abf1-f07c09272927")
+		)
+		(pin "1"
+			(uuid "8231b1aa-db39-4491-9f7a-7a8098818e63")
+		)
+		(instances
+			(project "dacboard"
+				(path "/35cb74e4-0f64-454b-9b50-bfac13ed28a5/78597d6c-f167-4e25-99ec-27c10aa3b74b/6c6b5dde-1189-4157-9e0e-d1987b8752a8"
+					(reference "C129")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
 		(lib_id "power:VDD")
-		(at 240.03 113.03 0)
+		(at 245.11 104.14 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -9157,7 +10502,7 @@
 		(fields_autoplaced yes)
 		(uuid "f6d9b400-d970-48fa-840e-4e42f23d8ac0")
 		(property "Reference" "#PWR082"
-			(at 240.03 116.84 0)
+			(at 245.11 107.95 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -9166,7 +10511,7 @@
 			)
 		)
 		(property "Value" "VDD"
-			(at 240.03 107.95 0)
+			(at 245.11 99.06 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -9174,7 +10519,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 240.03 113.03 0)
+			(at 245.11 104.14 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -9183,7 +10528,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 240.03 113.03 0)
+			(at 245.11 104.14 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -9192,7 +10537,7 @@
 			)
 		)
 		(property "Description" "Power symbol creates a global label with name \"VDD\""
-			(at 240.03 113.03 0)
+			(at 245.11 104.14 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -9480,8 +10825,77 @@
 		)
 	)
 	(symbol
+		(lib_id "Device:C")
+		(at 203.2 135.89 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "fae873b8-53e0-43aa-a346-0ea83d3a7b41")
+		(property "Reference" "C71"
+			(at 207.01 134.6199 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "C"
+			(at 207.01 137.1599 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "Capacitor_SMD:C_0402_1005Metric_Pad0.74x0.62mm_HandSolder"
+			(at 204.1652 139.7 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 203.2 135.89 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Unpolarized capacitor"
+			(at 203.2 135.89 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "2"
+			(uuid "2351561a-3d27-466a-8e4a-b87109da2be6")
+		)
+		(pin "1"
+			(uuid "4f93ae5b-aca9-48eb-8552-ef2f5e63b7e6")
+		)
+		(instances
+			(project "dacboard"
+				(path "/35cb74e4-0f64-454b-9b50-bfac13ed28a5/78597d6c-f167-4e25-99ec-27c10aa3b74b/6c6b5dde-1189-4157-9e0e-d1987b8752a8"
+					(reference "C71")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
 		(lib_id "power:VDD")
-		(at 184.15 113.03 0)
+		(at 189.23 104.14 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -9490,7 +10904,7 @@
 		(fields_autoplaced yes)
 		(uuid "fde9f2ea-1d19-4abb-9876-7523fcbb00ea")
 		(property "Reference" "#PWR054"
-			(at 184.15 116.84 0)
+			(at 189.23 107.95 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -9499,7 +10913,7 @@
 			)
 		)
 		(property "Value" "VDD"
-			(at 184.15 107.95 0)
+			(at 189.23 99.06 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -9507,7 +10921,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 184.15 113.03 0)
+			(at 189.23 104.14 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -9516,7 +10930,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 184.15 113.03 0)
+			(at 189.23 104.14 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -9525,7 +10939,7 @@
 			)
 		)
 		(property "Description" "Power symbol creates a global label with name \"VDD\""
-			(at 184.15 113.03 0)
+			(at 189.23 104.14 0)
 			(effects
 				(font
 					(size 1.27 1.27)

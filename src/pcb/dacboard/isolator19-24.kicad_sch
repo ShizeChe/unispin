@@ -2708,7 +2708,7 @@
 				)
 			)
 		)
-		(property "Footprint" "ISO6761:SOIC16_DW_TEX"
+		(property "Footprint" "Package_SO:SOIC-16W_7.5x10.3mm_P1.27mm"
 			(at 74.93 44.45 0)
 			(effects
 				(font
@@ -2956,7 +2956,7 @@
 				)
 			)
 		)
-		(property "Footprint" "ISO6761:SOIC16_DW_TEX"
+		(property "Footprint" "Package_SO:SOIC-16W_7.5x10.3mm_P1.27mm"
 			(at 173.99 44.45 0)
 			(effects
 				(font
@@ -3272,7 +3272,7 @@
 				)
 			)
 		)
-		(property "Footprint" "ISO6761:SOIC16_DW_TEX"
+		(property "Footprint" "Package_SO:SOIC-16W_7.5x10.3mm_P1.27mm"
 			(at 173.99 127 0)
 			(effects
 				(font
@@ -5248,7 +5248,7 @@
 				)
 			)
 		)
-		(property "Footprint" "ISO6761:SOIC16_DW_TEX"
+		(property "Footprint" "Package_SO:SOIC-16W_7.5x10.3mm_P1.27mm"
 			(at 74.93 85.09 0)
 			(effects
 				(font
@@ -5426,7 +5426,7 @@
 				)
 			)
 		)
-		(property "Footprint" "ISO6761:SOIC16_DW_TEX"
+		(property "Footprint" "Package_SO:SOIC-16W_7.5x10.3mm_P1.27mm"
 			(at 173.99 85.09 0)
 			(effects
 				(font
@@ -5673,7 +5673,7 @@
 				)
 			)
 		)
-		(property "Footprint" "ISO6761:SOIC16_DW_TEX"
+		(property "Footprint" "Package_SO:SOIC-16W_7.5x10.3mm_P1.27mm"
 			(at 74.93 127 0)
 			(effects
 				(font
