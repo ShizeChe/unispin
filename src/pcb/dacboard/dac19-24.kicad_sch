@@ -1472,10 +1472,76 @@
 		(uuid "075daa6d-2ff5-461f-bc82-8a4078bfede9")
 	)
 	(junction
+		(at 222.25 162.56)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "0deed0a9-af58-495a-a5d9-2c04e613710f")
+	)
+	(junction
+		(at 195.58 148.59)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "292a75fd-6cde-478f-a155-ec33c2559af5")
+	)
+	(junction
+		(at 208.28 162.56)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "3e5f7bc9-6324-4cd0-b9f3-b879da69dafd")
+	)
+	(junction
+		(at 184.15 162.56)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "526a4c91-f85d-4719-adf9-4977eb670807")
+	)
+	(junction
+		(at 171.45 162.56)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "58eafcdf-d190-4c16-92ae-b7c4650f3f29")
+	)
+	(junction
+		(at 171.45 148.59)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "73a4c0c0-91ac-4511-ac3e-670a53b27d50")
+	)
+	(junction
 		(at 175.26 46.99)
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "756b397f-eed3-4c41-ae7a-562fce34a1bb")
+	)
+	(junction
+		(at 195.58 140.97)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "80704f9e-b290-4dc9-b91a-8870b3b9245f")
+	)
+	(junction
+		(at 195.58 170.18)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "81f9fba9-04b5-4eff-b4b8-ceeac52225a5")
+	)
+	(junction
+		(at 195.58 162.56)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "8af460aa-b065-4138-b216-2f9b7fe5e06f")
+	)
+	(junction
+		(at 222.25 148.59)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "9ba70ea6-f838-43ab-b496-f87eda35f1b7")
+	)
+	(junction
+		(at 184.15 140.97)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "abf57397-c8e6-46f2-b367-979a4a68916a")
 	)
 	(junction
 		(at 34.29 46.99)
@@ -1484,10 +1550,34 @@
 		(uuid "b4da3a16-8915-427b-81ab-ccba3bcf20a4")
 	)
 	(junction
+		(at 208.28 170.18)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "b9057aa5-c219-4d8b-9bcb-47ca2a9c6d59")
+	)
+	(junction
+		(at 222.25 140.97)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "c96bea5f-44e0-4891-b0ba-7fbf42351309")
+	)
+	(junction
+		(at 208.28 140.97)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "d506bacf-79fa-4370-8041-4a261141b114")
+	)
+	(junction
 		(at 34.29 175.26)
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "d5cb806a-a077-459e-b6bf-74c7feabec15")
+	)
+	(junction
+		(at 184.15 170.18)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "d9593fb4-c0c0-4dee-a80f-3d6753501fb1")
 	)
 	(junction
 		(at 175.26 88.9)
@@ -1496,10 +1586,40 @@
 		(uuid "e0de7886-c905-456d-97a5-bd1fee59d269")
 	)
 	(junction
+		(at 222.25 170.18)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "e1e5b9e6-778e-4e76-b931-631a02b09445")
+	)
+	(junction
+		(at 208.28 148.59)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "ea7d277b-569a-44ef-a0a3-5cd6de789751")
+	)
+	(junction
 		(at 34.29 132.08)
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "f06e292b-003c-44e7-9eac-4b720fd8ca5c")
+	)
+	(junction
+		(at 171.45 170.18)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "f39788df-cad2-4016-97a1-902dccf88a04")
+	)
+	(junction
+		(at 184.15 148.59)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "f4c18a5c-7f3f-4c71-96dd-33a60542f962")
+	)
+	(junction
+		(at 171.45 140.97)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "fb3aa36d-53a7-4b6d-b0f1-2cb3fb42962a")
 	)
 	(wire
 		(pts
@@ -1603,6 +1723,16 @@
 	)
 	(wire
 		(pts
+			(xy 222.25 148.59) (xy 234.95 148.59)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "1c0c9dda-55f9-4f0f-a64c-6915ffc3ab7d")
+	)
+	(wire
+		(pts
 			(xy 104.14 78.74) (xy 140.97 78.74)
 		)
 		(stroke
@@ -1620,6 +1750,16 @@
 			(type default)
 		)
 		(uuid "25662b8d-8080-44a4-9f5f-70ffa6ac2da9")
+	)
+	(wire
+		(pts
+			(xy 222.25 140.97) (xy 234.95 140.97)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "28caa2de-d572-437a-a01d-75ad9b1f79db")
 	)
 	(wire
 		(pts
@@ -1683,6 +1823,16 @@
 	)
 	(wire
 		(pts
+			(xy 208.28 162.56) (xy 222.25 162.56)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "47fb7e98-ff6a-4478-ba93-c3fd9c4b401d")
+	)
+	(wire
+		(pts
 			(xy 156.21 71.12) (xy 156.21 76.2)
 		)
 		(stroke
@@ -1743,6 +1893,46 @@
 	)
 	(wire
 		(pts
+			(xy 184.15 170.18) (xy 195.58 170.18)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "6892b817-d5aa-4672-869c-3c292a19e888")
+	)
+	(wire
+		(pts
+			(xy 171.45 148.59) (xy 184.15 148.59)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "7670e53d-d235-4daa-a8a6-17d37725af35")
+	)
+	(wire
+		(pts
+			(xy 208.28 148.59) (xy 222.25 148.59)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "7c841f1a-b4cf-4a7d-b942-9de1166eba73")
+	)
+	(wire
+		(pts
+			(xy 195.58 170.18) (xy 208.28 170.18)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "7f66130f-a953-4334-a8cc-884aefee6f6d")
+	)
+	(wire
+		(pts
 			(xy 104.14 121.92) (xy 140.97 121.92)
 		)
 		(stroke
@@ -1793,6 +1983,16 @@
 	)
 	(wire
 		(pts
+			(xy 222.25 170.18) (xy 234.95 170.18)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "93122711-d632-49ec-856a-fb9baa0250b4")
+	)
+	(wire
+		(pts
 			(xy 34.29 88.9) (xy 53.34 88.9)
 		)
 		(stroke
@@ -1823,6 +2023,16 @@
 	)
 	(wire
 		(pts
+			(xy 208.28 140.97) (xy 222.25 140.97)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "9b99c4b3-2c00-45ab-bf14-5a94ca3ac973")
+	)
+	(wire
+		(pts
 			(xy 262.89 81.28) (xy 245.11 81.28)
 		)
 		(stroke
@@ -1843,6 +2053,16 @@
 	)
 	(wire
 		(pts
+			(xy 184.15 148.59) (xy 195.58 148.59)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "ac48f4fa-b196-44a5-8103-b9deb70011bd")
+	)
+	(wire
+		(pts
 			(xy 15.24 114.3) (xy 15.24 119.38)
 		)
 		(stroke
@@ -1850,6 +2070,16 @@
 			(type default)
 		)
 		(uuid "b87f0094-f152-48b9-86be-7f05755a7fd8")
+	)
+	(wire
+		(pts
+			(xy 171.45 162.56) (xy 184.15 162.56)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "bb49d141-495d-4312-847d-6e991562cc11")
 	)
 	(wire
 		(pts
@@ -1863,6 +2093,16 @@
 	)
 	(wire
 		(pts
+			(xy 195.58 148.59) (xy 208.28 148.59)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "c1807f45-9f01-45d0-88db-e3bbc0491a2b")
+	)
+	(wire
+		(pts
 			(xy 104.14 119.38) (xy 125.73 119.38)
 		)
 		(stroke
@@ -1870,6 +2110,26 @@
 			(type default)
 		)
 		(uuid "c43db7d1-6e55-495e-adeb-93cd5b06b36b")
+	)
+	(wire
+		(pts
+			(xy 222.25 162.56) (xy 234.95 162.56)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "c489be8e-b39d-49c4-aec6-3d2f657fd118")
+	)
+	(wire
+		(pts
+			(xy 171.45 170.18) (xy 184.15 170.18)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "c6eac9ef-c137-45f3-99ea-cd04113c02d3")
 	)
 	(wire
 		(pts
@@ -1933,6 +2193,46 @@
 	)
 	(wire
 		(pts
+			(xy 184.15 140.97) (xy 195.58 140.97)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "d4c229c0-655f-4a1e-ac4e-e5a1634ecefa")
+	)
+	(wire
+		(pts
+			(xy 195.58 140.97) (xy 208.28 140.97)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "e0f813e0-ee56-4655-92c9-d556195b8425")
+	)
+	(wire
+		(pts
+			(xy 208.28 170.18) (xy 222.25 170.18)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "e510e297-5008-447b-a721-6c59901ab2be")
+	)
+	(wire
+		(pts
+			(xy 171.45 140.97) (xy 184.15 140.97)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "e8dae1f1-34cc-46c3-b01f-910597892013")
+	)
+	(wire
+		(pts
 			(xy 156.21 76.2) (xy 194.31 76.2)
 		)
 		(stroke
@@ -1950,6 +2250,16 @@
 			(type default)
 		)
 		(uuid "ec00af98-0b79-419b-aa05-bf16cda26ab0")
+	)
+	(wire
+		(pts
+			(xy 184.15 162.56) (xy 195.58 162.56)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "f10aa623-3683-49a5-84d7-74d77168a0b4")
 	)
 	(wire
 		(pts
@@ -1980,6 +2290,16 @@
 			(type default)
 		)
 		(uuid "fc5e80bd-571d-4fb0-a538-b26a0baade98")
+	)
+	(wire
+		(pts
+			(xy 195.58 162.56) (xy 208.28 162.56)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "fde991a4-867d-4ee1-a557-6118b4aeb9cf")
 	)
 	(global_label "LOGIC_LEVEL"
 		(shape input)
@@ -3698,6 +4018,72 @@
 		)
 	)
 	(symbol
+		(lib_id "power:VSS")
+		(at 171.45 162.56 0)
+		(mirror y)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "03cf164e-b007-4fa3-b7bb-ee869c9a02b1")
+		(property "Reference" "#PWR0524"
+			(at 171.45 166.37 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "VSS"
+			(at 171.45 157.48 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 171.45 162.56 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 171.45 162.56 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Power symbol creates a global label with name \"VSS\""
+			(at 171.45 162.56 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "9900b885-b3d4-42ab-8f22-1642acb1ce80")
+		)
+		(instances
+			(project "dacboard"
+				(path "/35cb74e4-0f64-454b-9b50-bfac13ed28a5/78597d6c-f167-4e25-99ec-27c10aa3b74b/7ca62bcc-c819-4351-b304-a5e683147af1"
+					(reference "#PWR0524")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
 		(lib_id "power:GNDD")
 		(at 121.92 81.28 90)
 		(unit 1)
@@ -3759,6 +4145,146 @@
 			(project "dacboard"
 				(path "/35cb74e4-0f64-454b-9b50-bfac13ed28a5/78597d6c-f167-4e25-99ec-27c10aa3b74b/7ca62bcc-c819-4351-b304-a5e683147af1"
 					(reference "#PWR0188")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Device:C")
+		(at 222.25 144.78 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "11a7ebd8-0fb9-4438-a32d-143821d1483c")
+		(property "Reference" "C162"
+			(at 226.06 143.5099 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "C"
+			(at 226.06 146.0499 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "Capacitor_SMD:C_0402_1005Metric_Pad0.74x0.62mm_HandSolder"
+			(at 223.2152 148.59 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 222.25 144.78 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Unpolarized capacitor"
+			(at 222.25 144.78 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "678a6ddf-33bb-43f9-88a3-a8801a5c39ec")
+		)
+		(pin "2"
+			(uuid "f71053af-08a6-4eac-a769-5b024c359a7e")
+		)
+		(instances
+			(project "dacboard"
+				(path "/35cb74e4-0f64-454b-9b50-bfac13ed28a5/78597d6c-f167-4e25-99ec-27c10aa3b74b/7ca62bcc-c819-4351-b304-a5e683147af1"
+					(reference "C162")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Device:C")
+		(at 184.15 144.78 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "16266ae8-597b-46d0-87ab-768b6761ec39")
+		(property "Reference" "C156"
+			(at 187.96 143.5099 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "C"
+			(at 187.96 146.0499 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "Capacitor_SMD:C_0402_1005Metric_Pad0.74x0.62mm_HandSolder"
+			(at 185.1152 148.59 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 184.15 144.78 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Unpolarized capacitor"
+			(at 184.15 144.78 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "9ee07f45-3436-4ed4-bc7e-f27f1a3199e5")
+		)
+		(pin "2"
+			(uuid "31497650-e646-4914-b6a9-1bd20bc682d3")
+		)
+		(instances
+			(project "dacboard"
+				(path "/35cb74e4-0f64-454b-9b50-bfac13ed28a5/78597d6c-f167-4e25-99ec-27c10aa3b74b/7ca62bcc-c819-4351-b304-a5e683147af1"
+					(reference "C156")
 					(unit 1)
 				)
 			)
@@ -3892,6 +4418,72 @@
 			(project "dacboard"
 				(path "/35cb74e4-0f64-454b-9b50-bfac13ed28a5/78597d6c-f167-4e25-99ec-27c10aa3b74b/7ca62bcc-c819-4351-b304-a5e683147af1"
 					(reference "#PWR0185")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "power:VDD")
+		(at 171.45 140.97 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "1e23d450-11c0-49f9-8ffa-731cda62e43a")
+		(property "Reference" "#PWR0522"
+			(at 171.45 144.78 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "VDD"
+			(at 171.45 135.89 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 171.45 140.97 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 171.45 140.97 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Power symbol creates a global label with name \"VDD\""
+			(at 171.45 140.97 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "e7b5936d-5f6d-46d7-a35c-be6c47acf632")
+		)
+		(instances
+			(project "dacboard"
+				(path "/35cb74e4-0f64-454b-9b50-bfac13ed28a5/78597d6c-f167-4e25-99ec-27c10aa3b74b/7ca62bcc-c819-4351-b304-a5e683147af1"
+					(reference "#PWR0522")
 					(unit 1)
 				)
 			)
@@ -4351,6 +4943,72 @@
 				(path "/35cb74e4-0f64-454b-9b50-bfac13ed28a5/78597d6c-f167-4e25-99ec-27c10aa3b74b/7ca62bcc-c819-4351-b304-a5e683147af1"
 					(reference "U49")
 					(unit 2)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "power:GND")
+		(at 171.45 170.18 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "2fd4688e-d164-4d57-9a52-596c6f94755e")
+		(property "Reference" "#PWR0525"
+			(at 171.45 176.53 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "AGND"
+			(at 171.45 175.26 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 171.45 170.18 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 171.45 170.18 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
+			(at 171.45 170.18 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "01e4e694-aa29-4361-b3d4-9651e9a7d0b3")
+		)
+		(instances
+			(project "dacboard"
+				(path "/35cb74e4-0f64-454b-9b50-bfac13ed28a5/78597d6c-f167-4e25-99ec-27c10aa3b74b/7ca62bcc-c819-4351-b304-a5e683147af1"
+					(reference "#PWR0525")
+					(unit 1)
 				)
 			)
 		)
@@ -5456,6 +6114,76 @@
 		)
 	)
 	(symbol
+		(lib_id "Device:C")
+		(at 171.45 144.78 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "68c4bc15-3e4e-44ea-8700-78d8f71c853b")
+		(property "Reference" "C154"
+			(at 175.26 143.5099 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "C"
+			(at 175.26 146.0499 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "Capacitor_SMD:C_0402_1005Metric_Pad0.74x0.62mm_HandSolder"
+			(at 172.4152 148.59 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 171.45 144.78 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Unpolarized capacitor"
+			(at 171.45 144.78 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "cc9ebc5b-2d8d-4d94-b674-a2f587c75eef")
+		)
+		(pin "2"
+			(uuid "056a3f33-a86f-45ca-a6b5-eb97e207e511")
+		)
+		(instances
+			(project "dacboard"
+				(path "/35cb74e4-0f64-454b-9b50-bfac13ed28a5/78597d6c-f167-4e25-99ec-27c10aa3b74b/7ca62bcc-c819-4351-b304-a5e683147af1"
+					(reference "C154")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
 		(lib_id "power:VDD")
 		(at 53.34 78.74 90)
 		(unit 1)
@@ -5584,6 +6312,76 @@
 			(project "dacboard"
 				(path "/35cb74e4-0f64-454b-9b50-bfac13ed28a5/78597d6c-f167-4e25-99ec-27c10aa3b74b/7ca62bcc-c819-4351-b304-a5e683147af1"
 					(reference "#PWR0200")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Device:C")
+		(at 208.28 144.78 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "6f5b0b71-2437-478b-b4ce-43b80b517a22")
+		(property "Reference" "C160"
+			(at 212.09 143.5099 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "C"
+			(at 212.09 146.0499 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "Capacitor_SMD:C_0402_1005Metric_Pad0.74x0.62mm_HandSolder"
+			(at 209.2452 148.59 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 208.28 144.78 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Unpolarized capacitor"
+			(at 208.28 144.78 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "d6536ecb-06a8-426b-a397-46ae4d310ca9")
+		)
+		(pin "2"
+			(uuid "6afcc2b4-0593-4efc-a851-3fcf554f4ae4")
+		)
+		(instances
+			(project "dacboard"
+				(path "/35cb74e4-0f64-454b-9b50-bfac13ed28a5/78597d6c-f167-4e25-99ec-27c10aa3b74b/7ca62bcc-c819-4351-b304-a5e683147af1"
+					(reference "C160")
 					(unit 1)
 				)
 			)
@@ -5974,6 +6772,76 @@
 			(project "dacboard"
 				(path "/35cb74e4-0f64-454b-9b50-bfac13ed28a5/78597d6c-f167-4e25-99ec-27c10aa3b74b/7ca62bcc-c819-4351-b304-a5e683147af1"
 					(reference "#PWR0190")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Device:C")
+		(at 234.95 166.37 0)
+		(mirror y)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "7d63081d-ca00-4df3-a3b6-a27a9516bf4a")
+		(property "Reference" "C165"
+			(at 231.14 165.0999 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "C"
+			(at 231.14 167.6399 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "Capacitor_SMD:C_0402_1005Metric_Pad0.74x0.62mm_HandSolder"
+			(at 233.9848 170.18 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 234.95 166.37 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Unpolarized capacitor"
+			(at 234.95 166.37 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "69404037-b907-4600-b3bd-6ddd03ee4402")
+		)
+		(pin "2"
+			(uuid "18841eba-3c31-42b3-91af-ec7d17c86a6e")
+		)
+		(instances
+			(project "dacboard"
+				(path "/35cb74e4-0f64-454b-9b50-bfac13ed28a5/78597d6c-f167-4e25-99ec-27c10aa3b74b/7ca62bcc-c819-4351-b304-a5e683147af1"
+					(reference "C165")
 					(unit 1)
 				)
 			)
@@ -6649,6 +7517,76 @@
 		)
 	)
 	(symbol
+		(lib_id "Device:C")
+		(at 171.45 166.37 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "8e171cef-cb8a-4179-bcd7-5f5c5e41a86d")
+		(property "Reference" "C155"
+			(at 175.26 165.0999 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "C"
+			(at 175.26 167.6399 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "Capacitor_SMD:C_0402_1005Metric_Pad0.74x0.62mm_HandSolder"
+			(at 172.4152 170.18 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 171.45 166.37 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Unpolarized capacitor"
+			(at 171.45 166.37 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "b1ba228f-0e2c-4e87-bbbf-a3cfe2357bd1")
+		)
+		(pin "2"
+			(uuid "52d43237-7478-42aa-b2a5-cb91cec95548")
+		)
+		(instances
+			(project "dacboard"
+				(path "/35cb74e4-0f64-454b-9b50-bfac13ed28a5/78597d6c-f167-4e25-99ec-27c10aa3b74b/7ca62bcc-c819-4351-b304-a5e683147af1"
+					(reference "C155")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
 		(lib_id "power:VSS")
 		(at 214.63 124.46 0)
 		(mirror x)
@@ -7150,6 +8088,76 @@
 				(path "/35cb74e4-0f64-454b-9b50-bfac13ed28a5/78597d6c-f167-4e25-99ec-27c10aa3b74b/7ca62bcc-c819-4351-b304-a5e683147af1"
 					(reference "U54")
 					(unit 3)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Device:C")
+		(at 195.58 144.78 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "a0c45053-a645-47c5-83cb-b5c91f7c44e8")
+		(property "Reference" "C158"
+			(at 199.39 143.5099 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "C"
+			(at 199.39 146.0499 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "Capacitor_SMD:C_0402_1005Metric_Pad0.74x0.62mm_HandSolder"
+			(at 196.5452 148.59 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 195.58 144.78 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Unpolarized capacitor"
+			(at 195.58 144.78 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "46d4add2-38f1-4a82-a284-1ca063e3b967")
+		)
+		(pin "2"
+			(uuid "f857ec7e-83ad-4fbe-b4dc-fe1d6883f9f0")
+		)
+		(instances
+			(project "dacboard"
+				(path "/35cb74e4-0f64-454b-9b50-bfac13ed28a5/78597d6c-f167-4e25-99ec-27c10aa3b74b/7ca62bcc-c819-4351-b304-a5e683147af1"
+					(reference "C158")
+					(unit 1)
 				)
 			)
 		)
@@ -8036,6 +9044,72 @@
 		)
 	)
 	(symbol
+		(lib_id "power:GND")
+		(at 171.45 148.59 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "ba3a84f0-5f01-4350-94d4-5d9f5cab0e6e")
+		(property "Reference" "#PWR0523"
+			(at 171.45 154.94 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "AGND"
+			(at 171.45 153.67 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 171.45 148.59 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 171.45 148.59 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
+			(at 171.45 148.59 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "db36e7d4-c61f-4977-bcf4-def72f536127")
+		)
+		(instances
+			(project "dacboard"
+				(path "/35cb74e4-0f64-454b-9b50-bfac13ed28a5/78597d6c-f167-4e25-99ec-27c10aa3b74b/7ca62bcc-c819-4351-b304-a5e683147af1"
+					(reference "#PWR0523")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
 		(lib_id "Amplifier_Operational:AD8676xR")
 		(at 22.86 114.3 0)
 		(mirror y)
@@ -8259,6 +9333,76 @@
 	)
 	(symbol
 		(lib_id "Device:C")
+		(at 184.15 166.37 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "c97a2519-7055-4f16-b450-f22b553ee958")
+		(property "Reference" "C157"
+			(at 187.96 165.0999 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "C"
+			(at 187.96 167.6399 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "Capacitor_SMD:C_0402_1005Metric_Pad0.74x0.62mm_HandSolder"
+			(at 185.1152 170.18 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 184.15 166.37 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Unpolarized capacitor"
+			(at 184.15 166.37 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "9aa09282-caa6-4aef-8399-c74528479c6e")
+		)
+		(pin "2"
+			(uuid "2ec4503c-1d89-405e-81e7-4102667b687a")
+		)
+		(instances
+			(project "dacboard"
+				(path "/35cb74e4-0f64-454b-9b50-bfac13ed28a5/78597d6c-f167-4e25-99ec-27c10aa3b74b/7ca62bcc-c819-4351-b304-a5e683147af1"
+					(reference "C157")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Device:C")
 		(at 34.29 135.89 0)
 		(mirror y)
 		(unit 1)
@@ -8322,6 +9466,146 @@
 			(project "dacboard"
 				(path "/35cb74e4-0f64-454b-9b50-bfac13ed28a5/78597d6c-f167-4e25-99ec-27c10aa3b74b/7ca62bcc-c819-4351-b304-a5e683147af1"
 					(reference "C42")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Device:C")
+		(at 222.25 166.37 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "d0c315da-e6dd-4cdf-b911-4f5a969bbb93")
+		(property "Reference" "C163"
+			(at 226.06 165.0999 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "C"
+			(at 226.06 167.6399 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "Capacitor_SMD:C_0402_1005Metric_Pad0.74x0.62mm_HandSolder"
+			(at 223.2152 170.18 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 222.25 166.37 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Unpolarized capacitor"
+			(at 222.25 166.37 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "660fc099-0ffa-4e0b-8cfc-ca2bc2e1438f")
+		)
+		(pin "2"
+			(uuid "c456ccef-94d6-4caf-8c32-c08984a8fc09")
+		)
+		(instances
+			(project "dacboard"
+				(path "/35cb74e4-0f64-454b-9b50-bfac13ed28a5/78597d6c-f167-4e25-99ec-27c10aa3b74b/7ca62bcc-c819-4351-b304-a5e683147af1"
+					(reference "C163")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Device:C")
+		(at 208.28 166.37 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "d1c3580b-1c27-4363-85f3-b00c2b90d649")
+		(property "Reference" "C161"
+			(at 212.09 165.0999 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "C"
+			(at 212.09 167.6399 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "Capacitor_SMD:C_0402_1005Metric_Pad0.74x0.62mm_HandSolder"
+			(at 209.2452 170.18 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 208.28 166.37 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Unpolarized capacitor"
+			(at 208.28 166.37 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "2f7337b1-0319-4f04-bcff-601f913673d2")
+		)
+		(pin "2"
+			(uuid "42a5405f-6add-4c43-b4d6-6c2446968e91")
+		)
+		(instances
+			(project "dacboard"
+				(path "/35cb74e4-0f64-454b-9b50-bfac13ed28a5/78597d6c-f167-4e25-99ec-27c10aa3b74b/7ca62bcc-c819-4351-b304-a5e683147af1"
+					(reference "C161")
 					(unit 1)
 				)
 			)
@@ -8462,6 +9746,76 @@
 			(project "dacboard"
 				(path "/35cb74e4-0f64-454b-9b50-bfac13ed28a5/78597d6c-f167-4e25-99ec-27c10aa3b74b/7ca62bcc-c819-4351-b304-a5e683147af1"
 					(reference "C41")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Device:C")
+		(at 234.95 144.78 0)
+		(mirror y)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "d8d0e224-1810-4503-9fd9-9d19d7e5b9d0")
+		(property "Reference" "C164"
+			(at 231.14 143.5099 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "C"
+			(at 231.14 146.0499 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "Capacitor_SMD:C_0402_1005Metric_Pad0.74x0.62mm_HandSolder"
+			(at 233.9848 148.59 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 234.95 144.78 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Unpolarized capacitor"
+			(at 234.95 144.78 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "7e049f0c-aca2-4e5f-8c29-effb1c009d99")
+		)
+		(pin "2"
+			(uuid "97f09a0e-6a01-451d-ad9a-ad22a4c17008")
+		)
+		(instances
+			(project "dacboard"
+				(path "/35cb74e4-0f64-454b-9b50-bfac13ed28a5/78597d6c-f167-4e25-99ec-27c10aa3b74b/7ca62bcc-c819-4351-b304-a5e683147af1"
+					(reference "C164")
 					(unit 1)
 				)
 			)
@@ -8741,6 +10095,76 @@
 			(project "dacboard"
 				(path "/35cb74e4-0f64-454b-9b50-bfac13ed28a5/78597d6c-f167-4e25-99ec-27c10aa3b74b/7ca62bcc-c819-4351-b304-a5e683147af1"
 					(reference "#PWR0202")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Device:C")
+		(at 195.58 166.37 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "e23c266c-951a-4e5f-9a2f-8dd60fe24925")
+		(property "Reference" "C159"
+			(at 199.39 165.0999 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "C"
+			(at 199.39 167.6399 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "Capacitor_SMD:C_0402_1005Metric_Pad0.74x0.62mm_HandSolder"
+			(at 196.5452 170.18 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 195.58 166.37 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Unpolarized capacitor"
+			(at 195.58 166.37 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "1d1e4d30-ebf1-40bf-b6dc-9c4ddf1b2279")
+		)
+		(pin "2"
+			(uuid "10fcb36d-802f-4ec6-ac23-cbe5d8283290")
+		)
+		(instances
+			(project "dacboard"
+				(path "/35cb74e4-0f64-454b-9b50-bfac13ed28a5/78597d6c-f167-4e25-99ec-27c10aa3b74b/7ca62bcc-c819-4351-b304-a5e683147af1"
+					(reference "C159")
 					(unit 1)
 				)
 			)
