@@ -3,7 +3,7 @@
 module swashispin_tb;
 
     // dc parameters
-    localparam DC_DAC_WIDTH=16;
+    localparam DC_DAC_WIDTH=20;
     localparam DC_CYCLE_WIDTH=30;
     localparam DC_STREAM_ITER_WIDTH=10;
     localparam DC_CORE_ITER_WIDTH=10;
@@ -164,7 +164,7 @@ module swashispin_tb;
     logic [NUM_DC_CHANNEL-1:0][DC_DAC_WIDTH-1:0] vdc;
 
     for (genvar i = 0; i < NUM_DC_CHANNEL; i++) begin : DC_DAC_GEN
-        ad4451a DC_DAC (
+        ad5791 DC_DAC (
             .i_sclk(w_dc_sclk_bus[i]),
             .i_mosi(w_dc_mosi_bus[i]),
             .i_cs_n(w_dc_cs_n_bus[i]),

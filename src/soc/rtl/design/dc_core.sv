@@ -66,7 +66,6 @@ module dc_core
 
     always_ff @(posedge i_clk)
         o_armed <= (r_state == ARMED) && r_spi_finished;
-    // assign o_armed = (r_state == ARMED) && r_spi_finished;
 
     assign w_small_propagate = (r_cycles == 'd0) && (r_iters > 'd1) &&
                                r_spi_finished && (r_state == STREAM);
