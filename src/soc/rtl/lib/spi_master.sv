@@ -22,8 +22,6 @@ module spi_master
      localparam P0_LVL = (SCLK_PHASE) ? (!IDLE_LVL) : IDLE_LVL; 
      localparam P1_LVL = !P0_LVL;
      localparam logic [31:0] DATA_WIDTH_LOGIC = DATA_WIDTH;
-     localparam logic [31:0] WIDTH_CMP_32BIT = DATA_WIDTH_LOGIC - 'd1;
-     localparam logic [3:0] WIDTH_CMP = WIDTH_CMP_32BIT[3:0];
 
      enum {IDLE, P0, P1} r_state, w_next_state;
 
@@ -129,7 +127,7 @@ module spi_master
 
                  if (r_cycle_counter == i_dvsr) begin
 
-                     if (r_bit_counter == WIDTH_CMP) begin
+                     if (r_bit_counter == DATA_WIDTH - 1) begin
                          w_next_state = IDLE;
                          w_cycle_counter_next = 'd0;
                          w_bit_counter_next = 'd0;

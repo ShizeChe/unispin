@@ -4,7 +4,7 @@ module dc_core_tb;
 
     localparam CHANNELS = 2;
 
-    localparam DAC_WIDTH=16;
+    localparam DAC_WIDTH=20;
     localparam CYCLE_WIDTH=30;
     localparam ITER_WIDTH=10;
     localparam INSN_WIDTH=DAC_WIDTH*2+ITER_WIDTH+CYCLE_WIDTH;
@@ -60,14 +60,14 @@ module dc_core_tb;
         );
     end
 
-    // mimic ad4451a
-    logic [DAC_WIDTH-1:0] ad4451a_spi_reg [0:CHANNELS-1];
-    logic [DAC_WIDTH-1:0] ad4451a_dac_reg [0:CHANNELS-1];
+    // mimic ad5791
+    logic [DAC_WIDTH-1:0] ad5791_spi_reg [0:CHANNELS-1];
+    logic [DAC_WIDTH-1:0] ad5791_dac_reg [0:CHANNELS-1];
 
     for (genvar i = 0; i < CHANNELS; i++) begin
 
         always_ff @(negedge w_ldac_n[i]) begin
-            ad4451a_dac_reg[i] <= ad4451a_spi_reg[i];
+            ad5791_dac_reg[i] <= ad5791_spi_reg[i];
         end
 
         initial begin
@@ -75,7 +75,7 @@ module dc_core_tb;
                 @(negedge w_cs_n[i]);
                 for (int j = DAC_WIDTH-1; j >= 0; j--) begin
                     @(posedge w_sclk[i]);
-                    ad4451a_spi_reg[i][j] = w_mosi[i];
+                    ad5791_spi_reg[i][j] = w_mosi[i];
                 end
             end
         end
@@ -158,8 +158,8 @@ module dc_core_tb;
                 @(negedge w_clk);
                 for (int i = 0; i < ch_arr.size(); i++) begin
                     ch = ch_arr[i];
-                    assert (ad4451a_dac_reg[ch] == v[ch])
-                    else $fatal(1, "ad4451a_dac_reg[%0d]=%0h, v=%0h", ch, ad4451a_dac_reg[ch], v[ch]);
+                    assert (ad5791_dac_reg[ch] == v[ch])
+                    else $fatal(1, "ad5791_dac_reg[%0d]=%0h, v=%0h", ch, ad5791_dac_reg[ch], v[ch]);
                 end
             end
             for (int i = 0; i < ch_arr.size(); i++) begin
@@ -177,8 +177,8 @@ module dc_core_tb;
 
         for (int i = 0; i < ch_arr.size(); i++) begin
             ch = ch_arr[i];
-            assert (ad4451a_dac_reg[ch] == v[ch])
-            else $fatal(1, "ad4451a_dac_reg[%0d]=%0h, v=%0h", ch, ad4451a_dac_reg[ch], v[ch]);
+            assert (ad5791_dac_reg[ch] == v[ch])
+            else $fatal(1, "ad5791_dac_reg[%0d]=%0h, v=%0h", ch, ad5791_dac_reg[ch], v[ch]);
         end
 
     endtask
@@ -283,13 +283,13 @@ module dc_core_tb;
                     @(negedge w_clk);
                     for (int i = 0; i < ch_arr1.size(); i++) begin
                         ch = ch_arr1[i];
-                        assert (ad4451a_dac_reg[ch] == v[ch])
-                        else $fatal(1, "ad4451a_dac_reg[%0d]=%0h, v=%0h", ch, ad4451a_dac_reg[ch], v[ch]);
+                        assert (ad5791_dac_reg[ch] == v[ch])
+                        else $fatal(1, "ad5791_dac_reg[%0d]=%0h, v=%0h", ch, ad5791_dac_reg[ch], v[ch]);
                     end
                     for (int i = 0; i < ch_arr2.size(); i++) begin
                         ch = ch_arr2[i];
-                        assert (ad4451a_dac_reg[ch] == v[ch])
-                        else $fatal(1, "ad4451a_dac_reg[%0d]=%0h, v=%0h", ch, ad4451a_dac_reg[ch], v[ch]);
+                        assert (ad5791_dac_reg[ch] == v[ch])
+                        else $fatal(1, "ad5791_dac_reg[%0d]=%0h, v=%0h", ch, ad5791_dac_reg[ch], v[ch]);
                     end
 
                 end
@@ -322,13 +322,13 @@ module dc_core_tb;
 
         for (int i = 0; i < ch_arr1.size(); i++) begin
             ch = ch_arr1[i];
-            assert (ad4451a_dac_reg[ch] == v[ch])
-            else $fatal(1, "ad4451a_dac_reg[%0d]=%0h, v=%0h", ch, ad4451a_dac_reg[ch], v[ch]);
+            assert (ad5791_dac_reg[ch] == v[ch])
+            else $fatal(1, "ad5791_dac_reg[%0d]=%0h, v=%0h", ch, ad5791_dac_reg[ch], v[ch]);
         end
         for (int i = 0; i < ch_arr2.size(); i++) begin
             ch = ch_arr2[i];
-            assert (ad4451a_dac_reg[ch] == v[ch])
-            else $fatal(1, "ad4451a_dac_reg[%0d]=%0h, v=%0h", ch, ad4451a_dac_reg[ch], v[ch]);
+            assert (ad5791_dac_reg[ch] == v[ch])
+            else $fatal(1, "ad5791_dac_reg[%0d]=%0h, v=%0h", ch, ad5791_dac_reg[ch], v[ch]);
         end
 
     endtask
