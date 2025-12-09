@@ -3,7 +3,7 @@
 module rf_core
    #(parameter KBC_WIDTH=36,
      parameter NUM_SAMPLE_WIDTH=20,
-     parameter INSN_WIDTH=KBC_WIDTH*2+NUM_SAMPLE_WIDTH+1,
+     parameter INSN_WIDTH=KBC_WIDTH*2+NUM_SAMPLE_WIDTH*2+3,
      parameter IQ_WIDTH=14,
      parameter DAC_WIDTH=16,
      parameter PHASE_WIDTH=18,
@@ -14,6 +14,7 @@ module rf_core
      input  logic [INSN_WIDTH-1:0] i_insn,
      output logic o_next,
      input  logic i_empty,
+     output logic [INSN_WIDTH-1:0] o_insn_modified,
 
      output logic [DAC_WIDTH*16-1:0] o_QIx8,
 
@@ -39,7 +40,8 @@ module rf_core
         .o_c(w_c),
         .o_samples(w_samples),
         .o_arm(w_arm),
-        .o_idle(w_idle)
+        .o_idle(w_idle),
+        .o_insn_modified(o_insn_modified)
     );
 
     logic [NUM_SAMPLE_WIDTH-1:0] r_samples;
