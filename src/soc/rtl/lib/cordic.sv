@@ -4,15 +4,21 @@ module cordic
    #(parameter PHASE_WIDTH=18,
      parameter IQ_WIDTH=14,
      parameter NUM_STAGES=15,
-     parameter PAD_ZEROS=3)
+     parameter PAD_ZEROS=3,
+     parameter OPT_DATA_WIDTH=1)
     (input  logic i_clk,
      input  logic [PHASE_WIDTH-1:0] i_phase,
+     input  logic i_zero,
+     input  logic [OPT_DATA_WIDTH-1:0] i_opt_data,
      output logic [IQ_WIDTH-1:0] o_I, o_Q,
+     output logic [OPT_DATA_WIDTH-1:0] o_opt_data,
      input  logic i_stall);
 
     logic [PHASE_WIDTH-1:0] r_phase_left [0:NUM_STAGES];
     logic signed [IQ_WIDTH+PAD_ZEROS-1:0] r_x [0:NUM_STAGES];
     logic signed [IQ_WIDTH+PAD_ZEROS-1:0] r_y [0:NUM_STAGES];
+    logic [NUM_STAGES:0] r_zero;
+    logic [NUM_STAGES:0] r_opt_data;
     
     // 2's complement encoding of highest and lowest voltage level
     // arithmatic pad 1-bit at front for cordic gain
@@ -34,7 +40,12 @@ module cordic
 
     // coarse rotation into +/- 45 degrees range
     always_ff @(posedge i_clk) begin
+
         if (!i_stall) begin
+
+            r_zero[0] <= i_zero;
+            r_opt_data[0] <= i_opt_data;
+
             case (i_phase[PHASE_WIDTH-1:PHASE_WIDTH-3])
                 3'b000: begin // 0..45
                     // rotate 0, 0-45 left to rotate
@@ -85,7 +96,9 @@ module cordic
                     r_y[0] <= 'h0;
                 end
             endcase
+
         end
+
     end
 
     logic [PHASE_WIDTH-1:0] angle [0:NUM_STAGES-1];
@@ -108,8 +121,13 @@ module cordic
     };
 
     // cordic fine rotation
-    for (genvar i = 0; i < NUM_STAGES; i++) begin
+    for (genvar i = 0; i < NUM_STAGES; i++) begin : PIPELINE_GEN
+
         always_ff @(posedge i_clk) begin
+
+            r_zero[i + 1] <= r_zero[i];
+            r_opt_data[i + 1] <= r_opt_data[i];
+
             if (!i_stall) begin
                 if (r_phase_left[i][PHASE_WIDTH-1]) begin
                     // phase left is negative 
@@ -124,7 +142,9 @@ module cordic
                     r_y[i + 1] <= r_y[i] + (r_x[i] >>> (i + 1));
                 end
             end
+
         end
+
     end
 
     logic [IQ_WIDTH+PAD_ZEROS-1:0] w_x, w_y;
@@ -141,8 +161,9 @@ module cordic
     
     always_ff @(posedge i_clk) begin
         if (!i_stall) begin
-            o_I <= w_x_round[IQ_WIDTH+PAD_ZEROS-1:PAD_ZEROS];
-            o_Q <= w_y_round[IQ_WIDTH+PAD_ZEROS-1:PAD_ZEROS];
+            o_I <= r_zero[NUM_STAGES] ? w_x_round[IQ_WIDTH+PAD_ZEROS-1:PAD_ZEROS] : 'h0;
+            o_Q <= r_zero[NUM_STAGES] ? w_y_round[IQ_WIDTH+PAD_ZEROS-1:PAD_ZEROS] : 'h0;
+            o_opt_data <= r_opt_data[NUM_STAGES];
         end
     end
 
