@@ -1,0 +1,11 @@
+{"vcs1":{"timestamp_begin":1765317273.036011011, "rt":0.22, "ut":0.12, "st":0.11}}
+{"vcselab":{"timestamp_begin":1765317273.303073264, "rt":0.16, "ut":0.08, "st":0.04}}
+{"link":{"timestamp_begin":1765317273.502549579, "rt":0.08, "ut":0.06, "st":0.05}}
+{"SNPS_VCS_INTERNAL_ROOT_START_TIME": 1765317272.746518843}
+{"VCS_COMP_START_TIME": 1765317272.746518843}
+{"VCS_COMP_END_TIME": 1765317273.672014640}
+{"VCS_USER_OPTIONS": "-full64 -sverilog -debug_acc+all+dmptf -debug_region+cell+encrypt -kdb +warn=all -j32 +v2k -Mdir=build -o build/simv lib/cordic.sv lib/parabolic_counter.sv src/sequencer.sv src/rf_decode.sv src/rf_core.sv tb/rf_tb.sv -o rf_tb"}
+{"vcs1": {"peak_mem": 372868}}
+{"vcs1": {"peak_mem": 372868}}
+{"vcs1": {"peak_mem": 452780}}
+{"vcselab": {"peak_mem": 171672}}

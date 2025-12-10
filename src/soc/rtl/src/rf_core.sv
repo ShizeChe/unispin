@@ -31,7 +31,7 @@ module rf_core
     logic w_idle;
 
     rf_decode #(
-        .KBC_WIDTH(KBD_WIDTH),
+        .KBC_WIDTH(KBC_WIDTH),
         .NUM_SAMPLE_WIDTH(NUM_SAMPLE_WIDTH)
     ) DECODER (
         .i_insn(i_insn),
@@ -51,7 +51,7 @@ module rf_core
     always_ff @(posedge i_clk) begin
         if (i_rst) begin
             r_samples <= 'd0;
-            r_idle <= 1'b0;
+            r_idle <= 1'b1;
             r_arm <= 1'b0;
         end
         else if (o_next) begin
@@ -60,7 +60,7 @@ module rf_core
             r_arm <= w_arm;
         end
         else begin
-            r_samples <= r_samples - 'd8;
+            r_samples <= r_samples < 'd8 ? 'd0 : r_samples - 'd8;
             r_arm <= 1'b0;
         end
     end
@@ -113,9 +113,11 @@ module rf_core
             .OPT_DATA_WIDTH(1)
         ) CORDIC (
             .i_clk(i_clk),
+            .i_rst(i_rst),
             .i_phase(w_phasex8[i]),
             .i_zero(w_zerox8[i]),
             .i_opt_data(r_arm),
+            .i_opt_data_rst(1'b0),
             .o_I(w_Ix8_cordic[i]),
             .o_Q(w_Qx8_cordic[i]),
             .o_opt_data(w_arm_now[i]),

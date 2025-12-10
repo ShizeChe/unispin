@@ -6,10 +6,11 @@ module cordic
      parameter NUM_STAGES=15,
      parameter PAD_ZEROS=3,
      parameter OPT_DATA_WIDTH=1)
-    (input  logic i_clk,
+    (input  logic i_clk, i_rst,
      input  logic [PHASE_WIDTH-1:0] i_phase,
      input  logic i_zero,
      input  logic [OPT_DATA_WIDTH-1:0] i_opt_data,
+     input  logic [OPT_DATA_WIDTH-1:0] i_opt_data_rst,
      output logic [IQ_WIDTH-1:0] o_I, o_Q,
      output logic [OPT_DATA_WIDTH-1:0] o_opt_data,
      input  logic i_stall);
@@ -17,17 +18,17 @@ module cordic
     logic [PHASE_WIDTH-1:0] r_phase_left [0:NUM_STAGES];
     logic signed [IQ_WIDTH+PAD_ZEROS-1:0] r_x [0:NUM_STAGES];
     logic signed [IQ_WIDTH+PAD_ZEROS-1:0] r_y [0:NUM_STAGES];
-    logic [NUM_STAGES:0] r_zero;
-    logic [NUM_STAGES:0] r_opt_data;
+    logic [0:NUM_STAGES] r_zero;
+    logic [0:NUM_STAGES] r_opt_data;
     
     // 2's complement encoding of highest and lowest voltage level
     // arithmatic pad 1-bit at front for cordic gain
     // pad zeros at the end to increase resolution
     logic [IQ_WIDTH-1:0] w_pre_gain_pos, w_pre_gain_neg;
-    // assign  w_pre_gain_pos = 14'h1b7b;
-    // assign  w_pre_gain_neg = ~w_pre_gain_pos + 'h1;
-    assign  w_pre_gain_pos = 14'h1b7b + 14'h2000;
-    assign  w_pre_gain_neg = ~(14'h1b7b) + 14'h1 + 14'h2000;
+    assign  w_pre_gain_pos = 14'h1b7b;
+    assign  w_pre_gain_neg = ~w_pre_gain_pos + 'h1;
+    // assign  w_pre_gain_pos = 14'h1b7b + 14'h2000;
+    // assign  w_pre_gain_neg = ~(14'h1b7b) + 14'h1 + 14'h2000;
     logic [IQ_WIDTH+PAD_ZEROS-1:0] w_hi, w_lo;
     assign w_hi = {w_pre_gain_pos, {(PAD_ZEROS){1'b0}}};
     assign w_lo = {w_pre_gain_neg, {(PAD_ZEROS){1'b0}}};
@@ -41,7 +42,14 @@ module cordic
     // coarse rotation into +/- 45 degrees range
     always_ff @(posedge i_clk) begin
 
-        if (!i_stall) begin
+        if (i_rst) begin
+            r_zero[0] <= 1'b1;
+            r_opt_data[0] <= i_opt_data_rst;
+            r_phase_left[0] <= 'h0;
+            r_x[0] <= 'h0;
+            r_y[0] <= 'h0;
+        end
+        else if (!i_stall) begin
 
             r_zero[0] <= i_zero;
             r_opt_data[0] <= i_opt_data;
@@ -125,10 +133,18 @@ module cordic
 
         always_ff @(posedge i_clk) begin
 
-            r_zero[i + 1] <= r_zero[i];
-            r_opt_data[i + 1] <= r_opt_data[i];
+            if (i_rst) begin
+                r_zero[i + 1] <= 1'b1;
+                r_opt_data[i + 1] <= i_opt_data_rst;
+                r_phase_left[i + 1] <= 'h0;
+                r_x[i + 1] <= 'h0;
+                r_y[i + 1] <= 'h0;
+            end
+            else if (!i_stall) begin
 
-            if (!i_stall) begin
+                r_zero[i + 1] <= r_zero[i];
+                r_opt_data[i + 1] <= r_opt_data[i];
+
                 if (r_phase_left[i][PHASE_WIDTH-1]) begin
                     // phase left is negative 
                     r_phase_left[i + 1] <= r_phase_left[i] + angle[i];
@@ -160,9 +176,14 @@ module cordic
     assign w_y_round = (w_y_conv_round[IQ_WIDTH+PAD_ZEROS-1] == w_y[IQ_WIDTH+PAD_ZEROS-1]) ? w_y_conv_round : w_y;
     
     always_ff @(posedge i_clk) begin
-        if (!i_stall) begin
-            o_I <= r_zero[NUM_STAGES] ? w_x_round[IQ_WIDTH+PAD_ZEROS-1:PAD_ZEROS] : 'h0;
-            o_Q <= r_zero[NUM_STAGES] ? w_y_round[IQ_WIDTH+PAD_ZEROS-1:PAD_ZEROS] : 'h0;
+        if (i_rst) begin
+            o_I <= 'h0;
+            o_Q <= 'h0;
+            o_opt_data <= i_opt_data_rst;
+        end
+        else if (!i_stall) begin
+            o_I <= r_zero[NUM_STAGES] ? 'h0 : w_x_round[IQ_WIDTH+PAD_ZEROS-1:PAD_ZEROS];
+            o_Q <= r_zero[NUM_STAGES] ? 'h0 : w_y_round[IQ_WIDTH+PAD_ZEROS-1:PAD_ZEROS];
             o_opt_data <= r_opt_data[NUM_STAGES];
         end
     end

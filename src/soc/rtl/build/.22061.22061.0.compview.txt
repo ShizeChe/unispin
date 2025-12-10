@@ -1,0 +1,7 @@
+Command exited with non-zero status 255
+{"vcs1":{"timestamp_begin":1765316926.011819365, "rt":0.10, "ut":0.03, "st":0.02}}
+{"SNPS_VCS_INTERNAL_ROOT_START_TIME": 1765316925.701359047}
+{"VCS_COMP_START_TIME": 1765316925.701359047}
+{"VCS_COMP_END_TIME": 1765316926.151321701}
+{"VCS_USER_OPTIONS": "-full64 -sverilog -debug_acc+all+dmptf -debug_region+cell+encrypt -kdb +warn=all -j32 +v2k -Mdir=build -o build/simv lib/cordic.sv lib/parabolic_counter.sv src/sequencer.sv src/rf_decode.sv src/rf_core.sv tb/rf_tb.sv -o rf_tb"}
+{"vcs1": {"peak_mem": 452192}}

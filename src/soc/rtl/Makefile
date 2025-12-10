@@ -2,17 +2,18 @@
 SIM := vcs
 # SRC := $(wildcard lib/*.sv design/*.sv)
 # SRC := design/launch.sv design/dc_stream.sv design/dc_core.sv design/dc.sv design/rf_stream.sv design/rf_core.sv design/rf.sv lib/spi_master.sv lib/parabolic_counter.sv lib/cordic.sv lib/ad5541a.sv lib/zcu216_dac.sv
-SRC := design/launch.sv design/dc_stream.sv design/dc_core.sv design/dc.sv lib/spi_master.sv
-
+# SRC := design/launch.sv design/dc_stream.sv design/dc_core.sv design/dc.sv lib/spi_master.sv
+SRC := lib/cordic.sv lib/parabolic_counter.sv src/sequencer.sv src/rf_decode.sv src/rf_core.sv
 
 # SRC := $(filter-out design/uart.sv design/axi_lite_slave.sv lib/baud,$(SRC))
-TB ?= dc_core_tb
+TB ?= rf_tb
 TB_SRC := tb/$(TB).sv
 TARGET := $(TB)
 CORES := $(shell getconf _NPROCESSORS_ONLN)
 
-VCS_FLAGS = -full64 -sverilog -debug_acc+all+dmptf -debug_region+cell+encrypt -kdb +warn=all -j$(CORES) +v2k
-VERDI_FLAGS = +fsdbfile+dump.fsdb +vcs+all -gui
+VCS_FLAGS = -full64 -sverilog -debug_acc+all+dmptf -debug_region+cell+encrypt -kdb +warn=all -j$(CORES) +v2k \
+			-Mdir=build -o build/simv
+VERDI_FLAGS = +fsdbfile+build/dump.fsdb +vcs+all -gui
 
 all: $(TARGET)
 
