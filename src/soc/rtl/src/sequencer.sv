@@ -10,6 +10,7 @@ module sequencer
 
      input  logic [TOTAL_REGS-1:0][31:0] i_regs,
 
+     output logic [$clog2(DEPTH)-1:0] o_addr,
      output logic [INSN_WIDTH-1:0] o_insn,
      input  logic i_next,
      output logic o_empty,
@@ -28,6 +29,7 @@ module sequencer
     assign w_new_sequence = (w_last0_ff2 && !w_last0_ff1);
 
     logic [INSN_WIDTH-1:0] r_sequence [0:DEPTH-1];
+
     logic [$clog2(DEPTH)-1:0] r_iptr_modify;
 
     for (genvar i = 0; i < DEPTH; i++) begin : SEQUENCE_GEN
@@ -98,5 +100,7 @@ module sequencer
         else if (w_propagate)
             r_iptr_modify <= r_iptr;
     end
+
+    assign o_addr = r_iptr_modify;
 
 endmodule

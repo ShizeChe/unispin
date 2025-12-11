@@ -41,9 +41,9 @@
 //
 // endmodule
 
-module parabolic_counterx8
-   #(parameter IW=36,
-     parameter OW=18)
+module rf_phasor
+   #(parameter IW=RF_KBC_WIDTH,
+     parameter OW=RF_PHASE_WIDTH)
     (input  logic i_clk, i_rst,
      input  logic i_set, 
      input  logic [IW-1:0] i_k,

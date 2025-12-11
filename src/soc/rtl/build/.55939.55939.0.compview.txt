@@ -1,5 +1,0 @@
-{"vcs1":{"timestamp_begin":1765320862.574718645, "rt":0.09, "ut":0.02, "st":0.02}}
-{"SNPS_VCS_INTERNAL_ROOT_START_TIME": 1765320862.319305411}
-{"VCS_COMP_START_TIME": 1765320862.319305411}
-{"VCS_COMP_END_TIME": 1765320862.683178186}
-{"VCS_USER_OPTIONS": "-full64 -sverilog -debug_acc+all+dmptf -debug_region+cell+encrypt -kdb +warn=all -j32 +v2k -Mdir=build -o build/simv lib/cordic.sv lib/parabolic_counter.sv src/sequencer.sv src/rf_decode.sv src/rf_core.sv tb/rf_tb.sv -o rf_tb"}

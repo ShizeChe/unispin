@@ -1,61 +1,53 @@
 `timescale 1ns / 1ps
+`include "include/internal.svh"
 
-module rf_core_tb;
-
-    localparam KBC_WIDTH=36;
-    localparam NUM_SAMPLE_WIDTH=20;
-    localparam INSN_WIDTH=KBC_WIDTH*2+NUM_SAMPLE_WIDTH*2+3;
-    localparam IQ_WIDTH=14;
-    localparam DAC_WIDTH=16;
-    localparam PHASE_WIDTH=18;
-    localparam CORDIC_STAGES=15;
-    localparam CORDIC_PAD_ZEROS=8;
-
-    localparam ITER_WIDTH=10;
-    localparam DEPTH=16;
-    localparam REG_PER_INSN=(INSN_WIDTH+31)/32;
-    localparam TOTAL_REGS=DEPTH*REG_PER_INSN+2;
+module rf_tb;
 
     logic w_clk, w_rst;
-    logic [INSN_WIDTH-1:0] w_insn;
-    logic [INSN_WIDTH-1:0] w_insn_modified;
+    logic [RF_INSN_WIDTH-1:0] w_insn;
+    logic [RF_INSN_WIDTH-1:0] w_insn_modified;
     logic w_next;
     logic w_empty;
-    logic [DAC_WIDTH*16-1:0] w_QIx8;
+    logic [RF_DAC_WIDTH*16-1:0] w_QIx8;
     logic w_start;
     logic w_armed;
-    logic [TOTAL_REGS-1:0][31:0] w_regs;
+    logic [RF_TOTAL_REGS-1:0][31:0] w_regs;
+    logic [$clog2(RF_DEPTH)-1:0] w_addr;
 
     sequencer #(
-        .INSN_WIDTH(INSN_WIDTH),
-        .ITER_WIDTH(ITER_WIDTH),
-        .DEPTH(DEPTH)
+        .INSN_WIDTH(RF_INSN_WIDTH),
+        .ITER_WIDTH(RF_ITER_WIDTH),
+        .DEPTH(RF_DEPTH)
     ) SEQ (
         .i_clk(w_clk),
         .i_rst(w_rst),
         .i_regs(w_regs),
+        .o_addr(w_addr),
         .o_insn(w_insn),
         .i_next(w_next),
         .o_empty(w_empty),
         .i_insn_modified(w_insn_modified)
     );
 
+    rf_output_stg_t o;
+
     rf_core #(
-    	.KBC_WIDTH(KBC_WIDTH),
-    	.NUM_SAMPLE_WIDTH(NUM_SAMPLE_WIDTH),
-        .IQ_WIDTH(IQ_WIDTH),
-    	.DAC_WIDTH(DAC_WIDTH),
-    	.PHASE_WIDTH(PHASE_WIDTH),
-    	.CORDIC_STAGES(CORDIC_STAGES),
-    	.CORDIC_PAD_ZEROS(CORDIC_PAD_ZEROS)
+    	.KBC_WIDTH(RF_KBC_WIDTH),
+    	.NUM_SAMPLE_WIDTH(RF_NUM_SAMPLE_WIDTH),
+        .IQ_WIDTH(RF_IQ_WIDTH),
+    	.DAC_WIDTH(RF_DAC_WIDTH),
+    	.PHASE_WIDTH(RF_PHASE_WIDTH),
+    	.CORDIC_STAGES(RF_CORDIC_STAGES),
+    	.CORDIC_PAD_ZEROS(RF_CORDIC_PAD_ZEROS)
     ) CORE (
         .i_clk(w_clk),
         .i_rst(w_rst),
+        .i_addr(w_addr),
         .i_insn(w_insn),
         .o_next(w_next),
         .i_empty(w_empty),
         .o_insn_modified(w_insn_modified),
-        .o_QIx8(w_QIx8),
+        .o(o),
         .i_start(w_start),
         .o_armed(w_armed)
     );
@@ -72,92 +64,106 @@ module rf_core_tb;
         forever #0.25 w_dac_clk = !w_dac_clk;
     end
 
-    // simulate DUC with 10MHz
-    int dac_cycle;
-    initial begin
-        @(posedge w_clk);
-        dac_cycle = 0;
-        forever begin
-            @(posedge w_dac_clk);
-            dac_cycle = (dac_cycle == 7) ? 0 : (dac_cycle + 1);
-        end
-    end
+    real vrf;
 
-    function automatic real iq2real(input int N, input logic [IQ_WIDTH-1:0] iq);
-        return $itor($signed(iq)) / (1.0 * (1 << (N-1)));
-    endfunction
-
-    logic [7:0][IQ_WIDTH-1:0] w_Ix8, w_Qx8;
-    logic [7:0][DAC_WIDTH-IQ_WIDTH-1:0] w_filler1, w_filler2;
-    for (genvar i = 0; i < 8; i++) begin
-        assign {w_Qx8[i], w_filler1[i], w_Ix8[i], w_filler2[i]} = w_QIx8;
-    end
-
-    real I, Q;
-    real deg, rad, out;
-    // logic [PHASE_WIDTH:0] w_phase;
-    // logic [PHASE_WIDTH*2-1:0] w_phase_full;
-    logic [IQ_WIDTH-1:0] w_I, w_Q;
-    initial begin
-        deg = 0;
-        @(posedge w_clk);
-        forever begin
-            @(negedge w_dac_clk);
-            w_I = w_Ix8[dac_cycle];
-            w_Q = w_Qx8[dac_cycle];
-            // w_phase = w_phasex8[dac_cycle];
-            // w_phase_full = phase_counter.r_p[dac_cycle];
-            I = iq2real(IQ_WIDTH, w_I);
-            Q = iq2real(IQ_WIDTH, w_Q);
-            deg = deg + 1.8;
-            rad = deg * 3.14159265358979323846 / 180.0;
-            out = I * $cos(rad) - Q * $sin(rad);
-        end
-    end
-
-    task rabi(
-        logic [NUM_SAMPLE_WIDTH-1:0] ctrl_samples, ctrl_dsamples,
-        logic [NUM_SAMPLE_WIDTH-1:0] idle_samples, idle_dsamples,
-        logic [ITER_WIDTH-1:0] iters
+    zcu216_dac RF_DAC (
+        .i_clk(w_clk),
+        .i_dac_clk(w_dac_clk),
+        .i_QIx8(o.r_QIx8),
+        .o_vrf(vrf)
     );
 
-        w_regs[REG_PER_INSN-1:0] = {
+    // simulate DUC with 10MHz
+    // int dac_cycle;
+    // initial begin
+    //     @(posedge w_clk);
+    //     dac_cycle = 0;
+    //     forever begin
+//         @(posedge w_dac_clk);
+    //         dac_cycle = (dac_cycle == 7) ? 0 : (dac_cycle + 1);
+    //     end
+    // end
+    //
+    // function automatic real iq2real(input int N, input logic [IQ_WIDTH-1:0] iq);
+    //     return $itor($signed(iq)) / (1.0 * (1 << (N-1)));
+    // endfunction
+    //
+    // logic [7:0][IQ_WIDTH-1:0] w_Ix8, w_Qx8;
+    // logic [7:0][DAC_WIDTH-IQ_WIDTH-1:0] w_filler1, w_filler2;
+    // for (genvar i = 0; i < 8; i++) begin
+    //     assign {w_Qx8[i], w_filler1[i], w_Ix8[i], w_filler2[i]} = w_QIx8;
+    // end
+    //
+    // real I, Q;
+    // real deg, rad, out;
+    // // logic [PHASE_WIDTH:0] w_phase;
+    // // logic [PHASE_WIDTH*2-1:0] w_phase_full;
+    // logic [IQ_WIDTH-1:0] w_I, w_Q;
+    // initial begin
+    //     deg = 0;
+    //     @(posedge w_clk);
+    //     forever begin
+    //         @(negedge w_dac_clk);
+    //         w_I = w_Ix8[dac_cycle];
+    //         w_Q = w_Qx8[dac_cycle];
+    //         // w_phase = w_phasex8[dac_cycle];
+    //         // w_phase_full = phase_counter.r_p[dac_cycle];
+    //         I = iq2real(IQ_WIDTH, w_I);
+    //         Q = iq2real(IQ_WIDTH, w_Q);
+    //         deg = deg + 1.8;
+    //         rad = deg * 3.14159265358979323846 / 180.0;
+    //         out = I * $cos(rad) - Q * $sin(rad);
+    //     end
+    // end
+
+    task rabi(
+        logic [RF_NUM_SAMPLE_WIDTH-1:0] ctrl_samples, ctrl_dsamples,
+        logic [RF_NUM_SAMPLE_WIDTH-1:0] idle_samples, idle_dsamples,
+        logic [RF_ITER_WIDTH-1:0] iters
+    );
+
+        w_regs[RF_REG_PER_INSN-1:0] = {
             1'b1,
             2'b10,
-            {(KBC_WIDTH){1'b0}},
-            {(KBC_WIDTH){1'b0}},
+            {(RF_KBC_WIDTH){1'b0}},
+            {(RF_KBC_WIDTH){1'b0}},
             ctrl_samples,
             ctrl_dsamples
         };
 
-        w_regs[2*REG_PER_INSN-1:REG_PER_INSN] = {
+        w_regs[2*RF_REG_PER_INSN-1:RF_REG_PER_INSN] = {
             1'b0,
             2'b11,
-            {(KBC_WIDTH){1'b0}},
-            {(KBC_WIDTH){1'b0}},
+            {(RF_KBC_WIDTH){1'b0}},
+            {(RF_KBC_WIDTH){1'b0}},
             idle_samples,
             idle_dsamples
         };
 
-        for (int i = 2 * REG_PER_INSN; i <= TOTAL_REGS - 3; i++) begin
+        for (int i = 2 * RF_REG_PER_INSN; i <= RF_TOTAL_REGS - 3; i++) begin
             w_regs[i] = 'h0;
         end
 
-        w_regs[TOTAL_REGS-2] = iters;
-        w_regs[TOTAL_REGS-1] = 1'b0;
+        w_regs[RF_TOTAL_REGS-2] = iters;
+        w_regs[RF_TOTAL_REGS-1] = 1'b0;
 
         @(posedge w_clk);
-        w_regs[TOTAL_REGS-1] = 1'b1;
+        w_regs[RF_TOTAL_REGS-1] = 1'b1;
 
         wait(w_armed);
         repeat(3) @(posedge w_clk);
-        w_regs[TOTAL_REGS - 1] = 'd0;
+        w_regs[RF_TOTAL_REGS - 1] = 'd0;
         w_start = 1'b1;
         @(posedge w_clk);
         w_start = 1'b0;
 
-        wait(w_empty && CORE.r_samples == 'd0);
-        repeat (CORDIC_STAGES) @(posedge w_clk);
+        wait(w_empty && CORE.x.r_samples_left == 'd0);
+        repeat (RF_CORDIC_STAGES) @(posedge w_clk);
+
+    endtask
+
+    task rand_insns;
+        
 
     endtask
 
