@@ -1,6 +1,6 @@
 `timescale 1ns / 1ps
 
-module spi_master
+module dc_spi_master
    #(parameter DATA_WIDTH=8,
      parameter SCLK_POLARITY=0,
      parameter SCLK_PHASE=0)

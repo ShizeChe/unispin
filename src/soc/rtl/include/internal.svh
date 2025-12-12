@@ -12,7 +12,7 @@ parameter DC_TOTAL_REGS=DC_STREAM_DEPTH*3+2;
 
 //rf parameters
 parameter RF_KBC_WIDTH=36;
-parameter RF_NUM_SAMPLE_WIDTH=30;
+parameter RF_NUM_SAMPLE_WIDTH=20;
 parameter RF_INSN_WIDTH=RF_KBC_WIDTH*2+RF_NUM_SAMPLE_WIDTH*2+3;
 parameter RF_IQ_WIDTH=14;
 parameter RF_DAC_WIDTH=16;
@@ -76,6 +76,7 @@ typedef struct {
     logic [RF_PHASE_WIDTH-1:0] r_phase_left;
     logic signed [RF_IQ_WIDTH+RF_CORDIC_PAD_ZEROS-1:0] r_x;
     logic signed [RF_IQ_WIDTH+RF_CORDIC_PAD_ZEROS-1:0] r_y;
+    logic r_bubble;
     logic r_zero;
     logic r_arm;
 } rf_cordic_stg_t;
@@ -85,6 +86,7 @@ typedef struct {
     logic [RF_NUM_SAMPLE_WIDTH-1:0] r_sample;
     logic [RF_IQ_WIDTH-1:0] r_Q;
     logic [RF_IQ_WIDTH-1:0] r_I;
+    logic r_bubble;
     logic r_arm;
 } rf_result_stg_t;
 
@@ -96,12 +98,5 @@ typedef struct {
 } rf_output_stg_t;
 
 parameter logic [RF_DAC_WIDTH-RF_IQ_WIDTH-1:0] PAD = 'b0;
-
-typedef struct packed {
-    logic [RF_IQ_WIDTH-1:0] w_Q;
-    logic [RF_DAC_WIDTH-RF_IQ_WIDTH-1:0] w_padQ;
-    logic [RF_IQ_WIDTH-1:0] w_I;
-    logic [RF_DAC_WIDTH-RF_IQ_WIDTH-1:0] w_padI;
-} rf_QI_t;
 
 `endif

@@ -131,14 +131,14 @@ module rf_core
                 r_addr: r[0].r_addr,
                 r_sample_start: r[0].r_sample,
                 r_sample_end: (
-                    r[7] === r[7] ? r[7].r_sample :
-                    r[6] === r[6] ? r[6].r_sample :
-                    r[5] === r[5] ? r[5].r_sample :
-                    r[4] === r[4] ? r[4].r_sample :
-                    r[3] === r[3] ? r[3].r_sample :
-                    r[2] === r[2] ? r[2].r_sample :
-                    r[1] === r[1] ? r[1].r_sample :
-                    r[0] === r[0] ? r[0].r_sample : 'bx
+                    !r[7].r_bubble ? r[7].r_sample :
+                    !r[6].r_bubble ? r[6].r_sample :
+                    !r[5].r_bubble ? r[5].r_sample :
+                    !r[4].r_bubble ? r[4].r_sample :
+                    !r[3].r_bubble ? r[3].r_sample :
+                    !r[2].r_bubble ? r[2].r_sample :
+                    !r[1].r_bubble ? r[1].r_sample :
+                    !r[0].r_bubble ? r[0].r_sample : 'bx
                 ),
                 r_QIx8: {
                     r[7].r_Q, PAD, r[7].r_Q, PAD, 

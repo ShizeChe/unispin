@@ -8,10 +8,9 @@ module rf_tb;
     logic [RF_INSN_WIDTH-1:0] w_insn_modified;
     logic w_next;
     logic w_empty;
-    logic [RF_DAC_WIDTH*16-1:0] w_QIx8;
     logic w_start;
     logic w_armed;
-    logic [RF_TOTAL_REGS-1:0][31:0] w_regs;
+    logic [0:RF_TOTAL_REGS-1][31:0] w_regs;
     logic [$clog2(RF_DEPTH)-1:0] w_addr;
 
     sequencer #(
@@ -73,56 +72,18 @@ module rf_tb;
         .o_vrf(vrf)
     );
 
-    // simulate DUC with 10MHz
-    // int dac_cycle;
-    // initial begin
-    //     @(posedge w_clk);
-    //     dac_cycle = 0;
-    //     forever begin
-//         @(posedge w_dac_clk);
-    //         dac_cycle = (dac_cycle == 7) ? 0 : (dac_cycle + 1);
-    //     end
-    // end
-    //
-    // function automatic real iq2real(input int N, input logic [IQ_WIDTH-1:0] iq);
-    //     return $itor($signed(iq)) / (1.0 * (1 << (N-1)));
-    // endfunction
-    //
-    // logic [7:0][IQ_WIDTH-1:0] w_Ix8, w_Qx8;
-    // logic [7:0][DAC_WIDTH-IQ_WIDTH-1:0] w_filler1, w_filler2;
-    // for (genvar i = 0; i < 8; i++) begin
-    //     assign {w_Qx8[i], w_filler1[i], w_Ix8[i], w_filler2[i]} = w_QIx8;
-    // end
-    //
-    // real I, Q;
-    // real deg, rad, out;
-    // // logic [PHASE_WIDTH:0] w_phase;
-    // // logic [PHASE_WIDTH*2-1:0] w_phase_full;
-    // logic [IQ_WIDTH-1:0] w_I, w_Q;
-    // initial begin
-    //     deg = 0;
-    //     @(posedge w_clk);
-    //     forever begin
-    //         @(negedge w_dac_clk);
-    //         w_I = w_Ix8[dac_cycle];
-    //         w_Q = w_Qx8[dac_cycle];
-    //         // w_phase = w_phasex8[dac_cycle];
-    //         // w_phase_full = phase_counter.r_p[dac_cycle];
-    //         I = iq2real(IQ_WIDTH, w_I);
-    //         Q = iq2real(IQ_WIDTH, w_Q);
-    //         deg = deg + 1.8;
-    //         rad = deg * 3.14159265358979323846 / 180.0;
-    //         out = I * $cos(rad) - Q * $sin(rad);
-    //     end
-    // end
-
     task rabi(
         logic [RF_NUM_SAMPLE_WIDTH-1:0] ctrl_samples, ctrl_dsamples,
         logic [RF_NUM_SAMPLE_WIDTH-1:0] idle_samples, idle_dsamples,
         logic [RF_ITER_WIDTH-1:0] iters
     );
 
-        w_regs[RF_REG_PER_INSN-1:0] = {
+
+        for (int i = 0; i < RF_TOTAL_REGS; i++) begin
+            w_regs[i] = 'h0;
+        end
+
+        w_regs[0:RF_REG_PER_INSN-1] = {
             1'b1,
             2'b10,
             {(RF_KBC_WIDTH){1'b0}},
@@ -131,7 +92,7 @@ module rf_tb;
             ctrl_dsamples
         };
 
-        w_regs[2*RF_REG_PER_INSN-1:RF_REG_PER_INSN] = {
+        w_regs[RF_REG_PER_INSN:2*RF_REG_PER_INSN-1] = {
             1'b0,
             2'b11,
             {(RF_KBC_WIDTH){1'b0}},
@@ -139,10 +100,6 @@ module rf_tb;
             idle_samples,
             idle_dsamples
         };
-
-        for (int i = 2 * RF_REG_PER_INSN; i <= RF_TOTAL_REGS - 3; i++) begin
-            w_regs[i] = 'h0;
-        end
 
         w_regs[RF_TOTAL_REGS-2] = iters;
         w_regs[RF_TOTAL_REGS-1] = 1'b0;
@@ -162,16 +119,129 @@ module rf_tb;
 
     endtask
 
+    rf_insn_t rand_insn;
+    localparam MAX_SAMPLES = 8192;
+    localparam MAX_DSAMPLES = 64;
+    localparam MAX_ITERS = 100;
+
+    function logic [RF_DAC_WIDTH*16-1:0] get_golden_QI(
+        input rf_kbc_mode_t kbc_mode,
+        input logic [RF_KBC_WIDTH] kbc1, kbc2,
+        input logic sample_start, sample_end
+    );
+        return 'h0;
+    endfunction
+
+    rf_output_stg_t golden_seq [$];
+    int num_insns;
+    int total_samples;
+    rf_output_stg_t out;
+    rf_output_stg_t golden_o;
+
+    rf_insn_t [0:RF_DEPTH-1] insns;
+    for (genvar i = 0; i < RF_DEPTH; i++) begin : INSNS_GEN
+        assign {w_regs[i*RF_REG_PER_INSN:(i+1)*RF_REG_PER_INSN-1]} = 
+            {{(RF_REG_PER_INSN*32-RF_INSN_WIDTH){1'b0}}, insns[i]};
+    end
+    
+    logic [31:0] iters_reg;
+    logic [31:0] start_reg;
+    assign w_regs[RF_TOTAL_REGS-2] = iters_reg;
+    assign w_regs[RF_TOTAL_REGS-1] = start_reg;
+
+    task get_golden_seq;
+
+        if (golden_seq.size() > 0)
+            golden_seq.delete();
+
+        for (int i = 0; i < iters_reg; i++) begin
+
+            for (int j = 0; j < num_insns; j++) begin
+
+                total_samples = insns[j].w_samples + insns[j].w_dsamples * i;
+
+                for (int sample_start = 0; sample_start < total_samples; sample_start += 8) begin
+
+                    out.r_addr = j;
+                    out.r_sample_start = sample_start;
+                    out.r_sample_end = (sample_start + 8 > total_samples) ? total_samples - 1 : 
+                                        sample_start + 7;
+                    out.r_QIx8 = get_golden_QI(insns[j].w_kbc_mode, insns[j].w_kbc1, insns[j].w_kbc2, 
+                                               out.r_sample_start, out.r_sample_end);
+
+                    golden_seq.push_back(out);
+
+                end
+
+            end
+
+        end
+
+    endtask
+
+    function rf_kbc_mode_t rand_kbc_mode();
+        int n = $urandom_range(1, 3);
+        if (n == 1)
+            return RF_KB;
+        else if (n == 2)
+            return RF_BC;
+        else
+            return RF_IDLE;
+    endfunction
+
     task rand_insns;
-        
+
+        num_insns = $urandom_range(1, RF_DEPTH - 1);
+
+        for (int i = 0; i < num_insns; i++) begin
+            insns[i] = '{
+                w_arm: (i == 0),
+                w_kbc_mode: rand_kbc_mode(),
+                w_kbc1: $urandom_range(0, {(RF_KBC_WIDTH){1'b1}}),
+                w_kbc2: $urandom_range(0, {(RF_KBC_WIDTH){1'b1}}),
+                w_samples: $urandom_range(0, MAX_SAMPLES),
+                w_dsamples: $urandom_range(0, MAX_SAMPLES)
+            };
+        end
+
+        iters_reg = $urandom_range(0, MAX_ITERS);
+        start_reg = 32'h0;
+
+        get_golden_seq;
+
+        @(negedge w_clk);
+        start_reg = 1'b1;
+
+        wait(w_armed);
+        repeat(3) @(negedge w_clk);
+        start_reg = 'd0;
+        w_start = 1'b1;
+        @(negedge w_clk);
+        w_start = 1'b0;
+
+        for (int i = 0; i < golden_seq.size(); i++) begin
+            golden_o = golden_seq[i];
+            assert (o.r_addr == golden_seq[i].r_addr &&
+                    o.r_sample_start == golden_seq[i].r_sample_start &&
+                    o.r_sample_end == golden_seq[i].r_sample_end)
+            else $fatal(1, "At %0.3f ns: o = %p, golden_seq[%0d] = %p", $realtime,
+                        o, i, golden_seq[i]);
+            @(negedge w_clk);
+        end
+
+        $finish;
 
     endtask
 
 
     initial begin
         w_rst = 1'b1;
-        w_regs = 'h0;
         w_start = 1'b0;
+        for (int i = 0; i < RF_DEPTH; i++) begin
+            insns[i] = 'h0;
+        end
+        iters_reg = 32'h0;
+        start_reg = 32'h0;
         @(negedge w_clk);
         w_rst = 1'b0;
 
@@ -191,7 +261,8 @@ module rf_tb;
         // wait(core.w_propagate_bubble);
         // repeat (3) @(posedge w_clk);
 
-        rabi(.ctrl_samples('d0), .ctrl_dsamples('d8), .idle_samples('d16), .idle_dsamples('d0), .iters('d10));
+        // rabi(.ctrl_samples('d0), .ctrl_dsamples('d8), .idle_samples('d16), .idle_dsamples('d0), .iters('d10));
+        rand_insns;
 
         $finish;
     end

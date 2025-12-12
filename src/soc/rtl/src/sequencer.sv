@@ -8,7 +8,7 @@ module sequencer
      parameter TOTAL_REGS=DEPTH*REG_PER_INSN+2)
     (input  logic i_clk, i_rst,
 
-     input  logic [TOTAL_REGS-1:0][31:0] i_regs,
+     input  logic [0:TOTAL_REGS-1][31:0] i_regs,
 
      output logic [$clog2(DEPTH)-1:0] o_addr,
      output logic [INSN_WIDTH-1:0] o_insn,
@@ -37,7 +37,7 @@ module sequencer
             if (i_rst)
                 r_sequence[i] <= 'h0;
             else if (w_new_sequence)
-                r_sequence[i] <= {i_regs[(i+1)*REG_PER_INSN-1:i*REG_PER_INSN]}[INSN_WIDTH-1:0];
+                r_sequence[i] <= {i_regs[i*REG_PER_INSN:(i+1)*REG_PER_INSN-1]}[INSN_WIDTH-1:0];
             else if (!o_empty && i_next && r_iptr_modify == i)
                 r_sequence[i] <= i_insn_modified;
         end

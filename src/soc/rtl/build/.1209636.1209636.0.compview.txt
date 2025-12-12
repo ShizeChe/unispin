@@ -1,0 +1,13 @@
+{"vcs1":{"timestamp_begin":1765486957.596279482, "rt":0.28, "ut":0.25, "st":0.12}}
+{"vcselab":{"timestamp_begin":1765486957.915860941, "rt":0.16, "ut":0.09, "st":0.03}}
+{"link":{"timestamp_begin":1765486958.107433922, "rt":0.08, "ut":0.07, "st":0.07}}
+{"SNPS_VCS_INTERNAL_ROOT_START_TIME": 1765486957.347159586}
+{"VCS_COMP_START_TIME": 1765486957.347159586}
+{"VCS_COMP_END_TIME": 1765486958.260920041}
+{"VCS_USER_OPTIONS": "-full64 -sverilog -debug_acc+all+dmptf -debug_region+cell+encrypt -kdb +warn=all -j32 +v2k -Mdir=build -o build/simv src/sequencer.sv src/rf_decode.sv src/rf_cordic.sv src/rf_phasor.sv lib/zcu216_dac.sv src/rf_core.sv tb/rf_tb.sv -o rf_tb"}
+{"vcs1": {"peak_mem": 373648}}
+{"vcs1": {"peak_mem": 374752}}
+{"vcs1": {"peak_mem": 375708}}
+{"vcs1": {"peak_mem": 375392}}
+{"vcs1": {"peak_mem": 452604}}
+{"vcselab": {"peak_mem": 171680}}

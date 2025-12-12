@@ -45,6 +45,7 @@ module rf_cordic
                 r_phase_left: 'bx,
                 r_x: 'bx,
                 r_y: 'bx,
+                r_bubble: 1'b1,
                 r_zero: 1'b1,
                 r_arm: 1'b0
             };
@@ -53,6 +54,7 @@ module rf_cordic
 
             c[0].r_addr <= x.r_addr;
             c[0].r_sample <= (x.r_samples_left > INDEX) ? (x.r_samples - x.r_samples_left + INDEX) : 'bx;
+            c[0].r_bubble <= (x.r_samples_left <= INDEX);
             c[0].r_zero <= x.w_zerox8[INDEX];
             c[0].r_arm <= x.r_arm;
 
@@ -142,6 +144,7 @@ module rf_cordic
                     r_phase_left: 'bx,
                     r_x: 'bx,
                     r_y: 'bx,
+                    r_bubble: 1'b1,
                     r_zero: 1'b1,
                     r_arm: 1'b0
                 };
@@ -150,6 +153,7 @@ module rf_cordic
 
                 c[i + 1].r_addr <= c[i].r_addr;
                 c[i + 1].r_sample <= c[i].r_sample;
+                c[i + 1].r_bubble <= c[i].r_bubble;
                 c[i + 1].r_zero <= c[i].r_zero;
                 c[i + 1].r_arm <= c[i].r_arm;
 
@@ -190,6 +194,7 @@ module rf_cordic
                 r_sample: 'bx,
                 r_Q: 'h0,
                 r_I: 'h0,
+                r_bubble: 1'b1,
                 r_arm: 1'b0
             };
         end
@@ -199,6 +204,7 @@ module rf_cordic
                 r_sample: c[NUM_STAGES].r_sample,
                 r_Q: c[NUM_STAGES].r_zero ? 'h0 : w_x_round[IQ_WIDTH+PAD_ZEROS-1:PAD_ZEROS],
                 r_I: c[NUM_STAGES].r_zero ? 'h0 : w_y_round[IQ_WIDTH+PAD_ZEROS-1:PAD_ZEROS],
+                r_bubble: c[NUM_STAGES].r_bubble,
                 r_arm: c[NUM_STAGES].r_arm
             };
         end
