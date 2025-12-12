@@ -4,11 +4,53 @@
 //dc parameters
 parameter DC_DAC_WIDTH=20;
 parameter DC_CYCLE_WIDTH=30;
-parameter DC_ITER_WIDTH=10;
+parameter DC_SEQ_ITER_WIDTH=10;
 parameter DC_CORE_ITER_WIDTH=10;
-parameter DC_STREAM_DEPTH=10;
-parameter DC_INSN_WIDTH=(DC_DAC_WIDTH*2+DC_CORE_ITER_WIDTH+DC_CYCLE_WIDTH);
+parameter DC_SPI_DVSR_WIDTH=6;
+parameter DC_DEPTH=10;
+parameter DC_INSN_WIDTH=(DC_DAC_WIDTH*2+DC_CORE_ITER_WIDTH+DC_CYCLE_WIDTH+2);
 parameter DC_TOTAL_REGS=DC_STREAM_DEPTH*3+2;
+
+typedef struct packed {
+    logic w_arm;
+    logic [DC_CORE_ITER_WIDTH-1:0] w_iters;
+    logic [DC_SPI_DVSR_WIDTH-1:0] w_spi_dvsr;
+    logic [DC_DAC_WIDTH-1:0] w_dcc;
+    logic [DC_DAC_WIDTH-1:0] w_ddcc;
+    logic [DC_CYCLE_WIDTH-1:0] w_cycles;
+    logic w_modify;
+} dc_insn_t;
+
+typedef struct {
+    logic w_arm;
+    logic [DC_CORE_ITER_WIDTH-1:0] w_iters;
+    logic [DC_SPI_DVSR_WIDTH-1:0] w_spi_dvsr;
+    logic [DC_DAC_WIDTH-1:0] w_dcc;
+    logic [DC_DAC_WIDTH-1:0] w_ddcc;
+    logic [DC_CYCLE_WIDTH-1:0] w_cycles;
+} dc_decode_stg_t;
+
+typedef struct {
+    logic r_arm;
+    logic [DC_CORE_ITER_WIDTH-1:0] r_iters;
+    logic [DC_SPI_DVSR_WIDTH-1:0] r_spi_dvsr;
+    logic [DC_DAC_WIDTH-1:0] r_dcc;
+    logic [DC_DAC_WIDTH-1:0] r_ddcc;
+    logic [DC_CYCLE_WIDTH-1:0] r_cycles;
+} dc_execute_stg_t;
+
+typedef struct {
+    logic r_arm;
+    logic [DC_SPI_DVSR_WIDTH-1:0] r_spi_dvsr;
+    logic [DC_DAC_WIDTH-1:0] r_dcc;
+    logic r_spi_start;
+    logic r_spi_done;
+} dc_spi_stg_t;
+
+typedef struct {
+    logic [DC_DAC_WIDTH-1:0] r_ldac_n;
+    logic [DC_SPI_DVSR_WIDTH-1:0] r_cycles_left;
+} dc_output_stg_t;
 
 //rf parameters
 parameter RF_KBC_WIDTH=36;
