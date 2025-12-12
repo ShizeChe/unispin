@@ -12,42 +12,49 @@ parameter DC_INSN_WIDTH=(DC_DAC_WIDTH*2+DC_CORE_ITER_WIDTH+DC_CYCLE_WIDTH+2);
 parameter DC_TOTAL_REGS=DC_STREAM_DEPTH*3+2;
 
 typedef struct packed {
-    logic w_arm;
     logic [DC_CORE_ITER_WIDTH-1:0] w_iters;
     logic [DC_SPI_DVSR_WIDTH-1:0] w_spi_dvsr;
     logic [DC_DAC_WIDTH-1:0] w_dcc;
     logic [DC_DAC_WIDTH-1:0] w_ddcc;
     logic [DC_CYCLE_WIDTH-1:0] w_cycles;
     logic w_modify;
+    logic w_arm;
 } dc_insn_t;
 
 typedef struct {
-    logic w_arm;
+    logic [$clog2(DC_DEPTH)-1:0] w_addr;
     logic [DC_CORE_ITER_WIDTH-1:0] w_iters;
     logic [DC_SPI_DVSR_WIDTH-1:0] w_spi_dvsr;
     logic [DC_DAC_WIDTH-1:0] w_dcc;
     logic [DC_DAC_WIDTH-1:0] w_ddcc;
     logic [DC_CYCLE_WIDTH-1:0] w_cycles;
+    logic w_arm;
 } dc_decode_stg_t;
 
 typedef struct {
-    logic r_arm;
+    logic [$clog2(DC_DEPTH)-1:0] r_addr;
     logic [DC_CORE_ITER_WIDTH-1:0] r_iters;
     logic [DC_SPI_DVSR_WIDTH-1:0] r_spi_dvsr;
     logic [DC_DAC_WIDTH-1:0] r_dcc;
     logic [DC_DAC_WIDTH-1:0] r_ddcc;
     logic [DC_CYCLE_WIDTH-1:0] r_cycles;
+    logic r_arm;
 } dc_execute_stg_t;
 
 typedef struct {
-    logic r_arm;
+    logic [$clog2(DC_DEPTH)-1:0] r_addr;
+    logic [DC_CORE_ITER_WIDTH-1:0] r_iter;
     logic [DC_SPI_DVSR_WIDTH-1:0] r_spi_dvsr;
     logic [DC_DAC_WIDTH-1:0] r_dcc;
     logic r_spi_start;
     logic r_spi_done;
+    logic r_arm;
 } dc_spi_stg_t;
 
 typedef struct {
+    logic [$clog2(DC_DEPTH)-1:0] r_addr;
+    logic [DC_CORE_ITER_WIDTH-1:0] r_iter;
+    logic [DC_DAC_WIDTH-1:0] r_dcc;
     logic [DC_DAC_WIDTH-1:0] r_ldac_n;
     logic [DC_SPI_DVSR_WIDTH-1:0] r_cycles_left;
 } dc_output_stg_t;

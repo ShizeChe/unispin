@@ -23,6 +23,17 @@ module dc_core
      input  logic i_start,
      output logic o_armed);
 
+    dc_decode_stg_t d;
+
+    dc_decode #(
+        .DEPTH(DEPTH)
+    ) DECODER (
+        .i_addr(i_addr),
+        .i_insn(i_insn),
+        .d(d),
+        .o_insn_modified(o_insn_modified)
+    );
+
     logic [DAC_WIDTH-1:0] r_dac_code, w_dac_code_next;
     logic [ITER_WIDTH-1:0] r_iters, w_iters_next;
     logic [CYCLE_WIDTH-1:0] r_insn_cycles, w_insn_cycles_next;
