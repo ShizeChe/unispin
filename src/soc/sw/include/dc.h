@@ -7,7 +7,7 @@
 #define INSN_PER_DC_CHANNEL 10
 #define REG_PER_DC_CHANNEL 32
 
-#define DC_DAC_BITS 16
+#define DC_DAC_BITS 20
 #define DC_CYCLE_BITS 30
 #define DC_ITER_BITS 10
 

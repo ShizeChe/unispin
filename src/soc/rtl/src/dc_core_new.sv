@@ -23,6 +23,8 @@ module dc_core
      input  logic i_start,
      output logic o_armed);
 
+    logic w_stall_x, w_stall_s, w_stall_o;
+
     dc_decode_stg_t d;
 
     dc_decode #(
@@ -33,6 +35,50 @@ module dc_core
         .d(d),
         .o_insn_modified(o_insn_modified)
     );
+
+    dc_execute_stg_t x;
+
+    always_ff @(posedge i_clk) begin
+        if (i_rst) begin
+            x <= '{
+                r_addr <= 'bx,
+                r_iters <= 'd0,
+                r_spi_dvsr <= 'bx,
+                r_dcc <= 'bx,
+                r_ddcc <= 'bx,
+                r_cycles <= 'd0,
+                r_arm <= 1'b0
+            };
+        end
+        else if (!w_stall_x) begin
+            x <= '{
+                r_addr <= d.w_addr,
+                r_iters <= d.w_iters,
+                r_spi_dvsr <= d.w_spi_dvsr,
+                r_dcc <= d.w_dcc,
+                r_ddcc <= d.w_ddcc,
+                r_cycles <= d.w_cycles,
+                r_arm <= d.w_arm
+            };
+        end
+        else begin
+            x.r_iters <= (x.r_iters > 'd0) ? (x.r_iters - 'd1) : 'd0;
+        end
+    end
+
+    dc_spi_stg_t s;
+
+    always_ff @(posedge i_clk) begin
+        if (i_rst) begin
+            s <= '{
+                s.r_addr <= 'bx,
+                s.r_iters <= 'bx,
+                s.r_spi_dvsr <= 'bx,
+                s.r_dcc <= 'bx,
+                s.r_spi_start <= 1'b0,
+            };
+        end
+    end
 
     logic [DAC_WIDTH-1:0] r_dac_code, w_dac_code_next;
     logic [ITER_WIDTH-1:0] r_iters, w_iters_next;
