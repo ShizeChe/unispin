@@ -1,19 +1,15 @@
-`default_nettype none
 `timescale 1ns / 1ps
-`include "include/internal.svh"
 
 module dc_core
-   #(parameter DAC_WIDTH=DC_DAC_WIDTH,
-     parameter CYCLE_WIDTH=DC_CYCLE_WIDTH,
-     parameter ITER_WIDTH=DC_CORE_ITER_WIDTH,
-     parameter INSN_WIDTH=DC_INSN_WIDTH)
+   #(parameter DAC_WIDTH=16,
+     parameter CYCLE_WIDTH=30,
+     parameter ITER_WIDTH=10,
+     parameter INSN_WIDTH=DAC_WIDTH*2+ITER_WIDTH+CYCLE_WIDTH)
     (input  logic i_clk, i_rst,
 
-     input  logic [$clog2(DEPTH)-1:0] i_addr,
      input  logic [INSN_WIDTH-1:0] i_insn,
      output logic o_next,
      input  logic i_empty,
-     output dc_insn_t o_insn_modified,
 
      output logic o_sclk,
      output logic o_mosi,
@@ -22,63 +18,6 @@ module dc_core
 
      input  logic i_start,
      output logic o_armed);
-
-    logic w_stall_x, w_stall_s, w_stall_o;
-
-    dc_decode_stg_t d;
-
-    dc_decode #(
-        .DEPTH(DEPTH)
-    ) DECODER (
-        .i_addr(i_addr),
-        .i_insn(i_insn),
-        .d(d),
-        .o_insn_modified(o_insn_modified)
-    );
-
-    dc_execute_stg_t x;
-
-    always_ff @(posedge i_clk) begin
-        if (i_rst) begin
-            x <= '{
-                r_addr <= 'bx,
-                r_iters <= 'd0,
-                r_spi_dvsr <= 'bx,
-                r_dcc <= 'bx,
-                r_ddcc <= 'bx,
-                r_cycles <= 'd0,
-                r_arm <= 1'b0
-            };
-        end
-        else if (!w_stall_x) begin
-            x <= '{
-                r_addr <= d.w_addr,
-                r_iters <= d.w_iters,
-                r_spi_dvsr <= d.w_spi_dvsr,
-                r_dcc <= d.w_dcc,
-                r_ddcc <= d.w_ddcc,
-                r_cycles <= d.w_cycles,
-                r_arm <= d.w_arm
-            };
-        end
-        else begin
-            x.r_iters <= (x.r_iters > 'd0) ? (x.r_iters - 'd1) : 'd0;
-        end
-    end
-
-    dc_spi_stg_t s;
-
-    always_ff @(posedge i_clk) begin
-        if (i_rst) begin
-            s <= '{
-                s.r_addr <= 'bx,
-                s.r_iters <= 'bx,
-                s.r_spi_dvsr <= 'bx,
-                s.r_dcc <= 'bx,
-                s.r_spi_start <= 1'b0,
-            };
-        end
-    end
 
     logic [DAC_WIDTH-1:0] r_dac_code, w_dac_code_next;
     logic [ITER_WIDTH-1:0] r_iters, w_iters_next;

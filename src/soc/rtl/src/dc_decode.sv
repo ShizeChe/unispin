@@ -5,9 +5,9 @@
 module dc_decode
    #(parameter DEPTH=DC_DEPTH)
     (input  logic [$clog2(DEPTH)-1:0] i_addr,
-     input  rf_insn_t i_insn,
-     output rf_decode_stg_t d,
-     output rf_insn_t o_insn_modified);
+     input  dc_insn_t i_insn,
+     output dc_decode_stg_t d,
+     output dc_insn_t o_insn_modified);
 
     always_comb begin
 
@@ -15,9 +15,12 @@ module dc_decode
             w_addr: i_addr,
             w_iters: i_insn.w_iters,
             w_spi_dvsr: i_insn.w_spi_dvsr,
-            w_dcc: i_insn.w_dcc,
-            w_ddcc: i_insn.w_ddcc,
-            w_cycles: i_insn.w_cycles,
+            w_spi_din: i_insn.w_spi_din,
+            w_dspi_din: i_insn.w_dspi_din,
+            w_spi_rd: i_insn.w_spi_rd,
+            w_strb_ldac: i_insn.w_strb_ldac,
+            w_hold_cycles: i_insn.w_hold_cycles,
+            w_modify: i_insn.w_modify,
             w_arm: i_insn.w_arm
         };
 
@@ -25,7 +28,10 @@ module dc_decode
         o_insn_modified.w_arm = 1'b0;
 
         if (i_insn.w_modify)
-            o_insn_modified.w_dcc = i_insn.w_dcc + i_insn.w_ddcc;
+            o_insn_modified.w_spi_din = {
+                i_insn.w_spi_din[DC_SPI_DATA_WIDTH-1:DC_DAC_WIDTH],
+                i_insn.w_spi_din[DC_DAC_WIDTH-1:0] + i_insn.w_dspi_din
+            };
 
     end
 

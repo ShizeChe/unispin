@@ -9,7 +9,7 @@ module rf_cordic
      parameter PAD_ZEROS=RF_CORDIC_PAD_ZEROS,
      parameter INDEX)
     (input  logic i_clk, i_rst,
-     input  rf_execute_stg_t x,
+     input  rf_phase_stg_t p,
      output rf_result_stg_t r,
      input  logic i_stall);
 
@@ -33,7 +33,7 @@ module rf_cordic
     assign w_180_degree = {2'b10, {(PHASE_WIDTH-2){1'b0}}};
 
     logic [PHASE_WIDTH-1:0] w_phase;
-    assign w_phase = x.w_phasex8[INDEX];
+    assign w_phase = p.w_phasex8[INDEX];
 
     // coarse rotation into +/- 45 degrees range
     always_ff @(posedge i_clk) begin
@@ -52,11 +52,11 @@ module rf_cordic
         end
         else if (!i_stall) begin
 
-            c[0].r_addr <= x.r_addr;
-            c[0].r_sample <= (x.r_samples_left > INDEX) ? (x.r_samples - x.r_samples_left + INDEX) : 'bx;
-            c[0].r_bubble <= (x.r_samples_left <= INDEX);
-            c[0].r_zero <= x.w_zerox8[INDEX];
-            c[0].r_arm <= x.r_arm;
+            c[0].r_addr <= p.r_addr;
+            c[0].r_sample <= (p.r_samples_left > INDEX) ? (p.r_samples - p.r_samples_left + INDEX) : 'bx;
+            c[0].r_bubble <= (p.r_samples_left <= INDEX);
+            c[0].r_zero <= p.w_zerox8[INDEX];
+            c[0].r_arm <= p.r_arm;
 
             case (w_phase[PHASE_WIDTH-1:PHASE_WIDTH-3])
                 3'b000: begin // 0..45

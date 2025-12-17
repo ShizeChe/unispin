@@ -1,160 +1,235 @@
+`default_nettype none
 `timescale 1ns / 1ps
+`include "include/internal.svh"
 
 module dc_core
-   #(parameter DAC_WIDTH=16,
-     parameter CYCLE_WIDTH=30,
-     parameter ITER_WIDTH=10,
-     parameter INSN_WIDTH=DAC_WIDTH*2+ITER_WIDTH+CYCLE_WIDTH)
+   #(parameter SPI_DATA_WIDTH=DC_SPI_DATA_WIDTH,
+     parameter CYCLE_WIDTH=DC_CYCLE_WIDTH,
+     parameter ITER_WIDTH=DC_CORE_ITER_WIDTH,
+     parameter INSN_WIDTH=DC_INSN_WIDTH,
+     parameter DEPTH=DC_DEPTH)
     (input  logic i_clk, i_rst,
 
+     // sequencer interface
+     input  logic [$clog2(DEPTH)-1:0] i_addr,
      input  logic [INSN_WIDTH-1:0] i_insn,
      output logic o_next,
      input  logic i_empty,
+     output dc_insn_t o_insn_modified,
 
+     // spi interface
      output logic o_sclk,
      output logic o_mosi,
+     input  logic i_miso,
      output logic o_cs_n,
      output logic o_ldac_n,
 
+     // output interface
+     output logic [$clog2(DEPTH)-1:0] o_addr,
+     output logic [ITER_WIDTH-1:0] o_iter,
+     output logic [DC_SPI_DATA_WIDTH-1:0] o_spi_din,
+     output logic o_spi_rd,
+     output logic [SPI_DATA_WIDTH-1:0] o_spi_dout,
+     output logic [CYCLE_WIDTH-1:0] o_cycles_left,
+
+     // launcher interface
      input  logic i_start,
      output logic o_armed);
 
-    logic [DAC_WIDTH-1:0] r_dac_code, w_dac_code_next;
-    logic [ITER_WIDTH-1:0] r_iters, w_iters_next;
-    logic [CYCLE_WIDTH-1:0] r_insn_cycles, w_insn_cycles_next;
-    logic [CYCLE_WIDTH-1:0] r_cycles, w_cycles_next;
-    logic [DAC_WIDTH-1:0] r_dv, w_dv_next;
+    logic w_stall;
 
-    logic [DAC_WIDTH-1:0] w_dv_decode;
-    logic [ITER_WIDTH-1:0] w_iters_decode;
-    logic [DAC_WIDTH-1:0] w_dac_code_decode;
-    logic [CYCLE_WIDTH-1:0] w_cycles_decode;
+    /**************
+    * decode stage
+    **************/
 
-    logic r_spi_start, r_spi_finished;
-    logic w_spi_done;
+    dc_decode_stg_t d;
 
-    assign {w_dv_decode, w_iters_decode, 
-            w_dac_code_decode, w_cycles_decode} = i_insn;
+    dc_decode #(
+        .DEPTH(DEPTH)
+    ) DECODER (
+        .i_addr(i_addr),
+        .i_insn(i_insn),
+        .d(d),
+        .o_insn_modified(o_insn_modified)
+    );
+
+    /***************
+    * iterate stage
+    ***************/
+
+    dc_iterate_stg_t i;
 
     always_ff @(posedge i_clk) begin
         if (i_rst) begin
-            r_dac_code <= 'h0;
-            r_insn_cycles <= 'd0;
-            r_iters <= 'd1;
-            r_cycles <= 'd0;
-            r_dv = 'h0;
+            i <= '{
+                r_addr: 'bx,
+                r_iters: 'd0,
+                r_spi_dvsr: 'bx,
+                r_spi_din: 'bx,
+                r_dspi_din: 'bx,
+                r_spi_rd: 1'b0,
+                r_strb_ldac: 1'b0,
+                r_hold_cycles: 'd0,
+                r_arm: 1'b0,
+                r_bubble: 1'b1
+            };
+        end
+        else if (!w_stall) begin
+
+            if (i.r_iters == 'd0) begin
+
+                if (!i_empty) begin
+                    i <= '{
+                        r_addr: d.w_addr,
+                        r_iters: d.w_iters,
+                        r_spi_dvsr: d.w_spi_dvsr,
+                        r_spi_din: d.w_spi_din,
+                        r_dspi_din: d.w_dspi_din,
+                        r_spi_rd: d.w_spi_rd,
+                        r_strb_ldac: d.w_strb_ldac,
+                        r_hold_cycles: d.w_hold_cycles,
+                        r_arm: d.w_arm,
+                        r_bubble: 1'b0
+                    };
+                end
+                else begin
+                    i.r_bubble <= 1'b1;
+                end
+
+            end
+            else begin
+                i.r_iters <= (i.r_iters > 'd0) ? (i.r_iters - 'd1) : 'd0;
+                i.r_spi_din <= {
+                    i.r_spi_din[DC_SPI_DATA_WIDTH-1:DC_DAC_WIDTH],
+                    i.r_spi_din[DC_DAC_WIDTH-1:0] + i.r_dspi_din
+                };
+            end
+
+        end
+    end
+
+    /***********
+    * spi stage
+    ***********/
+
+    dc_spi_stg_t s;
+
+    logic w_spi_done;
+    logic [DC_SPI_DATA_WIDTH-1:0] w_spi_dout;
+
+    always_ff @(posedge i_clk) begin
+        if (i_rst) begin
+            s <= '{
+                r_addr: 'bx,
+                r_iter: 'bx,
+                r_spi_dvsr: 'bx,
+                r_spi_din: 'bx,
+                r_spi_rd: 1'b0,
+                r_spi_dout: 'h0,
+                r_strb_ldac: 1'b0,
+                r_hold_cycles: 'd0,
+                r_arm: 1'b0,
+                r_cs_n: 1'b1,
+                r_spi_start: 1'b0,
+                r_spi_done: 1'b1
+            };
+        end
+        else if (!w_stall) begin
+            s <= '{
+                r_addr: i.r_addr,
+                r_iter: i.r_iters,
+                r_spi_dvsr: i.r_spi_dvsr,
+                r_spi_din: i.r_spi_din,
+                r_spi_rd: i.r_spi_rd,
+                r_spi_dout: 'h0,
+                r_strb_ldac: i.r_strb_ldac,
+                r_hold_cycles: i.r_hold_cycles,
+                r_arm: !i.r_bubble && i.r_arm,
+                r_cs_n: i.r_bubble,
+                r_spi_start: !i.r_bubble,
+                r_spi_done: i.r_bubble
+            };
         end
         else begin
-            r_dac_code <= w_dac_code_next;
-            r_insn_cycles <= w_insn_cycles_next;
-            r_iters <= w_iters_next;
-            r_cycles <= w_cycles_next;
-            r_dv <= w_dv_next;
+            s.r_spi_start <= 1'b0;
+            if (w_spi_done) begin
+                s.r_spi_done <= 1'b1;
+                s.r_spi_dout <= w_spi_dout;
+                s.r_cs_n <= 1'b1;
+            end
         end
     end
 
-    logic w_small_propagate, w_big_propagate, w_propagate_last;
+    logic [15:0] w_dvsr;
+    assign w_dvsr = {{(16-DC_SPI_DVSR_WIDTH){1'b0}}, s.r_spi_dvsr};
 
-    enum {IDLE, ARMED, STREAM} r_state;
-
-    always_ff @(posedge i_clk) begin
-        if (i_rst) r_state <= IDLE;
-        else if (r_state == ARMED && i_start) r_state <= STREAM;
-        else if (r_state == IDLE && w_big_propagate) r_state <= ARMED;
-        else if (w_propagate_last) r_state <= IDLE;
-    end
-
-    always_ff @(posedge i_clk)
-        o_armed <= (r_state == ARMED) && r_spi_finished;
-
-    assign w_small_propagate = (r_cycles == 'd0) && (r_iters > 'd1) &&
-                               r_spi_finished && (r_state == STREAM);
-    assign w_big_propagate = (r_cycles == 'd0) && (r_iters == 'd1) &&
-                             r_spi_finished && (!i_empty) && (r_state != ARMED);
-    assign w_propagate_last = (r_cycles == 'd0) && (r_iters == 'd1) &&
-                              r_spi_finished && i_empty && (r_state == STREAM);
-
-    always_ff @(posedge i_clk) begin
-        if (i_rst) r_spi_start <= 1'b0;
-        else if (w_small_propagate || w_big_propagate) r_spi_start <= 1'b1;
-        else if (r_spi_start) r_spi_start <= 1'b0;
-
-        if (i_rst) r_spi_finished <= 1'b1;
-        else if (w_small_propagate || w_big_propagate) r_spi_finished <= 1'b0; 
-        else if (w_spi_done) r_spi_finished <= 1'b1;
-    end
-
-    spi_master #(
-        .DATA_WIDTH(DAC_WIDTH),
+    dc_spi_master #(
+        .DATA_WIDTH(DC_SPI_DATA_WIDTH),
         .SCLK_POLARITY(0),
-        .SCLK_PHASE(0)
-    ) spim (
+        .SCLK_PHASE(1)
+    ) SPI (
         .i_clk(i_clk),
         .i_rst(i_rst),
-        .i_dvsr(16'd4),
-        .i_din(r_dac_code),
-        .o_dout(),
-        .i_start(r_spi_start),
+        .i_dvsr(w_dvsr),
+        .i_din(s.r_spi_din),
+        .o_dout(w_spi_dout),
+        .i_start(s.r_spi_start),
         .o_done(w_spi_done),
-        .i_miso(),
+        .i_miso(i_miso),
         .o_mosi(o_mosi),
         .o_sclk(o_sclk)
     );
 
-    always_ff @(posedge i_clk) begin
-        if (i_rst) o_cs_n <= 1'b1;
-        else if (r_spi_start) o_cs_n <= 1'b0;
-        else if (w_spi_done) o_cs_n <= 1'b1;
-    end
+    /************
+    * hold stage
+    ************/
+
+    dc_hold_stg_t h;
 
     always_ff @(posedge i_clk) begin
-        if (i_rst) o_ldac_n <= 1'b1;
-        else if ((w_small_propagate || w_big_propagate ||
-                 w_propagate_last) && r_state == STREAM) o_ldac_n <= 1'b0;
-        else if (!o_ldac_n) o_ldac_n <= 1'b1;
+        if (i_rst) begin
+            h <= '{
+                r_addr: 'bx,
+                r_iter: 'bx,
+                r_spi_din: 'bx,
+                r_spi_rd: 1'b0,
+                r_spi_dout: 'bx,
+                r_ldac_n: 1'b1,
+                r_cycles_left: 'd0
+            };
+        end
+        else if (!w_stall) begin
+            h <= '{
+                r_addr: s.r_addr,
+                r_iter: s.r_iter,
+                r_spi_din: s.r_spi_din,
+                r_spi_rd: s.r_spi_rd,
+                r_spi_dout: s.r_spi_dout,
+                r_ldac_n: !s.r_strb_ldac,
+                r_cycles_left: s.r_hold_cycles
+            };
+        end
+        else begin
+            h.r_ldac_n <= 1'b1;
+            h.r_cycles_left <= (h.r_cycles_left > 'd0) ? (h.r_cycles_left - 'd1) : 'd0;
+        end
     end
 
-    assign o_next = w_big_propagate && !i_empty;
+    assign o_cs_n = s.r_cs_n;
+    assign o_ldac_n = h.r_ldac_n;
+    assign o_armed = s.r_arm && s.r_spi_done;
 
-    always_comb begin
-        case ({w_propagate_last, w_small_propagate, w_big_propagate})
-            3'b000: begin
-                w_dac_code_next = r_dac_code;
-                w_insn_cycles_next = r_insn_cycles;
-                w_iters_next = r_iters;
-                w_cycles_next = (r_cycles == 'd0) ? 'd0 : r_cycles - 'd1;
-                w_dv_next = r_dv;
-            end
-            3'b001: begin
-                w_dac_code_next = w_dac_code_decode;
-                w_insn_cycles_next = w_cycles_decode;
-                w_iters_next = w_iters_decode;
-                w_cycles_next = r_insn_cycles;
-                w_dv_next = w_dv_decode;
-            end
-            3'b010: begin
-                w_dac_code_next = r_dac_code + r_dv;
-                w_insn_cycles_next = r_insn_cycles;
-                w_iters_next = r_iters - 'd1;
-                w_cycles_next = r_insn_cycles;
-                w_dv_next = r_dv;
-            end
-            3'b100: begin
-                w_dac_code_next = 'h0;
-                w_insn_cycles_next = 'h0;
-                w_iters_next = 'd1;
-                w_cycles_next = r_insn_cycles;
-                w_dv_next = 'h0;
-            end
-            default: begin
-                w_dac_code_next = r_dac_code;
-                w_insn_cycles_next = r_insn_cycles;
-                w_iters_next = r_iters;
-                w_cycles_next = r_insn_cycles;
-                w_dv_next = r_dv;
-            end
-        endcase
-    end
+    assign w_stall = (h.r_cycles_left > 'd0) || !s.r_spi_done ||
+                     (o_armed && !i_start);
+
+    assign o_next = !w_stall && i.r_iters == 'd0 && !i_empty;
+
+    assign o_addr = h.r_addr;
+    assign o_iter = h.r_iter;
+    assign o_spi_din = h.r_spi_din;
+    assign o_spi_rd = h.r_spi_rd;
+    assign o_spi_dout = h.r_spi_dout;
+    assign o_cycles_left = h.r_cycles_left;
 
 endmodule
 
