@@ -67,7 +67,7 @@ module sequencer
     end
 
     always_ff @(posedge i_clk) begin
-        if (i_rst) r_iptr <= 'd0;
+        if (i_rst || w_new_sequence) r_iptr <= 'd0;
         else if (w_propagate) begin
             r_iptr <= w_next_null ? 'd0 : w_iptr_plus1;
         end

@@ -137,15 +137,15 @@ module dc_core
         end
         else if (!w_stall) begin
             s <= '{
-                r_addr: i.r_addr,
-                r_iter: i.r_iters,
-                r_spi_dvsr: i.r_spi_dvsr,
-                r_spi_din: i.r_spi_din,
-                r_spi_rd: i.r_spi_rd,
+                r_addr: i.r_bubble ? 'bx : i.r_addr,
+                r_iter: i.r_bubble ? 'bx : i.r_iters,
+                r_spi_dvsr: i.r_bubble ? 'bx : i.r_spi_dvsr,
+                r_spi_din: i.r_bubble ? 'bx : i.r_spi_din,
+                r_spi_rd: i.r_bubble ? 1'b0 : i.r_spi_rd,
                 r_spi_dout: 'h0,
-                r_strb_ldac: i.r_strb_ldac,
-                r_hold_cycles: i.r_hold_cycles,
-                r_arm: !i.r_bubble && i.r_arm,
+                r_strb_ldac: i.r_bubble ? 1'b0 : i.r_strb_ldac,
+                r_hold_cycles: i.r_bubble ? 'd0 : i.r_hold_cycles,
+                r_arm: i.r_bubble ? 1'b0 : i.r_arm,
                 r_cs_n: i.r_bubble,
                 r_spi_start: !i.r_bubble,
                 r_spi_done: i.r_bubble

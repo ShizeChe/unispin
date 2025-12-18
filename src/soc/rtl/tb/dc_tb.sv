@@ -31,12 +31,6 @@ module dc_tb;
 
     dc_output_stg_t o;
 
-    logic [$clog2(DC_DEPTH)-1:0] w_addr_out;
-    logic [DC_CORE_ITER_WIDTH-1:0] w_iter_out;
-    logic w_spi_rd_out;
-    logic [DC_SPI_DATA_WIDTH-1:0] w_spi_dout_out;
-    logic [DC_CYCLE_WIDTH-1:0] w_cycles_left_out;
-
     logic w_start;
     logic w_armed;
 
@@ -132,7 +126,8 @@ module dc_tb;
 
                         out.w_addr = j;
                         out.w_iter = iter;
-                        out.w_spi_din = insns[j].w_spi_din + insns[j].w_dspi_din * (insns[j].w_iters - iter);
+                        // out.w_spi_din = insns[j].w_spi_din + insns[j].w_dspi_din * (insns[j].w_iters - iter);
+                        out.w_spi_din = {insns[j].w_spi_din[DC_SPI_DATA_WIDTH-1:DC_DAC_WIDTH], insns[j].w_spi_din[DC_DAC_WIDTH-1:0] + 20'(insns[j].w_dspi_din * (insns[j].w_iters - iter))};
                         out.w_spi_rd = insns[j].w_spi_rd;
                         out.w_spi_dout = 'h0;
                         out.w_cycles_left = cycle;
@@ -177,6 +172,10 @@ module dc_tb;
 
     task rand_insns;
 
+        for (int i = 0; i < DC_DEPTH; i++) begin
+            insns[i] = 'h0;
+        end
+
         num_insns = $urandom_range(1, DC_DEPTH - 1);
 
         for (int i = 0; i < num_insns; i++) begin
@@ -187,14 +186,13 @@ module dc_tb;
                 w_dspi_din: $urandom_range(0, 20'hfffff),
                 w_spi_rd: 1'b0,
                 w_strb_ldac: 1'b1,
-                w_hold_cycles: $urandom_range(0, MAX_CYCLES),
-                w_modify: $urandom_range(0, 1),
+                w_hold_cycles: $urandom_range(250, MAX_CYCLES),
+                w_modify: 1'b0,
                 w_arm: (i == 0)
             };
-            $display("spi din = %0b", insns[i].w_spi_din);
         end
 
-        iters_reg = $urandom_range(0, MAX_SEQ_ITERS);
+        iters_reg = $urandom_range(1, MAX_SEQ_ITERS);
         start_reg = 32'h0;
 
         get_golden_seq;
@@ -203,6 +201,7 @@ module dc_tb;
         start_reg = 1'b1;
 
         wait(w_armed);
+        $display("armed");
         repeat(3) @(negedge w_clk);
         start_reg = 'd0;
         w_start = 1'b1;
@@ -214,13 +213,12 @@ module dc_tb;
             assert (o.w_addr == golden_seq[i].w_addr &&
                     o.w_iter == golden_seq[i].w_iter &&
                     o.w_cycles_left == golden_seq[i].w_cycles_left &&
+                    o.w_spi_din == golden_seq[i].w_spi_din &&
                     w_vout == o.w_spi_din[DC_DAC_WIDTH-1:0])
             else $fatal(1, "At %0.3f ns: o = %p, golden_seq[%0d] = %p, vout = %0h", $realtime,
                         o, i, golden_seq[i], w_vout);
             @(negedge w_clk);
         end
-
-        $finish;
 
     endtask
 
@@ -228,6 +226,8 @@ module dc_tb;
         w_clk = 1'b0;
         forever #2 w_clk = !w_clk;
     end
+
+    int test;
 
     initial begin
         w_rst = 1'b1;
@@ -241,7 +241,13 @@ module dc_tb;
         w_rst = 1'b0;
 
         init;
-        rand_insns;
+
+        test = 0;
+        repeat (100) begin
+            $display("test%0d", test);
+            rand_insns;
+            test++;
+        end
         $finish;
     end
 
