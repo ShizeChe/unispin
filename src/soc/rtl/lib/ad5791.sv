@@ -59,8 +59,7 @@ module ad5791
     end
 
     always @(negedge LDAC_N) begin
-        if (SYNC_N)
-            dac_reg <= !CLR_N ? clrcode_reg : dac_input_reg;
+        dac_reg <= !CLR_N ? clrcode_reg : dac_input_reg;
     end
 
     always @(negedge CLR_N) begin

@@ -73,7 +73,7 @@ typedef struct {
     logic r_spi_rd;
     logic [DC_DAC_WIDTH-1:0] r_spi_dout;
     logic [DC_DAC_WIDTH-1:0] r_ldac_n;
-    logic [DC_SPI_DVSR_WIDTH-1:0] r_cycles_left;
+    logic [DC_CYCLE_WIDTH-1:0] r_cycles_left;
 } dc_hold_stg_t;
 
 //rf parameters
