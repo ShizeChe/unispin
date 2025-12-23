@@ -1,6 +1,6 @@
 `default_nettype none
 `timescale 1ns / 1ps
-`include "include/internal.svh"
+`include "include/dc.svh"
 
 module dc_tb;
 

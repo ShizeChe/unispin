@@ -1,6 +1,6 @@
 `default_nettype none
 `timescale 1ns / 1ps
-`include "include/internal.svh"
+`include "include/rf.svh"
 
 module rf_cordic
    #(parameter PHASE_WIDTH=RF_PHASE_WIDTH,
@@ -54,7 +54,7 @@ module rf_cordic
 
             c[0].r_addr <= p.r_addr;
             c[0].r_sample <= (p.r_samples_left > INDEX) ? (p.r_samples - p.r_samples_left + INDEX) : 'bx;
-            c[0].r_bubble <= (p.r_samples_left <= INDEX);
+            c[0].r_bubble <= (p.r_samples_left == 'd0) || (p.r_samples_left <= INDEX);
             c[0].r_zero <= p.w_zerox8[INDEX];
             c[0].r_arm <= p.r_arm;
 

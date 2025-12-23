@@ -1,5 +1,6 @@
+`default_nettype none
 `timescale 1ns / 1ps
-`include "include/internal.svh"
+`include "include/rf.svh"
 
 module rf_tb;
 
@@ -28,6 +29,13 @@ module rf_tb;
         .i_insn_modified(w_insn_modified)
     );
 
+    typedef struct {
+        logic [$clog2(RF_DEPTH)-1:0] w_addr;
+        logic [RF_NUM_SAMPLE_WIDTH-1:0] w_sample_start;
+        logic [RF_NUM_SAMPLE_WIDTH-1:0] w_sample_end;
+        logic [RF_DAC_WIDTH*16-1:0] w_QIx8;
+    } rf_output_stg_t;
+
     rf_output_stg_t o;
 
     rf_core #(
@@ -46,7 +54,10 @@ module rf_tb;
         .o_next(w_next),
         .i_empty(w_empty),
         .o_insn_modified(w_insn_modified),
-        .o(o),
+        .o_addr(o.w_addr),
+        .o_sample_start(o.w_sample_start),
+        .o_sample_end(o.w_sample_end),
+        .o_QIx8(o.w_QIx8),
         .i_start(w_start),
         .o_armed(w_armed)
     );
@@ -68,7 +79,7 @@ module rf_tb;
     zcu216_dac RF_DAC (
         .i_clk(w_clk),
         .i_dac_clk(w_dac_clk),
-        .i_QIx8(o.r_QIx8),
+        .i_QIx8(o.w_QIx8),
         .o_vrf(vrf)
     );
 
@@ -114,7 +125,7 @@ module rf_tb;
         @(posedge w_clk);
         w_start = 1'b0;
 
-        wait(w_empty && CORE.x.r_samples_left == 'd0);
+        wait(w_empty && CORE.p.r_samples_left == 'd0);
         repeat (RF_CORDIC_STAGES) @(posedge w_clk);
 
     endtask
@@ -162,12 +173,12 @@ module rf_tb;
 
                 for (int sample_start = 0; sample_start < total_samples; sample_start += 8) begin
 
-                    out.r_addr = j;
-                    out.r_sample_start = sample_start;
-                    out.r_sample_end = (sample_start + 8 > total_samples) ? total_samples - 1 : 
+                    out.w_addr = j;
+                    out.w_sample_start = sample_start;
+                    out.w_sample_end = (sample_start + 8 > total_samples) ? total_samples - 1 : 
                                         sample_start + 7;
-                    out.r_QIx8 = get_golden_QI(insns[j].w_kbc_mode, insns[j].w_kbc1, insns[j].w_kbc2, 
-                                               out.r_sample_start, out.r_sample_end);
+                    out.w_QIx8 = get_golden_QI(insns[j].w_kbc_mode, insns[j].w_kbc1, insns[j].w_kbc2, 
+                                               out.w_sample_start, out.w_sample_end);
 
                     golden_seq.push_back(out);
 
@@ -220,10 +231,9 @@ module rf_tb;
         w_start = 1'b0;
 
         for (int i = 0; i < golden_seq.size(); i++) begin
-            golden_o = golden_seq[i];
-            assert (o.r_addr == golden_seq[i].r_addr &&
-                    o.r_sample_start == golden_seq[i].r_sample_start &&
-                    o.r_sample_end == golden_seq[i].r_sample_end)
+            assert (o.w_addr == golden_seq[i].w_addr &&
+                    o.w_sample_start == golden_seq[i].w_sample_start &&
+                    o.w_sample_end == golden_seq[i].w_sample_end)
             else $fatal(1, "At %0.3f ns: o = %p, golden_seq[%0d] = %p", $realtime,
                         o, i, golden_seq[i]);
             @(negedge w_clk);
@@ -262,7 +272,7 @@ module rf_tb;
         // repeat (3) @(posedge w_clk);
 
         // rabi(.ctrl_samples('d0), .ctrl_dsamples('d8), .idle_samples('d16), .idle_dsamples('d0), .iters('d10));
-        rand_insns;
+        repeat(10) rand_insns;
 
         $finish;
     end

@@ -3,6 +3,7 @@
 module zcu216_dac
     (input  logic i_clk, i_dac_clk,
      input  logic [255:0] i_QIx8,
+     output logic [13:0] o_I, o_Q,
      output real  o_vrf);
 
     // simulate DUC
@@ -17,30 +18,29 @@ module zcu216_dac
         end
     end
 
-    localparam IQ_WIDTH=14;
+    localparam IQ_WIDTH=RF_IQ_WIDTH;
 
     function automatic real iq2real(input int N, input logic [IQ_WIDTH-1:0] iq);
         return $itor($signed(iq)) / (1.0 * (1 << (N-1)));
     endfunction
 
     logic [7:0][IQ_WIDTH-1:0] w_Ix8, w_Qx8;
-    for (genvar i = 0; i < 8; i++) begin
+    for (genvar i = 0; i < 8; i++) begin : QIx8_ASSIGN
         assign w_Ix8[i] = i_QIx8[32*i+2+IQ_WIDTH-1:32*i+2];
         assign w_Qx8[i] = i_QIx8[32*i+16+2+IQ_WIDTH-1:32*i+16+2];
     end
 
     real I, Q;
     real deg, rad;
-    logic [IQ_WIDTH-1:0] w_I, w_Q;
     initial begin
         deg = 0;
         @(posedge i_clk);
         forever begin
             @(negedge i_dac_clk);
-            w_I = w_Ix8[dac_cycle];
-            w_Q = w_Qx8[dac_cycle];
-            I = iq2real(IQ_WIDTH, w_I);
-            Q = iq2real(IQ_WIDTH, w_Q);
+            o_I = w_Ix8[dac_cycle];
+            o_Q = w_Qx8[dac_cycle];
+            I = iq2real(IQ_WIDTH, o_I);
+            Q = iq2real(IQ_WIDTH, o_Q);
             deg = deg + 1.8;
             rad = deg * 3.14159265358979323846 / 180.0;
             o_vrf = I * $cos(rad) - Q * $sin(rad);

@@ -1,37 +1,9 @@
+`default_nettype none
 `timescale 1ns / 1ps
+`include "include/dc.svh"
+`include "include/rf.svh"
 
 module swashispin_tb;
-
-    // dc parameters
-    localparam DC_DAC_WIDTH=20;
-    localparam DC_CYCLE_WIDTH=30;
-    localparam DC_STREAM_ITER_WIDTH=10;
-    localparam DC_CORE_ITER_WIDTH=10;
-    localparam DC_STREAM_DEPTH=10;
-    localparam DC_INSN_WIDTH=DC_DAC_WIDTH*2+DC_CORE_ITER_WIDTH+DC_CYCLE_WIDTH;
-    localparam DC_TOTAL_REGS=DC_STREAM_DEPTH*3+2;
-
-    //rf parameters
-    localparam RF_KBC_WIDTH=36;
-    localparam RF_NUM_SAMPLE_WIDTH=30;
-    localparam RF_CORE_ITER_WIDTH=10;
-    localparam RF_INSN_WIDTH=RF_KBC_WIDTH*3+RF_CORE_ITER_WIDTH+RF_NUM_SAMPLE_WIDTH*4;
-    localparam RF_IQ_WIDTH=14;
-    localparam RF_DAC_WIDTH=16;
-    localparam RF_PHASE_WIDTH=18;
-    localparam RF_CORDIC_STAGES=15;
-    localparam RF_CORDIC_PAD_ZEROS=8;
-
-    localparam RF_INSN_BUF_DEPTH=4;
-    localparam RF_IPTR_WIDTH=$clog2(RF_INSN_BUF_DEPTH);
-    localparam RF_IPTR_BUF_DEPTH=512;
-    localparam RF_INSN_REGS=(RF_INSN_WIDTH+31)/32*RF_INSN_BUF_DEPTH;
-    localparam RF_IPTR_REGS=(RF_IPTR_BUF_DEPTH+32/RF_IPTR_WIDTH-1)/(32/RF_IPTR_WIDTH);
-    localparam RF_STREAM_ITER_WIDTH=10;
-    localparam RF_TOTAL_REGS=RF_INSN_REGS+RF_IPTR_REGS+2;
-
-    localparam RF_REG_PER_INSN = (RF_INSN_WIDTH + 31) / 32;
-    localparam RF_IPTR_PER_REG = 32 / RF_IPTR_WIDTH;
 
     // define number of dc/rf/li channels
     localparam NUM_DC_CHANNEL=4;
@@ -42,7 +14,7 @@ module swashispin_tb;
     logic w_clk, w_rf_dac_clk, w_rst;
 
     logic [31:0] dc_regs_unpacked [0:NUM_DC_CHANNEL-1][0:DC_TOTAL_REGS-1];
-    logic [NUM_DC_CHANNEL-1:0][DC_TOTAL_REGS-1:0][31:0] w_dc_regs;
+    logic [0:NUM_DC_CHANNEL-1][0:DC_TOATL_REGS-1][31:0] w_dc_regs;
 
     logic [NUM_DC_CHANNEL-1:0] w_dc_sclk_bus;
     logic [NUM_DC_CHANNEL-1:0] w_dc_mosi_bus;
@@ -61,18 +33,13 @@ module swashispin_tb;
             assign w_dc_regs[i][j] = dc_regs_unpacked[i][j];
         end
 
-        dc #(
-            .DAC_WIDTH(DC_DAC_WIDTH),
-            .CYCLE_WIDTH(DC_CYCLE_WIDTH),
-            .STREAM_ITER_WIDTH(DC_STREAM_ITER_WIDTH),
-            .CORE_ITER_WIDTH(DC_CORE_ITER_WIDTH),
-            .DEPTH(DC_STREAM_DEPTH)
-        ) DC (
+        dc DC (
             .i_clk(w_clk),
             .i_rst(w_rst),
             .i_regs(w_dc_regs[i]),
             .o_sclk(w_dc_sclk_bus[i]),
             .o_mosi(w_dc_mosi_bus[i]),
+            .i_miso(w_dc_miso_bus[i]),
             .o_cs_n(w_dc_cs_n_bus[i]),
             .o_ldac_n(w_dc_ldac_n_bus[i]),
             .i_start(w_dc_start_bus[i]),

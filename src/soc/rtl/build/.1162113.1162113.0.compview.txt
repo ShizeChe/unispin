@@ -1,7 +1,0 @@
-Command exited with non-zero status 255
-{"vcs1":{"timestamp_begin":1765481504.375460799, "rt":0.15, "ut":0.06, "st":0.06}}
-{"SNPS_VCS_INTERNAL_ROOT_START_TIME": 1765481504.027792906}
-{"VCS_COMP_START_TIME": 1765481504.027792906}
-{"VCS_COMP_END_TIME": 1765481504.582134123}
-{"VCS_USER_OPTIONS": "-full64 -sverilog -debug_acc+all+dmptf -debug_region+cell+encrypt -kdb +warn=all -j32 +v2k -Mdir=build -o build/simv src/sequencer.sv src/rf_decode.sv src/rf_cordic.sv src/rf_phasor.sv lib/zcu216_dac.sv src/rf_core.sv tb/rf_tb.sv -o rf_tb"}
-{"vcs1": {"peak_mem": 452604}}

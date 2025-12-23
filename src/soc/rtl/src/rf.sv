@@ -1,6 +1,6 @@
 `default_nettype none
 `timescale 1ns / 1ps
-`include "include/internal.svh"
+`include "include/rf.svh"
 
 module rf
    #(parameter KBC_WIDTH=RF_KBC_WIDTH,
@@ -10,13 +10,13 @@ module rf
      parameter IQ_WIDTH=RF_IQ_WIDTH,
      parameter DAC_WIDTH=RF_DAC_WIDTH,
      parameter PHASE_WIDTH=RF_PHASE_WIDTH,
-     parameter CORDIC_STAGES=RF_CORDIC_WIDTH,
+     parameter CORDIC_STAGES=RF_CORDIC_STAGES,
      parameter CORDIC_PAD_ZEROS=RF_CORDIC_PAD_ZEROS,
      parameter DEPTH=RF_DEPTH,
      parameter TOTAL_REGS=RF_TOTAL_REGS)
     (input  logic i_clk, i_rst,
 
-     input  logic [TOTAL_REGS-1:0][31:0] i_regs,
+     input  logic [0:TOTAL_REGS-1][31:0] i_regs,
 
      output logic [DAC_WIDTH*16-1:0] o_QIx8,
 
@@ -29,20 +29,20 @@ module rf
 
     sequencer #(
         .INSN_WIDTH(INSN_WIDTH),
-        .ITER_WIDTH(ITER_WIDTH)
+        .ITER_WIDTH(ITER_WIDTH),
         .DEPTH(DEPTH)
     ) SEQ (
         .i_clk(i_clk),
         .i_rst(i_rst),
+
         .i_regs(i_regs),
+
         .o_addr(w_addr),
-        .o_insn(w_insn)
+        .o_insn(w_insn),
         .i_next(w_next),
         .o_empty(w_empty),
         .i_insn_modified(w_insn_modified)
     );
-
-    rf_output_stg_t o;
 
     rf_core #(
     	.KBC_WIDTH(KBC_WIDTH),
@@ -57,16 +57,20 @@ module rf
     ) CORE (
         .i_clk(i_clk),
         .i_rst(i_rst),
+
         .i_addr(w_addr),
         .i_insn(w_insn),
         .o_next(w_next),
         .i_empty(w_empty),
-        .i_insn_modified(w_insn_modified),
-        .o(o),
+        .o_insn_modified(w_insn_modified),
+
+        .o_addr(),
+        .o_sample_start(),
+        .o_sample_end(),
+        .o_QIx8(o_QIx8),
+
         .i_start(i_start),
         .o_armed(o_armed)
     );
-
-    assign o_QIx8 = o.r_QIx8;
 
 endmodule

@@ -1,7 +1,8 @@
 `timescale 1ns / 1ps
+`include "include/launch.svh"
 
 module launch_regs
-   #(parameter NUM_REGS=4,
+   #(parameter NUM_REGS=LCH_TOTAL_REGS,
      parameter ADDR_WIDTH=$clog2(NUM_REGS)+2)
     (input  wire s_axi_aclk,
      input  wire s_axi_aresetn,

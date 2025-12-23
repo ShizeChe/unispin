@@ -10,7 +10,8 @@ module ad5791
      input  logic CLR_N,
      input  logic RESET_N,
 
-     output logic [19:0] VOUT);
+     output logic [19:0] VDIGITAL,
+     output real VOUT);
 
     // mimic ad5791
     logic [19:0] dac_reg;
@@ -167,6 +168,13 @@ module ad5791
         end
     end
 
-    assign VOUT = (OPGND || DACTRI) ? 'h0 : dac_reg;
+    assign VDIGITAL = (OPGND || DACTRI) ? 'h0 : dac_reg;
+
+    function automatic real vdigital2real(input logic [19:0] vdigital);
+        return $itor($signed(vdigital)) / (1.0 * (1 << (19-1)));
+    endfunction
+
+    assign VOUT = vdigital2real(VDIGITAL);
 
 endmodule
+

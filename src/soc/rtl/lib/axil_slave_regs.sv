@@ -33,7 +33,7 @@ module axil_slave_regs
      output logic [31:0] o_rdata,
      output logic [1:0] o_rresp,
 
-     output logic [NUM_REGS-1:0][31:0] o_regs);
+     output logic [0:NUM_REGS-1][31:0] o_regs);
 
     logic [31:0] r_regs [NUM_REGS];
 
@@ -67,10 +67,10 @@ module axil_slave_regs
     end
 
     // write handshake
-    initial begin
-        for (int i = 0; i < NUM_REGS; i++)
-            r_regs[i] = 'h0;
-    end
+    // initial begin
+    //     for (int i = 0; i < NUM_REGS; i++)
+    //         r_regs[i] = 'h0;
+    // end
 
     logic [ADDR_WIDTH-3:0] w_awireg;
     logic [1:0] w_awls2b;
