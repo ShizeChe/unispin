@@ -294,10 +294,15 @@ module simulator;
          output logic o_bready,
          input  logic [1:0] i_bresp);
 
+        $display("axil_write");
+
         @(negedge i_aclk);
+        $display("negedge");
         o_awvalid = 1'b1;
         o_wvalid = 1'b1;
         o_bready = 1'b0;
+
+        $display("pre fork");
 
         fork 
 
@@ -310,6 +315,8 @@ module simulator;
             end
 
         join
+
+        $display("post fork");
 
         @(negedge i_aclk);
         o_awvalid = 1'b0;
@@ -326,75 +333,224 @@ module simulator;
 
     endtask
 
+    task automatic dc_axil_write(int ch); 
+
+        $display("dc_axil_write channel%0d", ch);
+
+        @(negedge w_clk);
+
+        w_dc_awvalid_bus[ch] = 1'b1;
+        w_dc_wvalid_bus[ch] = 1'b1;
+        w_dc_bready_bus[ch] = 1'b0;
+
+        $display("pre fork");
+
+        fork 
+
+            begin: AWREADY
+                forever begin
+                    if (w_dc_awvalid_bus[ch] && w_dc_awready_bus[ch]) begin
+                        @(negedge w_clk);
+                        w_dc_awvalid_bus[ch] = 1'b0;
+                        break;
+                    end
+                    else @(negedge w_clk);
+                end
+            end
+            
+            begin: WREADY
+                forever begin
+                    if (w_dc_wvalid_bus[ch] && w_dc_wready_bus[ch]) begin
+                        @(negedge w_clk);
+                        w_dc_wvalid_bus[ch] = 1'b0;
+                        break;
+                    end
+                    else @(negedge w_clk);
+                end
+            end
+
+        join
+
+        $display("post fork");
+        w_dc_bready_bus[ch] = 1'b1;
+
+        forever begin
+            if (w_dc_bvalid_bus[ch] && w_dc_bready_bus[ch]) begin
+                @(negedge w_clk);
+                w_dc_bready_bus[ch] = 1'b0;
+                assert (w_dc_bresp_bus[ch] == 2'b00)
+                else $fatal(1, "Bad bresp: %0b", w_dc_bresp_bus[ch]);
+                break;
+            end
+            else @(negedge w_clk);
+        end
+
+    endtask
+
+    task automatic rf_axil_write(int ch); 
+
+        $display("rf_axil_write channel%0d", ch);
+
+        @(negedge w_clk);
+
+        w_rf_awvalid_bus[ch] = 1'b1;
+        w_rf_wvalid_bus[ch] = 1'b1;
+        w_rf_bready_bus[ch] = 1'b0;
+
+        $display("pre fork");
+
+        fork 
+
+            begin: AWREADY
+                forever begin
+                    if (w_rf_awvalid_bus[ch] && w_rf_awready_bus[ch]) begin
+                        @(negedge w_clk);
+                        w_rf_awvalid_bus[ch] = 1'b0;
+                        break;
+                    end
+                    else @(negedge w_clk);
+                end
+            end
+            
+            begin: WREADY
+                forever begin
+                    if (w_rf_wvalid_bus[ch] && w_rf_wready_bus[ch]) begin
+                        @(negedge w_clk);
+                        w_rf_wvalid_bus[ch] = 1'b0;
+                        break;
+                    end
+                    else @(negedge w_clk);
+                end
+            end
+
+        join
+
+        $display("post fork");
+        w_rf_bready_bus[ch] = 1'b1;
+
+        forever begin
+            if (w_rf_bvalid_bus[ch] && w_rf_bready_bus[ch]) begin
+                @(negedge w_clk);
+                w_rf_bready_bus[ch] = 1'b0;
+                assert (w_rf_bresp_bus[ch] == 2'b00)
+                else $fatal(1, "Bad bresp: %0b", w_rf_bresp_bus[ch]);
+                break;
+            end
+            else @(negedge w_clk);
+        end
+
+    endtask
+
+    task automatic lch_axil_write; 
+
+        $display("lch_axil_write");
+
+        @(negedge w_clk);
+
+        w_lch_awvalid = 1'b1;
+        w_lch_wvalid = 1'b1;
+        w_lch_bready = 1'b0;
+
+        $display("pre fork");
+
+        fork 
+
+            begin: AWREADY
+                forever begin
+                    if (w_lch_awvalid && w_lch_awready) begin
+                        @(negedge w_clk);
+                        w_lch_awvalid = 1'b0;
+                        break;
+                    end
+                    else @(negedge w_clk);
+                end
+            end
+            
+            begin: WREADY
+                forever begin
+                    if (w_lch_wvalid && w_lch_wready) begin
+                        @(negedge w_clk);
+                        w_lch_wvalid = 1'b0;
+                        break;
+                    end
+                    else @(negedge w_clk);
+                end
+            end
+
+        join
+
+        $display("post fork");
+        w_lch_bready = 1'b1;
+
+        forever begin
+            if (w_lch_bvalid && w_lch_bready) begin
+                @(negedge w_clk);
+                w_lch_bready = 1'b0;
+                assert (w_lch_bresp == 2'b00)
+                else $fatal(1, "Bad bresp: %0b", w_lch_bresp);
+                break;
+            end
+            else @(negedge w_clk);
+        end
+
+    endtask
+
     task automatic axil_bus_write(input logic [31:0] addr, data);
 
         int i = addr[31:ADDR_BITS];
 
         if (0 <= i && i < NUM_DC_CHANNEL) begin
+            
+            $display("dc%0d", i);
 
             w_dc_awaddr_bus[i] = addr[$clog2(DC_TOTAL_REGS)-1:0];
             w_dc_wdata_bus[i] = addr[$clog2(DC_TOTAL_REGS)-1:0];
             w_dc_wstrb_bus[i] = 4'hf;
 
-            axil_write(
-                w_clk,
+            dc_axil_write(i);
 
-                w_dc_awvalid_bus[i],
-                w_dc_awready_bus[i],
-
-                w_dc_wvalid_bus[i],
-                w_dc_wready_bus[i],
-
-                w_dc_bvalid_bus[i],
-                w_dc_bready_bus[i],
-                w_dc_bresp_bus[i]
-            );
+            $display("dc%0d axil write finished", i);
 
         end
         else if (NUM_DC_CHANNEL <= i && i < (NUM_DC_CHANNEL + NUM_RF_CHANNEL)) begin
+
+            $display("rf%0d", i - NUM_DC_CHANNEL);
 
             w_rf_awaddr_bus[i] = addr[$clog2(RF_TOTAL_REGS)-1:0];
             w_rf_wdata_bus[i] = addr[$clog2(RF_TOTAL_REGS)-1:0];
             w_rf_wstrb_bus[i] = 4'hf;
 
-            axil_write(
-                w_clk,
+            rf_axil_write(i - NUM_DC_CHANNEL);
 
-                w_rf_awvalid_bus[i],
-                w_rf_awready_bus[i],
-
-                w_rf_wvalid_bus[i],
-                w_rf_wready_bus[i],
-
-                w_rf_bvalid_bus[i],
-                w_rf_bready_bus[i],
-                w_rf_bresp_bus[i]
-            );
+            $display("dc%0d axil write finished", i);
 
         end
         else begin
+
+            $display("launch"); 
 
             w_lch_awaddr = addr[$clog2(LCH_TOTAL_REGS)-1:0];
             w_lch_wdata = addr[$clog2(LCH_TOTAL_REGS)-1:0];
             w_lch_wstrb = 4'hf;
 
-            axil_write(
-                w_clk,
+            lch_axil_write;
 
-                w_lch_awvalid,
-                w_lch_awready,
-
-                w_lch_wvalid,
-                w_lch_wready,
-
-                w_lch_bvalid,
-                w_lch_bready,
-                w_lch_bresp
-            );
+            $display("launch axil write finished");
 
         end
 
     endtask
+
+    // clocks
+    initial begin
+        w_clk = 1'b0;
+        forever #2 w_clk = !w_clk;
+    end
+
+    initial begin
+        w_rf_dac_clk = 1'b1;
+        forever #0.25 w_rf_dac_clk = !w_rf_dac_clk;
+    end
 
     // reset
     initial begin
@@ -417,18 +573,18 @@ module simulator;
 
     end
 
-    int running, exp_index;
+    // tracker
 
-    task automatic trace();
+    logic [NUM_DC_CHANNEL-1:0] dc_armed;
+    logic [NUM_RF_CHANNEL-1:0] rf_armed;
 
-        logic [NUM_DC_CHANNEL-1:0] dc_armed;
-        logic [NUM_RF_CHANNEL-1:0] rf_armed;
+    int all_empty;
+
+    initial begin
 
         dc_armed = 'h0;
         rf_armed = 'h0;
-
-        running = 0;
-        exp_index = 0;
+        all_empty = 1;
 
         forever begin
 
@@ -457,21 +613,21 @@ module simulator;
             end
 
             if (LCH.w_all_ready) begin
-                running = 1;
-                $display("At %0.3f: all ready, launch", $realtime);
+                $display("At %0.3f: LAUNCH sees all ready", $realtime);
             end
 
-            if (running && w_dc_empty_bus == {(NUM_DC_CHANNEL){1'b1}} && 
-                w_rf_empty_bus == {(NUM_RF_CHANNEL){1'b1}}) begin
+            if (all_empty && !(w_dc_empty_bus == {(NUM_DC_CHANNEL){1'b1}} && 
+                w_rf_empty_bus == {(NUM_RF_CHANNEL){1'b1}})) begin
+                $display("At %0.3f: not all empty", $realtime);
+                all_empty = 0;
+            end
+            else if (!all_empty && (w_dc_empty_bus == {(NUM_DC_CHANNEL){1'b1}} && 
+                w_rf_empty_bus == {(NUM_RF_CHANNEL){1'b1}})) begin
                 $display("At %0.3f: all empty", $realtime);
+                all_empty = 1;
             end
 
         end
-
-    endtask
-
-    initial begin
-        trace;
     end
 
     // file interface
@@ -480,6 +636,7 @@ module simulator;
     string fifo_in;
 
     logic [31:0] addr, data;
+    longint unsigned t;
 
     initial begin
 
@@ -495,11 +652,20 @@ module simulator;
 
             if ($fgets(line, fd)) begin
 
-                if ($sscanf(line, "%8h %8h", addr, data) == 2) begin
+                if ($sscanf(line, "0x%8h 0x%8h", addr, data) == 2) begin
 
                     $display("RX addr=%08h data=%08h", addr, data);
 
                     axil_bus_write(addr, data);
+                    t = $urandom_range(0, 50);
+                    $display("Advance %0d cycles", t / 4);
+                    repeat($urandom_range(0, 10)) @(negedge w_clk);
+
+                end
+                else if ($sscanf(line, "run %d", t)) begin
+
+                    $display("Advance %0d cycles", t / 4);
+                    repeat(t / 4) @(negedge w_clk);
 
                 end
                 else begin
@@ -507,9 +673,6 @@ module simulator;
                 end
 
             end 
-            else begin
-                #1us;
-            end
 
         end
 

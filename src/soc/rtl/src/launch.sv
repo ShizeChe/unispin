@@ -69,14 +69,14 @@ module launch
     assign w_rf_ready = ((r_rf_active_mask ^ r_rf_armed) == 'h0);
     assign w_li_ready = ((r_li_active_mask ^ r_li_armed) == 'h0);
 
-    logic w_all_ready;
-    assign w_all_ready = w_dc_ready && w_rf_ready && w_li_ready && i_trigger;
-
     enum {IDLE, LAUNCH} r_state, w_next_state;
 
     always_ff @(posedge i_clk) begin
         r_state <= i_rst ? IDLE : w_next_state;
     end
+
+    logic w_all_ready;
+    assign w_all_ready = r_state == LAUNCH && w_dc_ready && w_rf_ready && w_li_ready && i_trigger;
 
     logic w_start;
     always_ff @(posedge i_clk) begin

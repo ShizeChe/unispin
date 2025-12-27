@@ -30,6 +30,8 @@ static inline int clog2_u32(uint32_t n) {
 #define RF_KBC_MIN  (-(int64_t)(1ULL << (RF_KBC_BITS - 1)))
 #define RF_KBC_MASK ((uint64_t)((1ULL << (RF_KBC_BITS)) - 1ULL))
 
+#define RF_DEPTH 16
+
 typedef struct {
     int64_t  k;
     int64_t  b;

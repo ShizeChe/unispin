@@ -9,38 +9,87 @@
 
 #define DC_DAC_BITS 20
 #define DC_CYCLE_BITS 30
-#define DC_ITER_BITS 10
+#define DC_MAX_HOLD_CYCLES ((1u << DC_CYCLE_BITS) - 1u)
+#define DC_CORE_ITER_BITS 10
+#define DC_MAX_CORE_ITERS ((1u << DC_CORE_ITER_BITS) - 1u)
+#define DC_SPI_DVSR 4
+#define DC_REG_PER_INSN 3
 
 #define VMAX 10.0
 #define VMIN -10.0
 #define NS_PER_CYCLE 4
+#define DC_MAX_HOLD_NS (DC_MAX_HOLD_CYCLES * NS_PER_CYCLE)
+#define MAX_DT (NS_PER_CYCLE * DC_MAX_HOLD_CYCLES)
+
+#define DC_DEPTH 10
+#define DC_TOTAL_REGS ((DC_DEPTH * DC_REG_PER_INSN) + 2)
 
 typedef struct {
-    uint32_t dv;
     uint32_t iters;
-    uint32_t dac_code;
-    uint32_t cycles;
+    uint32_t spi_dvsr;
+    uint32_t spi_din;
+    uint32_t dspi_din;
+    uint32_t spi_rd;
+    uint32_t strb_ldac;
+    uint32_t hold_cycles;
+    uint32_t modify;
+    uint32_t arm;
 } dc_insn_t;
 
 typedef struct {
-    double vstart;
-    double vend;
-    uint32_t num_points;
+    uint32_t repeat;
+    uint32_t len;
+    dc_insn_t insns[DC_DEPTH];
+    uint32_t regs[DC_TOTAL_REGS];
+} dc_program_t;
+
+typedef struct {
+    uint32_t arm;
+    uint32_t rd;
+    uint32_t has_vplus;
+    uint32_t vplus;
+    uint32_t ldc;
+    uint32_t dvsr;
+} dc_opt_t;
+
+typedef struct {
+    uint32_t its;
+    uint32_t din;
+    uint32_t cyc;
+    dc_opt_t opt;
+} dc_ful_t;
+
+typedef struct {
+    double v1;
+    double v2;
+    uint32_t n;
     uint32_t dt_ns;
-} dc_sweep_t;
+    dc_opt_t opt;
+} dc_swp_t;
 
 typedef struct {
     double v;
     uint32_t t_ns;
-} dc_level_t;
+    dc_opt_t opt;
+} dc_lvl_t;
 
-dc_insn_t dc_sweep2insn(dc_sweep_t dc_sweep);
-dc_insn_t dc_level2insn(dc_level_t dc_level);
+typedef struct {
+    uint32_t r;
+    uint32_t din;
+    dc_opt_t opt;
+} dc_set_t;
 
-void dc_pack_stream(int stream_iters, int stream_len, dc_insn_t *dc_stream, 
-                    uint32_t *dc_regs);
+typedef struct {
+    uint32_t r;
+    dc_opt_t opt;
+} dc_get_t;
 
-int dc_program_stream(int dc_channel, int stream_iters, int stream_len, 
-                      dc_insn_t *dc_stream);
+typedef struct {
+    dc_opt_t opt;
+} dc_nop_t;
+
+int dc_parse_insn(char *line, dc_insn_t *insn);
+void dc_assemble(dc_program_t *prog);
+int dc_load_insns(int dc_channel, dc_program_t *dc_program);
 
 #endif

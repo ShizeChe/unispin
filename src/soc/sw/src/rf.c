@@ -1,5 +1,5 @@
 #include "rf.h"
-#include "def.h"
+#include "common.h"
 #include <math.h>
 #include <string.h>
 #include <stdio.h>
@@ -48,13 +48,6 @@ static inline int64_t b_formula(uint64_t f_span_hz, uint64_t f_nco_hz, uint64_t 
     long double b = first_term - second_term;
 
     return round_clamp(b);
-}
-
-static inline void print_binary(FILE *f, uint32_t value) {
-    for (int i = 31; i >= 0; --i) {
-        fprintf(f, "%d", (value >> i) & 1);
-    }
-    fprintf(f, "\n");
 }
 
 static inline uint32_t iptr2reg(uint8_t **iptr_buf, int n) {
@@ -216,57 +209,57 @@ void rf_pack_stream(int stream_iters, int insn_len, rf_insn_t *rf_insn_buf,
 
 }
 
-int rf_program_stream(int rf_channel, int stream_iters, int insn_len, 
-                      rf_insn_t *rf_insn_buf, int iptr_len, uint8_t *rf_iptr_buf) {
-
-    uint32_t rf_regs[REG_PER_RF_CHANNEL];
-    rf_pack_stream(stream_iters, insn_len, rf_insn_buf, iptr_len, rf_iptr_buf, 
-                   rf_regs);
-    
-#if TEST
-
-    char fp[32];
-    snprintf(fp, sizeof(fp), "dump/rf%d.txt", rf_channel);
-
-    FILE *f = fopen(fp, "w");
-    if (f == NULL) {
-        fprintf(stderr, "fopen(\"%s\") failed: %s\n", fp, strerror(errno));
-        return 1;
-    }
-
-    for (int i = 0; i < REG_PER_RF_CHANNEL; i++) {
-        print_binary(f, rf_regs[i]);
-    }
-
-    fclose(f);
-
-#else
-
-    char uio_path[32];
-    snprintf(uio_path, sizeof(uio_path), "/dev/uio%d", RF_UIO_BASE + rf_channel);
-
-    int rf_fd = open(uio_path, O_RDWR);
-    if (rf_fd < 0) {
-        fprintf(stderr, "open(\"%s\") failed: %s\n", uio_path, strerror(errno));
-        return 1;
-    }
-
-    void *rf_va = mmap(NULL, 0x1000, PROT_READ | PROT_WRITE, MAP_SHARED, rf_fd, 0);
-    if (rf_va == MAP_FAILED) {
-        fprintf(stderr, "open(\"%s\") failed: %s\n", uio_path, strerror(errno));
-        close(rf_fd);
-        return 1;
-    }
-
-    volatile uint32_t *rf_base = (volatile uint32_t *)((char *)rf_va);
-    for (int i = 0; i < REG_PER_DC_CHANNEL; i++) {
-        *(rf_base + i) = rf_regs[i];
-    }
-
-    __asm__ __volatile__("dsb oshst" ::: "memory");
-
-#endif
-
-    return 0;
-}
+/*int rf_program_stream(int rf_channel, int stream_iters, int insn_len, */
+/*                      rf_insn_t *rf_insn_buf, int iptr_len, uint8_t *rf_iptr_buf) {*/
+/**/
+/*    uint32_t rf_regs[REG_PER_RF_CHANNEL];*/
+/*    rf_pack_stream(stream_iters, insn_len, rf_insn_buf, iptr_len, rf_iptr_buf, */
+/*                   rf_regs);*/
+/**/
+/*#if TEST*/
+/**/
+/*    char fp[32];*/
+/*    snprintf(fp, sizeof(fp), "dump/rf%d.txt", rf_channel);*/
+/**/
+/*    FILE *f = fopen(fp, "w");*/
+/*    if (f == NULL) {*/
+/*        fprintf(stderr, "fopen(\"%s\") failed: %s\n", fp, strerror(errno));*/
+/*        return 1;*/
+/*    }*/
+/**/
+/*    for (int i = 0; i < REG_PER_RF_CHANNEL; i++) {*/
+/*        print_binary(f, rf_regs[i]);*/
+/*    }*/
+/**/
+/*    fclose(f);*/
+/**/
+/*#else*/
+/**/
+/*    char uio_path[32];*/
+/*    snprintf(uio_path, sizeof(uio_path), "/dev/uio%d", RF_UIO_BASE + rf_channel);*/
+/**/
+/*    int rf_fd = open(uio_path, O_RDWR);*/
+/*    if (rf_fd < 0) {*/
+/*        fprintf(stderr, "open(\"%s\") failed: %s\n", uio_path, strerror(errno));*/
+/*        return 1;*/
+/*    }*/
+/**/
+/*    void *rf_va = mmap(NULL, 0x1000, PROT_READ | PROT_WRITE, MAP_SHARED, rf_fd, 0);*/
+/*    if (rf_va == MAP_FAILED) {*/
+/*        fprintf(stderr, "open(\"%s\") failed: %s\n", uio_path, strerror(errno));*/
+/*        close(rf_fd);*/
+/*        return 1;*/
+/*    }*/
+/**/
+/*    volatile uint32_t *rf_base = (volatile uint32_t *)((char *)rf_va);*/
+/*    for (int i = 0; i < REG_PER_DC_CHANNEL; i++) {*/
+/*        *(rf_base + i) = rf_regs[i];*/
+/*    }*/
+/**/
+/*    __asm__ __volatile__("dsb oshst" ::: "memory");*/
+/**/
+/*#endif*/
+/**/
+/*    return 0;*/
+/*}*/
 

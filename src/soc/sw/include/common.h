@@ -1,7 +1,10 @@
-#ifndef DEFS_H
-#define DEFS_H
+#ifndef COMMON_H
+#define COMMON_H
+
+#define _POSIX_C_SOURCE 200809L
 
 #include <stdio.h>
+#include <stdint.h>
 
 #if DEBUG
 #  define DBG(...) fprintf(stderr, __VA_ARGS__)
@@ -16,5 +19,10 @@
 #define LI_UIO_BASE 35
 
 #define LAUNCH_UIO 37
+
+#define DC_CHANNELS RF_UIO_BASE - DC_UIO_BASE
+
+void print_binary(FILE *f, uint32_t value);
+int parse_time(char *str, uint32_t *t_ns);
 
 #endif

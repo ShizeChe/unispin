@@ -1,32 +1,32 @@
 CC      := gcc
-CFLAGS  := -std=c17 -Wall -Wextra -Werror -O2 \
+CFLAGS  := -std=c17 -Wall -Wextra -Werror -O0 \
            -g -fsanitize=address,undefined -fno-omit-frame-pointer \
 		   -Iinclude
 LDFLAGS := -fsanitize=address,undefined
 
-TEST ?= 1
+EXE ?= 0
 DEBUG ?= 0
-CFLAGS += -DTEST=$(TEST) -DDEBUG=$(DEBUG)
+CFLAGS += -DEXE=$(EXE) -DDEBUG=$(DEBUG)
 
 OBJDIR := build
-DUMPDIR := dump
 
 SRCS := $(wildcard src/*.c)
-APPS := $(wildcard app/*.c)
 OBJS := $(patsubst src/%.c,$(OBJDIR)/%.o,$(SRCS))
-BINS := $(patsubst app/%.c,%,$(APPS))
 
+BIN := squish
 
 $(OBJDIR)/%.o: src/%.c
 	@mkdir -p $(@D)
 	$(CC) $(CFLAGS) -c $< -o $@
 
-%: app/%.c $(OBJS)
+$(BIN): $(OBJS)
 	$(CC) $(CFLAGS) $^ -o $@ $(LDFLAGS) -lm
-	mkdir $(DUMPDIR)
 
-.PHONY: clean
+.PHONY: all clean
+
+all: $(BIN)
+
 clean:
-	rm -f $(BINS)
+	rm -f $(BIN)
 	rm -rf $(OBJDIR)
-	rm -rf $(DUMPDIR)
+
