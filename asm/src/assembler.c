@@ -104,11 +104,58 @@ static int assemble(FILE *fp, dc_program_t *dc_programs[]) {
                 uint32_t rf_repeat;
 
                 if (sscanf(line, ".repeat %u ", &rf_repeat)) {
-                    dc_programs[channel]->repeat = dc_repeat;
-                    state = DC_INSN;
+                    rf_programs[channel]->repeat = rf_repeat;
+                    state = RF_FNCO;
                     success = fgets(line, sizeof(line), fp);
                 } else {
                     return -1;
+                }
+
+                break;
+
+            case RF_FNCO:
+
+                long double rf_fnco_hz;
+                char fnco_tok[32];
+
+                if (sscanf(line, ".fnco %31s ", fnco_tok)) {
+                    if (parse_freq(fnco_tok, &rf_fnco_hz) == 0) {
+                        rf_programs[channel]->fnco = real2twos(RF_FNCO_MIN, 
+                            RF_FNCO_MAX, RF_FNCO_BITS, rf_fnco_hz);
+                        state = RF_INSN;
+                        success = fgets(line, sizeof(line), fp);
+                    } else {
+                        return -1;
+                    }
+                } else {
+                    return -1;
+                }
+                
+                break;
+
+            case RF_INSN:
+
+                while (success != NULL) {
+
+                    if (rf_parse_insn(line, &(rf_programs[channel]->insns[i])) == 0) {
+
+                        if (i >= RF_DEPTH) {
+                            printf("Exceeding maximum number of rf instructions:\n");
+                            printf("%s\n", line);
+                            return -1;
+                        } else {
+                            success = fgets(line, sizeof(line), fp);
+                            i++;
+                        }
+
+                    } else {
+                        rf_programs[channel]->len = i;
+                        rf_assemble(rf_programs[channel]);
+                        i = 0;
+                        state = PROGRAM;
+                        break;
+                    }
+
                 }
 
                 break;

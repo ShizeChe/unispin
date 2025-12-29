@@ -17,7 +17,11 @@ static inline int clog2_u32(uint32_t n) {
 
 #define RF_KBC_BITS 36
 #define RF_SAMPLE_BITS 20
+#define RF_FNCO_BITS 48
 
+#define RF_FSAMPLING_HZ 4000000000ULL
+#define RF_FNCO_MIN (-(RF_FSAMPLING_HZ / 2))
+#define RF_FNCO_MAX ((RF_FSAMPLING_HZ / 2) - (Fs / ldexpl(1.0L, RF_FNCO_BITS))
 #define RF_DAC_HZ 2000000000ULL
 #define RF_DAC_GHZ 2.0
 #define NS_PER_SAMPLE 0.5
@@ -52,14 +56,14 @@ typedef struct {
 } rf_opt_t;
 
 typedef struct {
-    double f1;
-    double f2;
+    long double f1;
+    long double f2;
     double t_ns;
     rf_opt_t opt;
 } rf_chp_t;
 
 typedef struct {
-    double phs;
+    long double phs;
     double t_ns;
     rf_opt_t opt;
 } rf_ply_t;

@@ -68,7 +68,22 @@ static inline uint32_t iptr2reg(uint8_t **iptr_buf, int n) {
     return res;
 }
 
-static void rf_chp2insn(rf_chp_t *chp, rf_insn_t *insn, double fnco_hz) {
+static void rf_chp2insn(rf_chp_t *chp, rf_insn_t *insn, long double fnco_hz) {
+    long double f1_dpn = (chp->f1 - fnco_hz) * 360e-9;
+    long double f2_dpn = (chp->f2 - fnco_hz) * 360e-9;
+    long double k_deg = (f2_dpn - f1_dpn) / (4 * (long double)chp->t_ns;
+    long double b_deg = (f1_dpn + k_deg) / 2;
+
+    uint64_t k = real2twos(-180, 180 - ldexpl(1.0L, RF_KBC_BITS, RF_KBC_BITS, k_deg);
+    uint64_t b = real2twos(-180, 180 - ldexpl(1.0L, RF_KBC_BITS, RF_KBC_BITS, b_deg);
+
+    insn->arm = chp->opt.arm;
+    insn->kbc_mode = 1;
+    insn->kbc1 = k;
+    insn->kbc2 = b;
+    insn->samples = rf_t2samples(chp->t_ns);
+    insn->dsamples = rf_t2samples(chp->opt.tplus_ns);
+
 }
 
 static void rf_ply2insn(rf_ply_t *ply, rf_insn_t *insn) {
@@ -98,41 +113,6 @@ static void rf_ful2insn(rf_ful_t *ful, rf_insn_t *insn) {
     insn->dsamples = rf_t2samples(ful->opt.tplus_ns);
 }
 
-/*rf_insn_t rf_chp2insn(rf_chirp_t chp) {*/
-/**/
-/*    int64_t k = k_formula(chp.f_span_hz, chp.t_ns);*/
-/*    int64_t b = b_formula(chp.f_span_hz, chp.f_nco_hz, chp.t_ns);*/
-/**/
-/*    uint32_t samples = (chp.t_ns * RF_DAC_GHZ + 4) / 8 * 8;*/
-/**/
-/*    return (rf_insn_t){.k = k, .b = b, .c = 0, .iters = 0,*/
-/*                       .dkbc_samples = 0, .kbc_samples = samples,*/
-/*                       .dzero_samples = 0, .zero_samples = 0};*/
-/*}*/
-
-/*rf_insn_t rf_d2insn(rf_drive_t d) {*/
-/**/
-/*    long double two_pow = ldexpl(1.0L, RF_KBC_BITS);*/
-/*    long double angle = remainderl(d.phase_deg, 360.0L);*/
-/*    angle = (angle == 180.0L) ? -180.0 : angle;*/
-/*    long double c = angle / 360.0L * two_pow;*/
-/**/
-/*    uint32_t kbc_samples = d.t_drive_ns * RF_DAC_GHZ;*/
-/*    uint32_t dkbc_samples = d.dt_drive_ns * RF_DAC_GHZ;*/
-/*    uint32_t zero_samples = d.t_idle_ns * RF_DAC_GHZ;*/
-/*    uint32_t dzero_samples = d.dt_idle_ns * RF_DAC_GHZ;*/
-/**/
-/*    zero_samples = (kbc_samples + zero_samples + 4) / 8 * 8 - kbc_samples;*/
-/*    dzero_samples = (dkbc_samples + dzero_samples + 4) / 8 * 8 - dkbc_samples;*/
-/**/
-/*    return (rf_insn_t){.k = 0, .b = 0, .c = round_clamp(c), */
-/*                       .iters = d.iters,*/
-/*                       .dkbc_samples = dkbc_samples, */
-/*                       .kbc_samples = kbc_samples,*/
-/*                       .dzero_samples = dzero_samples, */
-/*                       .zero_samples = zero_samples};*/
-/*}*/
-/**/
 static int rf_parse_opt(char *paren, rf_opt_t *opt) {
 
     opt->arm = 0;
@@ -286,7 +266,7 @@ static int rf_parse_ful(char *line, rf_ful_t *ful) {
 
 }
 
-int rf_parse_insn(char *line, rf_insn_t *insn) {
+int rf_parse_insn(char *line, rf_insn_t *insn, long double fnco_hz) {
 
     char op[4] = {0};
 
@@ -297,7 +277,7 @@ int rf_parse_insn(char *line, rf_insn_t *insn) {
     if (strcmp(op, "chp") == 0) {
 
         rf_chp_t chp;
-        rf_parse_chp(line, &chp);
+        rf_parse_chp(line, &chp, fnco_hz);
         rf_chp2insn(&chp, insn);
 
     } else if (strcmp(op, "ply") == 0) {

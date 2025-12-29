@@ -3,6 +3,9 @@
 #include <string.h>
 #include <stdlib.h>
 #include <math.h>
+#include <stdint.h>
+#include <math.h>
+#include <stdbool.h>
 
 void print_binary(FILE *f, uint32_t value) {
     for (int i = 31; i >= 0; --i) {
@@ -53,22 +56,82 @@ int parse_time_double(char *str, double *t_ns) {
     return 0;
 }
 
-int parse_freq(char *str, double *f_hz) {
+int parse_freq(char *str, long double *f_hz) {
     char *endptr = NULL;
-    double val = strtod(str, &endptr);
+    long double val = strtold(str, &endptr);
     if (endptr == str || val < 0) return -1; // no number
 
     const char *unit = endptr;
     if (*unit == '\0') return -1; // must have a unit
 
-    double scale = 0.0;
+    long double scale = 0.0;
     if (strcmp(unit, "Hz") == 0) scale = 1.0;
     else if (strcmp(unit, "KHz") == 0) scale = 1e3;
     else if (strcmp(unit, "MHz") == 0) scale = 1e6;
     else if (strcmp(unit, "GHz")  == 0) scale = 1e9;
     else return -1;
 
-    *f_hz = llround(val * scale);
+    *f_hz = llroundl(val * scale);
     return 0;
+}
+
+static inline uint64_t mask_nbits(unsigned n) {
+    return (n >= 64) ? ~0ULL : ((1ULL << n) - 1ULL);
+}
+
+static inline int64_t round_nearest_i64(long double x) {
+    return (int64_t)llroundl(x);
+}
+
+uint64_t real2twos(long double min, long double max,
+    unsigned n, long double x) {
+
+    if (n < 2 || n > 63) return 0;
+    if (!(min < max)) return 0;
+    if (!isfinite((double)min) || !isfinite((double)max) || !isfinite((double)x))
+        return 0;
+
+    int64_t kmin = -(int64_t)(1ULL << (n - 1));
+    int64_t kmax = (int64_t)((1ULL << (n - 1)) - 1ULL);
+
+    if (x <= min) return ((uint64_t)kmin) & mask_nbits(n);
+    if (x >= max) return ((uint64_t)kmax) & mask_nbits(n);
+
+    long double span_x = (max - min);
+    long double span_k = (long double)((uint64_t)kmax - (uint64_t)kmin);
+
+    long double k_real = (long double)kmin + (x - min) * (span_k / span_x);
+
+    int64_t k = (int64_t)llroundl(x);
+
+    if (k < kmin) k = kmin;
+    if (k > kmax) k = kmax;
+
+    return ((uint64_t)k) & mask_nbits(n);
+}
+
+long double twos2real(long double min, long double max,
+    unsigned n, uint64_t code) {
+
+    if (n < 2 || n > 63) return 0.0L;
+    if (!(min < max)) return 0.0L;
+
+    uint64_t m = mask_nbits(n);
+    code &= m;
+
+    // sign-extend n-bit code to int64_t
+    int64_t k = (int64_t)code;
+    if (code & (1ULL << (n - 1))) {
+        k |= (int64_t)~m;
+    }
+
+    const int64_t kmin = -(int64_t)(1ULL << (n - 1));
+    const int64_t kmax = (int64_t)((1ULL << (n - 1)) - 1ULL);
+
+    // Linear inverse: kmin -> min, kmax -> max
+    const long double span_x = (max - min);
+    const long double span_k = (long double)((uint64_t)kmax - (uint64_t)kmin); // 2^n - 1
+
+    return min + ((long double)(k - kmin)) * (span_x / span_k);
 }
 
