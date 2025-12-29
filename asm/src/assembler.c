@@ -19,7 +19,10 @@ static int assemble(FILE *fp, dc_program_t *dc_programs[]) {
     typedef enum {
         PROGRAM,
         DC_REPEAT,
-        DC_INSN
+        DC_INSN,
+        RF_REPEAT,
+        RF_FNCO,
+        RF_INSN
     } state_t;
 
     state_t state = PROGRAM;
@@ -45,6 +48,9 @@ static int assemble(FILE *fp, dc_program_t *dc_programs[]) {
                 if (sscanf(line, ".program dc%u ", &channel)){
                     dc_programs[channel] = (dc_program_t *)calloc(1, sizeof(dc_program_t));
                     state = DC_REPEAT;
+                    success = fgets(line, sizeof(line), fp);
+                } else if (sscanf(line, ".program rf%u ", &channel)) {
+                    state = RF_REPEAT;
                     success = fgets(line, sizeof(line), fp);
                 } else {
                     return -1;
@@ -89,6 +95,20 @@ static int assemble(FILE *fp, dc_program_t *dc_programs[]) {
                         break;
                     }
 
+                }
+
+                break;
+
+            case RF_REPEAT:
+
+                uint32_t rf_repeat;
+
+                if (sscanf(line, ".repeat %u ", &rf_repeat)) {
+                    dc_programs[channel]->repeat = dc_repeat;
+                    state = DC_INSN;
+                    success = fgets(line, sizeof(line), fp);
+                } else {
+                    return -1;
                 }
 
                 break;

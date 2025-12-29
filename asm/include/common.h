@@ -24,5 +24,6 @@
 
 void print_binary(FILE *f, uint32_t value);
 int parse_time(char *str, uint32_t *t_ns);
+int parse_time_double(char *str, double *t_ns);
 
 #endif

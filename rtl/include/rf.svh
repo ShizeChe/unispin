@@ -13,6 +13,88 @@ parameter RF_CORDIC_PAD_ZEROS=8;
 parameter RF_ITER_WIDTH=10;
 parameter RF_DEPTH=16;
 parameter RF_REG_PER_INSN=(RF_INSN_WIDTH+31)/32;
+#ifndef RF_H
+#define RF_H
+
+#include <stdint.h>
+
+static inline int clog2_u32(uint32_t n) {
+    int r = 0;
+    n--;
+    while (n > 0) {
+        n >>= 1;
+        r++;
+    }
+    return r;
+}
+
+#define RF_DEPTH 16
+
+#define RF_KBC_BITS 36
+#define RF_SAMPLE_BITS 20
+
+#define RF_DAC_HZ 2000000000ULL
+#define RF_DAC_GHZ 2.0
+
+#define RF_KBC_MAX  ((int64_t)((1ULL << (RF_KBC_BITS - 1)) - 1ULL))
+#define RF_KBC_MIN  (-(int64_t)(1ULL << (RF_KBC_BITS - 1)))
+#define RF_KBC_MASK ((uint64_t)((1ULL << (RF_KBC_BITS)) - 1ULL))
+
+#define RF_DEPTH 16
+
+typedef struct {
+    uint32_t arm;
+    uint32_t kbc_mode;
+    uint64_t kbc1;
+    uint64_t kbc2;
+    uint32_t samples;
+    uint32_t dsamples;
+} rf_insn_t;
+
+typedef struct {
+    uint32_t repeat;
+    uint64_t fnco;
+    uint32_t len;
+    rf_insn_t insns[RF_DEPTH];
+    uint32_t regs[RF_TOTAL_REGS];
+} rf_program_t;
+
+typedef struct {
+    uint32_t arm;
+    double tplus_ns;
+} rf_opt_t;
+
+typedef struct {
+    double f1;
+    double f2;
+    double t_ns;
+    rf_opt_t opt;
+} rf_chp_t;
+
+typedef struct {
+    double phs;
+    double t_ns;
+    rf_opt_t opt;
+} rf_ply_t;
+
+typedef struct {
+    double t_ns;
+    rf_opt_t opt;
+} rf_idl_t;
+
+typedef struct {
+    uint32_t kbc_mode;
+    uint64_t kbc1;
+    uint64_t kbc2;
+    double t_ns;
+    rf_opt_t opt;
+} rf_ful_t;
+
+int rf_parse_insn(char *line, rf_insn_t *insn);
+void rf_assemble(rf_prog_t *prog);
+int rf_load_insns(int rf_channel, rf_program_t *rf_program);
+
+#endif
 parameter RF_TOTAL_REGS=RF_DEPTH*RF_REG_PER_INSN+2;
 
 //li parameters
