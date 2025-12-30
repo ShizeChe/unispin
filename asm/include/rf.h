@@ -2,6 +2,7 @@
 #define RF_H
 
 #include <stdint.h>
+#include <math.h>
 
 static inline int clog2_u32(uint32_t n) {
     int r = 0;
@@ -21,7 +22,7 @@ static inline int clog2_u32(uint32_t n) {
 
 #define RF_FSAMPLING_HZ 4000000000ULL
 #define RF_FNCO_MIN (-(RF_FSAMPLING_HZ / 2))
-#define RF_FNCO_MAX ((RF_FSAMPLING_HZ / 2) - (Fs / ldexpl(1.0L, RF_FNCO_BITS))
+#define RF_FNCO_MAX ((RF_FSAMPLING_HZ / 2) - (RF_FSAMPLING_HZ / ldexpl(1.0L, RF_FNCO_BITS)))
 #define RF_DAC_HZ 2000000000ULL
 #define RF_DAC_GHZ 2.0
 #define NS_PER_SAMPLE 0.5
@@ -32,6 +33,8 @@ static inline int clog2_u32(uint32_t n) {
 #define RF_KBC_MASK ((uint64_t)((1ULL << (RF_KBC_BITS)) - 1ULL))
 
 #define RF_DEPTH 16
+#define RF_REG_PER_INSN 4
+#define RF_TOTAL_REGS (RF_DEPTH * RF_REG_PER_INSN)
 
 typedef struct {
     uint32_t arm;
@@ -81,8 +84,8 @@ typedef struct {
     rf_opt_t opt;
 } rf_ful_t;
 
-int rf_parse_insn(char *line, rf_insn_t *insn);
-void rf_assemble(rf_prog_t *prog);
+int rf_parse_insn(char *line, rf_insn_t *insn, long double fnco_hz);
+void rf_assemble(rf_program_t *prog);
 int rf_load_insns(int rf_channel, rf_program_t *rf_program);
 
 #endif

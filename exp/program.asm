@@ -19,3 +19,5 @@
     idl t=10ns (t+10ns)
     ful kb 0xDEAD 0xBEED t=10ns (arm t+10ns)
     ful bc 0xDEAD 0xBEED t=10ns (arm t+10ns)
+
+.launch dc0 rf0

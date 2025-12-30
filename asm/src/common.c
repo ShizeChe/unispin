@@ -79,10 +79,6 @@ static inline uint64_t mask_nbits(unsigned n) {
     return (n >= 64) ? ~0ULL : ((1ULL << n) - 1ULL);
 }
 
-static inline int64_t round_nearest_i64(long double x) {
-    return (int64_t)llroundl(x);
-}
-
 uint64_t real2twos(long double min, long double max,
     unsigned n, long double x) {
 
@@ -102,7 +98,7 @@ uint64_t real2twos(long double min, long double max,
 
     long double k_real = (long double)kmin + (x - min) * (span_k / span_x);
 
-    int64_t k = (int64_t)llroundl(x);
+    int64_t k = (int64_t)llroundl(k_real);
 
     if (k < kmin) k = kmin;
     if (k > kmax) k = kmax;
