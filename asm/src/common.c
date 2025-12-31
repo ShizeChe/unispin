@@ -75,12 +75,12 @@ int parse_freq(char *str, long double *f_hz) {
     return 0;
 }
 
-static inline uint64_t mask_nbits(unsigned n) {
+uint64_t mask_nbits(unsigned n) {
     return (n >= 64) ? ~0ULL : ((1ULL << n) - 1ULL);
 }
 
 uint64_t real2twos(long double min, long double max,
-    unsigned n, long double x) {
+    unsigned n, long double x, int zext) {
 
     if (n < 2 || n > 63) return 0;
     if (!(min < max)) return 0;
@@ -90,8 +90,10 @@ uint64_t real2twos(long double min, long double max,
     int64_t kmin = -(int64_t)(1ULL << (n - 1));
     int64_t kmax = (int64_t)((1ULL << (n - 1)) - 1ULL);
 
-    if (x <= min) return ((uint64_t)kmin) & mask_nbits(n);
-    if (x >= max) return ((uint64_t)kmax) & mask_nbits(n);
+    if (x <= min)
+        return (zext ? (((uint64_t)kmin) & mask_nbits(n)) : ((uint64_t)kmin));
+    if (x >= max)
+        return (zext ? (((uint64_t)kmax) & mask_nbits(n)) : ((uint64_t)kmax));
 
     long double span_x = (max - min);
     long double span_k = (long double)((uint64_t)kmax - (uint64_t)kmin);
@@ -103,7 +105,7 @@ uint64_t real2twos(long double min, long double max,
     if (k < kmin) k = kmin;
     if (k > kmax) k = kmax;
 
-    return ((uint64_t)k) & mask_nbits(n);
+    return (zext ? (((uint64_t)k) & mask_nbits(n)) : ((uint64_t)k));
 }
 
 long double twos2real(long double min, long double max,

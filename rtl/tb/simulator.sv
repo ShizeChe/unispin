@@ -2,7 +2,10 @@
 `timescale 1ns / 1ps
 `include "include/dc.svh"
 `include "include/rf.svh"
-`include "include/launch.svh"
+
+import "DPI-C" function int cmd_open(input string path);
+import "DPI-C" function int cmd_accept_poll(input int timeout_ms);
+import "DPI-C" function int cmd_getline(output byte unsigned line_buf[]);
 
 module simulator;
 
@@ -17,7 +20,7 @@ module simulator;
     // dc axi bus
     logic [0:NUM_DC_CHANNEL-1] w_dc_awvalid_bus;
     logic [0:NUM_DC_CHANNEL-1] w_dc_awready_bus;
-    logic [0:NUM_DC_CHANNEL-1][$clog2(DC_TOTAL_REGS)+1:0] w_dc_awaddr_bus;
+    logic [0:NUM_DC_CHANNEL-1][$clog2(DC_TOTAL_REGS*4)-1:0] w_dc_awaddr_bus;
 
     logic [0:NUM_DC_CHANNEL-1] w_dc_wvalid_bus;
     logic [0:NUM_DC_CHANNEL-1] w_dc_wready_bus;
@@ -71,7 +74,7 @@ module simulator;
             // leave read ports unconencted
             .s_axi_arvalid(1'b0),
             .s_axi_arready(),
-            .s_axi_araddr(($clog2(DC_TOTAL_REGS)+2)'('h0)),
+            .s_axi_araddr(($clog2(DC_TOTAL_REGS*4))'('h0)),
 
             .s_axi_rvalid(),
             .s_axi_rready(1'b1),
@@ -119,7 +122,7 @@ module simulator;
     // rf axi bus
     logic [0:NUM_RF_CHANNEL-1] w_rf_awvalid_bus;
     logic [0:NUM_RF_CHANNEL-1] w_rf_awready_bus;
-    logic [0:NUM_RF_CHANNEL-1][$clog2(RF_TOTAL_REGS)+1:0] w_rf_awaddr_bus;
+    logic [0:NUM_RF_CHANNEL-1][$clog2(RF_TOTAL_REGS*4)-1:0] w_rf_awaddr_bus;
 
     logic [0:NUM_RF_CHANNEL-1] w_rf_wvalid_bus;
     logic [0:NUM_RF_CHANNEL-1] w_rf_wready_bus;
@@ -170,7 +173,7 @@ module simulator;
             // leave read ports unconencted
             .s_axi_arvalid(1'b0),
             .s_axi_arready(),
-            .s_axi_araddr(($clog2(RF_TOTAL_REGS)+2)'('h0)),
+            .s_axi_araddr(($clog2(RF_TOTAL_REGS*4))'('h0)),
 
             .s_axi_rvalid(),
             .s_axi_rready(1'b1),
@@ -210,7 +213,7 @@ module simulator;
     // launch axi bus
     logic w_lch_awvalid;
     logic w_lch_awready;
-    logic [$clog2(LCH_TOTAL_REGS)+1:0] w_lch_awaddr;
+    logic [$clog2(LCH_TOTAL_REGS*4)-1:0] w_lch_awaddr;
 
     logic w_lch_wvalid;
     logic w_lch_wready;
@@ -246,7 +249,7 @@ module simulator;
         // leave read ports unconencted
         .s_axi_arvalid(1'b0),
         .s_axi_arready(),
-        .s_axi_araddr(($clog2(LCH_TOTAL_REGS)+2)'('h0)),
+        .s_axi_araddr(($clog2(LCH_TOTAL_REGS*4))'('h0)),
 
         .s_axi_rvalid(),
         .s_axi_rready(1'b1),
@@ -503,8 +506,8 @@ module simulator;
             
             $display("dc%0d", i);
 
-            w_dc_awaddr_bus[i] = addr[$clog2(DC_TOTAL_REGS)-1:0];
-            w_dc_wdata_bus[i] = addr[$clog2(DC_TOTAL_REGS)-1:0];
+            w_dc_awaddr_bus[i] = addr[$clog2(DC_TOTAL_REGS*4)-1:0];
+            w_dc_wdata_bus[i] = data;
             w_dc_wstrb_bus[i] = 4'hf;
 
             dc_axil_write(i);
@@ -516,8 +519,8 @@ module simulator;
 
             $display("rf%0d", i - NUM_DC_CHANNEL);
 
-            w_rf_awaddr_bus[i] = addr[$clog2(RF_TOTAL_REGS)-1:0];
-            w_rf_wdata_bus[i] = addr[$clog2(RF_TOTAL_REGS)-1:0];
+            w_rf_awaddr_bus[i] = addr[$clog2(RF_TOTAL_REGS*4)-1:0];
+            w_rf_wdata_bus[i] = data;
             w_rf_wstrb_bus[i] = 4'hf;
 
             rf_axil_write(i - NUM_DC_CHANNEL);
@@ -529,8 +532,8 @@ module simulator;
 
             $display("launch"); 
 
-            w_lch_awaddr = addr[$clog2(LCH_TOTAL_REGS)-1:0];
-            w_lch_wdata = addr[$clog2(LCH_TOTAL_REGS)-1:0];
+            w_lch_awaddr = addr[$clog2(LCH_TOTAL_REGS*4)-1:0];
+            w_lch_wdata = data;
             w_lch_wstrb = 4'hf;
 
             lch_axil_write;
@@ -631,51 +634,118 @@ module simulator;
     end
 
     // file interface
-    int fd;
-    string line;
-    string fifo_in;
+    // int fd, fd_writer;
+    // string line;
+    // string fifo_in;
+    //
+    // logic [31:0] addr, data;
+    // longint unsigned t;
+    //
+    // initial begin
+    //
+    //     $value$plusargs("FIFO_IN=%s", fifo_in);
+    //
+    //     fd_writer = $fopen(fifo_in, "w");
+    //     fd = $fopen(fifo_in, "r");
+    //     if (fd == 0) 
+    //         $fatal(1, "Failed to open %s", fifo_in);
+    //
+    //     $display("Simulator ready");
+    //
+    //     forever begin
+    //
+    //         if (!$feof(fd) && $fgets(line, fd)) begin
+    //
+    //             if ($sscanf(line, "0x%8h 0x%8h", addr, data) == 2) begin
+    //
+    //                 $display("RX addr=%08h data=%08h", addr, data);
+    //
+    //                 axil_bus_write(addr, data);
+    //                 t = $urandom_range(0, 50);
+    //                 $display("Advance %0d cycles", t / 4);
+    //                 repeat($urandom_range(0, 10)) @(negedge w_clk);
+    //
+    //             end
+    //             else if ($sscanf(line, "run %d", t)) begin
+    //
+    //                 $display("Advance %0d cycles", t / 4);
+    //                 repeat(t / 4) @(negedge w_clk);
+    //
+    //             end
+    //             else begin
+    //                 $fatal(1, "Bad line: %s", line);
+    //             end
+    //
+    //         end 
+    //         else begin
+    //             // $display("fgets failed");
+    //             // $fclose(fd);
+    //             // $display("fclose returned");
+    //             // fd = $fopen(fifo_in, "r");
+    //             // $display("fopen returned");
+    //             // if (fd == 0) $fatal(1, "reopen failed");
+    //         end
+    //
+    //     end
+    //
+    // end
 
     logic [31:0] addr, data;
     longint unsigned t;
+    int rc;
+    localparam LINE_MAX = 512;
+    byte unsigned line_buf[LINE_MAX];
+    string line;
+
+    function automatic string bytes2string(input byte unsigned b[]);
+        string s = "";
+        for (int i = 0; i < b.size(); i++) begin
+            if (b[i] == 0) break;           // stop at NUL
+            s = {s, byte'(b[i])};
+        end
+        return s;
+    endfunction
+
+    task wait_client;
+        $display("Waiting for command connection...");
+        forever begin
+            if (cmd_accept_poll(100) == 0)
+                break;
+        end
+        $display("Client connected");
+    endtask
 
     initial begin
+        rc = cmd_open("/tmp/tb_cmd.sock");
+        if (rc != 0) $fatal("cmd_open failed");
 
-        $value$plusargs("FIFO_IN=%s", fifo_in);
-
-        fd = $fopen(fifo_in, "r");
-        if (fd == 0) 
-            $fatal(1, "Failed to open %s", fifo_in);
-        
-        $display("Simulator ready");
+        wait_client;
 
         forever begin
 
-            if ($fgets(line, fd)) begin
+            rc = cmd_getline(line_buf);
+
+            if (rc == 1) begin
+                line = bytes2string(line_buf);
+                $display("RX: %s", line);
 
                 if ($sscanf(line, "0x%8h 0x%8h", addr, data) == 2) begin
-
-                    $display("RX addr=%08h data=%08h", addr, data);
-
                     axil_bus_write(addr, data);
-                    t = $urandom_range(0, 50);
-                    $display("Advance %0d cycles", t / 4);
-                    repeat($urandom_range(0, 10)) @(negedge w_clk);
-
                 end
-                else if ($sscanf(line, "run %d", t)) begin
-
-                    $display("Advance %0d cycles", t / 4);
-                    repeat(t / 4) @(negedge w_clk);
-
+                else if ($sscanf(line, "run %d", t) == 1) begin
+                    repeat (t/4) @(negedge w_clk);
                 end
                 else begin
-                    $fatal(1, "Bad line: %s", line);
+                    $display("Unknown command: %s", line);
                 end
 
-            end 
-
+            end else if (rc == 0) begin
+                $display("Client disconnected, waiting...");
+                wait_client;
+            end else begin
+                $fatal("cmd_getline error");
+            end
         end
-
     end
 
 endmodule

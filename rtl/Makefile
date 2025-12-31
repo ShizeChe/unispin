@@ -1,6 +1,6 @@
 # Top-level variables
 SIM := vcs
-SRC := $(wildcard src/dc*) $(wildcard src/rf*) $(wildcard src/launch*) src/sequencer.sv lib/axil_slave_regs.sv lib/ad5791.sv lib/zcu216_dac.sv
+SRC := $(wildcard src/dc*) $(wildcard src/rf*) $(wildcard src/launch*) src/sequencer.sv lib/cmd_dpi.c lib/axil_slave_regs.sv lib/ad5791.sv lib/zcu216_dac.sv
 # SRC := design/launch.sv design/dc_stream.sv design/dc_core.sv design/dc.sv design/rf_stream.sv design/rf_core.sv design/rf.sv lib/spi_master.sv lib/parabolic_counter.sv lib/cordic.sv lib/ad5541a.sv lib/zcu216_dac.sv
 # SRC := design/launch.sv design/dc_stream.sv design/dc_core.sv design/dc.sv lib/spi_master.sv
 # SRC := src/sequencer.sv src/rf_decode.sv src/rf_cordic.sv src/rf_phasor.sv lib/zcu216_dac.sv src/rf_core.sv

@@ -23,8 +23,8 @@ static void rf_chp2insn(rf_chp_t *chp, rf_insn_t *insn, long double fnco_hz) {
     long double k_deg = (f2_dpn - f1_dpn) / (4 * (long double)chp->t_ns);
     long double b_deg = (f1_dpn + k_deg) / 2;
 
-    uint64_t k = real2twos(-180, 180 - ldexpl(1.0L, -RF_KBC_BITS), RF_KBC_BITS, k_deg);
-    uint64_t b = real2twos(-180, 180 - ldexpl(1.0L, -RF_KBC_BITS), RF_KBC_BITS, b_deg);
+    uint64_t k = real2twos(-180, 180 - ldexpl(1.0L, -RF_KBC_BITS), RF_KBC_BITS, k_deg, 1);
+    uint64_t b = real2twos(-180, 180 - ldexpl(1.0L, -RF_KBC_BITS), RF_KBC_BITS, b_deg, 1);
 
     insn->arm = chp->opt.arm;
     insn->kbc_mode = 1;

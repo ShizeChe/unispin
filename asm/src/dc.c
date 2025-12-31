@@ -34,14 +34,14 @@ static uint32_t dc_t2cycles(uint32_t t_ns) {
 
 static void dc_swp2insn(dc_swp_t *swp, dc_insn_t *insn) {
 
-    uint32_t v1_code = dc_v2dac_code(swp->v1);
-    uint32_t v2_code = dc_v2dac_code(swp->v2);
+    int64_t v1_code = (int64_t)real2twos(VMIN, VMAX, DC_DAC_BITS, swp->v1, 0);
+    int64_t v2_code = (int64_t)real2twos(VMIN, VMAX, DC_DAC_BITS, swp->v2, 0);
     uint32_t cycles = dc_t2cycles(swp->dt_ns);
 
     uint32_t steps = swp->n - 1;
-    int32_t dv = ((int32_t)v2_code - (int32_t)v1_code) / (int32_t)steps;
+    int64_t dv = (v2_code - v1_code) / (int64_t)steps;
 
-    uint32_t din = (1u << 20) | v1_code;
+    uint32_t din = (1u << 20) | ((uint32_t)v1_code & ((1u << 20) - 1u));
 
     insn->iters = steps;
     insn->spi_dvsr = swp->opt.dvsr;

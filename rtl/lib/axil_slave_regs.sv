@@ -2,7 +2,7 @@
 
 module axil_slave_regs
    #(parameter NUM_REGS=32,
-     parameter ADDR_WIDTH=$clog2(NUM_REGS)+2)
+     parameter ADDR_WIDTH=$clog2(NUM_REGS*4))
     (input  logic i_aclk,
      input  logic i_aresetn,
      

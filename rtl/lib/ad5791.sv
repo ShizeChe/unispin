@@ -2,6 +2,8 @@
 `timescale 1ns / 1ps
 
 module ad5791
+   #(parameter real VMIN=-10.0,
+     parameter real VMAX=10.0)
     (input  logic SCLK,
      input  logic SDIN,
      input  logic SYNC_N,
@@ -171,7 +173,7 @@ module ad5791
     assign VDIGITAL = (OPGND || DACTRI) ? 'h0 : dac_reg;
 
     function automatic real vdigital2real(input logic [19:0] vdigital);
-        return $itor($signed(vdigital)) / (1.0 * (1 << (19-1)));
+        return (VMAX - VMIN) / (1.0 * (2 ** 20 - 1)) * $itor($signed(vdigital));
     endfunction
 
     assign VOUT = vdigital2real(VDIGITAL);

@@ -2,6 +2,7 @@
 #include "dc.h"
 #include "rf.h"
 #include "launch.h"
+#include "simcli.h"
 #include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -138,7 +139,7 @@ static int assemble(FILE *fp,
                 if (sscanf(line, ".fnco %31s ", fnco_tok)) {
                     if (parse_freq(fnco_tok, &rf_fnco_hz) == 0) {
                         rf_programs[channel]->fnco = real2twos(RF_FNCO_MIN, 
-                            RF_FNCO_MAX, RF_FNCO_BITS, rf_fnco_hz);
+                            RF_FNCO_MAX, RF_FNCO_BITS, rf_fnco_hz, 1);
                         state = RF_INSN;
                         success = fgets(line, sizeof(line), fp);
                     } else {
@@ -209,7 +210,7 @@ static uint64_t program_t(dc_program_t *dc_programs[],
 
             for (unsigned int j = 0; j < dc_programs[i]->len; j++) {
 
-                dc_insn_t *insn = &(dc_programs[i]->insns[i]);
+                dc_insn_t *insn = &(dc_programs[i]->insns[j]);
                 uint64_t iters = (uint64_t)insn->iters;
                 uint64_t hold_cycles = (uint64_t)insn->hold_cycles;
 
@@ -236,7 +237,7 @@ static uint64_t program_t(dc_program_t *dc_programs[],
 
             for (unsigned int j = 0; j < rf_programs[i]->len; j++) {
 
-                rf_insn_t *insn = &(rf_programs[i]->insns[i]);
+                rf_insn_t *insn = &(rf_programs[i]->insns[j]);
                 uint64_t samples = (uint64_t)insn->samples;
                 uint64_t dsamples = (uint64_t)insn->dsamples;
 
@@ -261,10 +262,67 @@ static uint64_t program_t(dc_program_t *dc_programs[],
 
 }
 
-static void write_pipe(dc_program_t *dc_programs[], 
-                       rf_program_t *rf_programs[],
-                       launch_t *launch,
-                       FILE *pipe) {
+/*static void write_pipe(dc_program_t *dc_programs[], */
+/*                       rf_program_t *rf_programs[],*/
+/*                       launch_t *launch,*/
+/*                       FILE *pipe) {*/
+/**/
+/*    uint32_t page_size = (1U << 12);*/
+/**/
+/*    for (int i = 0; i < DC_CHANNELS; i++) {*/
+/**/
+/*        if (dc_programs[i] != NULL) {*/
+/**/
+/*            uint32_t base = i * page_size;*/
+/**/
+/*            fprintf(pipe, "0x%08X 0x%08X\n", base + (DC_TOTAL_REGS - 1) * 4, 0);*/
+/**/
+/*            for (unsigned int j = 0; j < DC_TOTAL_REGS; j++) {*/
+/*                fprintf(pipe, "0x%08X 0x%08X\n", base + j * 4, (dc_programs[i]->regs)[j]);*/
+/*            }*/
+/**/
+/*        }*/
+/**/
+/*    }*/
+/**/
+/*    for (int i = 0; i < RF_CHANNELS; i++) {*/
+/**/
+/*        if (rf_programs[i] != NULL) {*/
+/**/
+/*            uint32_t base = (DC_CHANNELS + i) * page_size;*/
+/**/
+/*            fprintf(pipe, "0x%08X 0x%08X\n", base + (RF_TOTAL_REGS - 1) * 4, 0);*/
+/**/
+/*            for (unsigned int j = 0; j < RF_TOTAL_REGS; j++) {*/
+/*                fprintf(pipe, "0x%08X 0x%08X\n", base + j * 4, (rf_programs[i]->regs)[j]);*/
+/*            }*/
+/**/
+/*        }*/
+/**/
+/*    }*/
+/**/
+/*    if (launch != NULL) {*/
+/**/
+/*        uint32_t base = (DC_CHANNELS + RF_CHANNELS) * page_size;*/
+/**/
+/*        fprintf(pipe, "0x%08X 0x%08X\n", base + (LAUNCH_TOTAL_REGS - 1) * 4, 0);*/
+/**/
+/*        fprintf(pipe, "0x%08X 0x%08X\n", base, launch->dc_chmask);*/
+/*        fprintf(pipe, "0x%08X 0x%08X\n", base + 4, launch->rf_chmask);*/
+/*        fprintf(pipe, "0x%08X 0x%08X\n", base + 8, launch->li_chmask);*/
+/*        fprintf(pipe, "0x%08X 0x%08X\n", base + (LAUNCH_TOTAL_REGS - 1) * 4, 1);*/
+/**/
+/*    }*/
+/*}*/
+
+static int write_sim(dc_program_t *dc_programs[], 
+                     rf_program_t *rf_programs[],
+                     launch_t *launch) {
+
+    if (sim_connect(SOCKET) != 0) {
+        printf("Connection unseccessful\n");
+        return -1;
+    }
 
     uint32_t page_size = (1U << 12);
 
@@ -274,10 +332,10 @@ static void write_pipe(dc_program_t *dc_programs[],
 
             uint32_t base = i * page_size;
 
-            fprintf(pipe, "0x%08X 0x%08X\n", base + (DC_TOTAL_REGS - 1) * 4, 0);
+            sim_sendf("0x%08X 0x%08X\n", base + (DC_TOTAL_REGS - 1) * 4, 0);
             
             for (unsigned int j = 0; j < DC_TOTAL_REGS; j++) {
-                fprintf(pipe, "0x%08X 0x%08X\n", base + j * 4, (dc_programs[i]->regs)[j]);
+                sim_sendf("0x%08X 0x%08X\n", base + j * 4, (dc_programs[i]->regs)[j]);
             }
 
         }
@@ -290,10 +348,10 @@ static void write_pipe(dc_program_t *dc_programs[],
 
             uint32_t base = (DC_CHANNELS + i) * page_size;
 
-            fprintf(pipe, "0x%08X 0x%08X\n", base + (RF_TOTAL_REGS - 1) * 4, 0);
+            sim_sendf("0x%08X 0x%08X\n", base + (RF_TOTAL_REGS - 1) * 4, 0);
             
             for (unsigned int j = 0; j < RF_TOTAL_REGS; j++) {
-                fprintf(pipe, "0x%08X 0x%08X\n", base + j * 4, (rf_programs[i]->regs)[j]);
+                sim_sendf("0x%08X 0x%08X\n", base + j * 4, (rf_programs[i]->regs)[j]);
             }
 
         }
@@ -304,14 +362,18 @@ static void write_pipe(dc_program_t *dc_programs[],
 
         uint32_t base = (DC_CHANNELS + RF_CHANNELS) * page_size;
 
-        fprintf(pipe, "0x%08X 0x%08X\n", base + (LAUNCH_TOTAL_REGS - 1) * 4, 0);
+        sim_sendf("0x%08X 0x%08X\n", base + (LAUNCH_TOTAL_REGS - 1) * 4, 0);
         
-        fprintf(pipe, "0x%08X 0x%08X\n", base, launch->dc_chmask);
-        fprintf(pipe, "0x%08X 0x%08X\n", base + 4, launch->rf_chmask);
-        fprintf(pipe, "0x%08X 0x%08X\n", base + 8, launch->li_chmask);
-        fprintf(pipe, "0x%08X 0x%08X\n", base + (LAUNCH_TOTAL_REGS - 1) * 4, 1);
+        sim_sendf("0x%08X 0x%08X\n", base, launch->dc_chmask);
+        sim_sendf("0x%08X 0x%08X\n", base + 4, launch->rf_chmask);
+        sim_sendf("0x%08X 0x%08X\n", base + 8, launch->li_chmask);
+        sim_sendf("0x%08X 0x%08X\n", base + (LAUNCH_TOTAL_REGS - 1) * 4, 1);
 
     }
+
+    sim_sendf("run %lu\n", program_t(dc_programs, rf_programs) + 1000);
+
+    return 0;
 }
 
 static void write_bin(dc_program_t *dc_programs[], 
@@ -369,10 +431,10 @@ int main(int argc, char *argv[]) {
     int opt;
     char *file = NULL;
     char *out = NULL;
-    char *sim = NULL;
+    int sim = 0;
     int exe = 0;
 
-    while ((opt = getopt(argc, argv, "f:o:s:x")) != -1) {
+    while ((opt = getopt(argc, argv, "f:o:sx")) != -1) {
         switch (opt) {
             case 'f':
                 file = optarg;
@@ -381,13 +443,13 @@ int main(int argc, char *argv[]) {
                 out = optarg;
                 break;
             case 's':
-                sim = optarg;
+                sim = 1;
                 break;
             case 'x':
                 exe = 1;
                 break;
             default:
-                fprintf(stderr, "Usage: %s [-f file] [-o out] [-s mkfifo] [-x]\n", argv[0]);
+                fprintf(stderr, "Usage: %s [-f file] [-o out] [-s] [-x]\n", argv[0]);
                 return 1;
         }
     }
@@ -410,10 +472,9 @@ int main(int argc, char *argv[]) {
     FILE *op = fopen(out, "w");
     write_bin(dc_programs, rf_programs, launch, op);
 
-    if (sim != NULL) {
-        FILE *pipe = fopen(sim, "w");
-        write_pipe(dc_programs, rf_programs, launch, pipe);
-        fprintf(pipe, "run %lu", program_t(dc_programs, rf_programs) + 1000);
+    if (sim) {
+        printf("simulate\n");
+        write_sim(dc_programs, rf_programs, launch);
     }
 
     if (exe) {
