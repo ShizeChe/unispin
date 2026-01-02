@@ -34,7 +34,7 @@ static inline int clog2_u32(uint32_t n) {
 
 #define RF_DEPTH 16
 #define RF_REG_PER_INSN 4
-#define RF_TOTAL_REGS (RF_DEPTH * RF_REG_PER_INSN)
+#define RF_TOTAL_REGS ((RF_DEPTH * RF_REG_PER_INSN) + 2)
 
 typedef struct {
     uint32_t arm;

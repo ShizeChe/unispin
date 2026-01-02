@@ -1,0 +1,2 @@
+verdi -apex -dbdir simulator.daidir -play wv.tcl &
+./simulator -gui=apex -do wv.tcl &

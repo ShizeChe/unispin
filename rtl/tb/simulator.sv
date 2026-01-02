@@ -10,8 +10,8 @@ import "DPI-C" function int cmd_getline(output byte unsigned line_buf[]);
 module simulator;
 
     // define number of dc/rf/li channels
-    localparam NUM_DC_CHANNEL=4;
-    localparam NUM_RF_CHANNEL=2;
+    localparam NUM_DC_CHANNEL=24;
+    localparam NUM_RF_CHANNEL=6;
     localparam NUM_LI_CHANNEL=1;
 
     // clocks and reset
@@ -41,8 +41,8 @@ module simulator;
     logic [0:NUM_DC_CHANNEL-1] w_dc_ldac_n_bus;
 
     // dc armed/start bus
-    logic [0:NUM_DC_CHANNEL-1] w_dc_armed_bus;
-    logic [0:NUM_DC_CHANNEL-1] w_dc_start_bus;
+    logic [NUM_DC_CHANNEL-1:0] w_dc_armed_bus;
+    logic [NUM_DC_CHANNEL-1:0] w_dc_start_bus;
     logic [0:NUM_DC_CHANNEL-1] w_dc_empty_bus;
 
     // voltage output
@@ -139,8 +139,8 @@ module simulator;
     logic [0:NUM_RF_CHANNEL-1][RF_DAC_WIDTH*16-1:0] w_rf_QIx8_bus;
 
     // rf armed/start bus
-    logic [0:NUM_RF_CHANNEL-1] w_rf_armed_bus;
-    logic [0:NUM_RF_CHANNEL-1] w_rf_start_bus;
+    logic [NUM_RF_CHANNEL-1:0] w_rf_armed_bus;
+    logic [NUM_RF_CHANNEL-1:0] w_rf_start_bus;
     logic [0:NUM_RF_CHANNEL-1] w_rf_empty_bus;
 
     // rf output
@@ -519,9 +519,9 @@ module simulator;
 
             $display("rf%0d", i - NUM_DC_CHANNEL);
 
-            w_rf_awaddr_bus[i] = addr[$clog2(RF_TOTAL_REGS*4)-1:0];
-            w_rf_wdata_bus[i] = data;
-            w_rf_wstrb_bus[i] = 4'hf;
+            w_rf_awaddr_bus[i - NUM_DC_CHANNEL] = addr[$clog2(RF_TOTAL_REGS*4)-1:0];
+            w_rf_wdata_bus[i - NUM_DC_CHANNEL] = data;
+            w_rf_wstrb_bus[i - NUM_DC_CHANNEL] = 4'hf;
 
             rf_axil_write(i - NUM_DC_CHANNEL);
 
@@ -746,6 +746,11 @@ module simulator;
                 $fatal("cmd_getline error");
             end
         end
+    end
+
+    initial begin
+        $fsdbDumpfile("run.fsdb");
+        $fsdbDumpvars(0, "+all");
     end
 
 endmodule

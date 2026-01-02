@@ -1,4 +1,6 @@
+`default_nettype none
 `timescale 1ns / 1ps
+`include "include/launch.svh"
 
 module launch
    #(parameter NUM_DC_CHANNEL=24,
@@ -6,7 +8,7 @@ module launch
      parameter NUM_LI_CHANNEL=2)
     (input  logic i_clk, i_rst,
 
-     input  logic [3:0][31:0] i_regs,
+     input  logic [0:LCH_TOTAL_REGS-1][31:0] i_regs,
 
      input  logic [NUM_DC_CHANNEL-1:0] i_dc_armed,
      input  logic [NUM_RF_CHANNEL-1:0] i_rf_armed,

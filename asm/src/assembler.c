@@ -200,7 +200,7 @@ static uint64_t program_t(dc_program_t *dc_programs[],
 
     uint64_t max_ns = 0;
     uint64_t cycle_ns = NS_PER_CYCLE;
-    uint64_t sample_ns = NS_PER_SAMPLE;
+    double sample_ns = NS_PER_SAMPLE;
 
     for (int i = 0; i < DC_CHANNELS; i++) {
 
@@ -232,8 +232,8 @@ static uint64_t program_t(dc_program_t *dc_programs[],
 
         if (rf_programs[i] != NULL) {
 
-            uint64_t t_ns = 0;
-            uint64_t dt_ns = 0;
+            double t_ns = 0.0;
+            double dt_ns = 0.0;
 
             for (unsigned int j = 0; j < rf_programs[i]->len; j++) {
 
@@ -241,18 +241,18 @@ static uint64_t program_t(dc_program_t *dc_programs[],
                 uint64_t samples = (uint64_t)insn->samples;
                 uint64_t dsamples = (uint64_t)insn->dsamples;
 
-                t_ns += samples * sample_ns;
-                dt_ns += dsamples * sample_ns;
+                t_ns += ((double)samples) * sample_ns;
+                dt_ns += ((double)dsamples) * sample_ns;
 
             }
 
-            uint64_t repeat = dc_programs[i]->repeat;
-            t_ns *= repeat;
-            dt_ns = (repeat - 1) * dt_ns * repeat / 2;
+            uint64_t repeat = rf_programs[i]->repeat;
+            t_ns *= (double)repeat;
+            dt_ns = ((double)(repeat - 1)) * dt_ns * ((double)repeat) / 2.0;
             t_ns += dt_ns;
 
-            if (t_ns > max_ns)
-                max_ns = t_ns;
+            if (((uint64_t)llround(t_ns)) > max_ns)
+                max_ns = ((uint64_t)llround(t_ns));
 
         }
 
@@ -471,6 +471,7 @@ int main(int argc, char *argv[]) {
 
     FILE *op = fopen(out, "w");
     write_bin(dc_programs, rf_programs, launch, op);
+    printf("program t: %ld ns\n", program_t(dc_programs, rf_programs));
 
     if (sim) {
         printf("simulate\n");

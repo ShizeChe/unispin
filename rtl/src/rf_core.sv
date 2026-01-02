@@ -54,16 +54,19 @@ module rf_core
 
     rf_phase_stg_t p;
 
+    logic w_new_phase;
+    assign w_new_phase = d.w_set_phasor && o_next;
+
     rf_phasor #(
         .IW(PHASE_WIDTH*2),
         .OW(PHASE_WIDTH)
     ) PHASOR (
         .i_clk(i_clk),
         .i_rst(i_rst),
-        .i_set(d.w_set_phasor && o_next),
-        .i_k(p.r_k),
-        .i_b(p.r_b),
-        .i_c(p.r_c),
+        .i_set(w_new_phase),
+        .i_k(d.w_k),
+        .i_b(d.w_b),
+        .i_c(d.w_c),
         .o_p(p.w_phasex8),
         .i_stall(w_stall)
     );
@@ -71,9 +74,6 @@ module rf_core
     always_ff @(posedge i_clk) begin
         if (i_rst) begin
             p.r_addr <= 'bx;
-            p.r_k <= 'bx;
-            p.r_b <= 'bx;
-            p.r_c <= 'bx;
             p.r_samples <= 'bx;
             p.r_samples_left <= 'd0;
             p.r_arm <= 1'b0;
@@ -87,9 +87,6 @@ module rf_core
             end
             else if (!i_empty) begin
                 p.r_addr <= d.w_addr;
-                p.r_k <= d.w_k;
-                p.r_b <= d.w_b;
-                p.r_c <= d.w_c;
                 p.r_samples <= d.w_samples;
                 p.r_samples_left <= d.w_samples;
                 p.r_arm <= d.w_arm;
@@ -152,14 +149,14 @@ module rf_core
                 !r[0].r_bubble ? r[0].r_sample : 'bx
             );
             o_QIx8 <= {
-                r[7].r_Q, PAD, r[7].r_Q, PAD, 
-                r[6].r_Q, PAD, r[6].r_Q, PAD, 
-                r[5].r_Q, PAD, r[5].r_Q, PAD, 
-                r[4].r_Q, PAD, r[4].r_Q, PAD, 
-                r[3].r_Q, PAD, r[3].r_Q, PAD, 
-                r[2].r_Q, PAD, r[2].r_Q, PAD, 
-                r[1].r_Q, PAD, r[1].r_Q, PAD, 
-                r[0].r_Q, PAD, r[0].r_Q, PAD 
+                r[7].r_Q, PAD, r[7].r_I, PAD, 
+                r[6].r_Q, PAD, r[6].r_I, PAD, 
+                r[5].r_Q, PAD, r[5].r_I, PAD, 
+                r[4].r_Q, PAD, r[4].r_I, PAD, 
+                r[3].r_Q, PAD, r[3].r_I, PAD, 
+                r[2].r_Q, PAD, r[2].r_I, PAD, 
+                r[1].r_Q, PAD, r[1].r_I, PAD, 
+                r[0].r_Q, PAD, r[0].r_I, PAD 
             };
         end
     end

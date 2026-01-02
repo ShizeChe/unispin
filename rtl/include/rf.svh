@@ -49,9 +49,6 @@ typedef struct {
 
 typedef struct {
     logic [$clog2(RF_DEPTH)-1:0] r_addr;
-    logic [RF_KBC_WIDTH-1:0] r_k;
-    logic [RF_KBC_WIDTH-1:0] r_b;
-    logic [RF_KBC_WIDTH-1:0] r_c;
     logic [RF_NUM_SAMPLE_WIDTH-1:0] r_samples;
     logic [RF_NUM_SAMPLE_WIDTH-1:0] r_samples_left;
     logic r_arm;
