@@ -17,11 +17,28 @@ static uint32_t rf_t2samples(double t_ns) {
     return samples;
 }
 
+/*static void rf_chp2insn(rf_chp_t *chp, rf_insn_t *insn, long double fnco_hz) {*/
+/*    long double f1_dpn = (chp->f1 - fnco_hz) * 360e-9;*/
+/*    long double f2_dpn = (chp->f2 - fnco_hz) * 360e-9;*/
+/*    long double k_deg = (f2_dpn - f1_dpn) / (4 * (long double)chp->t_ns);*/
+/*    long double b_deg = (f1_dpn + k_deg) / 2;*/
+/**/
+/*    uint64_t k = real2twos(-180, 180 - ldexpl(1.0L, -RF_KBC_BITS), RF_KBC_BITS, k_deg, 1);*/
+/*    uint64_t b = real2twos(-180, 180 - ldexpl(1.0L, -RF_KBC_BITS), RF_KBC_BITS, b_deg, 1);*/
+/**/
+/*    insn->arm = chp->opt.arm;*/
+/*    insn->kbc_mode = 1;*/
+/*    insn->kbc1 = k;*/
+/*    insn->kbc2 = b;*/
+/*    insn->samples = rf_t2samples(chp->t_ns);*/
+/*    insn->dsamples = rf_t2samples(chp->opt.tplus_ns);*/
+/**/
+/*}*/
+
 static void rf_chp2insn(rf_chp_t *chp, rf_insn_t *insn, long double fnco_hz) {
-    long double f1_dpn = (chp->f1 - fnco_hz) * 360e-9;
-    long double f2_dpn = (chp->f2 - fnco_hz) * 360e-9;
-    long double k_deg = (f2_dpn - f1_dpn) / (4 * (long double)chp->t_ns);
-    long double b_deg = (f1_dpn + k_deg) / 2;
+
+    long double k_deg = (chp->f2 - chp->f1) / ((long double)chp->t_ns) * 90e-9;
+    long double b_deg = (chp->f1 - fnco_hz) * 180e-9 + k_deg;
 
     uint64_t k = real2twos(-180, 180 - ldexpl(1.0L, -RF_KBC_BITS), RF_KBC_BITS, k_deg, 1);
     uint64_t b = real2twos(-180, 180 - ldexpl(1.0L, -RF_KBC_BITS), RF_KBC_BITS, b_deg, 1);

@@ -479,6 +479,8 @@ for {set ch 5} {$ch >= 0} {incr ch -1} {
                               "/simulator/RF_GEN\[$ch\]/DAC/Q" \
                               "/simulator/RF_GEN\[$ch\]/DAC/deg" \
                               "/simulator/RF_GEN\[$ch\]/DAC/rad" \
+                              "/simulator/RF_GEN\[$ch\]/DAC/nco_i" \
+                              "/simulator/RF_GEN\[$ch\]/DAC/nco_q" \
                               "/simulator/RF_GEN\[$ch\]/DAC/o_vrf"
 
 

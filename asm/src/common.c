@@ -59,7 +59,7 @@ int parse_time_double(char *str, double *t_ns) {
 int parse_freq(char *str, long double *f_hz) {
     char *endptr = NULL;
     long double val = strtold(str, &endptr);
-    if (endptr == str || val < 0) return -1; // no number
+    if (endptr == str) return -1; // no number
 
     const char *unit = endptr;
     if (*unit == '\0') return -1; // must have a unit

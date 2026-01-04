@@ -202,8 +202,8 @@ module rf_cordic
             r <= '{
                 r_addr: c[NUM_STAGES].r_addr,
                 r_sample: c[NUM_STAGES].r_sample,
-                r_Q: c[NUM_STAGES].r_zero ? 'h0 : w_x_round[IQ_WIDTH+PAD_ZEROS-1:PAD_ZEROS],
-                r_I: c[NUM_STAGES].r_zero ? 'h0 : w_y_round[IQ_WIDTH+PAD_ZEROS-1:PAD_ZEROS],
+                r_Q: c[NUM_STAGES].r_zero ? 'h0 : w_y_round[IQ_WIDTH+PAD_ZEROS-1:PAD_ZEROS],
+                r_I: c[NUM_STAGES].r_zero ? 'h0 : w_x_round[IQ_WIDTH+PAD_ZEROS-1:PAD_ZEROS],
                 r_bubble: c[NUM_STAGES].r_bubble,
                 r_arm: c[NUM_STAGES].r_arm
             };

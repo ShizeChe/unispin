@@ -31,7 +31,7 @@ module zcu216_dac
     end
 
     real I, Q;
-    real deg, rad;
+    real deg, rad, nco_i, nco_q;
     initial begin
         deg = 0;
         @(posedge i_clk);
@@ -43,7 +43,10 @@ module zcu216_dac
             Q = iq2real(IQ_WIDTH, o_Q);
             deg = deg + 1.8;
             rad = deg * 3.14159265358979323846 / 180.0;
+            nco_i = $cos(rad);
+            nco_q = $sin(rad);
             o_vrf = I * $cos(rad) - Q * $sin(rad);
         end
     end
+
 endmodule

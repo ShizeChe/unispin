@@ -199,8 +199,8 @@ module simulator;
             .i_clk(w_clk),
             .i_dac_clk(w_rf_dac_clk),
             .i_QIx8(w_rf_QIx8_bus[i]),
-            .o_I(vrf_Q[i]),
-            .o_Q(vrf_I[i]),
+            .o_I(vrf_I[i]),
+            .o_Q(vrf_Q[i]),
             .o_vrf(vrf[i])
         );
 
@@ -746,11 +746,6 @@ module simulator;
                 $fatal("cmd_getline error");
             end
         end
-    end
-
-    initial begin
-        $fsdbDumpfile("run.fsdb");
-        $fsdbDumpvars(0, "+all");
     end
 
 endmodule
