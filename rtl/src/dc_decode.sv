@@ -1,6 +1,6 @@
 `default_nettype none
 `timescale 1ns / 1ps
-`include "include/dc.svh"
+`include "dc.svh"
 
 module dc_decode
    #(parameter DEPTH=DC_DEPTH)

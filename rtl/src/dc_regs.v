@@ -1,3 +1,4 @@
+`default_nettype none
 `timescale 1ns / 1ps
 
 module dc_regs
@@ -33,7 +34,7 @@ module dc_regs
      output wire [31:0] s_axi_rdata,
      output wire [1:0] s_axi_rresp,
 
-     output wire [NUM_REGS-1:0][31:0] o_regs);
+     output wire [0:NUM_REGS-1][31:0] o_regs);
 
      axil_slave_regs #(
          .NUM_REGS(NUM_REGS)

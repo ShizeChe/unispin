@@ -1,6 +1,6 @@
 `default_nettype none
 `timescale 1ns / 1ps
-`include "include/dc.svh"
+`include "dc.svh"
 
 module dc
    #(parameter SPI_DATA_WIDTH=DC_SPI_DATA_WIDTH,

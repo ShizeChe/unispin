@@ -1,6 +1,6 @@
 `default_nettype none
 `timescale 1ns / 1ps
-`include "include/rf.svh"
+`include "rf.svh"
 
 module rf_cordic
    #(parameter PHASE_WIDTH=RF_PHASE_WIDTH,
