@@ -1,6 +1,6 @@
 `default_nettype none
 `timescale 1ns / 1ps
-`include "launch.svh"
+`include "launch.vh"
 
 module launch
    #(parameter NUM_DC_CHANNEL=24,

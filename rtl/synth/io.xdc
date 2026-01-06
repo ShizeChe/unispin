@@ -1,4 +1,3 @@
-
 #J2
 set_property -dict {PACKAGE_PIN G27 IOSTANDARD LVCMOS18} [get_ports o_la01_p]
 set_property -dict {PACKAGE_PIN F30 IOSTANDARD LVCMOS18} [get_ports i_la00_p]

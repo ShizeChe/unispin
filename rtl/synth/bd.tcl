@@ -412,11 +412,12 @@ proc create_root_design { parentCell } {
   set o_regs_28 [ create_bd_port -dir O -from 2111 -to 0 o_regs_28 ]
   set o_regs_29 [ create_bd_port -dir O -from 2111 -to 0 o_regs_29 ]
   set o_regs_30 [ create_bd_port -dir O -from 127 -to 0 o_regs_30 ]
-  set dc_rf_clk [ create_bd_port -dir I -type clk -freq_hz 250000000 dc_rf_clk ]
+  set dcrfli_clk [ create_bd_port -dir I -type clk -freq_hz 250000000 dcrfli_clk ]
   set clk_adc1_0 [ create_bd_port -dir O -type clk clk_adc1_0 ]
   set clk_dac0_0 [ create_bd_port -dir O -type clk clk_dac0_0 ]
   set clk_dac1_0 [ create_bd_port -dir O -type clk clk_dac1_0 ]
   set clk_dac2_0 [ create_bd_port -dir O -type clk clk_dac2_0 ]
+  set dcrfli_rst_n [ create_bd_port -dir O -type rst dcrfli_rst_n ]
 
   # Create instance: zynq_ultra_ps_e_0, and set properties
   set zynq_ultra_ps_e_0 [ create_bd_cell -type ip -vlnv xilinx.com:ip:zynq_ultra_ps_e:3.5 zynq_ultra_ps_e_0 ]
@@ -1379,7 +1380,8 @@ Port;FD4A0000;FD4AFFFF;0|FPD;DPDMA;FD4C0000;FD4CFFFF;0|FPD;DDR_XMPU5_CFG;FD05000
   [get_bd_pins smartconnect_2/aresetn] \
   [get_bd_pins smartconnect_3/aresetn] \
   [get_bd_pins axis_dwidth_converter_0/aresetn] \
-  [get_bd_pins axis_dwidth_converter_1/aresetn]
+  [get_bd_pins axis_dwidth_converter_1/aresetn] \
+  [get_bd_ports dcrfli_rst_n]
   connect_bd_net -net rf_regs_0_o_regs  [get_bd_pins rf_regs_0/o_regs] \
   [get_bd_ports o_regs_24]
   connect_bd_net -net rf_regs_1_o_regs  [get_bd_pins rf_regs_1/o_regs] \
@@ -1400,7 +1402,7 @@ Port;FD4A0000;FD4AFFFF;0|FPD;DPDMA;FD4C0000;FD4CFFFF;0|FPD;DDR_XMPU5_CFG;FD05000
   [get_bd_ports clk_dac1_0]
   connect_bd_net -net usp_rf_data_converter_0_clk_dac2  [get_bd_pins usp_rf_data_converter_0/clk_dac2] \
   [get_bd_ports clk_dac2_0]
-  connect_bd_net -net util_ds_buf_0_BUFG_O  [get_bd_ports dc_rf_clk] \
+  connect_bd_net -net util_ds_buf_0_BUFG_O  [get_bd_ports dcrfli_clk] \
   [get_bd_pins launch_regs_0/s_axi_aclk] \
   [get_bd_pins rf_regs_5/s_axi_aclk] \
   [get_bd_pins rf_regs_4/s_axi_aclk] \
@@ -1500,16 +1502,15 @@ Port;FD4A0000;FD4AFFFF;0|FPD;DPDMA;FD4C0000;FD4CFFFF;0|FPD;DDR_XMPU5_CFG;FD05000
   assign_bd_address -offset 0xC0000000 -range 0x20000000 -target_address_space [get_bd_addr_spaces axi_dma_1/Data_S2MM] [get_bd_addr_segs zynq_ultra_ps_e_0/SAXIGP3/HP1_QSPI] -force
 
   # Exclude Address Segments
-  exclude_bd_addr_seg -target_address_space [get_bd_addr_spaces axi_dma_0/Data_S2MM] [get_bd_addr_segs zynq_ultra_ps_e_0/SAXIGP2/HP0_DDR_HIGH]
+  exclude_bd_addr_seg -offset 0x000800000000 -range 0x000100000000 -target_address_space [get_bd_addr_spaces axi_dma_0/Data_S2MM] [get_bd_addr_segs zynq_ultra_ps_e_0/SAXIGP2/HP0_DDR_HIGH]
   exclude_bd_addr_seg -offset 0xFF000000 -range 0x01000000 -target_address_space [get_bd_addr_spaces axi_dma_0/Data_S2MM] [get_bd_addr_segs zynq_ultra_ps_e_0/SAXIGP2/HP0_LPS_OCM]
-  exclude_bd_addr_seg -target_address_space [get_bd_addr_spaces axi_dma_1/Data_S2MM] [get_bd_addr_segs zynq_ultra_ps_e_0/SAXIGP3/HP1_DDR_HIGH]
+  exclude_bd_addr_seg -offset 0x000800000000 -range 0x000100000000 -target_address_space [get_bd_addr_spaces axi_dma_1/Data_S2MM] [get_bd_addr_segs zynq_ultra_ps_e_0/SAXIGP3/HP1_DDR_HIGH]
   exclude_bd_addr_seg -offset 0xFF000000 -range 0x01000000 -target_address_space [get_bd_addr_spaces axi_dma_1/Data_S2MM] [get_bd_addr_segs zynq_ultra_ps_e_0/SAXIGP3/HP1_LPS_OCM]
 
 
   # Restore current instance
   current_bd_instance $oldCurInst
 
-  validate_bd_design
   save_bd_design
 }
 # End of create_root_design()
@@ -1521,4 +1522,6 @@ Port;FD4A0000;FD4AFFFF;0|FPD;DPDMA;FD4C0000;FD4CFFFF;0|FPD;DDR_XMPU5_CFG;FD05000
 
 create_root_design ""
 
+
+common::send_gid_msg -ssname BD::TCL -id 2053 -severity "WARNING" "This Tcl script was generated from a block design that has not been validated. It is possible that design <$design_name> may result in errors during validation."
 

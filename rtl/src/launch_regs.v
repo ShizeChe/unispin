@@ -1,5 +1,5 @@
 `timescale 1ns / 1ps
-`include "launch.svh"
+`include "launch.vh"
 
 module launch_regs
    #(parameter NUM_REGS=LCH_TOTAL_REGS,

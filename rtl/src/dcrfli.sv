@@ -3,7 +3,7 @@
 `include "dc.svh"
 `include "rf.svh"
 
-module top
+module dcrfli
    #(parameter NUM_DC_CHANNEL=24,
      parameter NUM_RF_CHANNEL=6,
      parameter NUM_LI_CHANNEL=1)
@@ -13,15 +13,15 @@ module top
 
      output logic [0:NUM_DC_CHANNEL-1] o_dc_sclk_bus,
      output logic [0:NUM_DC_CHANNEL-1] o_dc_mosi_bus,
-     input  logic [0:NUM_DC_CHANNEL-1] o_dc_miso_bus,
-     input  logic [0:NUM_DC_CHANNEL-1] o_dc_cs_n_bus,
-     input  logic [0:NUM_DC_CHANNEL-1] o_dc_ldac_n_bus,
+     input  logic [0:NUM_DC_CHANNEL-1] i_dc_miso_bus,
+     output logic [0:NUM_DC_CHANNEL-1] o_dc_cs_n_bus,
+     output logic [0:NUM_DC_CHANNEL-1] o_dc_ldac_n_bus,
 
      input  logic [0:NUM_RF_CHANNEL-1][0:RF_TOTAL_REGS-1][31:0] i_rf_regs,
 
-     output logic [0:NUM_RF_CHANNEL-1][RF_DAC_WIDTH*16-1:0] o_rf_QIx8,
+     output logic [0:NUM_RF_CHANNEL-1][RF_DAC_WIDTH*16-1:0] o_rf_QIx8_bus,
 
-     input  logic [0:LCH_TOATL_REGS-1][31:0] i_lch_regs,
+     input  logic [0:LCH_TOTAL_REGS-1][31:0] i_lch_regs,
 
      input  logic i_trigger);
      

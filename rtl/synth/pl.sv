@@ -1,5 +1,7 @@
 `default_nettype none
 `timescale 1ns / 1ps
+`include "dc.svh"
+`include "rf.svh"
 
 module pl
     (input  logic i_adc1_clk_n, i_adc1_clk_p,
@@ -58,7 +60,7 @@ module pl
      input  logic i_clk0_m2c_p, i_clk1_m2c_p,
 
      // J6
-     output logic o_sync_c2m_p, o_sync_c2m_n, o_sync_m2c_p, 
+    output  logic o_sync_c2m_p, o_sync_c2m_n, o_sync_m2c_p, 
                   o_sync_m2c_n, o_la30_p, o_la30_n,
                   o_la32_n, o_la14_n,
      input  logic i_la32_p, i_la17_n,
@@ -88,6 +90,9 @@ module pl
                   o_pmod14, o_pmod15, o_pmod16, 
                   o_pmod17,
      input  logic i_pmod10,
+
+     output logic o_rled0, o_rled1, o_rled2, o_rled3,
+     output logic o_rled4, o_rled5, o_rled6, o_rled7,
     
      output logic o_gled0, o_gled1, o_gled2, o_gled3,
      output logic o_gled4, o_gled5, o_gled6, o_gled7,
@@ -96,5 +101,178 @@ module pl
      output logic o_bled4, o_bled5, o_bled6, o_bled7,
     
      input  logic i_btn_w);
+
+    localparam NUM_DC_CHANNEL=24;
+    localparam NUM_RF_CHANNEL=6;
+    localparam NUM_LI_CHANNEL=1;
+
+    logic w_dcrfli_clk, w_dcrfli_rst_n;
+
+    logic [0:NUM_DC_CHANNEL-1][0:DC_TOTAL_REGS-1][31:0] w_dc_regs;
+
+    logic [0:NUM_DC_CHANNEL-1] w_dc_sclk_bus;
+    logic [0:NUM_DC_CHANNEL-1] w_dc_mosi_bus;
+    logic [0:NUM_DC_CHANNEL-1] w_dc_miso_bus;
+    logic [0:NUM_DC_CHANNEL-1] w_dc_cs_n_bus;
+    logic [0:NUM_DC_CHANNEL-1] w_dc_ldac_n_bus;
+
+    logic [0:NUM_RF_CHANNEL-1][0:RF_TOTAL_REGS-1][31:0] w_rf_regs;
+
+    logic [0:NUM_RF_CHANNEL-1][RF_DAC_WIDTH*16-1:0] o_rf_QIx8_bus;
+
+    logic [0:RF_TOTAL_REGS-1][31:0] w_lch_regs;
+
+    logic w_trigger;
+
+
+    bd_wrapper BD (
+
+        // clock
+        .adc1_clk_0_clk_n(i_adc1_clk_n),
+        .adc1_clk_0_clk_p(i_adc1_clk_p),
+        .clk_adc1_0(),
+        .clk_dac0_0(),
+        .clk_dac1_0(w_dcrfli_clk),
+        .clk_dac2_0(),
+        .dac1_clk_0_clk_n(i_dac1_clk_n),
+        .dac1_clk_0_clk_p(i_dac1_clk_p),
+        .dcrfli_clk(w_dcrfli_clk),
+        .dcrfli_rst_n(w_dcrfli_rst_n),
+
+        // dc x 24
+        .o_regs_0(w_dc_regs[0]),
+        .o_regs_1(w_dc_regs[1]),
+        .o_regs_2(w_dc_regs[2]),
+        .o_regs_3(w_dc_regs[3]),
+        .o_regs_4(w_dc_regs[4]),
+        .o_regs_5(w_dc_regs[5]),
+        .o_regs_6(w_dc_regs[6]),
+        .o_regs_7(w_dc_regs[7]),
+        .o_regs_8(w_dc_regs[8]),
+        .o_regs_9(w_dc_regs[9]),
+        .o_regs_10(w_dc_regs[10]),
+        .o_regs_11(w_dc_regs[11]),
+        .o_regs_12(w_dc_regs[12]),
+        .o_regs_13(w_dc_regs[13]),
+        .o_regs_14(w_dc_regs[14]),
+        .o_regs_15(w_dc_regs[15]),
+        .o_regs_16(w_dc_regs[16]),
+        .o_regs_17(w_dc_regs[17]),
+        .o_regs_18(w_dc_regs[18]),
+        .o_regs_19(w_dc_regs[19]),
+        .o_regs_20(w_dc_regs[20]),
+        .o_regs_21(w_dc_regs[21]),
+        .o_regs_22(w_dc_regs[22]),
+        .o_regs_23(w_dc_regs[23]),
+
+        // rf x 6
+        .o_regs_24(w_rf_regs[0]),
+        .o_regs_25(w_rf_regs[1]),
+        .o_regs_26(w_rf_regs[2]),
+        .o_regs_27(w_rf_regs[3]),
+        .o_regs_28(w_rf_regs[4]),
+        .o_regs_29(w_rf_regs[5]),
+
+        // rf dac tile 228-0/1
+        .s00_axis_0_tdata(w_rf_QIx8_bus[0]),
+        .s00_axis_0_tready(),
+        .s00_axis_0_tvalid(1'b1),
+        .vout00_0_v_n(o_vout00_n),
+        .vout00_0_v_p(o_vout00_p),
+        .vout01_0_v_n(o_vout01_n),
+        .vout01_0_v_p(o_vout01_p),
+
+        // rf dac tile 228-2/3
+        .s02_axis_0_tdata(w_rf_QIx8_bus[1]),
+        .s02_axis_0_tready(),
+        .s02_axis_0_tvalid(1'b1),
+        .vout02_0_v_n(o_vout02_n),
+        .vout02_0_v_p(o_vout02_p),
+        .vout03_0_v_n(o_vout03_n),
+        .vout03_0_v_p(o_vout03_p),
+
+        // rf dac tile 229-0/1
+        .s10_axis_0_tdata(w_rf_QIx8_bus[2]),
+        .s10_axis_0_tready(),
+        .s10_axis_0_tvalid(1'b1),
+        .vout10_0_v_n(o_vout10_n),
+        .vout10_0_v_p(o_vout10_p),
+        .vout11_0_v_n(o_vout11_n),
+        .vout11_0_v_p(o_vout11_p),
+
+        // rf dac tile 229-2/3
+        .s12_axis_0_tdata(w_rf_QIx8_bus[3]),
+        .s12_axis_0_tready(),
+        .s12_axis_0_tvalid(1'b1),
+        .vout12_0_v_n(o_vout12_n),
+        .vout12_0_v_p(o_vout12_p),
+        .vout13_0_v_n(o_vout13_n),
+        .vout13_0_v_p(o_vout13_p),
+
+        // rf dac tile 230-0/1
+        .s20_axis_0_tdata(w_rf_QIx8_bus[4]),
+        .s20_axis_0_tready(),
+        .s20_axis_0_tvalid(1'b1),
+        .vout20_0_v_n(o_vout20_n),
+        .vout20_0_v_p(o_vout20_p),
+        .vout21_0_v_n(o_vout21_n),
+        .vout21_0_v_p(o_vout21_p),
+
+        // rf dac tile 230-2/3
+        .s22_axis_0_tdata(w_rf_QIx8_bus[5]),
+        .s22_axis_0_tready(),
+        .s22_axis_0_tvalid(1'b1),
+        .vout22_0_v_n(o_vout22_n),
+        .vout22_0_v_p(o_vout22_p),
+        .vout23_0_v_n(o_vout23_n),
+        .vout23_0_v_p(o_vout23_p),
+
+        // rf adc tile 225-0/1
+        .vin10_0_v_n(i_vin10_n),
+        .vin10_0_v_p(i_vin10_p),
+        .vin11_0_v_n(i_vin11_n),
+        .vin11_0_v_p(i_vin11_p),
+
+        .sysref_in_0_diff_n(i_sysref_n),
+        .sysref_in_0_diff_p(i_sysref_p),
+
+        // launch x 1
+        .o_regs_30(w_lch_regs)
+
+    );
+
+    dcrfli #(
+        .NUM_DC_CHANNEL(NUM_DC_CHANNEL),
+        .NUM_RF_CHANNEL(NUM_RF_CHANNEL),
+        .NUM_LI_CHANNEL(NUM_LI_CHANNEL)
+    ) DCRFLI (
+        .i_clk(w_dcrfli_clk),
+        .i_rst(!w_dcrfli_rst_n),
+
+        .i_dc_regs(w_dc_regs),
+
+        .o_dc_sclk_bus(w_dc_sclk_bus),
+        .o_dc_mosi_bus(w_dc_mosi_bus),
+        .i_dc_miso_bus(w_dc_miso_bus),
+        .o_dc_cs_n_bus(w_dc_cs_n_bus),
+        .o_dc_ldac_n_bus(w_dc_ldac_n_bus),
+
+        .i_rf_regs(w_rf_regs),
+
+        .o_rf_QIx8_bus(w_rf_QIx8_bus),
+
+        .i_lch_regs(w_lch_regs)
+        
+        .i_trigger(w_trigger)
+    );
+
+    io IO (
+        .i_dc_sclk_bus(w_dc_sclk_bus),
+        .i_dc_mosi_bus(w_dc_mosi_bus),
+        .o_dc_miso_bus(w_dc_miso_bus),
+        .i_dc_cs_n_bus(w_dc_cs_n_bus),
+        .i_dc_ldac_n_bus(w_dc_ldac_n_bus),
+        .*
+    );
 
 endmodule
