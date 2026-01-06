@@ -21,3 +21,4 @@ endgroup
 apply_bd_automation -rule xilinx.com:bd_rule:zynq_ultra_ps_e -config {apply_board_preset "1" }  [get_bd_cells zynq_ultra_ps_e_0]
 create_bd_cell -type module -reference dc_regs dc_regs_0
 create_bd_cell -type module -reference launch_regs launch_regs_0
+make_wrapper -files [get_files /home/shizeche/hardware/xilinx/projects/swashispin_pl/swashispin_pl.srcs/sources_1/bd/bd/bd.bd] -top
