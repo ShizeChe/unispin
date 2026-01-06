@@ -137,6 +137,15 @@ set_property -dict {PACKAGE_PIN N15 IOSTANDARD LVCMOS18} [get_ports o_pmod15]
 set_property -dict {PACKAGE_PIN M16 IOSTANDARD LVCMOS18} [get_ports o_pmod16]
 set_property -dict {PACKAGE_PIN N16 IOSTANDARD LVCMOS18} [get_ports o_pmod17]
 
+# LED R
+set_property -dict {PACKAGE_PIN AN14 IOSTANDARD LVCMOS12} [get_ports o_rled0]
+set_property -dict {PACKAGE_PIN AP16 IOSTANDARD LVCMOS12} [get_ports o_rled1]
+set_property -dict {PACKAGE_PIN AP14 IOSTANDARD LVCMOS12} [get_ports o_rled2]
+set_property -dict {PACKAGE_PIN AU16 IOSTANDARD LVCMOS12} [get_ports o_rled3]
+set_property -dict {PACKAGE_PIN AW12 IOSTANDARD LVCMOS12} [get_ports o_rled4]
+set_property -dict {PACKAGE_PIN AY16 IOSTANDARD LVCMOS12} [get_ports o_rled5]
+set_property -dict {PACKAGE_PIN BB12 IOSTANDARD LVCMOS12} [get_ports o_rled6]
+set_property -dict {PACKAGE_PIN E25 IOSTANDARD LVCMOS12} [get_ports o_rled7]
 
 # LED G
 set_property -dict {PACKAGE_PIN C13 IOSTANDARD LVCMOS18} [get_ports o_gled0]
@@ -172,4 +181,3 @@ set_property -dict {PACKAGE_PIN K12 IOSTANDARD LVCMOS18} [get_ports i_btn_w]
 #set_property -dict {PACKAGE_PIN E10 IOSTANDARD LVDS_25} [get_ports i_pl_clk_p]
 
 #create_clock -add -name pl_clk -period 10.00 -waveform {0 5} [get_ports { i_pl_clk_p }];
-

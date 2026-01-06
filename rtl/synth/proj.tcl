@@ -9,6 +9,8 @@ add_files [glob ../src/*.v]
 add_files [glob ./*.xdc]
 remove_files  ../src/li_core.sv
 add_files [glob ../lib/axil_slave_regs.sv]
+add_files [glob ../lib/debouncer.sv]
+add_files [glob ../lib/button_detector.sv]
 update_compile_order -fileset sources_1
 
 source ./bd.tcl

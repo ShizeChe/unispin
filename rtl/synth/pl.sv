@@ -1,4 +1,4 @@
-`default_nettype none
+// `default_nettype none
 `timescale 1ns / 1ps
 `include "dc.svh"
 `include "rf.svh"
@@ -115,15 +115,23 @@ module pl
     logic [0:NUM_DC_CHANNEL-1] w_dc_miso_bus;
     logic [0:NUM_DC_CHANNEL-1] w_dc_cs_n_bus;
     logic [0:NUM_DC_CHANNEL-1] w_dc_ldac_n_bus;
+    logic w_dc_clr, w_dc_rst;
+
+    logic [0:NUM_DC_CHANNEL-1] w_dc_armed_bus;
 
     logic [0:NUM_RF_CHANNEL-1][0:RF_TOTAL_REGS-1][31:0] w_rf_regs;
 
     logic [0:NUM_RF_CHANNEL-1][RF_DAC_WIDTH*16-1:0] o_rf_QIx8_bus;
 
+    logic [0:num_rf_channel-1] w_rf_armed_bus;
+
+    logic [0:num_rf_channel-1] w_rf_ready_bus;
+
     logic [0:RF_TOTAL_REGS-1][31:0] w_lch_regs;
 
-    logic w_trigger;
+    logic [0:1] w_li_valid_bus;
 
+    logic w_trigger;
 
     bd_wrapper BD (
 
@@ -137,6 +145,8 @@ module pl
         .dac1_clk_0_clk_n(i_dac1_clk_n),
         .dac1_clk_0_clk_p(i_dac1_clk_p),
         .dcrfli_clk(w_dcrfli_clk),
+
+        // reset
         .dcrfli_rst_n(w_dcrfli_rst_n),
 
         // dc x 24
@@ -175,7 +185,7 @@ module pl
 
         // rf dac tile 228-0/1
         .s00_axis_0_tdata(w_rf_QIx8_bus[0]),
-        .s00_axis_0_tready(),
+        .s00_axis_0_tready(w_rf_ready_bus[0]),
         .s00_axis_0_tvalid(1'b1),
         .vout00_0_v_n(o_vout00_n),
         .vout00_0_v_p(o_vout00_p),
@@ -184,7 +194,7 @@ module pl
 
         // rf dac tile 228-2/3
         .s02_axis_0_tdata(w_rf_QIx8_bus[1]),
-        .s02_axis_0_tready(),
+        .s02_axis_0_tready(w_rf_ready_bus[1]),
         .s02_axis_0_tvalid(1'b1),
         .vout02_0_v_n(o_vout02_n),
         .vout02_0_v_p(o_vout02_p),
@@ -193,7 +203,7 @@ module pl
 
         // rf dac tile 229-0/1
         .s10_axis_0_tdata(w_rf_QIx8_bus[2]),
-        .s10_axis_0_tready(),
+        .s10_axis_0_tready(w_rf_ready_bus[2]),
         .s10_axis_0_tvalid(1'b1),
         .vout10_0_v_n(o_vout10_n),
         .vout10_0_v_p(o_vout10_p),
@@ -202,7 +212,7 @@ module pl
 
         // rf dac tile 229-2/3
         .s12_axis_0_tdata(w_rf_QIx8_bus[3]),
-        .s12_axis_0_tready(),
+        .s12_axis_0_tready(w_rf_ready_bus[3]),
         .s12_axis_0_tvalid(1'b1),
         .vout12_0_v_n(o_vout12_n),
         .vout12_0_v_p(o_vout12_p),
@@ -211,7 +221,7 @@ module pl
 
         // rf dac tile 230-0/1
         .s20_axis_0_tdata(w_rf_QIx8_bus[4]),
-        .s20_axis_0_tready(),
+        .s20_axis_0_tready(w_rf_ready_bus[4]),
         .s20_axis_0_tvalid(1'b1),
         .vout20_0_v_n(o_vout20_n),
         .vout20_0_v_p(o_vout20_p),
@@ -220,7 +230,7 @@ module pl
 
         // rf dac tile 230-2/3
         .s22_axis_0_tdata(w_rf_QIx8_bus[5]),
-        .s22_axis_0_tready(),
+        .s22_axis_0_tready(w_rf_ready_bus[5]),
         .s22_axis_0_tvalid(1'b1),
         .vout22_0_v_n(o_vout22_n),
         .vout22_0_v_p(o_vout22_p),
@@ -266,12 +276,29 @@ module pl
         .i_trigger(w_trigger)
     );
 
-    io IO (
+    io #(
+        .NUM_DC_CHANNEL(NUM_DC_CHANNEL),
+        .NUM_RF_CHANNEL(NUM_RF_CHANNEL),
+        .NUM_LI_CHANNEL(NUM_LI_CHANNEL)
+    ) IO (
+        .i_clk(w_dcrfli_clk),
+        .i_rst(!w_dcrfli_rst_n),
+
         .i_dc_sclk_bus(w_dc_sclk_bus),
         .i_dc_mosi_bus(w_dc_mosi_bus),
         .o_dc_miso_bus(w_dc_miso_bus),
         .i_dc_cs_n_bus(w_dc_cs_n_bus),
         .i_dc_ldac_n_bus(w_dc_ldac_n_bus),
+        .i_dc_clr(w_dc_clr),
+        .i_dc_rst(w_dc_rst),
+
+        .i_dc_armed_bus(w_dc_armed_bus),
+
+        .i_rf_armed_bus(w_rf_armed_bus),
+        .i_rf_ready_bus(w_rf_ready_bus),
+
+        .i_li_valid_bus(w_li_valid_bus),
+
         .*
     );
 

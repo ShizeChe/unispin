@@ -1,4 +1,4 @@
-`default_nettype none
+// `default_nettype none
 `timescale 1ns / 1ps
 `include "dc.svh"
 `include "rf.svh"
@@ -17,9 +17,13 @@ module dcrfli
      output logic [0:NUM_DC_CHANNEL-1] o_dc_cs_n_bus,
      output logic [0:NUM_DC_CHANNEL-1] o_dc_ldac_n_bus,
 
+     output logic [0:NUM_DC_CHANNEL-1] o_dc_armed_bus,
+
      input  logic [0:NUM_RF_CHANNEL-1][0:RF_TOTAL_REGS-1][31:0] i_rf_regs,
 
      output logic [0:NUM_RF_CHANNEL-1][RF_DAC_WIDTH*16-1:0] o_rf_QIx8_bus,
+
+     output logic [0:NUM_RF_CHANNEL-1] o_rf_armed_bus,
 
      input  logic [0:LCH_TOTAL_REGS-1][31:0] i_lch_regs,
 
@@ -87,5 +91,8 @@ module dcrfli
         .o_rf_start(w_rf_start_bus),
         .o_li_start()
     );
+
+    assign o_dc_armed_bus = w_dc_armed_bus;
+    assign o_rf_armed_bus = w_rf_armed_bus;
 
 endmodule
