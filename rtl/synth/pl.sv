@@ -238,8 +238,10 @@ module pl
         .vout23_0_v_p(o_vout23_p),
 
         // rf adc tile 225-0/1
+        .m10_axis_tvalid_0(w_li_valid_bus[0]),
         .vin10_0_v_n(i_vin10_n),
         .vin10_0_v_p(i_vin10_p),
+        .m11_axis_tvalid_0(w_li_valid_bus[1]),
         .vin11_0_v_n(i_vin11_n),
         .vin11_0_v_p(i_vin11_p),
 

@@ -1,3 +1,4 @@
+
 ################################################################
 # This is a generated script based on design: bd
 #
@@ -416,7 +417,9 @@ proc create_root_design { parentCell } {
   set clk_dac0_0 [ create_bd_port -dir O -type clk clk_dac0_0 ]
   set clk_dac1_0 [ create_bd_port -dir O -type clk clk_dac1_0 ]
   set clk_dac2_0 [ create_bd_port -dir O -type clk clk_dac2_0 ]
-  set dcrfli_rst_n [ create_bd_port -dir O -type rst dcrfli_rst_n ]
+  set dcrfli_rst_n [ create_bd_port -dir O -from 0 -to 0 -type rst dcrfli_rst_n ]
+  set m10_axis_tvalid_0 [ create_bd_port -dir O m10_axis_tvalid_0 ]
+  set m11_axis_tvalid_0 [ create_bd_port -dir O m11_axis_tvalid_0 ]
 
   # Create instance: zynq_ultra_ps_e_0, and set properties
   set zynq_ultra_ps_e_0 [ create_bd_cell -type ip -vlnv xilinx.com:ip:zynq_ultra_ps_e:3.5 zynq_ultra_ps_e_0 ]
@@ -1401,6 +1404,10 @@ Port;FD4A0000;FD4AFFFF;0|FPD;DPDMA;FD4C0000;FD4CFFFF;0|FPD;DDR_XMPU5_CFG;FD05000
   [get_bd_ports clk_dac1_0]
   connect_bd_net -net usp_rf_data_converter_0_clk_dac2  [get_bd_pins usp_rf_data_converter_0/clk_dac2] \
   [get_bd_ports clk_dac2_0]
+  connect_bd_net -net usp_rf_data_converter_0_m10_axis_tvalid  [get_bd_pins usp_rf_data_converter_0/m10_axis_tvalid] \
+  [get_bd_ports m10_axis_tvalid_0]
+  connect_bd_net -net usp_rf_data_converter_0_m11_axis_tvalid  [get_bd_pins usp_rf_data_converter_0/m11_axis_tvalid] \
+  [get_bd_ports m11_axis_tvalid_0]
   connect_bd_net -net util_ds_buf_0_BUFG_O  [get_bd_ports dcrfli_clk] \
   [get_bd_pins launch_regs_0/s_axi_aclk] \
   [get_bd_pins rf_regs_5/s_axi_aclk] \
@@ -1510,6 +1517,7 @@ Port;FD4A0000;FD4AFFFF;0|FPD;DPDMA;FD4C0000;FD4CFFFF;0|FPD;DDR_XMPU5_CFG;FD05000
   # Restore current instance
   current_bd_instance $oldCurInst
 
+  validate_bd_design
   save_bd_design
 }
 # End of create_root_design()
@@ -1522,4 +1530,3 @@ Port;FD4A0000;FD4AFFFF;0|FPD;DPDMA;FD4C0000;FD4CFFFF;0|FPD;DDR_XMPU5_CFG;FD05000
 create_root_design ""
 
 
-common::send_gid_msg -ssname BD::TCL -id 2053 -severity "WARNING" "This Tcl script was generated from a block design that has not been validated. It is possible that design <$design_name> may result in errors during validation."
