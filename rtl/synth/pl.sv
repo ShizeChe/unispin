@@ -2,6 +2,7 @@
 `timescale 1ns / 1ps
 `include "dc.svh"
 `include "rf.svh"
+`include "launch.svh"
 
 module pl
     (input  logic i_adc1_clk_n, i_adc1_clk_p,
@@ -121,11 +122,11 @@ module pl
 
     logic [0:NUM_RF_CHANNEL-1][0:RF_TOTAL_REGS-1][31:0] w_rf_regs;
 
-    logic [0:NUM_RF_CHANNEL-1][RF_DAC_WIDTH*16-1:0] o_rf_QIx8_bus;
+    logic [0:NUM_RF_CHANNEL-1][RF_DAC_WIDTH*16-1:0] w_rf_QIx8_bus;
 
-    logic [0:num_rf_channel-1] w_rf_armed_bus;
+    logic [0:NUM_RF_CHANNEL-1] w_rf_armed_bus;
 
-    logic [0:num_rf_channel-1] w_rf_ready_bus;
+    logic [0:NUM_RF_CHANNEL-1] w_rf_ready_bus;
 
     logic [0:RF_TOTAL_REGS-1][31:0] w_lch_regs;
 
@@ -261,6 +262,7 @@ module pl
         .i_clk(w_dcrfli_clk),
         .i_rst(!w_dcrfli_rst_n),
 
+        // dc
         .i_dc_regs(w_dc_regs),
 
         .o_dc_sclk_bus(w_dc_sclk_bus),
@@ -269,14 +271,22 @@ module pl
         .o_dc_cs_n_bus(w_dc_cs_n_bus),
         .o_dc_ldac_n_bus(w_dc_ldac_n_bus),
 
-        .i_rf_regs(w_rf_regs),
+        .o_dc_armed_bus(w_dc_armed_bus),
 
+        // rf
+        .i_rf_regs(w_rf_regs),
         .o_rf_QIx8_bus(w_rf_QIx8_bus),
 
-        .i_lch_regs(w_lch_regs)
+        .o_rf_armed_bus(w_rf_armed_bus),
+
+        // launch
+        .i_lch_regs(w_lch_regs),
         
         .i_trigger(w_trigger)
     );
+    
+    assign w_dc_clr = 1'b0;
+    assign w_dc_rst = 1'b0;
 
     io #(
         .NUM_DC_CHANNEL(NUM_DC_CHANNEL),
@@ -286,6 +296,7 @@ module pl
         .i_clk(w_dcrfli_clk),
         .i_rst(!w_dcrfli_rst_n),
 
+        // dc
         .i_dc_sclk_bus(w_dc_sclk_bus),
         .i_dc_mosi_bus(w_dc_mosi_bus),
         .o_dc_miso_bus(w_dc_miso_bus),
@@ -293,14 +304,19 @@ module pl
         .i_dc_ldac_n_bus(w_dc_ldac_n_bus),
         .i_dc_clr(w_dc_clr),
         .i_dc_rst(w_dc_rst),
-
         .i_dc_armed_bus(w_dc_armed_bus),
 
+        // rf
         .i_rf_armed_bus(w_rf_armed_bus),
         .i_rf_ready_bus(w_rf_ready_bus),
 
+        // li
         .i_li_valid_bus(w_li_valid_bus),
 
+        // launch
+        .o_trigger(w_trigger),
+
+        // fpga pins
         .*
     );
 

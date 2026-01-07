@@ -11,10 +11,11 @@ remove_files  ../src/li_core.sv
 add_files [glob ../lib/axil_slave_regs.sv]
 add_files [glob ../lib/debouncer.sv]
 add_files [glob ../lib/button_detector.sv]
+add_files [glob ./*.sv]
 update_compile_order -fileset sources_1
 
 source ./bd.tcl
-make_wrapper -files [get_files ./pl/pl.srcs/sources_1/bd/bd/bd.bd] -top
-add_files -norecurse ./pl/pl.gen/sources_1/bd/bd/hdl/bd_wrapper.v
-update_compile_order -fileset sources_1
-close_bd_design [get_bd_designs bd]
+# make_wrapper -files [get_files ./pl/pl.srcs/sources_1/bd/bd/bd.bd] -top
+# add_files -norecurse ./pl/pl.gen/sources_1/bd/bd/hdl/bd_wrapper.v
+# update_compile_order -fileset sources_1
+# close_bd_design [get_bd_designs bd]

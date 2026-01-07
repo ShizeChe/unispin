@@ -2,6 +2,7 @@
 `timescale 1ns / 1ps
 `include "dc.svh"
 `include "rf.svh"
+`include "launch.vh"
 
 module dcrfli
    #(parameter NUM_DC_CHANNEL=24,
