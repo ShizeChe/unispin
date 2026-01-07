@@ -2,7 +2,7 @@
 `timescale 1ns / 1ps
 `include "dc.svh"
 `include "rf.svh"
-`include "launch.svh"
+`include "launch.vh"
 
 module pl
     (input  logic i_adc1_clk_n, i_adc1_clk_p,
