@@ -12,6 +12,8 @@ module debouncer
     always_ff @(posedge i_clk) begin
         if (i_rst) begin
             r_cycles <= 'd0;
+            r_last_unchanged <= 1'b0;
+            o_steady <= 1'b0;
         end
         else begin
 

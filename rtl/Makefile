@@ -1,8 +1,10 @@
 # Top-level variables
 SIM := vcs
 SRC := $(wildcard src/dc*) $(wildcard src/rf*) $(wildcard src/launch*) src/sequencer.sv lib/cmd_dpi.c lib/axil_slave_regs.sv lib/ad5791.sv lib/zcu216_dac.sv
+SRC := lib/debouncer.sv lib/button_detector.sv
 
-TB ?= simulator
+# TB ?= simulator
+TB ?= button_detector_tb
 TB_SRC := tb/$(TB).sv
 TARGET := $(TB)
 CORES := $(shell getconf _NPROCESSORS_ONLN)
