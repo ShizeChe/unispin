@@ -118,17 +118,17 @@ module pl
     logic [0:NUM_DC_CHANNEL-1] w_dc_ldac_n_bus;
     logic w_dc_clr, w_dc_rst;
 
-    logic [0:NUM_DC_CHANNEL-1] w_dc_armed_bus;
+    logic [NUM_DC_CHANNEL-1:0] w_dc_armed_bus;
 
     logic [0:NUM_RF_CHANNEL-1][0:RF_TOTAL_REGS-1][31:0] w_rf_regs;
 
     logic [0:NUM_RF_CHANNEL-1][RF_DAC_WIDTH*16-1:0] w_rf_QIx8_bus;
 
-    logic [0:NUM_RF_CHANNEL-1] w_rf_armed_bus;
+    logic [NUM_RF_CHANNEL-1:0] w_rf_armed_bus;
 
     logic [0:NUM_RF_CHANNEL-1] w_rf_ready_bus;
 
-    logic [0:RF_TOTAL_REGS-1][31:0] w_lch_regs;
+    logic [0:LCH_TOTAL_REGS-1][31:0] w_lch_regs;
 
     logic [0:1] w_li_valid_bus;
 

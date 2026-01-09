@@ -16,9 +16,9 @@ module io
      input  logic [0:NUM_DC_CHANNEL-1] i_dc_ldac_n_bus,
      input  logic i_dc_clr, i_dc_rst,
 
-     input  logic [0:NUM_DC_CHANNEL-1] i_dc_armed_bus,
+     input  logic [NUM_DC_CHANNEL-1:0] i_dc_armed_bus,
 
-     input  logic [0:NUM_RF_CHANNEL-1] i_rf_armed_bus,
+     input  logic [NUM_RF_CHANNEL-1:0] i_rf_armed_bus,
      input  logic [0:NUM_RF_CHANNEL-1] i_rf_ready_bus,
 
      input  logic [0:1] i_li_valid_bus,
@@ -443,7 +443,7 @@ module io
         .NUM_BUTTONS(1)
     ) BTN (
         .i_clk(i_clk),
-        .i_rst(!i_rst),
+        .i_rst(i_rst),
         .i_btn(i_btn_w),
         .o_pressed(o_trigger)
     );

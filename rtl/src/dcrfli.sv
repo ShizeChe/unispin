@@ -18,20 +18,20 @@ module dcrfli
      output logic [0:NUM_DC_CHANNEL-1] o_dc_cs_n_bus,
      output logic [0:NUM_DC_CHANNEL-1] o_dc_ldac_n_bus,
 
-     output logic [0:NUM_DC_CHANNEL-1] o_dc_armed_bus,
+     output logic [NUM_DC_CHANNEL-1:0] o_dc_armed_bus,
 
      input  logic [0:NUM_RF_CHANNEL-1][0:RF_TOTAL_REGS-1][31:0] i_rf_regs,
 
      output logic [0:NUM_RF_CHANNEL-1][RF_DAC_WIDTH*16-1:0] o_rf_QIx8_bus,
 
-     output logic [0:NUM_RF_CHANNEL-1] o_rf_armed_bus,
+     output logic [NUM_RF_CHANNEL-1:0] o_rf_armed_bus,
 
      input  logic [0:LCH_TOTAL_REGS-1][31:0] i_lch_regs,
 
      input  logic i_trigger);
      
-    logic [0:NUM_DC_CHANNEL-1] w_dc_start_bus;
-    logic [0:NUM_DC_CHANNEL-1] w_dc_armed_bus;
+    logic [NUM_DC_CHANNEL-1:0] w_dc_start_bus;
+    logic [NUM_DC_CHANNEL-1:0] w_dc_armed_bus;
 
     for (genvar i = 0; i < NUM_DC_CHANNEL; i++) begin : DC_GEN
 
