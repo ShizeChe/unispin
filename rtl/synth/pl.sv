@@ -106,6 +106,7 @@ module pl
     localparam NUM_DC_CHANNEL=24;
     localparam NUM_RF_CHANNEL=6;
     localparam NUM_LI_CHANNEL=1;
+    localparam NUM_DEBOUNCE_CYCLES=25000000;
 
     logic w_dcrfli_clk, w_dcrfli_rst_n;
 
@@ -131,8 +132,6 @@ module pl
     logic [0:LCH_TOTAL_REGS-1][31:0] w_lch_regs;
 
     logic [0:1] w_li_valid_bus;
-
-    logic w_trigger;
 
     bd_wrapper BD (
 
@@ -254,10 +253,11 @@ module pl
 
     );
 
-    dcrfli #(
+    dcrfli_btn #(
         .NUM_DC_CHANNEL(NUM_DC_CHANNEL),
         .NUM_RF_CHANNEL(NUM_RF_CHANNEL),
-        .NUM_LI_CHANNEL(NUM_LI_CHANNEL)
+        .NUM_LI_CHANNEL(NUM_LI_CHANNEL),
+        .NUM_DEBOUNCE_CYCLES(NUM_DEBOUNCE_CYCLES)
     ) DCRFLI (
         .i_clk(w_dcrfli_clk),
         .i_rst(!w_dcrfli_rst_n),
@@ -282,7 +282,7 @@ module pl
         // launch
         .i_lch_regs(w_lch_regs),
         
-        .i_trigger(w_trigger)
+        .i_btn(i_btn_w)
     );
     
     assign w_dc_clr = 1'b0;
@@ -293,9 +293,6 @@ module pl
         .NUM_RF_CHANNEL(NUM_RF_CHANNEL),
         .NUM_LI_CHANNEL(NUM_LI_CHANNEL)
     ) IO (
-        .i_clk(w_dcrfli_clk),
-        .i_rst(!w_dcrfli_rst_n),
-
         // dc
         .i_dc_sclk_bus(w_dc_sclk_bus),
         .i_dc_mosi_bus(w_dc_mosi_bus),
@@ -312,9 +309,6 @@ module pl
 
         // li
         .i_li_valid_bus(w_li_valid_bus),
-
-        // launch
-        .o_trigger(w_trigger),
 
         // fpga pins
         .*

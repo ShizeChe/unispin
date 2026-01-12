@@ -7,9 +7,7 @@ module io
    #(parameter NUM_DC_CHANNEL=24,
      parameter NUM_RF_CHANNEL=6,
      parameter NUM_LI_CHANNEL=1)
-    (input  logic i_clk, i_rst,
-
-     input  logic [0:NUM_DC_CHANNEL-1] i_dc_sclk_bus,
+    (input  logic [0:NUM_DC_CHANNEL-1] i_dc_sclk_bus,
      input  logic [0:NUM_DC_CHANNEL-1] i_dc_mosi_bus,
      output logic [0:NUM_DC_CHANNEL-1] o_dc_miso_bus,
      input  logic [0:NUM_DC_CHANNEL-1] i_dc_cs_n_bus,
@@ -22,8 +20,6 @@ module io
      input  logic [0:NUM_RF_CHANNEL-1] i_rf_ready_bus,
 
      input  logic [0:1] i_li_valid_bus,
-
-     output logic o_trigger,
 
      // J2
      output logic o_la01_p, o_la06_p, o_la01_n,
@@ -436,16 +432,5 @@ module io
         i_rf_armed_bus[0], i_rf_armed_bus[1],
         i_rf_armed_bus[2], i_rf_armed_bus[3]
     };
-
-    // Button
-    button_detector #(
-        .NUM_CYCLES(25000000),
-        .NUM_BUTTONS(1)
-    ) BTN (
-        .i_clk(i_clk),
-        .i_rst(i_rst),
-        .i_btn(i_btn_w),
-        .o_pressed(o_trigger)
-    );
 
 endmodule
