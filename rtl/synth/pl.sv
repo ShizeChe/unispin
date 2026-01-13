@@ -313,5 +313,18 @@ module pl
         // fpga pins
         .*
     );
+    
+    ila_0 ILA (
+        .clk(w_dcrfli_clk), // input wire clk
+
+        .probe0(DCRFLI.LCH.i_rst), // input wire [0:0]  probe0  
+        .probe1(DCRFLI.LCH.r_dc_active_mask), // input wire [23:0]  probe1 
+        .probe2(DCRFLI.LCH.i_dc_armed), // input wire [23:0]  probe2 
+        .probe3(DCRFLI.LCH.o_dc_start), // input wire [23:0]  probe3 
+        .probe4(DCRFLI.LCH.r_rf_active_mask), // input wire [5:0]  probe4 
+        .probe5(DCRFLI.LCH.i_rf_armed), // input wire [5:0]  probe5 
+        .probe6(DCRFLI.LCH.o_rf_start), // input wire [5:0]  probe6 
+        .probe7(DCRFLI.LCH.i_trigger) // input wire [0:0]  probe7
+    );
 
 endmodule

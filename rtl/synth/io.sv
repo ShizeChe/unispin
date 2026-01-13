@@ -92,9 +92,7 @@ module io
      output logic o_gled4, o_gled5, o_gled6, o_gled7,
     
      output logic o_bled0, o_bled1, o_bled2, o_bled3,
-     output logic o_bled4, o_bled5, o_bled6, o_bled7,
-    
-     input  logic i_btn_w);
+     output logic o_bled4, o_bled5, o_bled6, o_bled7);
 
     logic w_sclk1,  w_mosi1,  w_miso1,  w_cs1,  w_ldac1;
     logic w_sclk2,  w_mosi2,  w_miso2,  w_cs2,  w_ldac2;
