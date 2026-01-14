@@ -1,6 +1,6 @@
-.program dc6
+.program dc0
 .repeat 1
-    set cr 0x2
-    swp v1=-10 v2=10 n=109 dt=1ms (arm dvsr=12)
+    set cr 0x2 (dvsr=15)
+    swp v1=-5 v2=5 n=100 dt=1ms (arm dvsr=15)
 
-.launch dc6
+.launch dc0
