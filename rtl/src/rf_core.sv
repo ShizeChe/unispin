@@ -21,15 +21,18 @@ module rf_core
      input  logic i_empty,
      output rf_insn_t o_insn_modified,
 
-     // output interface
-     output logic [$clog2(DEPTH)-1:0] o_addr,
-     output logic [NUM_SAMPLE_WIDTH-1:0] o_sample_start,
-     output logic [NUM_SAMPLE_WIDTH-1:0] o_sample_end,
-     output logic [DAC_WIDTH*16-1:0] o_QIx8,
+     // control interface
+     input  rf_ctrl_t i_ctrl,
 
      // launcher interface
      input  logic i_start,
-     output logic o_armed);
+     output logic o_armed,
+
+     // output interface (verification only except o_QIx8)
+     output logic [$clog2(DEPTH)-1:0] o_addr,
+     output logic [NUM_SAMPLE_WIDTH-1:0] o_sample_start,
+     output logic [NUM_SAMPLE_WIDTH-1:0] o_sample_end,
+     output logic [DAC_WIDTH*16-1:0] o_QIx8);
 
     logic w_stall;
 
@@ -128,42 +131,45 @@ module rf_core
 
     end
 
+    logic [$clog2(DEPTH)-1:0] w_addr,
+    logic [NUM_SAMPLE_WIDTH-1:0] w_sample_start, w_sample_end;
+    logic [IQ_WIDTH*16-1:0] w_QIx8;
+
+    rf_format #(
+        .NUM_SAMPLE_WIDTH(NUM_SAMPLE_WIDTH),
+        .IQ_WIDTH(IQ_WIDTH),
+        .DEPTH(DEPTH)
+    ) FMT (
+        .r(r),
+        .o_sample_start(w_sample_start),
+        .o_sample_end(w_sample_end),
+        .o_QIx8(w_QIx8)
+    );
+
+    /**************
+    * output stage
+    **************/
+
+    rf_output_stg_t o;
+
     always_ff @(posedge i_clk) begin
         if (i_rst) begin
-            o_addr <= 'bx;
-            o_sample_start <= 'bx;
-            o_sample_end <= 'bx;
-            o_QIx8 <= 'h0;
+            o.r_addr <= 'bx;
+            o.r_sample_start <= 'bx;
+            o.r_sample_end <= 'bx;
+            o.r_QIx8 <= 'h0;
         end
         else if (!w_stall) begin
-            o_addr <= r[0].r_addr;
-            o_sample_start <= r[0].r_sample;
-            o_sample_end <= (
-                !r[7].r_bubble ? r[7].r_sample :
-                !r[6].r_bubble ? r[6].r_sample :
-                !r[5].r_bubble ? r[5].r_sample :
-                !r[4].r_bubble ? r[4].r_sample :
-                !r[3].r_bubble ? r[3].r_sample :
-                !r[2].r_bubble ? r[2].r_sample :
-                !r[1].r_bubble ? r[1].r_sample :
-                !r[0].r_bubble ? r[0].r_sample : 'bx
-            );
-            o_QIx8 <= {
-                r[7].r_Q, PAD, r[7].r_I, PAD, 
-                r[6].r_Q, PAD, r[6].r_I, PAD, 
-                r[5].r_Q, PAD, r[5].r_I, PAD, 
-                r[4].r_Q, PAD, r[4].r_I, PAD, 
-                r[3].r_Q, PAD, r[3].r_I, PAD, 
-                r[2].r_Q, PAD, r[2].r_I, PAD, 
-                r[1].r_Q, PAD, r[1].r_I, PAD, 
-                r[0].r_Q, PAD, r[0].r_I, PAD 
-            };
+            o_addr <= w_addr;
+            o_sample_start <= w_sample_start;
+            o_sample_end <= w_sample_end;
+            o_QIx8 <= w_QIx8;
         end
     end
 
     assign o_armed = |{r[0].r_arm, r[1].r_arm, r[2].r_arm, r[3].r_arm,
                        r[4].r_arm, r[5].r_arm, r[6].r_arm, r[7].r_arm};
 
-    assign w_stall = o_armed && !i_start; 
+    assign w_stall = (o_armed && !i_start) || !i_ctrl.w_nco_ready; 
 
 endmodule

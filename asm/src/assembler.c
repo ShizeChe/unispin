@@ -262,58 +262,9 @@ static uint64_t program_t(dc_program_t *dc_programs[],
 
 }
 
-/*static void write_pipe(dc_program_t *dc_programs[], */
-/*                       rf_program_t *rf_programs[],*/
-/*                       launch_t *launch,*/
-/*                       FILE *pipe) {*/
-/**/
-/*    uint32_t page_size = (1U << 12);*/
-/**/
-/*    for (int i = 0; i < DC_CHANNELS; i++) {*/
-/**/
-/*        if (dc_programs[i] != NULL) {*/
-/**/
-/*            uint32_t base = i * page_size;*/
-/**/
-/*            fprintf(pipe, "0x%08X 0x%08X\n", base + (DC_TOTAL_REGS - 1) * 4, 0);*/
-/**/
-/*            for (unsigned int j = 0; j < DC_TOTAL_REGS; j++) {*/
-/*                fprintf(pipe, "0x%08X 0x%08X\n", base + j * 4, (dc_programs[i]->regs)[j]);*/
-/*            }*/
-/**/
-/*        }*/
-/**/
-/*    }*/
-/**/
-/*    for (int i = 0; i < RF_CHANNELS; i++) {*/
-/**/
-/*        if (rf_programs[i] != NULL) {*/
-/**/
-/*            uint32_t base = (DC_CHANNELS + i) * page_size;*/
-/**/
-/*            fprintf(pipe, "0x%08X 0x%08X\n", base + (RF_TOTAL_REGS - 1) * 4, 0);*/
-/**/
-/*            for (unsigned int j = 0; j < RF_TOTAL_REGS; j++) {*/
-/*                fprintf(pipe, "0x%08X 0x%08X\n", base + j * 4, (rf_programs[i]->regs)[j]);*/
-/*            }*/
-/**/
-/*        }*/
-/**/
-/*    }*/
-/**/
-/*    if (launch != NULL) {*/
-/**/
-/*        uint32_t base = (DC_CHANNELS + RF_CHANNELS) * page_size;*/
-/**/
-/*        fprintf(pipe, "0x%08X 0x%08X\n", base + (LAUNCH_TOTAL_REGS - 1) * 4, 0);*/
-/**/
-/*        fprintf(pipe, "0x%08X 0x%08X\n", base, launch->dc_chmask);*/
-/*        fprintf(pipe, "0x%08X 0x%08X\n", base + 4, launch->rf_chmask);*/
-/*        fprintf(pipe, "0x%08X 0x%08X\n", base + 8, launch->li_chmask);*/
-/*        fprintf(pipe, "0x%08X 0x%08X\n", base + (LAUNCH_TOTAL_REGS - 1) * 4, 1);*/
-/**/
-/*    }*/
-/*}*/
+static uint32_t program_arms() {
+    return 0;
+}
 
 static int write_sim(dc_program_t *dc_programs[], 
                      rf_program_t *rf_programs[],

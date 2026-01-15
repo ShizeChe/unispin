@@ -2,8 +2,9 @@
 `timescale 1ns / 1ps
 
 module dc_regs
-   #(parameter NUM_REGS=32,
-     parameter ADDR_WIDTH=$clog2(NUM_REGS)+2)
+   #(parameter NUM_SEQ_REGS=32,
+     parameter NUM_CTRL_REGS=4,
+     parameter ADDR_WIDTH=$clog2(NUM_SEQ_REGS+NUM_CTRL_REGS)+2)
     (input  wire s_axi_aclk,
      input  wire s_axi_aresetn,
      
@@ -34,10 +35,11 @@ module dc_regs
      output wire [31:0] s_axi_rdata,
      output wire [1:0] s_axi_rresp,
 
-     output wire [0:NUM_REGS-1][31:0] o_regs);
+     output wire [0:NUM_SEQ_REGS-1][31:0] o_seq_regs,
+     output wire [0:NUM_CTRL_REGS-1][31:0] o_ctrl_regs);
 
      axil_slave_regs #(
-         .NUM_REGS(NUM_REGS)
+         .NUM_REGS(NUM_SEQ_REGS+NUM_CTRL_REGS)
      ) AXIL_REGS (
 
         .i_aclk(s_axi_aclk),
@@ -65,7 +67,7 @@ module dc_regs
         .o_rdata(s_axi_rdata),
         .o_rresp(s_axi_rresp),
 
-        .o_regs(o_regs)
+        .o_regs({o_seq_regs, o_ctrl_regs})
      );
 
 endmodule

@@ -6,10 +6,10 @@ module sequencer
      parameter ITER_WIDTH=16,
      parameter DEPTH=16,
      parameter REG_PER_INSN=(INSN_WIDTH+31)/32,
-     parameter TOTAL_REGS=DEPTH*REG_PER_INSN+2)
+     parameter SEQ_REGS=DEPTH*REG_PER_INSN+2)
     (input  logic i_clk, i_rst,
 
-     input  logic [0:TOTAL_REGS-1][31:0] i_regs,
+     input  logic [0:SEQ_REGS-1][31:0] i_regs,
 
      output logic [$clog2(DEPTH)-1:0] o_addr,
      output logic [INSN_WIDTH-1:0] o_insn,
@@ -19,7 +19,7 @@ module sequencer
 
     logic w_last0, w_last0_ff1, w_last0_ff2;
 
-    assign w_last0 = (i_regs[TOTAL_REGS-1] == 'h0);
+    assign w_last0 = (i_regs[SEQ_REGS-1] == 'h0);
 
     always_ff @(posedge i_clk) begin
         w_last0_ff1 <= w_last0;
@@ -62,7 +62,7 @@ module sequencer
         if (i_rst)
             r_iters <= 'd0;
         else if (w_new_sequence)
-            r_iters <= i_regs[TOTAL_REGS-2][ITER_WIDTH-1:0];
+            r_iters <= i_regs[SEQ_REGS-2][ITER_WIDTH-1:0];
         else if (w_propagate && w_next_null)
             r_iters <= (r_iters == 'd0) ? 'd0 : r_iters - 'd1;
     end

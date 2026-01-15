@@ -12,10 +12,13 @@ module dc_core
 
      // sequencer interface
      input  logic [$clog2(DEPTH)-1:0] i_addr,
-     input  logic [INSN_WIDTH-1:0] i_insn,
+     input  dc_insn_t i_insn,
      output logic o_next,
      input  logic i_empty,
      output dc_insn_t o_insn_modified,
+
+     // control interface
+     input  dc_ctrl_t i_ctrl,
 
      // spi interface
      output logic o_sclk,
@@ -24,17 +27,17 @@ module dc_core
      output logic o_cs_n,
      output logic o_ldac_n,
 
-     // output interface
+     // launcher interface
+     input  logic i_start,
+     output logic o_armed,
+
+     // output interface (verification only)
      output logic [$clog2(DEPTH)-1:0] o_addr,
      output logic [ITER_WIDTH-1:0] o_iter,
      output logic [DC_SPI_DATA_WIDTH-1:0] o_spi_din,
      output logic o_spi_rd,
      output logic [SPI_DATA_WIDTH-1:0] o_spi_dout,
-     output logic [CYCLE_WIDTH-1:0] o_cycles_left,
-
-     // launcher interface
-     input  logic i_start,
-     output logic o_armed);
+     output logic [CYCLE_WIDTH-1:0] o_cycles_left);
 
     logic w_stall;
 
@@ -64,7 +67,6 @@ module dc_core
             i <= '{
                 r_addr: 'bx,
                 r_iters: 'd0,
-                r_spi_dvsr: 'bx,
                 r_spi_din: 'bx,
                 r_dspi_din: 'bx,
                 r_spi_rd: 1'b0,
@@ -82,7 +84,6 @@ module dc_core
                     i <= '{
                         r_addr: d.w_addr,
                         r_iters: d.w_iters,
-                        r_spi_dvsr: d.w_spi_dvsr,
                         r_spi_din: d.w_spi_din,
                         r_dspi_din: d.w_dspi_din,
                         r_spi_rd: d.w_spi_rd,
@@ -123,13 +124,13 @@ module dc_core
             s <= '{
                 r_addr: 'bx,
                 r_iter: 'bx,
-                r_spi_dvsr: 'bx,
                 r_spi_din: 'bx,
                 r_spi_rd: 1'b0,
                 r_spi_dout: 'h0,
                 r_strb_ldac: 1'b0,
                 r_hold_cycles: 'd0,
                 r_arm: 1'b0,
+                r_cs_up_cycles: 'd0,
                 r_cs_n: 1'b1,
                 r_spi_start: 1'b0,
                 r_spi_done: 1'b1
@@ -139,13 +140,13 @@ module dc_core
             s <= '{
                 r_addr: i.r_bubble ? 'bx : i.r_addr,
                 r_iter: i.r_bubble ? 'bx : i.r_iters,
-                r_spi_dvsr: i.r_bubble ? 'bx : i.r_spi_dvsr,
                 r_spi_din: i.r_bubble ? 'bx : i.r_spi_din,
                 r_spi_rd: i.r_bubble ? 1'b0 : i.r_spi_rd,
                 r_spi_dout: 'h0,
                 r_strb_ldac: i.r_bubble ? 1'b0 : i.r_strb_ldac,
                 r_hold_cycles: i.r_bubble ? 'd0 : i.r_hold_cycles,
                 r_arm: i.r_bubble ? 1'b0 : i.r_arm,
+                r_cs_up_cycles: i.r_bubble ? 'd0 : i_ctrl.w_cs_up_cycles;
                 r_cs_n: i.r_bubble,
                 r_spi_start: !i.r_bubble,
                 r_spi_done: i.r_bubble
@@ -157,12 +158,11 @@ module dc_core
                 s.r_spi_done <= 1'b1;
                 s.r_spi_dout <= w_spi_dout;
                 s.r_cs_n <= 1'b1;
+                s.r_cs_up_cycles <= s.r_cs_up_cycles == 'd0 ? 
+                    'd0 : s.r_cs_up_cycles - 'd1;
             end
         end
     end
-
-    logic [15:0] w_dvsr;
-    assign w_dvsr = {{(16-DC_SPI_DVSR_WIDTH){1'b0}}, s.r_spi_dvsr};
 
     dc_spi_master #(
         .DATA_WIDTH(DC_SPI_DATA_WIDTH),
@@ -171,7 +171,7 @@ module dc_core
     ) SPI (
         .i_clk(i_clk),
         .i_rst(i_rst),
-        .i_dvsr(w_dvsr),
+        .i_dvsr(i_ctrl.w_dvsr),
         .i_din(s.r_spi_din),
         .o_dout(w_spi_dout),
         .i_start(s.r_spi_start),
@@ -195,6 +195,7 @@ module dc_core
                 r_spi_din: 'bx,
                 r_spi_rd: 1'b0,
                 r_spi_dout: 'bx,
+                r_ldac_cycles: 'd0,
                 r_ldac_n: 1'b1,
                 r_cycles_left: 'd0
             };
@@ -206,13 +207,19 @@ module dc_core
                 r_spi_din: s.r_spi_din,
                 r_spi_rd: s.r_spi_rd,
                 r_spi_dout: s.r_spi_dout,
+                r_ldac_cycles: s.r_strb_ldac ? i_ctrl.w_ldac_cycles : 'd0, 
                 r_ldac_n: !s.r_strb_ldac,
                 r_cycles_left: s.r_hold_cycles
             };
         end
         else begin
-            h.r_ldac_n <= 1'b1;
-            h.r_cycles_left <= (h.r_cycles_left > 'd0) ? (h.r_cycles_left - 'd1) : 'd0;
+            if (h.r_ldac_cycles > 'd0) begin
+                h.r_ldac_cycles <= h.r_ldac_cycles - 'd1;
+            end
+            else begin
+                h.r_ldac_n <= 1'b1;
+                h.r_cycles_left <= (h.r_cycles_left > 'd0) ? (h.r_cycles_left - 'd1) : 'd0;
+            end
         end
     end
 
@@ -220,8 +227,8 @@ module dc_core
     assign o_ldac_n = h.r_ldac_n;
     assign o_armed = s.r_arm && s.r_spi_done;
 
-    assign w_stall = (h.r_cycles_left > 'd0) || !s.r_spi_done ||
-                     (o_armed && !i_start);
+    assign w_stall = (h.r_ldac_cycles ? 'd0) || (h.r_cycles_left > 'd0) || 
+                     (!s.r_spi_done) || (s.r_cs_up_cycles > 'd0) || (o_armed && !i_start);
 
     assign o_next = !w_stall && i.r_iters == 'd0 && !i_empty;
 

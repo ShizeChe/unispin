@@ -13,13 +13,18 @@ parameter RF_CORDIC_PAD_ZEROS=8;
 parameter RF_ITER_WIDTH=10;
 parameter RF_DEPTH=16;
 parameter RF_REG_PER_INSN=(RF_INSN_WIDTH+31)/32;
-parameter RF_TOTAL_REGS=RF_DEPTH*RF_REG_PER_INSN+2;
+parameter RF_SEQ_REGS=RF_DEPTH*RF_REG_PER_INSN+2;
+parameter RF_CTRL_REGS=5;
 
-//li parameters
-parameter LI_ITER_WIDTH=10;
-parameter LI_NUM_SAMPLE_WIDTH=30;
+parameter RF_NCO_FREQ_WIDTH=48;
+parameter RF_NCO_PHASE_WIDTH=18;
+parameter RF_NCO_EN_WIDTH=6;
 
-// structs
+typedef struct packed {
+    logic w_nco_ready;
+    logic [RF_IQ_WIDTH-1:0] w_default_I;
+    logic [RF_IQ_WIDTH-1:0] w_default_Q;
+} rf_ctrl_t;
 
 typedef enum logic [1:0] {
     RF_KB = 2'b01,
@@ -76,6 +81,13 @@ typedef struct {
     logic r_bubble;
     logic r_arm;
 } rf_result_stg_t;
+
+typedef struct {
+    logic [$clog2(RF_DEPTH)-1:0] r_addr;
+    logic [RF_NUM_SAMPLE_WIDTH-1:0] r_sample_start;
+    logic [RF_NUM_SAMPLE_WIDTH-1:0] r_sample_end;
+    logic [DAC_WIDTH*16-1:0] r_QIx8;
+} rf_output_stg_t;
 
 parameter logic [RF_DAC_WIDTH-RF_IQ_WIDTH-1:0] PAD = 'b0;
 
