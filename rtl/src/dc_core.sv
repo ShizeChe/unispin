@@ -146,7 +146,7 @@ module dc_core
                 r_strb_ldac: i.r_bubble ? 1'b0 : i.r_strb_ldac,
                 r_hold_cycles: i.r_bubble ? 'd0 : i.r_hold_cycles,
                 r_arm: i.r_bubble ? 1'b0 : i.r_arm,
-                r_cs_up_cycles: i.r_bubble ? 'd0 : i_ctrl.w_cs_up_cycles;
+                r_cs_up_cycles: i.r_bubble ? 'd0 : i_ctrl.w_cs_up_cycles,
                 r_cs_n: i.r_bubble,
                 r_spi_start: !i.r_bubble,
                 r_spi_done: i.r_bubble
@@ -227,7 +227,7 @@ module dc_core
     assign o_ldac_n = h.r_ldac_n;
     assign o_armed = s.r_arm && s.r_spi_done;
 
-    assign w_stall = (h.r_ldac_cycles ? 'd0) || (h.r_cycles_left > 'd0) || 
+    assign w_stall = (h.r_ldac_cycles > 'd0) || (h.r_cycles_left > 'd0) || 
                      (!s.r_spi_done) || (s.r_cs_up_cycles > 'd0) || (o_armed && !i_start);
 
     assign o_next = !w_stall && i.r_iters == 'd0 && !i_empty;

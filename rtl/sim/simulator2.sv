@@ -23,6 +23,8 @@ module simulator;
     logic w_dcrfli_clk, w_rf_dac_clk, w_dcrfli_rst_n;
 
     // dc axi bus
+    localparam DC_TOTAL_REGS = DC_SEQ_REGS + DC_CTRL_REGS;
+
     logic [0:NUM_DC_CHANNEL-1] w_dc_awvalid_bus;
     logic [0:NUM_DC_CHANNEL-1] w_dc_awready_bus;
     logic [0:NUM_DC_CHANNEL-1][$clog2(DC_TOTAL_REGS*4)-1:0] w_dc_awaddr_bus;
@@ -36,7 +38,8 @@ module simulator;
     logic [0:NUM_DC_CHANNEL-1] w_dc_bready_bus;
     logic [0:NUM_DC_CHANNEL-1][1:0] w_dc_bresp_bus;
 
-    logic [0:NUM_DC_CHANNEL-1][0:DC_TOTAL_REGS-1][31:0] w_dc_regs;
+    logic [0:NUM_DC_CHANNEL-1][0:DC_SEQ_REGS-1][31:0] w_dc_seq_regs;
+    logic [0:NUM_DC_CHANNEL-1][0:DC_CTRL_REGS-1][31:0] w_dc_ctrl_regs;
 
     // dc spi bus
     logic [0:NUM_DC_CHANNEL-1] w_dc_sclk_bus;
@@ -55,6 +58,8 @@ module simulator;
     real vdc [NUM_DC_CHANNEL];
 
     // rf axi bus
+    localparam RF_TOTAL_REGS = RF_SEQ_REGS + RF_CTRL_REGS;
+
     logic [0:NUM_RF_CHANNEL-1] w_rf_awvalid_bus;
     logic [0:NUM_RF_CHANNEL-1] w_rf_awready_bus;
     logic [0:NUM_RF_CHANNEL-1][$clog2(RF_TOTAL_REGS*4)-1:0] w_rf_awaddr_bus;
@@ -68,10 +73,19 @@ module simulator;
     logic [0:NUM_RF_CHANNEL-1] w_rf_bready_bus;
     logic [0:NUM_RF_CHANNEL-1][1:0] w_rf_bresp_bus;
 
-    logic [0:NUM_RF_CHANNEL-1][0:RF_TOTAL_REGS-1][31:0] w_rf_regs;
+    logic [0:NUM_RF_CHANNEL-1][0:RF_SEQ_REGS-1][31:0] w_rf_seq_regs;
+    logic [0:NUM_RF_CHANNEL-1][0:RF_CTRL_REGS-1][31:0] w_rf_ctrl_regs;
 
     // rf QIx8 bus
     logic [0:NUM_RF_CHANNEL-1][RF_DAC_WIDTH*16-1:0] w_rf_QIx8_bus;
+
+    // rf nco bus
+    logic [0:(NUM_RF_CHANNEL+1)/2-1] w_rf_nco_req_bus;
+    logic [0:(NUM_RF_CHANNEL+1)/2-1] w_rf_nco_tile_busy_bus;
+    logic [0:NUM_RF_CHANNEL-1] w_rf_nco_busy_bus;
+    logic [0:NUM_RF_CHANNEL-1][RF_NCO_FREQ_WIDTH-1:0] w_rf_nco_freq_bus;
+    logic [0:NUM_RF_CHANNEL-1][RF_NCO_PHASE_WIDTH-1:0] w_rf_nco_phase_bus;
+    logic [0:NUM_RF_CHANNEL-1][RF_NCO_EN_WIDTH-1:0] w_rf_nco_en_bus;
 
     // rf armed/start bus
     logic [NUM_RF_CHANNEL-1:0] w_rf_armed_bus;
@@ -117,7 +131,8 @@ module simulator;
         .i_rst(!w_dcrfli_rst_n),
 
         // dc
-        .i_dc_regs(w_dc_regs),
+        .i_dc_seq_regs(w_dc_seq_regs),
+        .i_dc_ctrl_regs(w_dc_ctrl_regs),
 
         .o_dc_sclk_bus(w_dc_sclk_bus),
         .o_dc_mosi_bus(w_dc_mosi_bus),
@@ -128,10 +143,18 @@ module simulator;
         .o_dc_armed_bus(w_dc_armed_bus),
 
         // rf
-        .i_rf_regs(w_rf_regs),
+        .i_rf_seq_regs(w_rf_seq_regs),
+        .i_rf_ctrl_regs(w_rf_ctrl_regs),
+
         .o_rf_QIx8_bus(w_rf_QIx8_bus),
 
         .o_rf_armed_bus(w_rf_armed_bus),
+
+        .o_rf_nco_req_bus(w_rf_nco_req_bus),
+        .i_rf_nco_busy_bus(w_rf_nco_tile_busy_bus),
+        .o_rf_nco_freq_bus(w_rf_nco_freq_bus),
+        .o_rf_nco_phase_bus(w_rf_nco_phase_bus),
+        .o_rf_nco_en_bus(w_rf_nco_en_bus),
 
         // launch
         .i_lch_regs(w_lch_regs),
@@ -147,7 +170,8 @@ module simulator;
     for (genvar i = 0; i < NUM_DC_CHANNEL; i++) begin : DC_IO_GEN
 
         dc_regs #(
-            .NUM_REGS(DC_TOTAL_REGS)
+            .NUM_SEQ_REGS(DC_SEQ_REGS),
+            .NUM_CTRL_REGS(DC_CTRL_REGS)
         ) REGS (
             .s_axi_aclk(w_dcrfli_clk),
             .s_axi_aresetn(w_dcrfli_rst_n),
@@ -175,7 +199,8 @@ module simulator;
             .s_axi_rdata(),
             .s_axi_rresp(),
 
-            .o_regs(w_dc_regs[i])
+            .o_seq_regs(w_dc_seq_regs[i]),
+            .o_ctrl_regs(w_dc_ctrl_regs[i])
         );
 
         ad5791 DAC (
@@ -204,7 +229,8 @@ module simulator;
     for (genvar i = 0; i < NUM_RF_CHANNEL; i++) begin : RF_IO_GEN
 
         rf_regs #(
-            .NUM_REGS(RF_TOTAL_REGS)
+            .NUM_SEQ_REGS(RF_SEQ_REGS),
+            .NUM_CTRL_REGS(RF_CTRL_REGS)
         ) REGS (
             .s_axi_aclk(w_dcrfli_clk),
             .s_axi_aresetn(w_dcrfli_rst_n),
@@ -232,7 +258,8 @@ module simulator;
             .s_axi_rdata(),
             .s_axi_rresp(),
 
-            .o_regs(w_rf_regs[i])
+            .o_seq_regs(w_rf_seq_regs[i]),
+            .o_ctrl_regs(w_rf_ctrl_regs[i])
         );
 
         zcu216_dac DAC (
@@ -241,7 +268,13 @@ module simulator;
             .i_QIx8(w_rf_QIx8_bus[i]),
             .o_I(vrf_I[i]),
             .o_Q(vrf_Q[i]),
-            .o_vrf(vrf[i])
+            .o_vrf(vrf[i]),
+
+            .i_nco_req(w_rf_nco_req_bus[i / 2]),
+            .o_nco_busy(w_rf_nco_busy_bus[i]),
+            .i_nco_freq(w_rf_nco_freq_bus[i]),
+            .i_nco_phase(w_rf_nco_phase_bus[i]),
+            .i_nco_en(w_rf_nco_en_bus[i])
         );
 
         assign w_rf_empty_bus[i] = DCRFLI.RF_GEN[i].RF.CORE.i_empty && 
@@ -255,6 +288,16 @@ module simulator;
                DCRFLI.RF_GEN[i].RF.CORE.r[6].r_bubble, 
                DCRFLI.RF_GEN[i].RF.CORE.r[7].r_bubble});
 
+    end
+
+    for (genvar i = 0; i < (NUM_RF_CHANNEL + 1) / 2; i++) begin : RF_NCO_TILE_BUSY_GEN
+        if (2 * i + 1 < NUM_RF_CHANNEL) begin : PAIR
+            assign w_rf_nco_tile_busy_bus[i] = w_rf_nco_busy_bus[2 * i] | 
+                                               w_rf_nco_busy_bus[2 * i + 1];
+        end
+        else begin : SINGLE
+            assign w_rf_nco_tile_busy_bus[i] = w_rf_nco_busy_bus[2 * i];
+        end
     end
 
 

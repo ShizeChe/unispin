@@ -99,7 +99,7 @@ module dcrfli_btn
             .o_QIx8(o_rf_QIx8_bus[i]),
 
             .i_start(w_rf_start_bus[i]),
-            .o_armed(w_rf_armed_bus[i])
+            .o_armed(w_rf_armed_bus[i]),
 
             .i_nco_wait(w_rf_nco_iwait_bus[i]),
             .o_nco_wait(w_rf_nco_owait_bus[i]),
@@ -115,18 +115,18 @@ module dcrfli_btn
 
     for (genvar i = 0; i < NUM_RF_CHANNEL; i++) begin : RF_NCO_IWAIT_REQ_GEN
 
-        if (i % 2 == 0) begin
-            if (i + 1 < NUM_RF_CHANNEL) begin
+        if (i % 2 == 0) begin : EVEN
+            if (i + 1 < NUM_RF_CHANNEL) begin : PAIR
                 assign o_rf_nco_req_bus[i / 2] = w_rf_nco_chreq_bus[i] | 
-                                                 w_rf_nco_chreq_bus[i + 1] 
+                                                 w_rf_nco_chreq_bus[i + 1];
                 assign w_rf_nco_iwait_bus[i] = w_rf_nco_owait_bus[i + 1];
             end
-            else begin
+            else begin : SINGLE
                 assign o_rf_nco_req_bus[i / 2] = w_rf_nco_chreq_bus[i];
                 assign w_rf_nco_iwait_bus[i] = 1'b0;
             end
         end
-        else begin
+        else begin : ODD
             assign w_rf_nco_iwait_bus[i] = w_rf_nco_owait_bus[i - 1];
         end
 

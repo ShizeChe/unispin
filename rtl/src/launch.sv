@@ -22,7 +22,7 @@ module launch
 
     logic w_last0, w_last0_ff1, w_last0_ff2;
 
-    assign w_last0 = (i_regs[LCH_TOATL_REGS-1] == 'h0);
+    assign w_last0 = (i_regs[LCH_TOTAL_REGS-1] == 'h0);
 
     always_ff @(posedge i_clk) begin
         w_last0_ff1 <= w_last0;

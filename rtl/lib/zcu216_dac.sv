@@ -121,15 +121,15 @@ module zcu216_dac
             6'b000011: return 29;
             6'b000010: return 24;
             6'b000001: return 26;
-            default:   return 0;
+            default:   return 30;
         endcase
     endfunction
 
     // nco update
     enum {IDLE, HOLD, BUSY} state;
-    logic [47:0] freq;
-    logic [17:0] phase;
-    logic [5:0] en;
+    logic [47:0] freq, ifreq;
+    logic [17:0] phase, iphase;
+    logic [5:0] en, ien;
     int hold_cycles;
     int busy_cycles;
 
@@ -138,11 +138,59 @@ module zcu216_dac
     endfunction
 
     function automatic real get_deg_incr(input real freq_hz);
-
+        return freq_hz * 360.0 / 1.0e9 * 0.5;
     endfunction
 
     function automatic real phase2real(input logic [17:0] phase);
         return $itor($signed(phase)) * 360.0 / (1.0 * (1 << 18));
+    endfunction
+
+    function automatic logic [47:0] freq_en (
+        input logic [47:0] freq, 
+        input logic [47:0] ifreq, 
+        input logic [5:0] ien
+    );
+
+        logic [47:0] new_freq = freq;
+
+        if (ien[2]) begin
+            new_freq[47:32] = ifreq[47:32];
+        end
+
+        if (ien[1]) begin
+            new_freq[31:16] = ifreq[31:16];
+        end
+
+        if (ien[0]) begin
+            new_freq[15:0] = ifreq[15:0];
+        end
+
+        return new_freq;
+
+    endfunction
+
+    function automatic logic [47:0] phase_en (
+        input logic [17:0] phase, 
+        input logic [17:0] iphase, 
+        input logic [5:0] ien
+    );
+
+        logic [17:0] new_phase = phase;
+
+        if (ien[4]) begin
+            new_phase[17:16] = iphase[17:16];
+        end
+
+        if (ien[3]) begin
+            new_phase[15:0] = iphase[15:0];
+        end
+
+        if (ien[5]) begin
+            new_phase = 'h0;
+        end
+
+        return new_phase;
+
     endfunction
 
     assign o_nco_busy = (state == BUSY);
@@ -150,40 +198,55 @@ module zcu216_dac
     initial begin
 
         state = IDLE;
-        o_nco_busy = 1'b0;
         hold_cycles = 0;
         busy_cycles = 0;
+
+        freq = 'h0;
+        phase = 'h0;
+        en = 'h0;
 
         forever begin
 
             @(negedge i_clk);
 
             if (state == IDLE) begin
+
                 if (i_nco_req) begin
-                    freq = i_nco_freq;
-                    phase = i_nco_phase;
-                    en = i_nco_en;
+
+                    ifreq = i_nco_freq;
+                    iphase = i_nco_phase;
+                    ien = i_nco_en;
+
                     @(posedge i_clk);
+
                     state = HOLD;
                     hold_cycles = $urandom_range(1, 10);
+
                 end
+
             end
             else if (state == HOLD) begin
+
                 if (i_nco_req) begin
-                    freq = i_nco_freq;
-                    phase = i_nco_phase;
-                    en = i_nco_en;
+
+                    ifreq = i_nco_freq;
+                    iphase = i_nco_phase;
+                    ien = i_nco_en;
+
                     hold_cycles = $urandom_range(0, 10);
+
                 end
                 else if (
-                    i_nco_freq !== freq ||
-                    i_nco_phase !== phase ||
-                    i_nco_en !== en
+                    i_nco_freq !== ifreq ||
+                    i_nco_phase !== iphase ||
+                    i_nco_en !== ien
                 ) begin
+
                     // failure to hold results in x
-                    freq = 'hx;
-                    phase = 'hx;
-                    en = 'hx;
+                    ifreq = 'hx;
+                    iphase = 'hx;
+                    ien = 'hx;
+
                     if (hold_cycles == 0) begin
                         state = BUSY;
                         busy_cycles = get_busy_cycles(en);
@@ -191,8 +254,10 @@ module zcu216_dac
                     else begin
                         hold_cycles--;
                     end
+
                 end
                 else begin
+
                     if (hold_cycles == 0) begin
                         state = BUSY;
                         busy_cycles = get_busy_cycles(en);
@@ -200,45 +265,62 @@ module zcu216_dac
                     else begin
                         hold_cycles--;
                     end
+
                 end
+
             end
             else begin
+
                 if (i_nco_req) begin
-                    freq = i_nco_freq;
-                    phase = i_nco_phase;
-                    en = i_nco_en;
+
+                    ifreq = i_nco_freq;
+                    iphase = i_nco_phase;
+                    ien = i_nco_en;
+
                     state = HOLD;
                     hold_cycles = $urandom_range(0, 10);
+
                 end
                 else if (
-                    i_nco_freq !== freq ||
-                    i_nco_phase !== phase ||
-                    i_nco_en !== en
+                    i_nco_freq !== ifreq ||
+                    i_nco_phase !== iphase ||
+                    i_nco_en !== ien
                 ) begin
+
                     // failure to hold results in x
-                    freq = 'hx;
-                    phase = 'hx;
-                    en = 'hx;
+                    ifreq = 'hx;
+                    iphase = 'hx;
+                    ien = 'hx;
+
                     if (busy_cycles == 0) begin
                         @(posedge i_clk);
+                        phase = phase_en(phase, iphase, ien);
+                        freq = freq_en(freq, ifreq, ien);
                         deg += phase2real(phase);
-                        deg_incr = ;
+                        deg_incr = get_deg_incr(freq2real(freq));
                         state = IDLE;
                     end
                     else begin
                         hold_cycles--;
                     end
+
                 end
                 else begin
+
                     if (hold_cycles == 0) begin
+                        @(posedge i_clk);
+                        phase = phase_en(phase, iphase, ien);
+                        freq = freq_en(freq, ifreq, ien);
+                        deg += phase2real(phase);
+                        deg_incr = get_deg_incr(freq2real(freq));
                         state = IDLE;
-                        deg = ;
-                        deg_incr = ;
                     end
                     else begin
                         hold_cycles--;
                     end
+
                 end
+
             end
 
         end

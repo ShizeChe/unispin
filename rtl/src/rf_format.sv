@@ -3,10 +3,12 @@
 `include "rf.svh"
 
 module rf_format
-   #(parameter NUM_SAMPLE_WIDTH=RF_SAMPLE_WIDTH,
+   #(parameter NUM_SAMPLE_WIDTH=RF_NUM_SAMPLE_WIDTH,
      parameter IQ_WIDTH=RF_IQ_WIDTH,
      parameter DEPTH=RF_DEPTH)
-    (input  rf_result_stg_t [0:7] r,
+    (input  rf_result_stg_t r [0:7],
+
+     input  rf_ctrl_t i_ctrl,
      
      output logic [$clog2(DEPTH)-1:0] o_addr,
      output logic [NUM_SAMPLE_WIDTH-1:0] o_sample_start,

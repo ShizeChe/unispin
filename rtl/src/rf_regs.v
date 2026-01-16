@@ -39,7 +39,7 @@ module rf_regs
      output wire [0:NUM_CTRL_REGS-1][31:0] o_ctrl_regs);
 
      axil_slave_regs #(
-         .NUM_REGS(NUM_REGS)
+         .NUM_REGS(NUM_SEQ_REGS+NUM_CTRL_REGS)
      ) AXIL_REGS (
 
         .i_aclk(s_axi_aclk),

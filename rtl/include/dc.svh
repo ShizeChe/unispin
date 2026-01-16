@@ -36,7 +36,6 @@ typedef struct packed {
 typedef struct {
     logic [$clog2(DC_DEPTH)-1:0] w_addr;
     logic [DC_CORE_ITER_WIDTH-1:0] w_iters;
-    logic [DC_SPI_DVSR_WIDTH-1:0] w_spi_dvsr;
     logic [DC_SPI_DATA_WIDTH-1:0] w_spi_din;
     logic [DC_DAC_WIDTH-1:0] w_dspi_din;
     logic w_spi_rd;
@@ -49,7 +48,6 @@ typedef struct {
 typedef struct {
     logic [$clog2(DC_DEPTH)-1:0] r_addr;
     logic [DC_CORE_ITER_WIDTH-1:0] r_iters;
-    logic [DC_SPI_DVSR_WIDTH-1:0] r_spi_dvsr;
     logic [DC_SPI_DATA_WIDTH-1:0] r_spi_din;
     logic [DC_DAC_WIDTH-1:0] r_dspi_din;
     logic r_spi_rd;

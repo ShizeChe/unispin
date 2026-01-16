@@ -46,7 +46,7 @@ module rf_nco_update
         w_set_req = 1'b0;
         o_wait = 1'b0;
 
-        case (state)
+        case (r_state)
             IDLE: begin
                 w_next_state = i_start ? REQ : IDLE;
             end

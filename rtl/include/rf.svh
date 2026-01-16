@@ -14,7 +14,7 @@ parameter RF_ITER_WIDTH=10;
 parameter RF_DEPTH=16;
 parameter RF_REG_PER_INSN=(RF_INSN_WIDTH+31)/32;
 parameter RF_SEQ_REGS=RF_DEPTH*RF_REG_PER_INSN+2;
-parameter RF_CTRL_REGS=5;
+parameter RF_CTRL_REGS=6;
 
 parameter RF_NCO_FREQ_WIDTH=48;
 parameter RF_NCO_PHASE_WIDTH=18;
@@ -86,7 +86,7 @@ typedef struct {
     logic [$clog2(RF_DEPTH)-1:0] r_addr;
     logic [RF_NUM_SAMPLE_WIDTH-1:0] r_sample_start;
     logic [RF_NUM_SAMPLE_WIDTH-1:0] r_sample_end;
-    logic [DAC_WIDTH*16-1:0] r_QIx8;
+    logic [RF_DAC_WIDTH*16-1:0] r_QIx8;
 } rf_output_stg_t;
 
 parameter logic [RF_DAC_WIDTH-RF_IQ_WIDTH-1:0] PAD = 'b0;

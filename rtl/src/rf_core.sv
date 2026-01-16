@@ -131,7 +131,7 @@ module rf_core
 
     end
 
-    logic [$clog2(DEPTH)-1:0] w_addr,
+    logic [$clog2(DEPTH)-1:0] w_addr;
     logic [NUM_SAMPLE_WIDTH-1:0] w_sample_start, w_sample_end;
     logic [IQ_WIDTH*16-1:0] w_QIx8;
 
@@ -141,6 +141,8 @@ module rf_core
         .DEPTH(DEPTH)
     ) FMT (
         .r(r),
+        .i_ctrl(i_ctrl),
+        .o_addr(w_addr),
         .o_sample_start(w_sample_start),
         .o_sample_end(w_sample_end),
         .o_QIx8(w_QIx8)

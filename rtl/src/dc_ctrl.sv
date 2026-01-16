@@ -9,7 +9,7 @@ module dc_ctrl
      parameter SPI_LDAC_WIDTH=DC_SPI_LDAC_WIDTH)
     (input  logic i_clk, i_rst,
 
-     input  logic [0:CTRL_REGS-1] i_regs,
+     input  logic [0:CTRL_REGS-1][31:0] i_regs,
 
      output dc_ctrl_t o_ctrl);
 

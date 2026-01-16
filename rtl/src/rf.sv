@@ -49,7 +49,7 @@ module rf
         .i_clk(i_clk),
         .i_rst(i_rst),
 
-        .i_regs(i_regs),
+        .i_regs(i_seq_regs),
 
         .o_addr(w_addr),
         .o_insn(w_insn),
@@ -58,7 +58,7 @@ module rf
         .i_insn_modified(w_insn_modified)
     );
 
-    logic rf_ctrl_t w_ctrl;
+    rf_ctrl_t w_ctrl;
 
     rf_core #(
     	.KBC_WIDTH(KBC_WIDTH),

@@ -14,7 +14,6 @@ module dc_decode
         d = '{
             w_addr: i_addr,
             w_iters: i_insn.w_iters,
-            w_spi_dvsr: i_insn.w_spi_dvsr,
             w_spi_din: i_insn.w_spi_din,
             w_dspi_din: i_insn.w_dspi_din,
             w_spi_rd: i_insn.w_spi_rd,
