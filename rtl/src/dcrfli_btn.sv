@@ -11,26 +11,47 @@ module dcrfli_btn
      parameter NUM_DEBOUNCE_CYCLES=25)
     (input  logic i_clk, i_rst,
 
-     input  logic [0:NUM_DC_CHANNEL-1][0:DC_TOTAL_REGS-1][31:0] i_dc_regs,
+     // dc mmio registers
+     input  logic [0:NUM_DC_CHANNEL-1][0:DC_SEQ_REGS-1][31:0] i_dc_seq_regs,
+     input  logic [0:NUM_DC_CHANNEL-1][0:DC_CTRL_REGS-1][31:0] i_dc_ctrl_regs,
 
+     // dc spi buses
      output logic [0:NUM_DC_CHANNEL-1] o_dc_sclk_bus,
      output logic [0:NUM_DC_CHANNEL-1] o_dc_mosi_bus,
      input  logic [0:NUM_DC_CHANNEL-1] i_dc_miso_bus,
      output logic [0:NUM_DC_CHANNEL-1] o_dc_cs_n_bus,
      output logic [0:NUM_DC_CHANNEL-1] o_dc_ldac_n_bus,
 
+     // dc armed bus for LED
      output logic [NUM_DC_CHANNEL-1:0] o_dc_armed_bus,
 
-     input  logic [0:NUM_RF_CHANNEL-1][0:RF_TOTAL_REGS-1][31:0] i_rf_regs,
+     // rf mmio registers
+     input  logic [0:NUM_RF_CHANNEL-1][0:RF_SEQ_REGS-1][31:0] i_rf_seq_regs,
+     input  logic [0:NUM_RF_CHANNEL-1][0:RF_CTRL_REGS-1][31:0] i_rf_ctrl_regs,
 
+     // rf IQ stream to RFDC IP
      output logic [0:NUM_RF_CHANNEL-1][RF_DAC_WIDTH*16-1:0] o_rf_QIx8_bus,
 
+     // rf armed buses for LED
      output logic [NUM_RF_CHANNEL-1:0] o_rf_armed_bus,
 
+     // rf nco freq/phase update buses
+     output logic [0:(NUM_RF_CHANNEL+1)/2-1] o_rf_nco_req_bus,
+     input  logic [0:(NUM_RF_CHANNEL+1)/2-1] i_rf_nco_busy_bus,
+     output logic [0:NUM_RF_CHANNEL-1][RF_NCO_FREQ_WIDTH-1:0] o_rf_nco_freq_bus,
+     output logic [0:NUM_RF_CHANNEL-1][RF_NCO_PHASE_WIDTH-1:0] o_rf_nco_phase_bus,
+     output logic [0:NUM_RF_CHANNEL-1][RF_NCO_EN_WIDTH-1:0] o_rf_nco_en_bus,
+
+     // launch mmio registers
      input  logic [0:LCH_TOTAL_REGS-1][31:0] i_lch_regs,
 
+     // user button press
      input  logic i_btn);
      
+    /****************
+    * dc connections
+    ****************/
+
     logic [NUM_DC_CHANNEL-1:0] w_dc_start_bus;
     logic [NUM_DC_CHANNEL-1:0] w_dc_armed_bus;
 
@@ -40,7 +61,8 @@ module dcrfli_btn
             .i_clk(i_clk),
             .i_rst(i_rst),
 
-            .i_regs(i_dc_regs[i]),
+            .i_seq_regs(i_dc_seq_regs[i]),
+            .i_ctrl_regs(i_dc_ctrl_regs[i]),
 
             .o_sclk(o_dc_sclk_bus[i]),
             .o_mosi(o_dc_mosi_bus[i]),
@@ -54,8 +76,16 @@ module dcrfli_btn
 
     end
 
+    /****************
+    * rf connections
+    ****************/
+
     logic [NUM_RF_CHANNEL-1:0] w_rf_armed_bus;
     logic [NUM_RF_CHANNEL-1:0] w_rf_start_bus;
+
+    logic [0:NUM_RF_CHANNEL-1] w_rf_nco_chreq_bus;
+    logic [0:NUM_RF_CHANNEL-1] w_rf_nco_iwait_bus;
+    logic [0:NUM_RF_CHANNEL-1] w_rf_nco_owait_bus;
 
     for (genvar i = 0; i < NUM_RF_CHANNEL; i++) begin : RF_GEN
 
@@ -63,15 +93,48 @@ module dcrfli_btn
             .i_clk(i_clk),
             .i_rst(i_rst),
 
-            .i_regs(i_rf_regs[i]),
+            .i_seq_regs(i_rf_seq_regs[i]),
+            .i_ctrl_regs(i_rf_ctrl_regs[i]),
 
             .o_QIx8(o_rf_QIx8_bus[i]),
 
             .i_start(w_rf_start_bus[i]),
             .o_armed(w_rf_armed_bus[i])
+
+            .i_nco_wait(w_rf_nco_iwait_bus[i]),
+            .o_nco_wait(w_rf_nco_owait_bus[i]),
+
+            .o_nco_req(w_rf_nco_chreq_bus[i]),
+            .i_nco_busy(i_rf_nco_busy_bus[i / 2]),
+            .o_nco_freq(o_rf_nco_freq_bus[i]),
+            .o_nco_phase(o_rf_nco_phase_bus[i]),
+            .o_nco_en(o_rf_nco_en_bus[i])
         );
 
     end
+
+    for (genvar i = 0; i < NUM_RF_CHANNEL; i++) begin : RF_NCO_IWAIT_REQ_GEN
+
+        if (i % 2 == 0) begin
+            if (i + 1 < NUM_RF_CHANNEL) begin
+                assign o_rf_nco_req_bus[i / 2] = w_rf_nco_chreq_bus[i] | 
+                                                 w_rf_nco_chreq_bus[i + 1] 
+                assign w_rf_nco_iwait_bus[i] = w_rf_nco_owait_bus[i + 1];
+            end
+            else begin
+                assign o_rf_nco_req_bus[i / 2] = w_rf_nco_chreq_bus[i];
+                assign w_rf_nco_iwait_bus[i] = 1'b0;
+            end
+        end
+        else begin
+            assign w_rf_nco_iwait_bus[i] = w_rf_nco_owait_bus[i - 1];
+        end
+
+    end
+
+    /********************
+    * launch connections
+    ********************/
 
     logic w_trigger;
 
@@ -98,6 +161,10 @@ module dcrfli_btn
 
     assign o_dc_armed_bus = w_dc_armed_bus;
     assign o_rf_armed_bus = w_rf_armed_bus;
+
+    /********************
+    * button for trigger
+    ********************/
 
     button_detector #(
         .NUM_CYCLES(NUM_DEBOUNCE_CYCLES),

@@ -15,14 +15,14 @@ module rf_ctrl
      output rf_ctrl_t o_ctrl,
 
      input  logic i_seq_running,
-     input  logic i_nco_updating,
-     output logic o_nco_updating,
+     input  logic i_nco_wait,
+     output logic o_nco_wait,
 
-     output logic o_nco_update_req,
-     input  logic i_nco_update_busy,
+     output logic o_nco_req,
+     input  logic i_nco_busy,
      output logic [NCO_FREQ_WIDTH-1:0] o_nco_freq,
      output logic [NCO_PHASE_WIDTH-1:0] o_nco_phase,
-     output logic [NCO_EN_WIDTH-1:0] o_nco_update_en);
+     output logic [NCO_EN_WIDTH-1:0] o_nco_en);
 
     logic w_last0, w_last0_ff1, w_last0_ff2;
 
@@ -38,7 +38,7 @@ module rf_ctrl
 
     logic [NCO_FREQ_WIDTH-1:0] r_nco_freq;
     logic [NCO_PHASE_WIDTH-1:0] r_nco_phase;
-    logic [NCO_EN_WIDTH-1:0] r_nco_update_en;
+    logic [NCO_EN_WIDTH-1:0] r_nco_en;
     logic [IQ_WIDTH-1:0] r_default_I;
     logic [IQ_WIDTH-1:0] r_default_Q;
 
@@ -66,7 +66,7 @@ module rf_ctrl
 
     assign o_nco_freq = r_nco_freq;
     assign o_nco_phase = r_nco_phase;
-    assign o_nco_update_en = r_nco_update_en;
+    assign o_nco_en = r_nco_en;
 
     rf_nco_update #(
         .NCO_FREQ_WIDTH(NCO_FREQ_WIDTH),
@@ -75,15 +75,15 @@ module rf_ctrl
     ) NUPDT (
         .i_clk(i_clk),
         .i_rst(i_rst),
-        .i_updating(i_nco_updating),
-        .o_updating(o_nco_updating),
+        .i_wait(i_nco_wait),
+        .o_wait(o_nco_wait),
         .i_start(w_start),
-        .o_req(o_nco_update_req),
-        .i_busy(i_nco_update_busy)
+        .o_req(o_nco_req),
+        .i_busy(i_nco_busy)
     );
 
     assign o_ctrl = '{
-        w_nco_ready: ,
+        w_nco_ready: !i_nco_wait && !o_nco_wait,
         w_default_I: r_default_I,
         w_default_Q: r_default_Q,
     };

@@ -4,7 +4,13 @@ module zcu216_dac
     (input  logic i_clk, i_dac_clk,
      input  logic [255:0] i_QIx8,
      output logic [13:0] o_I, o_Q,
-     output real  o_vrf);
+     output real  o_vrf,
+     
+     input  logic i_nco_req,
+     output logic o_nco_busy,
+     input  logic [47:0] i_nco_freq,
+     input  logic [17:0] i_nco_phase,
+     input  logic [5:0] i_nco_en);
 
     // simulate DUC
     // if i_clk is 250MHz, simulated nco is 10MHz
@@ -18,10 +24,10 @@ module zcu216_dac
         end
     end
 
-    localparam IQ_WIDTH=RF_IQ_WIDTH;
+    localparam IQ_WIDTH=14;
 
-    function automatic real iq2real(input int N, input logic [IQ_WIDTH-1:0] iq);
-        return $itor($signed(iq)) / (1.0 * (1 << (N-1)));
+    function automatic real iq2real(input logic [IQ_WIDTH-1:0] iq);
+        return $itor($signed(iq)) / (1.0 * (1 << (IQ_WIDTH-1)));
     endfunction
 
     logic [7:0][IQ_WIDTH-1:0] w_Ix8, w_Qx8;
@@ -31,22 +37,212 @@ module zcu216_dac
     end
 
     real I, Q;
-    real deg, rad, nco_i, nco_q;
+    real deg, deg_incr, rad, nco_i, nco_q;
     initial begin
         deg = 0;
+        deg_incr = 1.8;
         @(posedge i_clk);
         forever begin
             @(negedge i_dac_clk);
             o_I = w_Ix8[dac_cycle];
             o_Q = w_Qx8[dac_cycle];
-            I = iq2real(IQ_WIDTH, o_I);
-            Q = iq2real(IQ_WIDTH, o_Q);
-            deg = deg + 1.8;
+            I = iq2real(o_I);
+            Q = iq2real(o_Q);
+            deg = deg + deg_incr;
             rad = deg * 3.14159265358979323846 / 180.0;
             nco_i = $cos(rad);
             nco_q = $sin(rad);
             o_vrf = I * $cos(rad) - Q * $sin(rad);
         end
+    end
+
+    function automatic int get_busy_cycles(input logic [5:0] en);
+        case (en)
+            6'b111111: return 39;
+            6'b111110: return 34;
+            6'b111101: return 38;
+            6'b111100: return 31;
+            6'b111011: return 38;
+            6'b111010: return 33;
+            6'b111001: return 35;
+            6'b111000: return 28;
+            6'b110111: return 38;
+            6'b110110: return 33;
+            6'b110101: return 37;
+            6'b110100: return 30;
+            6'b110011: return 35;
+            6'b110010: return 30;
+            6'b110001: return 32;
+            6'b110000: return 25;
+            6'b101111: return 38;
+            6'b101110: return 33;
+            6'b101101: return 37;
+            6'b101100: return 30;
+            6'b101011: return 37;
+            6'b101010: return 32;
+            6'b101001: return 34;
+            6'b101000: return 27;
+            6'b100111: return 35;
+            6'b100110: return 30;
+            6'b100101: return 34;
+            6'b100100: return 27;
+            6'b100011: return 32;
+            6'b100010: return 27;
+            6'b100001: return 29;
+            6'b100000: return 22;
+            6'b011111: return 38;
+            6'b011110: return 33;
+            6'b011101: return 37;
+            6'b011100: return 30;
+            6'b011011: return 37;
+            6'b011010: return 32;
+            6'b011001: return 34;
+            6'b011000: return 27;
+            6'b010111: return 37;
+            6'b010110: return 32;
+            6'b010101: return 36;
+            6'b010100: return 29;
+            6'b010011: return 34;
+            6'b010010: return 29;
+            6'b010001: return 31;
+            6'b010000: return 24;
+            6'b001111: return 35;
+            6'b001110: return 30;
+            6'b001101: return 34;
+            6'b001100: return 27;
+            6'b001011: return 34;
+            6'b001010: return 29;
+            6'b001001: return 31;
+            6'b001000: return 24;
+            6'b000111: return 32;
+            6'b000110: return 27;
+            6'b000101: return 31;
+            6'b000100: return 24;
+            6'b000011: return 29;
+            6'b000010: return 24;
+            6'b000001: return 26;
+            default:   return 0;
+        endcase
+    endfunction
+
+    // nco update
+    enum {IDLE, HOLD, BUSY} state;
+    logic [47:0] freq;
+    logic [17:0] phase;
+    logic [5:0] en;
+    int hold_cycles;
+    int busy_cycles;
+
+    function automatic real freq2real(input logic [47:0] freq);
+        return $itor($signed(freq)) * 2.0e9 / (1.0 * (1 << 48));
+    endfunction
+
+    function automatic real get_deg_incr(input real freq_hz);
+
+    endfunction
+
+    function automatic real phase2real(input logic [17:0] phase);
+        return $itor($signed(phase)) * 360.0 / (1.0 * (1 << 18));
+    endfunction
+
+    assign o_nco_busy = (state == BUSY);
+
+    initial begin
+
+        state = IDLE;
+        o_nco_busy = 1'b0;
+        hold_cycles = 0;
+        busy_cycles = 0;
+
+        forever begin
+
+            @(negedge i_clk);
+
+            if (state == IDLE) begin
+                if (i_nco_req) begin
+                    freq = i_nco_freq;
+                    phase = i_nco_phase;
+                    en = i_nco_en;
+                    @(posedge i_clk);
+                    state = HOLD;
+                    hold_cycles = $urandom_range(1, 10);
+                end
+            end
+            else if (state == HOLD) begin
+                if (i_nco_req) begin
+                    freq = i_nco_freq;
+                    phase = i_nco_phase;
+                    en = i_nco_en;
+                    hold_cycles = $urandom_range(0, 10);
+                end
+                else if (
+                    i_nco_freq !== freq ||
+                    i_nco_phase !== phase ||
+                    i_nco_en !== en
+                ) begin
+                    // failure to hold results in x
+                    freq = 'hx;
+                    phase = 'hx;
+                    en = 'hx;
+                    if (hold_cycles == 0) begin
+                        state = BUSY;
+                        busy_cycles = get_busy_cycles(en);
+                    end
+                    else begin
+                        hold_cycles--;
+                    end
+                end
+                else begin
+                    if (hold_cycles == 0) begin
+                        state = BUSY;
+                        busy_cycles = get_busy_cycles(en);
+                    end
+                    else begin
+                        hold_cycles--;
+                    end
+                end
+            end
+            else begin
+                if (i_nco_req) begin
+                    freq = i_nco_freq;
+                    phase = i_nco_phase;
+                    en = i_nco_en;
+                    state = HOLD;
+                    hold_cycles = $urandom_range(0, 10);
+                end
+                else if (
+                    i_nco_freq !== freq ||
+                    i_nco_phase !== phase ||
+                    i_nco_en !== en
+                ) begin
+                    // failure to hold results in x
+                    freq = 'hx;
+                    phase = 'hx;
+                    en = 'hx;
+                    if (busy_cycles == 0) begin
+                        @(posedge i_clk);
+                        deg += phase2real(phase);
+                        deg_incr = ;
+                        state = IDLE;
+                    end
+                    else begin
+                        hold_cycles--;
+                    end
+                end
+                else begin
+                    if (hold_cycles == 0) begin
+                        state = IDLE;
+                        deg = ;
+                        deg_incr = ;
+                    end
+                    else begin
+                        hold_cycles--;
+                    end
+                end
+            end
+
+        end
+
     end
 
 endmodule

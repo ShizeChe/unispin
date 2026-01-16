@@ -8,8 +8,8 @@ module rf_nco_update
      parameter NCO_EN_WIDTH=RF_NCO_EN_WIDTH)
     (input  logic i_clk, i_rst,
 
-     input  logic i_updating,
-     output logic o_updating,
+     input  logic i_wait,
+     output logic o_wait,
 
      input  logic i_start,
 
@@ -44,22 +44,22 @@ module rf_nco_update
     always_comb begin
 
         w_set_req = 1'b0;
-        o_updating = 1'b0;
+        o_wait = 1'b0;
 
         case (state)
             IDLE: begin
                 w_next_state = i_start ? REQ : IDLE;
             end
             REQ: begin
-                w_next_state = i_updating ? REQ : HOLD;
-                w_set_req = !i_updating;
+                w_next_state = i_wait ? REQ : HOLD;
+                w_set_req = !i_wait;
             end
             HOLD: begin
-                o_updating = 1'b1;
+                o_wait = 1'b1;
                 w_next_state = i_busy ? BUSY : HOLD;
             end
             BUSY: begin
-                o_updating = 1'b1;
+                o_wait = 1'b1;
                 w_next_state = i_busy ? BUSY : IDLE;
             end
             default: begin

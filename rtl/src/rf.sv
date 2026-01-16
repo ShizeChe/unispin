@@ -28,14 +28,14 @@ module rf
      input  logic i_start,
      output logic o_armed,
 
-     input  logic i_nco_updating,
-     output logic o_nco_updating,
+     input  logic i_nco_wait,
+     output logic o_nco_wait,
 
-     output logic o_nco_update_req,
-     input  logic i_nco_update_busy,
+     output logic o_nco_req,
+     input  logic i_nco_busy,
      output logic [NCO_FREQ_WIDTH-1:0] o_nco_freq,
      output logic [NCO_PHASE_WIDTH-1:0] o_nco_phase,
-     output logic [NCO_EN_WIDTH-1:0] o_nco_update_en);
+     output logic [NCO_EN_WIDTH-1:0] o_nco_en);
 
     logic w_next, w_empty;
     logic [$clog2(DEPTH)-1:0] w_addr;
@@ -107,14 +107,14 @@ module rf
         .o_ctrl(w_ctrl),
 
         .i_seq_running(!w_empty),
-        .i_nco_updating(i_nco_updating),
-        .o_nco_updating(o_nco_updating),
+        .i_nco_wait(i_nco_wait),
+        .o_nco_wait(o_nco_wait),
 
-        .o_nco_update_req(o_nco_update_req),
-        .i_nco_update_busy(i_nco_update_busy),
+        .o_nco_req(o_nco_req),
+        .i_nco_busy(i_nco_busy),
         .o_nco_freq(o_nco_freq),
         .o_nco_phase(o_nco_phase),
-        .o_nco_update_en(o_nco_update_en)
+        .o_nco_en(o_nco_en)
     );
 
 endmodule
