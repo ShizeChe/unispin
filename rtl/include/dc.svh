@@ -17,9 +17,9 @@ parameter DC_SEQ_REGS=DC_DEPTH*DC_REG_PER_INSN+2;
 parameter DC_CTRL_REGS=3+1;
 
 typedef struct packed {
-    logic [DC_SPI_DVSR_WIDTH-1:0] w_dvsr;
-    logic [DC_SPI_CS_UP_WIDTH-1:0] w_cs_up_cycles;
-    logic [DC_SPI_LDAC_WIDTH-1:0] w_ldac_cycles;
+    logic [DC_SPI_DVSR_WIDTH-1:0] w_dvsr; // inclusive countdown
+    logic [DC_SPI_CS_UP_WIDTH-1:0] w_cs_up_cycles; // inclusive countdown
+    logic [DC_SPI_LDAC_WIDTH-1:0] w_ldac_cycles; // inclusive countdown
 } dc_ctrl_t;
 
 typedef struct packed {
@@ -79,7 +79,7 @@ typedef struct {
     logic r_spi_rd;
     logic [DC_DAC_WIDTH-1:0] r_spi_dout;
     logic [DC_SPI_LDAC_WIDTH-1:0] r_ldac_cycles;
-    logic [DC_DAC_WIDTH-1:0] r_ldac_n;
+    logic r_ldac_n;
     logic [DC_CYCLE_WIDTH-1:0] r_cycles_left;
 } dc_hold_stg_t;
 

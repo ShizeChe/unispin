@@ -5,6 +5,7 @@
 module dc_core
    #(parameter SPI_DATA_WIDTH=DC_SPI_DATA_WIDTH,
      parameter CYCLE_WIDTH=DC_CYCLE_WIDTH,
+     parameter SPI_LDAC_WIDTH=DC_SPI_LDAC_WIDTH,
      parameter ITER_WIDTH=DC_CORE_ITER_WIDTH,
      parameter INSN_WIDTH=DC_INSN_WIDTH,
      parameter DEPTH=DC_DEPTH)
@@ -34,9 +35,10 @@ module dc_core
      // output interface (verification only)
      output logic [$clog2(DEPTH)-1:0] o_addr,
      output logic [ITER_WIDTH-1:0] o_iter,
-     output logic [DC_SPI_DATA_WIDTH-1:0] o_spi_din,
+     output logic [SPI_DATA_WIDTH-1:0] o_spi_din,
      output logic o_spi_rd,
      output logic [SPI_DATA_WIDTH-1:0] o_spi_dout,
+     output logic [SPI_LDAC_WIDTH-1:0] o_ldac_cycles,
      output logic [CYCLE_WIDTH-1:0] o_cycles_left);
 
     logic w_stall;
@@ -154,12 +156,15 @@ module dc_core
         end
         else begin
             s.r_spi_start <= 1'b0;
-            if (w_spi_done) begin
-                s.r_spi_done <= 1'b1;
-                s.r_spi_dout <= w_spi_dout;
+            if (!s.r_spi_done) begin
+                s.r_cs_n <= w_spi_done;
+                s.r_spi_done <= w_spi_done;
+                s.r_spi_dout <= w_spi_done ? w_spi_dout : 'bx;
+            end
+            else begin
                 s.r_cs_n <= 1'b1;
-                s.r_cs_up_cycles <= s.r_cs_up_cycles == 'd0 ? 
-                    'd0 : s.r_cs_up_cycles - 'd1;
+                s.r_cs_up_cycles <= (s.r_cs_up_cycles > 'd0) ? 
+                    s.r_cs_up_cycles - 'd1 : 'd0;
             end
         end
     end
@@ -216,8 +221,10 @@ module dc_core
             if (h.r_ldac_cycles > 'd0) begin
                 h.r_ldac_cycles <= h.r_ldac_cycles - 'd1;
             end
-            else begin
+            else if (!h.r_ldac_n) begin
                 h.r_ldac_n <= 1'b1;
+            end
+            else begin
                 h.r_cycles_left <= (h.r_cycles_left > 'd0) ? (h.r_cycles_left - 'd1) : 'd0;
             end
         end
@@ -225,10 +232,11 @@ module dc_core
 
     assign o_cs_n = s.r_cs_n;
     assign o_ldac_n = h.r_ldac_n;
-    assign o_armed = s.r_arm && s.r_spi_done;
+    assign o_armed = s.r_arm && s.r_spi_done && (s.r_cs_up_cycles == 'd0);
 
-    assign w_stall = (h.r_ldac_cycles > 'd0) || (h.r_cycles_left > 'd0) || 
-                     (!s.r_spi_done) || (s.r_cs_up_cycles > 'd0) || (o_armed && !i_start);
+    assign w_stall = (h.r_ldac_cycles > 'd0) || (h.r_cycles_left > 'd0) || (!h.r_ldac_n) ||
+                     (!s.r_spi_done) || (s.r_cs_up_cycles > 'd0) || (!s.r_cs_n) ||
+                     (o_armed && !i_start);
 
     assign o_next = !w_stall && i.r_iters == 'd0 && !i_empty;
 
@@ -237,6 +245,7 @@ module dc_core
     assign o_spi_din = h.r_spi_din;
     assign o_spi_rd = h.r_spi_rd;
     assign o_spi_dout = h.r_spi_dout;
+    assign o_ldac_cycles = h.r_ldac_cycles;
     assign o_cycles_left = h.r_cycles_left;
 
 endmodule
