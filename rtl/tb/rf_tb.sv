@@ -210,12 +210,12 @@ module rf_tb;
         end
 
         iters_reg = $urandom_range(1, MAX_ITERS);
-        start_reg = 32'h0;
+        start_reg = 'h0;
 
         get_golden_seq;
 
         @(negedge w_clk);
-        start_reg = 1'b1;
+        start_reg = 'h1;
 
         $display("wait armed");
         wait(w_armed);
@@ -238,6 +238,20 @@ module rf_tb;
 
     endtask
 
+    task rand_ctrl;
+        nco_freq_reg = $urandom_range(0, 48'hffffffffffff);
+        nco_phase_reg = $urandom_range(0, 18'h3ffff);
+        // default_I_reg = $urandom_range(0, 14'h3ff);
+        // default_Q_reg = $urandom_range(0, 14'h3ff);
+        default_I_reg = 14'h3fff;
+        default_Q_reg = 14'h3fff;
+        new_ctrl_reg = 'h0;
+        @(negedge w_clk);
+        new_ctrl_reg = 'h1;
+        repeat(3) @(negedge w_clk);
+        new_ctrl_reg = 'h0;
+    endtask
+
     int test;
 
     initial begin
@@ -257,9 +271,11 @@ module rf_tb;
         w_rst = 1'b0;
 
         test = 0;
-        repeat(10) begin
-            $display("test%0d", test);
-            rand_insns;
+        repeat(1) begin
+            rand_ctrl();
+            repeat(100) @(negedge w_clk);
+            // $display("test%0d", test);
+            // rand_insns;
             test++;
         end
 

@@ -134,7 +134,7 @@ module zcu216_dac
     int busy_cycles;
 
     function automatic real freq2real(input logic [47:0] freq);
-        return $itor($signed(freq)) * 2.0e9 / (1.0 * (1 << 48));
+        return $itor($signed(freq)) * 2.0e9 / (1.0 * (64'd1 << 48));
     endfunction
 
     function automatic real get_deg_incr(input real freq_hz);
@@ -249,7 +249,7 @@ module zcu216_dac
 
                     if (hold_cycles == 0) begin
                         state = BUSY;
-                        busy_cycles = get_busy_cycles(en);
+                        busy_cycles = get_busy_cycles(ien);
                     end
                     else begin
                         hold_cycles--;
@@ -260,7 +260,7 @@ module zcu216_dac
 
                     if (hold_cycles == 0) begin
                         state = BUSY;
-                        busy_cycles = get_busy_cycles(en);
+                        busy_cycles = get_busy_cycles(ien);
                     end
                     else begin
                         hold_cycles--;
@@ -301,22 +301,25 @@ module zcu216_dac
                         state = IDLE;
                     end
                     else begin
-                        hold_cycles--;
+                        busy_cycles--;
                     end
 
                 end
                 else begin
 
-                    if (hold_cycles == 0) begin
+                    if (busy_cycles == 0) begin
                         @(posedge i_clk);
                         phase = phase_en(phase, iphase, ien);
                         freq = freq_en(freq, ifreq, ien);
                         deg += phase2real(phase);
                         deg_incr = get_deg_incr(freq2real(freq));
+                        $display("freq=%0h", freq);
+                        $display("freq(real)=%0.6f", freq2real(freq));
+                        $display("deg_incr=%0h", deg_incr);
                         state = IDLE;
                     end
                     else begin
-                        hold_cycles--;
+                        busy_cycles--;
                     end
 
                 end

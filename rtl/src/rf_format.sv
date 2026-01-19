@@ -4,7 +4,7 @@
 
 module rf_format
    #(parameter NUM_SAMPLE_WIDTH=RF_NUM_SAMPLE_WIDTH,
-     parameter IQ_WIDTH=RF_IQ_WIDTH,
+     parameter DAC_WIDTH=RF_DAC_WIDTH,
      parameter DEPTH=RF_DEPTH)
     (input  rf_result_stg_t r [0:7],
 
@@ -13,7 +13,7 @@ module rf_format
      output logic [$clog2(DEPTH)-1:0] o_addr,
      output logic [NUM_SAMPLE_WIDTH-1:0] o_sample_start,
      output logic [NUM_SAMPLE_WIDTH-1:0] o_sample_end,
-     output logic [IQ_WIDTH*16-1:0] o_QIx8);
+     output logic [RF_DAC_WIDTH*16-1:0] o_QIx8);
 
     assign o_addr = r[0].r_addr;
 

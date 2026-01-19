@@ -138,11 +138,11 @@ module rf_core
 
     logic [$clog2(DEPTH)-1:0] w_addr;
     logic [NUM_SAMPLE_WIDTH-1:0] w_sample_start, w_sample_end;
-    logic [IQ_WIDTH*16-1:0] w_QIx8;
+    logic [DAC_WIDTH*16-1:0] w_QIx8;
 
     rf_format #(
         .NUM_SAMPLE_WIDTH(NUM_SAMPLE_WIDTH),
-        .IQ_WIDTH(IQ_WIDTH),
+        .DAC_WIDTH(DAC_WIDTH),
         .DEPTH(DEPTH)
     ) FMT (
         .r(r),
