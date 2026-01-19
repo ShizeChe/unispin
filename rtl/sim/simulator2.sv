@@ -48,9 +48,10 @@ module simulator;
     logic [0:NUM_DC_CHANNEL-1] w_dc_cs_n_bus;
     logic [0:NUM_DC_CHANNEL-1] w_dc_ldac_n_bus;
 
-    // dc armed/start bus
+    // dc armed bus
     logic [NUM_DC_CHANNEL-1:0] w_dc_armed_bus;
-    logic [NUM_DC_CHANNEL-1:0] w_dc_start_bus;
+
+    // dc empty bus
     logic [0:NUM_DC_CHANNEL-1] w_dc_empty_bus;
 
     // dc voltage output
@@ -79,6 +80,12 @@ module simulator;
     // rf QIx8 bus
     logic [0:NUM_RF_CHANNEL-1][RF_DAC_WIDTH*16-1:0] w_rf_QIx8_bus;
 
+    // rf armed bus
+    logic [NUM_RF_CHANNEL-1:0] w_rf_armed_bus;
+
+    // rf empty bus
+    logic [0:NUM_RF_CHANNEL-1] w_rf_empty_bus;
+
     // rf nco bus
     logic [0:(NUM_RF_CHANNEL+1)/2-1] w_rf_nco_req_bus;
     logic [0:(NUM_RF_CHANNEL+1)/2-1] w_rf_nco_tile_busy_bus;
@@ -86,11 +93,6 @@ module simulator;
     logic [0:NUM_RF_CHANNEL-1][RF_NCO_FREQ_WIDTH-1:0] w_rf_nco_freq_bus;
     logic [0:NUM_RF_CHANNEL-1][RF_NCO_PHASE_WIDTH-1:0] w_rf_nco_phase_bus;
     logic [0:NUM_RF_CHANNEL-1][RF_NCO_EN_WIDTH-1:0] w_rf_nco_en_bus;
-
-    // rf armed/start bus
-    logic [NUM_RF_CHANNEL-1:0] w_rf_armed_bus;
-    logic [NUM_RF_CHANNEL-1:0] w_rf_start_bus;
-    logic [0:NUM_RF_CHANNEL-1] w_rf_empty_bus;
 
     // rf voltage output
     logic [RF_IQ_WIDTH-1:0] vrf_Q [NUM_RF_CHANNEL];
@@ -142,6 +144,10 @@ module simulator;
 
         .o_dc_armed_bus(w_dc_armed_bus),
 
+        .o_dc_empty_bus(w_dc_empty_bus),
+
+        .o_dc_eop_bus(),
+
         // rf
         .i_rf_seq_regs(w_rf_seq_regs),
         .i_rf_ctrl_regs(w_rf_ctrl_regs),
@@ -150,15 +156,20 @@ module simulator;
 
         .o_rf_armed_bus(w_rf_armed_bus),
 
+        .o_rf_empty_bus(w_rf_empty_bus),
+
         .o_rf_nco_req_bus(w_rf_nco_req_bus),
         .i_rf_nco_busy_bus(w_rf_nco_tile_busy_bus),
         .o_rf_nco_freq_bus(w_rf_nco_freq_bus),
         .o_rf_nco_phase_bus(w_rf_nco_phase_bus),
         .o_rf_nco_en_bus(w_rf_nco_en_bus),
 
+        .o_rf_eop_bus(),
+
         // launch
         .i_lch_regs(w_lch_regs),
         
+        // button
         .i_btn(i_btn_w)
     );
 
@@ -217,11 +228,6 @@ module simulator;
             .VOUT(vdc[i])
         );
 
-        assign w_dc_empty_bus[i] = DCRFLI.DC_GEN[i].DC.CORE.i_empty && 
-            DCRFLI.DC_GEN[i].DC.CORE.i.r_bubble &&
-            DCRFLI.DC_GEN[i].DC.CORE.s.r_spi_done && 
-            DCRFLI.DC_GEN[i].DC.CORE.h.r_cycles_left == 'd0;
-
     end
 
 
@@ -276,17 +282,6 @@ module simulator;
             .i_nco_phase(w_rf_nco_phase_bus[i]),
             .i_nco_en(w_rf_nco_en_bus[i])
         );
-
-        assign w_rf_empty_bus[i] = DCRFLI.RF_GEN[i].RF.CORE.i_empty && 
-            DCRFLI.RF_GEN[i].RF.CORE.p.r_samples_left == 'd0 &&
-            (&{DCRFLI.RF_GEN[i].RF.CORE.r[0].r_bubble, 
-               DCRFLI.RF_GEN[i].RF.CORE.r[1].r_bubble, 
-               DCRFLI.RF_GEN[i].RF.CORE.r[2].r_bubble, 
-               DCRFLI.RF_GEN[i].RF.CORE.r[3].r_bubble, 
-               DCRFLI.RF_GEN[i].RF.CORE.r[4].r_bubble, 
-               DCRFLI.RF_GEN[i].RF.CORE.r[5].r_bubble, 
-               DCRFLI.RF_GEN[i].RF.CORE.r[6].r_bubble, 
-               DCRFLI.RF_GEN[i].RF.CORE.r[7].r_bubble});
 
     end
 
@@ -583,7 +578,6 @@ module simulator;
     end
 
     // tracker
-
     logic [NUM_DC_CHANNEL-1:0] dc_armed;
     logic [NUM_RF_CHANNEL-1:0] rf_armed;
 

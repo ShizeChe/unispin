@@ -83,4 +83,15 @@ typedef struct {
     logic [DC_CYCLE_WIDTH-1:0] r_cycles_left;
 } dc_hold_stg_t;
 
+// eop = end of pipeline
+typedef struct packed {
+    logic [$clog2(DC_DEPTH)-1:0] w_addr;
+    logic [DC_CORE_ITER_WIDTH-1:0] w_iter;
+    logic [DC_SPI_DATA_WIDTH-1:0] w_spi_din;
+    logic w_spi_rd;
+    logic [DC_SPI_DATA_WIDTH-1:0] w_spi_dout;
+    logic [DC_SPI_LDAC_WIDTH-1:0] w_ldac_cycles;
+    logic [DC_CYCLE_WIDTH-1:0] w_cycles_left;
+} dc_eop_t;
+
 `endif

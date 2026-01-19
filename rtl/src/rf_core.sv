@@ -34,10 +34,8 @@ module rf_core
      // pipeline empty flag
      output logic o_empty,
 
-     // verification signals
-     output logic [$clog2(DEPTH)-1:0] o_addr,
-     output logic [NUM_SAMPLE_WIDTH-1:0] o_sample_start,
-     output logic [NUM_SAMPLE_WIDTH-1:0] o_sample_end);
+     // eop for verification
+     output rf_eop_t o_eop);
 
     logic w_stall;
 
@@ -189,12 +187,14 @@ module rf_core
     assign o_armed = |{r[0].r_arm, r[1].r_arm, r[2].r_arm, r[3].r_arm,
                        r[4].r_arm, r[5].r_arm, r[6].r_arm, r[7].r_arm};
 
-    assign o_addr = o.r_addr;
-    assign o_sample_start = o.r_sample_start;
-    assign o_sample_end = o.r_sample_end;
-
     assign o_empty = i_empty && p.r_samples_left == 'd0 &&
         (&{r[0].r_bubble, r[1].r_bubble, r[2].r_bubble, r[3].r_bubble,
            r[4].r_bubble, r[5].r_bubble, r[6].r_bubble, r[7].r_bubble});
+
+    assign o_eop = '{
+        w_addr: o.r_addr,
+        w_sample_start: o.r_sample_start,
+        w_sample_end: o.r_sample_end
+    };
 
 endmodule

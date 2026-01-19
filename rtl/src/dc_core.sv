@@ -35,14 +35,8 @@ module dc_core
      // pipeline empty flag
      output logic o_empty,
 
-     // verification signals
-     output logic [$clog2(DEPTH)-1:0] o_addr,
-     output logic [ITER_WIDTH-1:0] o_iter,
-     output logic [SPI_DATA_WIDTH-1:0] o_spi_din,
-     output logic o_spi_rd,
-     output logic [SPI_DATA_WIDTH-1:0] o_spi_dout,
-     output logic [SPI_LDAC_WIDTH-1:0] o_ldac_cycles,
-     output logic [CYCLE_WIDTH-1:0] o_cycles_left);
+     // eop for verification
+     output dc_eop_t o_eop);
 
     logic w_stall;
 
@@ -252,17 +246,19 @@ module dc_core
 
     assign o_next = !w_stall && (i.r_iters == 'd0) && !i_empty;
 
-    assign o_addr = h.r_addr;
-    assign o_iter = h.r_iter;
-    assign o_spi_din = h.r_spi_din;
-    assign o_spi_rd = h.r_spi_rd;
-    assign o_spi_dout = h.r_spi_dout;
-    assign o_ldac_cycles = h.r_ldac_cycles;
-    assign o_cycles_left = h.r_cycles_left;
-
     assign o_empty = i_empty && i.r_bubble && s.r_spi_done && (s.r_cs_up_cycles == 'd0) && 
                      s.r_cs_n && (h.r_ldac_cycles == 'd0) && (h.r_cycles_left == 'd0) &&
                      h.r_ldac_n;
+
+    assign o_eop = '{
+        w_addr: h.r_addr,
+        w_iter: h.r_iter,
+        w_spi_din: h.r_spi_din,
+        w_spi_rd: h.r_spi_rd,
+        w_spi_dout: h.r_spi_dout,
+        w_ldac_cycles: h.r_ldac_cycles,
+        w_cycles_left: h.r_cycles_left
+    };
 
 endmodule
 

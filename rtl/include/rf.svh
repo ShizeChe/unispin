@@ -89,6 +89,13 @@ typedef struct {
     logic [RF_DAC_WIDTH*16-1:0] r_QIx8;
 } rf_output_stg_t;
 
+// eop = end of pipeline
+typedef struct packed {
+    logic [$clog2(RF_DEPTH)-1:0] w_addr;
+    logic [RF_NUM_SAMPLE_WIDTH-1:0] w_sample_start;
+    logic [RF_NUM_SAMPLE_WIDTH-1:0] w_sample_end;
+} rf_eop_t;
+
 parameter logic [RF_DAC_WIDTH-RF_IQ_WIDTH-1:0] PAD = 'b0;
 
 `endif

@@ -15,17 +15,7 @@ module dc_tb;
     logic [0:DC_SEQ_REGS-1][31:0] w_seq_regs;
     logic [0:DC_CTRL_REGS-1][31:0] w_ctrl_regs;
 
-    typedef struct {
-        logic [$clog2(DC_DEPTH)-1:0] w_addr;
-        logic [DC_CORE_ITER_WIDTH-1:0] w_iter;
-        logic [DC_SPI_DATA_WIDTH-1:0] w_spi_din;
-        logic w_spi_rd;
-        logic [DC_SPI_DATA_WIDTH-1:0] w_spi_dout;
-        logic [DC_SPI_LDAC_WIDTH-1:0] w_ldac_cycles;
-        logic [DC_CYCLE_WIDTH-1:0] w_cycles_left;
-    } dc_output_t;
-
-    dc_output_t o;
+    dc_eop_t w_eop;
 
     logic w_start;
     logic w_armed;
@@ -63,13 +53,7 @@ module dc_tb;
 
         .o_empty(w_empty),
 
-        .o_addr(o.w_addr),
-        .o_iter(o.w_iter),
-        .o_spi_din(o.w_spi_din),
-        .o_spi_rd(o.w_spi_rd),
-        .o_spi_dout(o.w_spi_dout),
-        .o_ldac_cycles(o.w_ldac_cycles),
-        .o_cycles_left(o.w_cycles_left)
+        .o_eop(w_eop)
     );
 
     logic [19:0] w_vout;
@@ -91,11 +75,11 @@ module dc_tb;
     localparam MAX_CORE_ITERS = 100;
     localparam MAX_CYCLES = 2000;
 
-    dc_output_t golden_seq [$];
+    dc_eop_t golden_seq [$];
     int num_insns;
     int total_samples;
-    dc_output_t out;
-    dc_output_t golden_o;
+    dc_eop_t eop;
+    dc_eop_t golden_eop;
 
     dc_insn_t [0:DC_DEPTH-1] insns;
     for (genvar i = 0; i < DC_DEPTH; i++) begin : INSNS_GEN
@@ -130,29 +114,29 @@ module dc_tb;
 
                     for (int cycle = ldac_reg; cycle >= 0; cycle--) begin
 
-                        out.w_addr = j;
-                        out.w_iter = iter;
-                        out.w_spi_din = {insns[j].w_spi_din[DC_SPI_DATA_WIDTH-1:DC_DAC_WIDTH], insns[j].w_spi_din[DC_DAC_WIDTH-1:0] + 20'(insns[j].w_dspi_din * (insns[j].w_iters - iter))};
-                        out.w_spi_rd = insns[j].w_spi_rd;
-                        out.w_spi_dout = 'h0;
-                        out.w_ldac_cycles = cycle;
-                        out.w_cycles_left = insns[j].w_hold_cycles;
+                        eop.w_addr = j;
+                        eop.w_iter = iter;
+                        eop.w_spi_din = {insns[j].w_spi_din[DC_SPI_DATA_WIDTH-1:DC_DAC_WIDTH], insns[j].w_spi_din[DC_DAC_WIDTH-1:0] + 20'(insns[j].w_dspi_din * (insns[j].w_iters - iter))};
+                        eop.w_spi_rd = insns[j].w_spi_rd;
+                        eop.w_spi_dout = 'h0;
+                        eop.w_ldac_cycles = cycle;
+                        eop.w_cycles_left = insns[j].w_hold_cycles;
 
-                        golden_seq.push_back(out);
+                        golden_seq.push_back(eop);
 
                     end
 
                     for (int cycle = insns[j].w_hold_cycles; cycle >= 0; cycle--) begin
 
-                        out.w_addr = j;
-                        out.w_iter = iter;
-                        out.w_spi_din = {insns[j].w_spi_din[DC_SPI_DATA_WIDTH-1:DC_DAC_WIDTH], insns[j].w_spi_din[DC_DAC_WIDTH-1:0] + 20'(insns[j].w_dspi_din * (insns[j].w_iters - iter))};
-                        out.w_spi_rd = insns[j].w_spi_rd;
-                        out.w_spi_dout = 'h0;
-                        out.w_ldac_cycles = 'h0;
-                        out.w_cycles_left = cycle;
+                        eop.w_addr = j;
+                        eop.w_iter = iter;
+                        eop.w_spi_din = {insns[j].w_spi_din[DC_SPI_DATA_WIDTH-1:DC_DAC_WIDTH], insns[j].w_spi_din[DC_DAC_WIDTH-1:0] + 20'(insns[j].w_dspi_din * (insns[j].w_iters - iter))};
+                        eop.w_spi_rd = insns[j].w_spi_rd;
+                        eop.w_spi_dout = 'h0;
+                        eop.w_ldac_cycles = 'h0;
+                        eop.w_cycles_left = cycle;
 
-                        golden_seq.push_back(out);
+                        golden_seq.push_back(eop);
 
                     end
 
@@ -253,14 +237,14 @@ module dc_tb;
         w_start = 1'b0;
 
         for (int i = 0; i < golden_seq.size(); i++) begin
-            golden_o = golden_seq[i];
-            assert (o.w_addr == golden_seq[i].w_addr &&
-                    o.w_iter == golden_seq[i].w_iter &&
-                    o.w_cycles_left == golden_seq[i].w_cycles_left &&
-                    o.w_spi_din == golden_seq[i].w_spi_din &&
-                    w_vout == o.w_spi_din[DC_DAC_WIDTH-1:0])
+            golden_eop = golden_seq[i];
+            assert (w_eop.w_addr == golden_seq[i].w_addr &&
+                    w_eop.w_iter == golden_seq[i].w_iter &&
+                    w_eop.w_cycles_left == golden_seq[i].w_cycles_left &&
+                    w_eop.w_spi_din == golden_seq[i].w_spi_din &&
+                    w_vout == w_eop.w_spi_din[DC_DAC_WIDTH-1:0])
             else $fatal(1, "At %0.3f ns: o = %p, golden_seq[%0d] = %p, vout = %0h", $realtime,
-                        o, i, golden_seq[i], w_vout);
+                        w_eop, i, golden_seq[i], w_vout);
             @(negedge w_clk);
         end
 

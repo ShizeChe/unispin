@@ -40,10 +40,8 @@ module rf
      output logic [NCO_PHASE_WIDTH-1:0] o_nco_phase,
      output logic [NCO_EN_WIDTH-1:0] o_nco_en,
 
-     // verification signals
-     output logic [$clog2(DEPTH)-1:0] o_addr,
-     output logic [NUM_SAMPLE_WIDTH-1:0] o_sample_start,
-     output logic [NUM_SAMPLE_WIDTH-1:0] o_sample_end);
+     // eop for verification
+     output rf_eop_t o_eop);
 
     logic w_next, w_empty;
     logic [$clog2(DEPTH)-1:0] w_addr;
@@ -97,10 +95,7 @@ module rf
 
         .o_empty(o_empty),
 
-        // verification signals
-        .o_addr(o_addr),
-        .o_sample_start(o_sample_start),
-        .o_sample_end(o_sample_end)
+        .o_eop(o_eop)
     );
 
     rf_ctrl #(

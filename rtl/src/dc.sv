@@ -31,14 +31,8 @@ module dc
 
      output logic o_empty,
 
-     // verification signals
-     output logic [$clog2(DEPTH)-1:0] o_addr,
-     output logic [CORE_ITER_WIDTH-1:0] o_iter,
-     output logic [SPI_DATA_WIDTH-1:0] o_spi_din,
-     output logic o_spi_rd,
-     output logic [SPI_DATA_WIDTH-1:0] o_spi_dout,
-     output logic [SPI_LDAC_WIDTH-1:0] o_ldac_cycles,
-     output logic [CYCLE_WIDTH-1:0] o_cycles_left);
+     // eop for verification
+     output dc_eop_t o_eop);
 
     logic w_next, w_empty;
     logic [$clog2(DEPTH)-1:0] w_addr;
@@ -90,14 +84,7 @@ module dc
 
         .o_empty(o_empty),
 
-        // verification signals
-        .o_addr(o_addr),
-        .o_iter(o_iter),
-        .o_spi_din(o_spi_din),
-        .o_spi_rd(o_spi_rd),
-        .o_spi_dout(o_spi_dout),
-        .o_ldac_cycles(o_ldac_cycles),
-        .o_cycles_left(o_cycles_left)
+        .o_eop(o_eop)
     );
 
     dc_ctrl #(

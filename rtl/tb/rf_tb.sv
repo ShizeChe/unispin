@@ -12,14 +12,9 @@ module rf_tb;
     logic [0:RF_SEQ_REGS-1][31:0] w_seq_regs;
     logic [0:RF_CTRL_REGS-1][31:0] w_ctrl_regs;
 
-    typedef struct {
-        logic [$clog2(RF_DEPTH)-1:0] w_addr;
-        logic [RF_NUM_SAMPLE_WIDTH-1:0] w_sample_start;
-        logic [RF_NUM_SAMPLE_WIDTH-1:0] w_sample_end;
-        logic [RF_DAC_WIDTH*16-1:0] w_QIx8;
-    } rf_output_t;
+    logic [RF_DAC_WIDTH*16-1:0] w_QIx8;
 
-    rf_output_t o;
+    rf_eop_t w_eop;
 
     logic w_empty;
 
@@ -54,7 +49,7 @@ module rf_tb;
         .i_seq_regs(w_seq_regs),
         .i_ctrl_regs(w_ctrl_regs),
 
-        .o_QIx8(o.w_QIx8),
+        .o_QIx8(w_QIx8),
 
         .i_start(w_start),
         .o_armed(w_armed),
@@ -70,9 +65,7 @@ module rf_tb;
         .o_nco_phase(w_nco_phase),
         .o_nco_en(w_nco_en),
 
-        .o_addr(o.w_addr),
-        .o_sample_start(o.w_sample_start),
-        .o_sample_end(o.w_sample_end)
+        .o_eop(w_eop)
     );
 
     logic [13:0] w_I, w_Q;
@@ -81,7 +74,7 @@ module rf_tb;
     zcu216_dac RF_DAC (
         .i_clk(w_clk),
         .i_dac_clk(w_dac_clk),
-        .i_QIx8(o.w_QIx8),
+        .i_QIx8(w_QIx8),
         .o_I(w_I),
         .o_Q(w_Q),
         .o_vrf(vrf),
@@ -115,11 +108,11 @@ module rf_tb;
         return 'h0;
     endfunction
 
-    rf_output_t golden_seq [$];
+    rf_eop_t golden_seq [$];
     int num_insns;
     int total_samples;
-    rf_output_t out;
-    rf_output_t golden_o;
+    rf_eop_t eop;
+    rf_eop_t golden_eop;
 
     rf_insn_t [0:RF_DEPTH-1] insns;
     for (genvar i = 0; i < RF_DEPTH; i++) begin : INSNS_GEN
@@ -156,14 +149,12 @@ module rf_tb;
 
                 for (int sample_start = 0; sample_start < total_samples; sample_start += 8) begin
 
-                    out.w_addr = j;
-                    out.w_sample_start = sample_start;
-                    out.w_sample_end = (sample_start + 8 > total_samples) ? total_samples - 1 : 
+                    eop.w_addr = j;
+                    eop.w_sample_start = sample_start;
+                    eop.w_sample_end = (sample_start + 8 > total_samples) ? total_samples - 1 : 
                                         sample_start + 7;
-                    out.w_QIx8 = get_golden_QI(insns[j].w_kbc_mode, insns[j].w_kbc1, insns[j].w_kbc2, 
-                                               out.w_sample_start, out.w_sample_end);
 
-                    golden_seq.push_back(out);
+                    golden_seq.push_back(eop);
 
                 end
 
@@ -227,12 +218,12 @@ module rf_tb;
         w_start = 1'b0;
 
         for (int i = 0; i < golden_seq.size(); i++) begin
-            golden_o = golden_seq[i];
-            assert (o.w_addr == golden_seq[i].w_addr &&
-                    o.w_sample_start == golden_seq[i].w_sample_start &&
-                    o.w_sample_end == golden_seq[i].w_sample_end)
+            golden_eop = golden_seq[i];
+            assert (w_eop.w_addr == golden_seq[i].w_addr &&
+                    w_eop.w_sample_start == golden_seq[i].w_sample_start &&
+                    w_eop.w_sample_end == golden_seq[i].w_sample_end)
             else $fatal(1, "At %0.3f ns: o = %p, golden_seq[%0d] = %p", $realtime,
-                        o, i, golden_seq[i]);
+                        eop, i, golden_seq[i]);
             @(negedge w_clk);
         end
 
@@ -241,10 +232,10 @@ module rf_tb;
     task rand_ctrl;
         nco_freq_reg = $urandom_range(0, 48'hffffffffffff);
         nco_phase_reg = $urandom_range(0, 18'h3ffff);
-        // default_I_reg = $urandom_range(0, 14'h3ff);
-        // default_Q_reg = $urandom_range(0, 14'h3ff);
-        default_I_reg = 14'h3fff;
-        default_Q_reg = 14'h3fff;
+        default_I_reg = $urandom_range(0, 14'h3ff);
+        default_Q_reg = $urandom_range(0, 14'h3ff);
+        // default_I_reg = 14'h3fff;
+        // default_Q_reg = 14'h3fff;
         new_ctrl_reg = 'h0;
         @(negedge w_clk);
         new_ctrl_reg = 'h1;
@@ -271,11 +262,11 @@ module rf_tb;
         w_rst = 1'b0;
 
         test = 0;
-        repeat(1) begin
+        repeat(10) begin
             rand_ctrl();
             repeat(100) @(negedge w_clk);
-            // $display("test%0d", test);
-            // rand_insns;
+            $display("test%0d", test);
+            rand_insns;
             test++;
         end
 
