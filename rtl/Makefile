@@ -1,9 +1,10 @@
 # Top-level variables
 SIM := vcs
 # SRC := $(wildcard src/dc*) $(wildcard src/rf*) $(wildcard src/launch*) src/sequencer.sv sim/cmd_dpi.c lib/axil_slave_regs.sv lib/debouncer.sv lib/button_detector.sv lib/ad5791.sv lib/zcu216_dac.sv
-SRC := src/dc_decode.sv src/dc_spi_master.sv src/dc_core.sv src/sequencer.sv src/dc_ctrl.sv src/dc.sv lib/ad5791.sv
+# SRC := src/dc_decode.sv src/dc_spi_master.sv src/dc_core.sv src/sequencer.sv src/dc_ctrl.sv src/dc.sv lib/ad5791.sv
+SRC := src/rf_decode.sv src/rf_phasor.sv src/rf_cordic.sv src/rf_core.sv src/sequencer.sv src/rf_nco_update.sv src/rf_ctrl.sv src/rf_format.sv src/rf.sv lib/zcu216_dac.sv
 
-TB ?= dc_tb
+TB ?= rf_tb
 # TB_SRC := sim/$(TB).sv
 TB_SRC := tb/$(TB).sv
 TARGET := $(TB)

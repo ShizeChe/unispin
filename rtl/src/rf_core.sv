@@ -23,16 +23,21 @@ module rf_core
 
      // control interface
      input  rf_ctrl_t i_ctrl,
+     
+     // rfdac interface
+     output logic [DAC_WIDTH*16-1:0] o_QIx8,
 
      // launcher interface
      input  logic i_start,
      output logic o_armed,
 
-     // output interface (verification only except o_QIx8)
+     // pipeline empty flag
+     output logic o_empty,
+
+     // verification signals
      output logic [$clog2(DEPTH)-1:0] o_addr,
      output logic [NUM_SAMPLE_WIDTH-1:0] o_sample_start,
-     output logic [NUM_SAMPLE_WIDTH-1:0] o_sample_end,
-     output logic [DAC_WIDTH*16-1:0] o_QIx8);
+     output logic [NUM_SAMPLE_WIDTH-1:0] o_sample_end);
 
     logic w_stall;
 
@@ -162,16 +167,34 @@ module rf_core
             o.r_QIx8 <= 'h0;
         end
         else if (!w_stall) begin
-            o_addr <= w_addr;
-            o_sample_start <= w_sample_start;
-            o_sample_end <= w_sample_end;
-            o_QIx8 <= w_QIx8;
+            o.r_addr <= w_addr;
+            o.r_sample_start <= w_sample_start;
+            o.r_sample_end <= w_sample_end;
+            o.r_QIx8 <= w_QIx8;
         end
     end
+
+    /*************
+    * stall logic
+    *************/
+
+    assign w_stall = (o_armed && !i_start) || !i_ctrl.w_nco_ready; 
+
+    /****************
+    * output signals
+    ****************/
+
+    assign o_QIx8 = o.r_QIx8;
 
     assign o_armed = |{r[0].r_arm, r[1].r_arm, r[2].r_arm, r[3].r_arm,
                        r[4].r_arm, r[5].r_arm, r[6].r_arm, r[7].r_arm};
 
-    assign w_stall = (o_armed && !i_start) || !i_ctrl.w_nco_ready; 
+    assign o_addr = o.r_addr;
+    assign o_sample_start = o.r_sample_start;
+    assign o_sample_end = o.r_sample_end;
+
+    assign o_empty = i_empty && p.r_samples_left == 'd0 &&
+        (&{r[0].r_bubble, r[1].r_bubble, r[2].r_bubble, r[3].r_bubble,
+           r[4].r_bubble, r[5].r_bubble, r[6].r_bubble, r[7].r_bubble});
 
 endmodule

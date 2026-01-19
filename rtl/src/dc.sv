@@ -29,7 +29,9 @@ module dc
      input  logic i_start,
      output logic o_armed,
 
-     // output interface (verification only)
+     output logic o_empty,
+
+     // verification signals
      output logic [$clog2(DEPTH)-1:0] o_addr,
      output logic [CORE_ITER_WIDTH-1:0] o_iter,
      output logic [SPI_DATA_WIDTH-1:0] o_spi_din,
@@ -86,7 +88,9 @@ module dc
         .i_start(i_start),
         .o_armed(o_armed),
 
-        // signals for verification only
+        .o_empty(o_empty),
+
+        // verification signals
         .o_addr(o_addr),
         .o_iter(o_iter),
         .o_spi_din(o_spi_din),

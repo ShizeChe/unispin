@@ -32,7 +32,10 @@ module dc_core
      input  logic i_start,
      output logic o_armed,
 
-     // output interface (verification only)
+     // pipeline empty flag
+     output logic o_empty,
+
+     // verification signals
      output logic [$clog2(DEPTH)-1:0] o_addr,
      output logic [ITER_WIDTH-1:0] o_iter,
      output logic [SPI_DATA_WIDTH-1:0] o_spi_din,
@@ -230,15 +233,24 @@ module dc_core
         end
     end
 
-    assign o_cs_n = s.r_cs_n;
-    assign o_ldac_n = h.r_ldac_n;
-    assign o_armed = s.r_arm && s.r_spi_done && (s.r_cs_up_cycles == 'd0);
+    /*************
+    * stall logic
+    *************/
 
     assign w_stall = (h.r_ldac_cycles > 'd0) || (h.r_cycles_left > 'd0) || (!h.r_ldac_n) ||
                      (!s.r_spi_done) || (s.r_cs_up_cycles > 'd0) || (!s.r_cs_n) ||
                      (o_armed && !i_start);
 
-    assign o_next = !w_stall && i.r_iters == 'd0 && !i_empty;
+    /****************
+    * output signals
+    ****************/
+
+    assign o_cs_n = s.r_cs_n;
+    assign o_ldac_n = h.r_ldac_n;
+
+    assign o_armed = s.r_arm && s.r_spi_done && (s.r_cs_up_cycles == 'd0);
+
+    assign o_next = !w_stall && (i.r_iters == 'd0) && !i_empty;
 
     assign o_addr = h.r_addr;
     assign o_iter = h.r_iter;
@@ -247,6 +259,10 @@ module dc_core
     assign o_spi_dout = h.r_spi_dout;
     assign o_ldac_cycles = h.r_ldac_cycles;
     assign o_cycles_left = h.r_cycles_left;
+
+    assign o_empty = i_empty && i.r_bubble && s.r_spi_done && (s.r_cs_up_cycles == 'd0) && 
+                     s.r_cs_n && (h.r_ldac_cycles == 'd0) && (h.r_cycles_left == 'd0) &&
+                     h.r_ldac_n;
 
 endmodule
 

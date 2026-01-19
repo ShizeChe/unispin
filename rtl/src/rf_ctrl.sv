@@ -14,7 +14,7 @@ module rf_ctrl
 
      output rf_ctrl_t o_ctrl,
 
-     input  logic i_seq_running,
+     input  logic i_running,
      input  logic i_nco_wait,
      output logic o_nco_wait,
 
@@ -36,11 +36,25 @@ module rf_ctrl
     logic w_new_ctrl;
     assign w_new_ctrl = (w_last0_ff2 && !w_last0_ff1);
 
-    logic [NCO_FREQ_WIDTH-1:0] r_nco_freq;
-    logic [NCO_PHASE_WIDTH-1:0] r_nco_phase;
-    logic [NCO_EN_WIDTH-1:0] r_nco_en;
-    logic [IQ_WIDTH-1:0] r_default_I;
-    logic [IQ_WIDTH-1:0] r_default_Q;
+    logic [NCO_FREQ_WIDTH-1:0] w_nco_freq, r_nco_freq;
+    logic [NCO_PHASE_WIDTH-1:0] w_nco_phase, r_nco_phase;
+    logic [IQ_WIDTH-1:0] w_default_I, r_default_I;
+    logic [IQ_WIDTH-1:0] w_default_Q, r_default_Q;
+    logic [NCO_EN_WIDTH-1:0] w_nco_en, r_nco_en;
+
+    always_comb begin
+        w_nco_freq = {i_regs[0], i_regs[1]}[NCO_FREQ_WIDTH-1:0];
+        w_nco_phase = i_regs[2][NCO_PHASE_WIDTH-1:0];
+        w_default_I = i_regs[3][IQ_WIDTH-1:0];
+        w_default_Q = i_regs[4][IQ_WIDTH-1:0];
+
+        w_nco_en[5] = (w_nco_phase == 'h0);
+        w_nco_en[4] = (w_nco_phase != 'h0) && (w_nco_phase[17:16] != r_nco_phase[17:16]);
+        w_nco_en[3] = (w_nco_phase != 'h0) && (w_nco_phase[15:0] != r_nco_phase[15:0]);
+        w_nco_en[2] = (w_nco_freq[47:32] != r_nco_freq[47:32]);
+        w_nco_en[1] = (w_nco_freq[31:16] != r_nco_freq[31:16]);
+        w_nco_en[0] = (w_nco_freq[15:0] != r_nco_freq[15:0]);
+    end
 
     logic r_start;
 
@@ -49,15 +63,17 @@ module rf_ctrl
             r_start <= 1'b0;
             r_nco_freq <= 'hA3D70A3D71;
             r_nco_phase <= 'h0;
+            r_nco_en <= 'h0;
             r_default_I <= 'h0;
             r_default_Q <= 'h0;
         end
-        else if (w_new_ctrl && !i_seq_running) begin
+        else if (w_new_ctrl && !i_running) begin
             r_start <= 1'b1;
-            r_nco_freq <= {i_regs[0], i_regs[1]}[NCO_FREQ_WIDTH-1:0];
-            r_nco_phase <= i_regs[2][NCO_PHASE_WIDTH-1:0];
-            r_default_I <= i_regs[3][IQ_WIDTH-1:0];
-            r_default_Q <= i_regs[4][IQ_WIDTH-1:0];
+            r_nco_freq <= w_nco_freq;
+            r_nco_phase <= w_nco_phase;
+            r_nco_en <= w_nco_en;
+            r_default_I <= w_default_I;
+            r_default_Q <= w_default_Q;
         end
         else begin
             r_start <= 1'b0;
@@ -72,7 +88,7 @@ module rf_ctrl
         .NCO_FREQ_WIDTH(NCO_FREQ_WIDTH),
         .NCO_PHASE_WIDTH(NCO_PHASE_WIDTH),
         .NCO_EN_WIDTH(NCO_EN_WIDTH)
-    ) NUPDT (
+    ) NCO_UPDATE (
         .i_clk(i_clk),
         .i_rst(i_rst),
         .i_wait(i_nco_wait),

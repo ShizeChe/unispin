@@ -6,12 +6,6 @@ module dc_tb;
 
     logic w_clk, w_rst;
 
-    logic [$clog2(DC_DEPTH)-1:0] w_addr;
-    logic [DC_INSN_WIDTH-1:0] w_insn;
-    logic w_next;
-    logic w_empty;
-    dc_insn_t w_insn_modified;
-
     logic w_sclk;
     logic w_mosi;
     logic w_miso;
@@ -29,12 +23,14 @@ module dc_tb;
         logic [DC_SPI_DATA_WIDTH-1:0] w_spi_dout;
         logic [DC_SPI_LDAC_WIDTH-1:0] w_ldac_cycles;
         logic [DC_CYCLE_WIDTH-1:0] w_cycles_left;
-    } dc_output_stg_t;
+    } dc_output_t;
 
-    dc_output_stg_t o;
+    dc_output_t o;
 
     logic w_start;
     logic w_armed;
+
+    logic w_empty;
 
     dc #(
         .SPI_DATA_WIDTH(DC_SPI_DATA_WIDTH),
@@ -65,6 +61,8 @@ module dc_tb;
         .i_start(w_start),
         .o_armed(w_armed),
 
+        .o_empty(w_empty),
+
         .o_addr(o.w_addr),
         .o_iter(o.w_iter),
         .o_spi_din(o.w_spi_din),
@@ -91,13 +89,13 @@ module dc_tb;
 
     localparam MAX_SEQ_ITERS = 10;
     localparam MAX_CORE_ITERS = 100;
-    localparam MAX_CYCLES = 1000;
+    localparam MAX_CYCLES = 2000;
 
-    dc_output_stg_t golden_seq [$];
+    dc_output_t golden_seq [$];
     int num_insns;
     int total_samples;
-    dc_output_stg_t out;
-    dc_output_stg_t golden_o;
+    dc_output_t out;
+    dc_output_t golden_o;
 
     dc_insn_t [0:DC_DEPTH-1] insns;
     for (genvar i = 0; i < DC_DEPTH; i++) begin : INSNS_GEN
@@ -290,7 +288,7 @@ module dc_tb;
         init;
 
         test = 0;
-        repeat (10) begin
+        repeat (100) begin
             $display("test%0d", test);
             rand_insns;
             test++;

@@ -27,7 +27,10 @@ module rf
 
      input  logic i_start,
      output logic o_armed,
+     
+     output logic o_empty,
 
+     // nco interface
      input  logic i_nco_wait,
      output logic o_nco_wait,
 
@@ -35,7 +38,12 @@ module rf
      input  logic i_nco_busy,
      output logic [NCO_FREQ_WIDTH-1:0] o_nco_freq,
      output logic [NCO_PHASE_WIDTH-1:0] o_nco_phase,
-     output logic [NCO_EN_WIDTH-1:0] o_nco_en);
+     output logic [NCO_EN_WIDTH-1:0] o_nco_en,
+
+     // verification signals
+     output logic [$clog2(DEPTH)-1:0] o_addr,
+     output logic [NUM_SAMPLE_WIDTH-1:0] o_sample_start,
+     output logic [NUM_SAMPLE_WIDTH-1:0] o_sample_end);
 
     logic w_next, w_empty;
     logic [$clog2(DEPTH)-1:0] w_addr;
@@ -82,14 +90,17 @@ module rf
 
         .i_ctrl(w_ctrl),
 
+        .o_QIx8(o_QIx8),
+
         .i_start(i_start),
         .o_armed(o_armed),
 
-        // signals for verifications only (except o_QIx8)
-        .o_addr(),
-        .o_sample_start(),
-        .o_sample_end(),
-        .o_QIx8(o_QIx8)
+        .o_empty(o_empty),
+
+        // verification signals
+        .o_addr(o_addr),
+        .o_sample_start(o_sample_start),
+        .o_sample_end(o_sample_end)
     );
 
     rf_ctrl #(
@@ -106,7 +117,7 @@ module rf
 
         .o_ctrl(w_ctrl),
 
-        .i_seq_running(!w_empty),
+        .i_running(!o_empty),
         .i_nco_wait(i_nco_wait),
         .o_nco_wait(o_nco_wait),
 
