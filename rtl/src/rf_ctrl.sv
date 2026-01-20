@@ -88,7 +88,7 @@ module rf_ctrl
         .NCO_FREQ_WIDTH(NCO_FREQ_WIDTH),
         .NCO_PHASE_WIDTH(NCO_PHASE_WIDTH),
         .NCO_EN_WIDTH(NCO_EN_WIDTH)
-    ) NCO_UPDATE (
+    ) FSM (
         .i_clk(i_clk),
         .i_rst(i_rst),
         .i_wait(i_nco_wait),
