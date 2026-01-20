@@ -68,7 +68,7 @@ module rf_ctrl
             r_default_Q <= 'h0;
         end
         else if (w_new_ctrl && !i_running) begin
-            r_start <= 1'b1;
+            r_start <= (w_nco_en != 6'b0);
             r_nco_freq <= w_nco_freq;
             r_nco_phase <= w_nco_phase;
             r_nco_en <= w_nco_en;

@@ -22,11 +22,11 @@
 #define MAX_DT (NS_PER_CYCLE * DC_MAX_HOLD_CYCLES)
 
 #define DC_DEPTH 10
-#define DC_TOTAL_REGS ((DC_DEPTH * DC_REG_PER_INSN) + 2)
+#define DC_SEQ_REGS ((DC_DEPTH * DC_REG_PER_INSN) + 2)
+#define DC_CTRL_REGS 4
 
 typedef struct {
     uint32_t iters;
-    uint32_t spi_dvsr;
     uint32_t spi_din;
     uint32_t dspi_din;
     uint32_t spi_rd;
@@ -37,10 +37,18 @@ typedef struct {
 } dc_insn_t;
 
 typedef struct {
+    int32_t dvsr;
+    int32_t cs_up_cycles;
+    int32_t ldac_cycles;
+} dc_ctrl_t;
+
+typedef struct {
+    dc_ctrl_t ctrl;
     uint32_t repeat;
     uint32_t len;
     dc_insn_t insns[DC_DEPTH];
-    uint32_t regs[DC_TOTAL_REGS];
+    uint32_t seq_regs[DC_SEQ_REGS];
+    int32_t ctrl_regs[DC_CTRL_REGS];
 } dc_program_t;
 
 typedef struct {
@@ -49,7 +57,6 @@ typedef struct {
     uint32_t has_vplus;
     uint32_t vplus;
     uint32_t ldc;
-    uint32_t dvsr;
 } dc_opt_t;
 
 typedef struct {

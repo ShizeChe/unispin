@@ -21,7 +21,7 @@ static inline int clog2_u32(uint32_t n) {
 #define RF_FNCO_BITS 48
 
 #define RF_FSAMPLING_HZ 4000000000ULL
-#define RF_FNCO_MIN (-(RF_FSAMPLING_HZ / 2))
+#define RF_FNCO_MIN (-((long double)RF_FSAMPLING_HZ / 2.0L))
 #define RF_FNCO_MAX ((RF_FSAMPLING_HZ / 2) - (RF_FSAMPLING_HZ / ldexpl(1.0L, RF_FNCO_BITS)))
 #define RF_DAC_HZ 2000000000ULL
 #define RF_DAC_GHZ 2.0
@@ -32,9 +32,16 @@ static inline int clog2_u32(uint32_t n) {
 #define RF_KBC_MIN  (-(int64_t)(1ULL << (RF_KBC_BITS - 1)))
 #define RF_KBC_MASK ((uint64_t)((1ULL << (RF_KBC_BITS)) - 1ULL))
 
+#define RF_PNCO_BITS 18
+#define RF_PNCO_MIN -180
+#define RF_PNCO_MAX (180 - (360 / ldexpl(1.0L, 18)))
+
+#define RF_IQ_BITS 14
+
 #define RF_DEPTH 16
 #define RF_REG_PER_INSN 4
-#define RF_TOTAL_REGS ((RF_DEPTH * RF_REG_PER_INSN) + 2)
+#define RF_SEQ_REGS ((RF_DEPTH * RF_REG_PER_INSN) + 2)
+#define RF_CTRL_REGS 6
 
 typedef struct {
     uint32_t arm;
@@ -46,11 +53,19 @@ typedef struct {
 } rf_insn_t;
 
 typedef struct {
+    int64_t nco_freq;
+    int32_t nco_phase;
+    int32_t default_I;
+    int32_t default_Q;
+} rf_ctrl_t;
+
+typedef struct {
+    rf_ctrl_t ctrl;
     uint32_t repeat;
-    uint64_t fnco;
     uint32_t len;
     rf_insn_t insns[RF_DEPTH];
-    uint32_t regs[RF_TOTAL_REGS];
+    uint32_t seq_regs[RF_SEQ_REGS];
+    int32_t ctrl_regs[RF_CTRL_REGS];
 } rf_program_t;
 
 typedef struct {

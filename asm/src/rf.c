@@ -17,24 +17,6 @@ static uint32_t rf_t2samples(double t_ns) {
     return samples;
 }
 
-/*static void rf_chp2insn(rf_chp_t *chp, rf_insn_t *insn, long double fnco_hz) {*/
-/*    long double f1_dpn = (chp->f1 - fnco_hz) * 360e-9;*/
-/*    long double f2_dpn = (chp->f2 - fnco_hz) * 360e-9;*/
-/*    long double k_deg = (f2_dpn - f1_dpn) / (4 * (long double)chp->t_ns);*/
-/*    long double b_deg = (f1_dpn + k_deg) / 2;*/
-/**/
-/*    uint64_t k = real2twos(-180, 180 - ldexpl(1.0L, -RF_KBC_BITS), RF_KBC_BITS, k_deg, 1);*/
-/*    uint64_t b = real2twos(-180, 180 - ldexpl(1.0L, -RF_KBC_BITS), RF_KBC_BITS, b_deg, 1);*/
-/**/
-/*    insn->arm = chp->opt.arm;*/
-/*    insn->kbc_mode = 1;*/
-/*    insn->kbc1 = k;*/
-/*    insn->kbc2 = b;*/
-/*    insn->samples = rf_t2samples(chp->t_ns);*/
-/*    insn->dsamples = rf_t2samples(chp->opt.tplus_ns);*/
-/**/
-/*}*/
-
 static void rf_chp2insn(rf_chp_t *chp, rf_insn_t *insn, long double fnco_hz) {
 
     long double k_deg = (chp->f2 - chp->f1) / ((long double)chp->t_ns) * 90e-9;
@@ -302,7 +284,7 @@ void rf_assemble(rf_program_t *prog) {
     for (unsigned int i = 0; i < prog->len; i++) {
 
         rf_insn_t *insn = &(prog->insns[i]);
-        uint32_t *reg = &(prog->regs[i * RF_REG_PER_INSN]);
+        uint32_t *reg = &(prog->seq_regs[i * RF_REG_PER_INSN]);
 
         reg[0] = (insn->arm << 18) | (insn->kbc_mode << 16) | 
                  ((uint32_t)(insn->kbc1 >> 20));
@@ -312,8 +294,18 @@ void rf_assemble(rf_program_t *prog) {
 
     }
 
-    prog->regs[RF_TOTAL_REGS-2] = prog->repeat;
-    prog->regs[RF_TOTAL_REGS-1] = 1;
+    prog->seq_regs[RF_SEQ_REGS-2] = prog->repeat;
+    prog->seq_regs[RF_SEQ_REGS-1] = 1;
+
+    prog->ctrl_regs[0] = (prog->ctrl.nco_freq >> 32);
+    prog->ctrl_regs[1] = prog->ctrl.nco_freq;
+    prog->ctrl_regs[2] = prog->ctrl.nco_phase;
+    prog->ctrl_regs[3] = prog->ctrl.default_I;
+    prog->ctrl_regs[4] = prog->ctrl.default_Q;
+
+    prog->ctrl_regs[RF_CTRL_REGS-1] = (prog->ctrl_regs[0] != -1) ||
+        (prog->ctrl_regs[1] != -1) || (prog->ctrl_regs[2] != -1) ||
+        (prog->ctrl_regs[3] != -1) || (prog->ctrl_regs[4] != -1);
 
 }
 
@@ -338,9 +330,14 @@ int rf_load_insns(int rf_channel, rf_program_t *rf_program) {
     }
 
     volatile uint32_t *rf_base = (volatile uint32_t *)((char *)rf_va);
-    *(rf_base + RF_TOTAL_REGS - 1) = 0;
-    for (int i = 0; i < RF_TOTAL_REGS; i++) {
-        *(rf_base + i) = rf_program->regs[i];
+    *(rf_base + RF_SEQ_REGS - 1) = 0;
+    for (int i = 0; i < RF_SEQ_REGS; i++) {
+        *(rf_base + i) = rf_program->seq_regs[i];
+    }
+    *(rf_base + RF_SEQ_REGS + RF_CTRL_REGS - 1) = 0;
+    for (int i = 0; i < RF_CTRL_REGS; i++) {
+        if (rf_program->ctrl_regs[i] != -1)
+            *(rf_base + RF_SEQ_REGS + i) = rf_program->ctrl_regs[i];
     }
 
 #if EXE

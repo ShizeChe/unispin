@@ -44,7 +44,6 @@ static void dc_swp2insn(dc_swp_t *swp, dc_insn_t *insn) {
     uint32_t din = (1u << 20) | ((uint32_t)v1_code & ((1u << 20) - 1u));
 
     insn->iters = steps;
-    insn->spi_dvsr = swp->opt.dvsr;
     insn->spi_din = din;
     insn->dspi_din = (uint32_t)dv;
     insn->spi_rd = swp->opt.rd;
@@ -60,7 +59,6 @@ static void dc_lvl2insn(dc_lvl_t *lvl, dc_insn_t *insn) {
     uint32_t din = (1u << 20) | dc_v2dac_code(lvl->v);
 
     insn->iters = 0;
-    insn->spi_dvsr = lvl->opt.dvsr;
     insn->spi_din = din;
     insn->dspi_din = lvl->opt.has_vplus ? lvl->opt.vplus : 0;
     insn->spi_rd = lvl->opt.rd;
@@ -76,7 +74,6 @@ static void dc_set2insn(dc_set_t *set, dc_insn_t *insn) {
     uint32_t din = (set->r << 20) | set->din;
 
     insn->iters = 0;
-    insn->spi_dvsr = set->opt.dvsr;
     insn->spi_din = din;
     insn->dspi_din = set->opt.has_vplus ? set->opt.vplus : 0;
     insn->spi_rd = set->opt.rd;
@@ -92,7 +89,6 @@ static void dc_get2insn(dc_get_t *get, dc_insn_t *insn) {
     uint32_t din = (1u << 23) | (get->r << 20);
 
     insn->iters = 0;
-    insn->spi_dvsr = get->opt.dvsr;
     insn->spi_din = din;
     insn->dspi_din = get->opt.has_vplus ? get->opt.vplus : 0;
     insn->spi_rd = get->opt.rd;
@@ -106,7 +102,6 @@ static void dc_get2insn(dc_get_t *get, dc_insn_t *insn) {
 static void dc_nop2insn(dc_nop_t *nop, dc_insn_t *insn) {
 
     insn->iters = 0;
-    insn->spi_dvsr = nop->opt.dvsr;
     insn->spi_din = 0;
     insn->dspi_din = nop->opt.has_vplus ? nop->opt.vplus : 0;
     insn->spi_rd = nop->opt.rd;
@@ -120,7 +115,6 @@ static void dc_nop2insn(dc_nop_t *nop, dc_insn_t *insn) {
 static void dc_ful2insn(dc_ful_t *ful, dc_insn_t *insn) {
 
     insn->iters = 0;
-    insn->spi_dvsr = ful->opt.dvsr;
     insn->spi_din = 0;
     insn->dspi_din = ful->opt.has_vplus ? ful->opt.vplus : 0;
     insn->spi_rd = ful->opt.rd;
@@ -137,7 +131,6 @@ static int dc_parse_opt(char *paren, dc_opt_t *opt) {
     opt->rd = 0;
     opt->vplus = 0;
     opt->ldc = 0;
-    opt->dvsr = DC_SPI_DVSR;
 
     char tmp[256];
     snprintf(tmp, sizeof(tmp), "%s", paren);
@@ -170,16 +163,6 @@ static int dc_parse_opt(char *paren, dc_opt_t *opt) {
             opt->has_vplus = 1;
             opt->vplus = v;
 
-        } else if (strncmp(tok, "dvsr=", 5) == 0) {
-
-            char *endp = NULL;
-            uint32_t dvsr = strtoul(tok + 5, &endp, 0);
-
-            if (endp == tok + 5 || *endp != '\0') 
-                return -1;
-
-            opt->dvsr = dvsr;
-
         } else {
             // unknown flag/token inside parens
             return -1;
@@ -197,7 +180,6 @@ static int dc_parse_swp(char *line, dc_swp_t *swp) {
     swp->opt.has_vplus = 0;
     swp->opt.vplus = 0;
     swp->opt.ldc = 0;
-    swp->opt.dvsr = DC_SPI_DVSR;
 
     double v1, v2;
     uint32_t n;
@@ -239,7 +221,6 @@ static int dc_parse_lvl(char *line, dc_lvl_t *lvl) {
     lvl->opt.has_vplus = 0;
     lvl->opt.vplus = 0;
     lvl->opt.ldc = 0;
-    lvl->opt.dvsr = DC_SPI_DVSR;
 
     double v;
 
@@ -276,7 +257,6 @@ static int dc_parse_set(char *line, dc_set_t *set) {
     set->opt.has_vplus = 0;
     set->opt.vplus = 0;
     set->opt.ldc = 0;
-    set->opt.dvsr = DC_SPI_DVSR;
 
     char r[4] = {0};
     uint32_t din;
@@ -321,7 +301,6 @@ static int dc_parse_get(char *line, dc_get_t *get) {
     get->opt.has_vplus = 0;
     get->opt.vplus = 0;
     get->opt.ldc = 0;
-    get->opt.dvsr = DC_SPI_DVSR;
 
     char r[4] = {0};
     char paren[256] = {0};
@@ -361,7 +340,6 @@ static int dc_parse_nop(char *line, dc_nop_t *nop) {
     nop->opt.has_vplus = 0;
     nop->opt.vplus = 0;
     nop->opt.ldc = 0;
-    nop->opt.dvsr = DC_SPI_DVSR;
 
     char paren[256] = {0};
 
@@ -384,7 +362,6 @@ static int dc_parse_ful(char *line, dc_ful_t *ful) {
     ful->opt.has_vplus = 0;
     ful->opt.vplus = 0;
     ful->opt.ldc = 0;
-    ful->opt.dvsr = DC_SPI_DVSR;
 
     uint32_t its, din, cyc;
 
@@ -472,10 +449,9 @@ void dc_assemble(dc_program_t *prog) {
     for (unsigned int i = 0; i < prog->len; i++) {
 
         dc_insn_t *insn = &(prog->insns[i]);
-        uint32_t *reg = &(prog->regs[i * DC_REG_PER_INSN]);
+        uint32_t *reg = &(prog->seq_regs[i * DC_REG_PER_INSN]);
 
-        reg[0] = (insn->iters << 18) | (insn->spi_dvsr << 14) | 
-                 (insn->spi_din >> 10);
+        reg[0] = (insn->iters << 14) | (insn->spi_din >> 10);
         reg[1] = (insn->spi_din << 22) | (insn->dspi_din << 2) | 
                  (insn->spi_rd << 1) | insn->strb_ldac;
         reg[2] = (insn->hold_cycles << 2) | (insn->modify << 1) | 
@@ -483,8 +459,15 @@ void dc_assemble(dc_program_t *prog) {
 
     }
 
-    prog->regs[DC_TOTAL_REGS-2] = prog->repeat;
-    prog->regs[DC_TOTAL_REGS-1] = 1;
+    prog->seq_regs[DC_SEQ_REGS-2] = prog->repeat;
+    prog->seq_regs[DC_SEQ_REGS-1] = 1;
+
+    prog->ctrl_regs[0] = prog->ctrl.dvsr;
+    prog->ctrl_regs[1] = prog->ctrl.cs_up_cycles;
+    prog->ctrl_regs[2] = prog->ctrl.ldac_cycles;
+
+    prog->ctrl_regs[DC_CTRL_REGS-1] = (prog->ctrl_regs[0] != -1) ||
+        (prog->ctrl_regs[1] != -1) || (prog->ctrl_regs[2] != -1);
 
 }
 
@@ -509,9 +492,14 @@ int dc_load_insns(int dc_channel, dc_program_t *dc_program) {
     }
 
     volatile uint32_t *dc_base = (volatile uint32_t *)((char *)dc_va);
-    *(dc_base + DC_TOTAL_REGS - 1) = 0;
-    for (int i = 0; i < DC_TOTAL_REGS; i++) {
-        *(dc_base + i) = dc_program->regs[i];
+    *(dc_base + DC_SEQ_REGS - 1) = 0;
+    for (int i = 0; i < DC_SEQ_REGS; i++) {
+        *(dc_base + i) = dc_program->seq_regs[i];
+    }
+    *(dc_base + DC_SEQ_REGS + DC_CTRL_REGS - 1) = 0;
+    for (int i = 0; i < DC_CTRL_REGS; i++) {
+        if (dc_program->ctrl_regs[i] != -1)
+            *(dc_base + DC_SEQ_REGS + i) = dc_program->ctrl_regs[i];
     }
 
 #if EXE
