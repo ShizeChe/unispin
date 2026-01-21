@@ -1,119 +1,191 @@
 .program dc0
+.dvsr 20
+.csup 20
+.ldac 20
 .repeat 1
     set cr 0x2
     swp v1=0 v2=10 n=100 dt=1us (arm)
 
 .program dc1
+.dvsr 20
+.csup 20
+.ldac 20
 .repeat 1
     set cr 0x2
     swp v1=0 v2=10 n=100 dt=1us (arm)
 
 .program dc2
+.dvsr 20
+.csup 20
+.ldac 20
 .repeat 1
     set cr 0x2
     swp v1=0 v2=10 n=100 dt=1us (arm)
 
 .program dc3
+.dvsr 20
+.csup 20
+.ldac 20
 .repeat 1
     set cr 0x2
     swp v1=0 v2=10 n=100 dt=1us (arm)
 
 .program dc4
+.dvsr 20
+.csup 20
+.ldac 20
 .repeat 1
     set cr 0x2
     swp v1=0 v2=10 n=100 dt=1us (arm)
 
 .program dc5
+.dvsr 20
+.csup 20
+.ldac 20
 .repeat 1
     set cr 0x2
     swp v1=0 v2=10 n=100 dt=1us (arm)
 
 .program dc6
+.dvsr 20
+.csup 20
+.ldac 20
 .repeat 1
     set cr 0x2
     swp v1=0 v2=10 n=100 dt=1us (arm)
 
 .program dc7
+.dvsr 20
+.csup 20
+.ldac 20
 .repeat 1
     set cr 0x2
     swp v1=0 v2=10 n=100 dt=1us (arm)
 
 .program dc8
+.dvsr 20
+.csup 20
+.ldac 20
 .repeat 1
     set cr 0x2
     swp v1=0 v2=10 n=100 dt=1us (arm)
 
 .program dc9
+.dvsr 20
+.csup 20
+.ldac 20
 .repeat 1
     set cr 0x2
     swp v1=0 v2=10 n=100 dt=1us (arm)
 
 .program dc10
+.dvsr 20
+.csup 20
+.ldac 20
 .repeat 1
     set cr 0x2
     swp v1=0 v2=10 n=100 dt=1us (arm)
 
 .program dc11
+.dvsr 20
+.csup 20
+.ldac 20
 .repeat 1
     set cr 0x2
     swp v1=0 v2=10 n=100 dt=1us (arm)
 
 .program dc12
+.dvsr 20
+.csup 20
+.ldac 20
 .repeat 1
     set cr 0x2
     swp v1=0 v2=10 n=100 dt=1us (arm)
 
 .program dc13
+.dvsr 20
+.csup 20
+.ldac 20
 .repeat 1
     set cr 0x2
     swp v1=0 v2=10 n=100 dt=1us (arm)
 
 .program dc14
+.dvsr 20
+.csup 20
+.ldac 20
 .repeat 1
     set cr 0x2
     swp v1=0 v2=10 n=100 dt=1us (arm)
 
 .program dc15
+.dvsr 20
+.csup 20
+.ldac 20
 .repeat 1
     set cr 0x2
     swp v1=0 v2=10 n=100 dt=1us (arm)
 
 .program dc16
+.dvsr 20
+.csup 20
+.ldac 20
 .repeat 1
     set cr 0x2
     swp v1=0 v2=10 n=100 dt=1us (arm)
 
 .program dc17
+.dvsr 20
+.csup 20
+.ldac 20
 .repeat 1
     set cr 0x2
     swp v1=0 v2=10 n=100 dt=1us (arm)
 
 .program dc18
+.dvsr 20
+.csup 20
+.ldac 20
 .repeat 1
     set cr 0x2
     swp v1=0 v2=10 n=100 dt=1us (arm)
 
 .program dc19
+.dvsr 20
+.csup 20
+.ldac 20
 .repeat 1
     set cr 0x2
     swp v1=0 v2=10 n=100 dt=1us (arm)
 
 .program dc20
+.dvsr 20
+.csup 20
+.ldac 20
 .repeat 1
     set cr 0x2
     swp v1=0 v2=10 n=100 dt=1us (arm)
 
 .program dc21
+.dvsr 20
+.csup 20
+.ldac 20
 .repeat 1
     set cr 0x2
     swp v1=0 v2=10 n=100 dt=1us (arm)
 
 .program dc22
+.dvsr 20
+.csup 20
+.ldac 20
 .repeat 1
     set cr 0x2
     swp v1=0 v2=10 n=100 dt=1us (arm)
 
 .program dc23
+.dvsr 20
+.csup 20
+.ldac 20
 .repeat 1
     set cr 0x2
     swp v1=0 v2=10 n=100 dt=1us (arm)

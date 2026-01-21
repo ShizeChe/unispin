@@ -110,7 +110,8 @@ module pl
 
     logic w_dcrfli_clk, w_dcrfli_rst_n;
 
-    logic [0:NUM_DC_CHANNEL-1][0:DC_TOTAL_REGS-1][31:0] w_dc_regs;
+    logic [0:NUM_DC_CHANNEL-1][0:DC_SEQ_REGS-1][31:0] w_dc_seq_regs;
+    logic [0:NUM_DC_CHANNEL-1][0:DC_CTRL_REGS-1][31:0] w_dc_ctrl_regs;
 
     logic [0:NUM_DC_CHANNEL-1] w_dc_sclk_bus;
     logic [0:NUM_DC_CHANNEL-1] w_dc_mosi_bus;
@@ -121,13 +122,20 @@ module pl
 
     logic [NUM_DC_CHANNEL-1:0] w_dc_armed_bus;
 
-    logic [0:NUM_RF_CHANNEL-1][0:RF_TOTAL_REGS-1][31:0] w_rf_regs;
+    logic [0:NUM_RF_CHANNEL-1][0:RF_SEQ_REGS-1][31:0] w_rf_seq_regs;
+    logic [0:NUM_RF_CHANNEL-1][0:RF_CTRL_REGS-1][31:0] w_rf_ctrl_regs;
 
     logic [0:NUM_RF_CHANNEL-1][RF_DAC_WIDTH*16-1:0] w_rf_QIx8_bus;
 
     logic [NUM_RF_CHANNEL-1:0] w_rf_armed_bus;
 
     logic [0:NUM_RF_CHANNEL-1] w_rf_ready_bus;
+
+    logic [0:(NUM_RF_CHANNEL+1)/2-1] w_rf_nco_req_bus;
+    logic [0:(NUM_RF_CHANNEL+1)/2-1] w_rf_nco_tile_busy_bus;
+    logic [0:NUM_RF_CHANNEL-1][RF_NCO_FREQ_WIDTH-1:0] w_rf_nco_freq_bus;
+    logic [0:NUM_RF_CHANNEL-1][RF_NCO_PHASE_WIDTH-1:0] w_rf_nco_phase_bus;
+    logic [0:NUM_RF_CHANNEL-1][RF_NCO_EN_WIDTH-1:0] w_rf_nco_en_bus;
 
     logic [0:LCH_TOTAL_REGS-1][31:0] w_lch_regs;
 
@@ -150,38 +158,70 @@ module pl
         .dcrfli_rst_n(w_dcrfli_rst_n),
 
         // dc x 24
-        .o_regs_0(w_dc_regs[0]),
-        .o_regs_1(w_dc_regs[1]),
-        .o_regs_2(w_dc_regs[2]),
-        .o_regs_3(w_dc_regs[3]),
-        .o_regs_4(w_dc_regs[4]),
-        .o_regs_5(w_dc_regs[5]),
-        .o_regs_6(w_dc_regs[6]),
-        .o_regs_7(w_dc_regs[7]),
-        .o_regs_8(w_dc_regs[8]),
-        .o_regs_9(w_dc_regs[9]),
-        .o_regs_10(w_dc_regs[10]),
-        .o_regs_11(w_dc_regs[11]),
-        .o_regs_12(w_dc_regs[12]),
-        .o_regs_13(w_dc_regs[13]),
-        .o_regs_14(w_dc_regs[14]),
-        .o_regs_15(w_dc_regs[15]),
-        .o_regs_16(w_dc_regs[16]),
-        .o_regs_17(w_dc_regs[17]),
-        .o_regs_18(w_dc_regs[18]),
-        .o_regs_19(w_dc_regs[19]),
-        .o_regs_20(w_dc_regs[20]),
-        .o_regs_21(w_dc_regs[21]),
-        .o_regs_22(w_dc_regs[22]),
-        .o_regs_23(w_dc_regs[23]),
+        .o_dc_seq_regs0(w_dc_seq_regs[0]),
+        .o_dc_seq_regs1(w_dc_seq_regs[1]),
+        .o_dc_seq_regs2(w_dc_seq_regs[2]),
+        .o_dc_seq_regs3(w_dc_seq_regs[3]),
+        .o_dc_seq_regs4(w_dc_seq_regs[4]),
+        .o_dc_seq_regs5(w_dc_seq_regs[5]),
+        .o_dc_seq_regs6(w_dc_seq_regs[6]),
+        .o_dc_seq_regs7(w_dc_seq_regs[7]),
+        .o_dc_seq_regs8(w_dc_seq_regs[8]),
+        .o_dc_seq_regs9(w_dc_seq_regs[9]),
+        .o_dc_seq_regs10(w_dc_seq_regs[10]),
+        .o_dc_seq_regs11(w_dc_seq_regs[11]),
+        .o_dc_seq_regs12(w_dc_seq_regs[12]),
+        .o_dc_seq_regs13(w_dc_seq_regs[13]),
+        .o_dc_seq_regs14(w_dc_seq_regs[14]),
+        .o_dc_seq_regs15(w_dc_seq_regs[15]),
+        .o_dc_seq_regs16(w_dc_seq_regs[16]),
+        .o_dc_seq_regs17(w_dc_seq_regs[17]),
+        .o_dc_seq_regs18(w_dc_seq_regs[18]),
+        .o_dc_seq_regs19(w_dc_seq_regs[19]),
+        .o_dc_seq_regs20(w_dc_seq_regs[20]),
+        .o_dc_seq_regs21(w_dc_seq_regs[21]),
+        .o_dc_seq_regs22(w_dc_seq_regs[22]),
+        .o_dc_seq_regs23(w_dc_seq_regs[23]),
+
+        .o_dc_ctrl_regs0(w_dc_ctrl_regs[0]),
+        .o_dc_ctrl_regs1(w_dc_ctrl_regs[1]),
+        .o_dc_ctrl_regs2(w_dc_ctrl_regs[2]),
+        .o_dc_ctrl_regs3(w_dc_ctrl_regs[3]),
+        .o_dc_ctrl_regs4(w_dc_ctrl_regs[4]),
+        .o_dc_ctrl_regs5(w_dc_ctrl_regs[5]),
+        .o_dc_ctrl_regs6(w_dc_ctrl_regs[6]),
+        .o_dc_ctrl_regs7(w_dc_ctrl_regs[7]),
+        .o_dc_ctrl_regs8(w_dc_ctrl_regs[8]),
+        .o_dc_ctrl_regs9(w_dc_ctrl_regs[9]),
+        .o_dc_ctrl_regs10(w_dc_ctrl_regs[10]),
+        .o_dc_ctrl_regs11(w_dc_ctrl_regs[11]),
+        .o_dc_ctrl_regs12(w_dc_ctrl_regs[12]),
+        .o_dc_ctrl_regs13(w_dc_ctrl_regs[13]),
+        .o_dc_ctrl_regs14(w_dc_ctrl_regs[14]),
+        .o_dc_ctrl_regs15(w_dc_ctrl_regs[15]),
+        .o_dc_ctrl_regs16(w_dc_ctrl_regs[16]),
+        .o_dc_ctrl_regs17(w_dc_ctrl_regs[17]),
+        .o_dc_ctrl_regs18(w_dc_ctrl_regs[18]),
+        .o_dc_ctrl_regs19(w_dc_ctrl_regs[19]),
+        .o_dc_ctrl_regs20(w_dc_ctrl_regs[20]),
+        .o_dc_ctrl_regs21(w_dc_ctrl_regs[21]),
+        .o_dc_ctrl_regs22(w_dc_ctrl_regs[22]),
+        .o_dc_ctrl_regs23(w_dc_ctrl_regs[23]),
 
         // rf x 6
-        .o_regs_24(w_rf_regs[0]),
-        .o_regs_25(w_rf_regs[1]),
-        .o_regs_26(w_rf_regs[2]),
-        .o_regs_27(w_rf_regs[3]),
-        .o_regs_28(w_rf_regs[4]),
-        .o_regs_29(w_rf_regs[5]),
+        .o_rf_seq_regs0(w_rf_seq_regs[0]),
+        .o_rf_seq_regs1(w_rf_seq_regs[1]),
+        .o_rf_seq_regs2(w_rf_seq_regs[2]),
+        .o_rf_seq_regs3(w_rf_seq_regs[3]),
+        .o_rf_seq_regs4(w_rf_seq_regs[4]),
+        .o_rf_seq_regs5(w_rf_seq_regs[5]),
+
+        .o_rf_ctrl_regs0(w_rf_ctrl_regs[0]),
+        .o_rf_ctrl_regs1(w_rf_ctrl_regs[1]),
+        .o_rf_ctrl_regs2(w_rf_ctrl_regs[2]),
+        .o_rf_ctrl_regs3(w_rf_ctrl_regs[3]),
+        .o_rf_ctrl_regs4(w_rf_ctrl_regs[4]),
+        .o_rf_ctrl_regs5(w_rf_ctrl_regs[5]),
 
         // rf dac tile 228-0/1
         .s00_axis_0_tdata(w_rf_QIx8_bus[0]),
@@ -201,6 +241,18 @@ module pl
         .vout03_0_v_n(o_vout03_n),
         .vout03_0_v_p(o_vout03_p),
 
+        // rf dac tile 228 nco update
+        .dac0_nco_0_converter0_nco_freq('h0),
+        .dac0_nco_0_converter0_nco_phase('h0),
+        .dac0_nco_0_converter0_phase_reset(1'b0),
+        .dac0_nco_0_converter0_update_en('h0),
+        .dac0_nco_0_converter2_nco_freq('h0),
+        .dac0_nco_0_converter2_nco_phase('h0),
+        .dac0_nco_0_converter2_phase_reset(1'b0),
+        .dac0_nco_0_converter2_update_en('h0),
+        .dac0_nco_0_nco_update_busy('h0),
+        .dac0_nco_0_nco_update_request(1'b0),
+
         // rf dac tile 229-0/1
         .s10_axis_0_tdata(w_rf_QIx8_bus[2]),
         .s10_axis_0_tready(w_rf_ready_bus[2]),
@@ -218,6 +270,18 @@ module pl
         .vout12_0_v_p(o_vout12_p),
         .vout13_0_v_n(o_vout13_n),
         .vout13_0_v_p(o_vout13_p),
+
+        // rf dac tile 229 nco update
+        .dac1_nco_0_converter0_nco_freq('h0),
+        .dac1_nco_0_converter0_nco_phase('h0),
+        .dac1_nco_0_converter0_phase_reset(1'b0),
+        .dac1_nco_0_converter0_update_en('h0),
+        .dac1_nco_0_converter2_nco_freq('h0),
+        .dac1_nco_0_converter2_nco_phase('h0),
+        .dac1_nco_0_converter2_phase_reset(1'b0),
+        .dac1_nco_0_converter2_update_en('h0),
+        .dac1_nco_0_nco_update_busy('h0),
+        .dac1_nco_0_nco_update_request(1'b0),
 
         // rf dac tile 230-0/1
         .s20_axis_0_tdata(w_rf_QIx8_bus[4]),
@@ -237,6 +301,18 @@ module pl
         .vout23_0_v_n(o_vout23_n),
         .vout23_0_v_p(o_vout23_p),
 
+        // rf dac tile 230 nco update
+        .dac2_nco_0_converter0_nco_freq('h0),
+        .dac2_nco_0_converter0_nco_phase('h0),
+        .dac2_nco_0_converter0_phase_reset(1'b0),
+        .dac2_nco_0_converter0_update_en('h0),
+        .dac2_nco_0_converter2_nco_freq('h0),
+        .dac2_nco_0_converter2_nco_phase('h0),
+        .dac2_nco_0_converter2_phase_reset(1'b0),
+        .dac2_nco_0_converter2_update_en('h0),
+        .dac2_nco_0_nco_update_busy('h0),
+        .dac2_nco_0_nco_update_request(1'b0),
+
         // rf adc tile 225-0/1
         .m10_axis_tvalid_0(w_li_valid_bus[0]),
         .vin10_0_v_n(i_vin10_n),
@@ -249,7 +325,7 @@ module pl
         .sysref_in_0_diff_p(i_sysref_p),
 
         // launch x 1
-        .o_regs_30(w_lch_regs)
+        .o_lch_regs(w_lch_regs)
 
     );
 
@@ -263,7 +339,8 @@ module pl
         .i_rst(!w_dcrfli_rst_n),
 
         // dc
-        .i_dc_regs(w_dc_regs),
+        .i_dc_seq_regs(w_dc_seq_regs),
+        .i_dc_ctrl_regs(w_dc_ctrl_regs),
 
         .o_dc_sclk_bus(w_dc_sclk_bus),
         .o_dc_mosi_bus(w_dc_mosi_bus),
@@ -273,18 +350,37 @@ module pl
 
         .o_dc_armed_bus(w_dc_armed_bus),
 
+        .o_dc_empty_bus(),
+
+        .o_dc_eop_bus(),
+
         // rf
-        .i_rf_regs(w_rf_regs),
+        .i_rf_seq_regs(w_rf_seq_regs),
+        .i_rf_ctrl_regs(w_rf_ctrl_regs),
+
         .o_rf_QIx8_bus(w_rf_QIx8_bus),
 
         .o_rf_armed_bus(w_rf_armed_bus),
 
+        .o_rf_empty_bus(),
+
+        .o_rf_nco_req_bus(w_rf_nco_req_bus),
+        .i_rf_nco_busy_bus(w_rf_nco_tile_busy_bus),
+        .o_rf_nco_freq_bus(w_rf_nco_freq_bus),
+        .o_rf_nco_phase_bus(w_rf_nco_phase_bus),
+        .o_rf_nco_en_bus(w_rf_nco_en_bus),
+
+        .o_rf_eop_bus(),
+
         // launch
         .i_lch_regs(w_lch_regs),
         
+        // button
         .i_btn(i_btn_w)
     );
-    
+
+    assign w_rf_nco_tile_busy_bus = 'h0;
+
     assign w_dc_clr = 1'b0;
     assign w_dc_rst = 1'b0;
 
@@ -314,17 +410,4 @@ module pl
         .*
     );
     
-    ila_0 ILA (
-        .clk(w_dcrfli_clk), // input wire clk
-
-        .probe0(DCRFLI.LCH.i_rst), // input wire [0:0]  probe0  
-        .probe1(DCRFLI.LCH.r_dc_active_mask), // input wire [23:0]  probe1 
-        .probe2(DCRFLI.LCH.i_dc_armed), // input wire [23:0]  probe2 
-        .probe3(DCRFLI.LCH.o_dc_start), // input wire [23:0]  probe3 
-        .probe4(DCRFLI.LCH.r_rf_active_mask), // input wire [5:0]  probe4 
-        .probe5(DCRFLI.LCH.i_rf_armed), // input wire [5:0]  probe5 
-        .probe6(DCRFLI.LCH.o_rf_start), // input wire [5:0]  probe6 
-        .probe7(DCRFLI.LCH.i_trigger) // input wire [0:0]  probe7
-    );
-
 endmodule

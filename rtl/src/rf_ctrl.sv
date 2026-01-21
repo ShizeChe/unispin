@@ -80,9 +80,29 @@ module rf_ctrl
         end
     end
 
-    assign o_nco_freq = r_nco_freq;
-    assign o_nco_phase = r_nco_phase;
-    assign o_nco_en = r_nco_en;
+    logic r_start_ff1;
+    logic [NCO_FREQ_WIDTH-1:0] r_nco_freq_ff1;
+    logic [NCO_PHASE_WIDTH-1:0] r_nco_phase_ff1;
+    logic [NCO_EN_WIDTH-1:0] r_nco_en_ff1;
+
+    always_ff @(posedge i_clk) begin
+        if (i_rst) begin
+            r_start_ff1 <= 1'b0;
+            r_nco_freq_ff1 <= 'h0;
+            r_nco_phase_ff1 <= 'h0;
+            r_nco_en_ff1 <= 'h0;
+        end
+        else begin
+            r_start_ff1 <= r_start;
+            r_nco_freq_ff1 <= r_nco_freq;
+            r_nco_phase_ff1 <= r_nco_phase;
+            r_nco_en_ff1 <= r_nco_en;
+        end
+    end
+
+    assign o_nco_freq = r_nco_freq_ff1;
+    assign o_nco_phase = r_nco_phase_ff1;
+    assign o_nco_en = r_nco_en_ff1;
 
     rf_nco_update #(
         .NCO_FREQ_WIDTH(NCO_FREQ_WIDTH),
@@ -93,7 +113,7 @@ module rf_ctrl
         .i_rst(i_rst),
         .i_wait(i_nco_wait),
         .o_wait(o_nco_wait),
-        .i_start(r_start),
+        .i_start(r_start_ff1),
         .o_req(o_nco_req),
         .i_busy(i_nco_busy)
     );

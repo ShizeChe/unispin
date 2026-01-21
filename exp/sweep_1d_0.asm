@@ -1,10 +1,10 @@
 .program dc0
-.dvsr 20
-.csup 20
-.ldac 20
+.dvsr 65535
+.csup 65535
+.ldac 65535
 .repeat 1
     set cr 0x2
-    swp v1=-10 v2=10 n=109 dt=1us (arm)
+    swp v1=-5 v2=5 n=10 dt=50ms (arm)
 
 .launch dc0
 

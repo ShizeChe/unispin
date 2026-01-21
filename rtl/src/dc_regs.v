@@ -2,8 +2,8 @@
 `timescale 1ns / 1ps
 
 module dc_regs
-   #(parameter NUM_SEQ_REGS=DC_SEQ_REGS,
-     parameter NUM_CTRL_REGS=DC_CTRL_REGS,
+   #(parameter NUM_SEQ_REGS=32,
+     parameter NUM_CTRL_REGS=4,
      parameter ADDR_WIDTH=$clog2(NUM_SEQ_REGS+NUM_CTRL_REGS)+2)
     (input  wire s_axi_aclk,
      input  wire s_axi_aresetn,
