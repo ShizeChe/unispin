@@ -1,13 +1,8 @@
 .program dc2
+.dvsr 65535
+.csup 65535
+.ldac 65535
 .repeat 1
     set cr 0x2
-    swp v1=-10 v2=10 n=100 dt=1us (arm)
-    swp v1=10 v2=-10 n=100 dt=1us
+    swp v1=-5 v2=5 n=10 dt=50ms
 
-.program dc3
-.repeat 1
-    set cr 0x2
-    swp v1=10 v2=-10 n=100 dt=1us (arm)
-    swp v1=-10 v2=10 n=100 dt=1us
-
-.launch dc2 dc3

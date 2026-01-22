@@ -381,8 +381,8 @@ module pl
 
     assign w_rf_nco_tile_busy_bus = 'h0;
 
-    assign w_dc_clr = 1'b0;
-    assign w_dc_rst = 1'b0;
+    assign w_dc_clr = 1'b1;
+    assign w_dc_rst = 1'b1;
 
     io #(
         .NUM_DC_CHANNEL(NUM_DC_CHANNEL),
