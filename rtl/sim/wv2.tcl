@@ -256,13 +256,13 @@ for {set ch 23} {$ch >= 0} {incr ch -1} {
     wvSelectGroup -win $nw "dc/ch$ch/CTRL"
     wvAddSubGroup -win $nw "new"
 
-    wvSetPosition -win $nw [format {("dc/ch%d/SEQ" 0)} $ch]
+    wvSetPosition -win $nw [format {("dc/ch%d/CTRL" 0)} $ch]
     wvAddSignal -win $nw "/simulator/DCRFLI/DC_GEN\[$ch\]/DC/CTRL/o_ctrl" \
                          "/simulator/DCRFLI/DC_GEN\[$ch\]/DC/CTRL/r_dvsr" \
                          "/simulator/DCRFLI/DC_GEN\[$ch\]/DC/CTRL/r_cs_up_cycles" \
                          "/simulator/DCRFLI/DC_GEN\[$ch\]/DC/CTRL/r_ldac_cycles"
 
-    wvSetPosition -win $nw [format {("dc/ch%d/SEQ/new" 0)} $ch]
+    wvSetPosition -win $nw [format {("dc/ch%d/CTRL/new" 0)} $ch]
     wvAddSignal -win $nw "/simulator/DCRFLI/DC_GEN\[$ch\]/DC/CTRL/i_regs" \
                          "/simulator/DCRFLI/DC_GEN\[$ch\]/DC/CTRL/w_last0" \
                          "/simulator/DCRFLI/DC_GEN\[$ch\]/DC/CTRL/w_last0_ff1" \
