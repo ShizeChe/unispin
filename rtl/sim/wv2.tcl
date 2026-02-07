@@ -1,5 +1,6 @@
 set nw [wvCreateWindow]
-wvRenameGroup -win $nw {G1} {dc}
+wvRenameGroup -win $nw {G1} {uart}
+wvAddGroup -win $nw {dc}
 wvAddGroup -win $nw {rf}
 wvAddGroup -win $nw {launch}
 wvAddGroup -win $nw {v}
@@ -81,7 +82,12 @@ wvAddSignal -win $nw "/simulator/DCRFLI/LCH/i_regs" \
                      "/simulator/DCRFLI/LCH/w_last0" \
                      "/simulator/DCRFLI/LCH/w_last0_ff1" \
                      "/simulator/DCRFLI/LCH/w_last0_ff2" \
-                     "/simulator/DCRFLI/LCH/w_new_stream"
+                     "/simulator/DCRFLI/LCH/w_new_stream" \
+                     "/simulator/DCRFLI/LCH/i_uregs" \
+                     "/simulator/DCRFLI/LCH/w_ulast0" \
+                     "/simulator/DCRFLI/LCH/w_ulast0_ff1" \
+                     "/simulator/DCRFLI/LCH/w_ulast0_ff2" \
+                     "/simulator/DCRFLI/LCH/w_new_ustream"
 
 wvSetPosition -win $nw {("launch/LCH/armed" 0)}
 wvAddSignal -win $nw "/simulator/DCRFLI/LCH/i_trigger" \
@@ -113,6 +119,106 @@ wvCollapseGroup -win $nw "launch/LCH/armed"
 wvCollapseGroup -win $nw "launch/LCH/start"
 wvCollapseGroup -win $nw "launch/LCH"
 wvCollapseGroup -win $nw "launch"
+
+# uart regs
+wvSelectGroup -win $nw "uart"
+wvAddSubGroup -win $nw "UREGS"
+wvAddSubGroup -win $nw "TSMT"
+wvAddSubGroup -win $nw "RECV"
+
+wvSelectGroup -win $nw "uart/RECV"
+wvAddSubGroup -win $nw "RXFIFO"
+
+wvSetPosition -win $nw {("uart/RECV" 0)}
+wvAddSignal -win $nw "/simulator/UREGS/UART/RECV/i_clk" \
+                     "/simulator/UREGS/UART/RECV/i_rst" \
+                     "/simulator/UREGS/UART/RECV/r_state" \
+                     "/simulator/UREGS/UART/RECV/i_rx" \
+                     "/simulator/UREGS/UART/RECV/i_sample_tick" \
+                     "/simulator/UREGS/UART/RECV/r_cycle_counter" \
+                     "/simulator/UREGS/UART/RECV/r_bit_counter" \
+                     "/simulator/UREGS/UART/RECV/w_data_en" \
+                     "/simulator/UREGS/UART/RECV/r_data" \
+                     "/simulator/UREGS/UART/RECV/o_enq_rxq" \
+                     "/simulator/UREGS/UART/RECV/o_data"
+
+wvSetPosition -win $nw {("uart/RECV/RXFIFO" 0)}
+wvAddSignal -win $nw "/simulator/UREGS/UART/RXFIFO/i_clk" \
+                     "/simulator/UREGS/UART/RXFIFO/i_rst" \
+                     "/simulator/UREGS/UART/RXFIFO/r_num_data" \
+                     "/simulator/UREGS/UART/RXFIFO/r_enq_ptr" \
+                     "/simulator/UREGS/UART/RXFIFO/i_enq" \
+                     "/simulator/UREGS/UART/RXFIFO/w_enq_en" \
+                     "/simulator/UREGS/UART/RXFIFO/o_full" \
+                     "/simulator/UREGS/UART/RXFIFO/r_deq_ptr" \
+                     "/simulator/UREGS/UART/RXFIFO/i_deq" \
+                     "/simulator/UREGS/UART/RXFIFO/o_empty" \
+                     "/simulator/UREGS/UART/RXFIFO/r_data"
+
+
+wvSelectGroup -win $nw "uart/TSMT"
+wvAddSubGroup -win $nw "TXFIFO"
+
+wvSetPosition -win $nw {("uart/TSMT" 0)}
+wvAddSignal -win $nw "/simulator/UREGS/UART/TSMT/i_clk" \
+                     "/simulator/UREGS/UART/TSMT/i_rst" \
+                     "/simulator/UREGS/UART/TSMT/r_state" \
+                     "/simulator/UREGS/UART/TSMT/o_tx" \
+                     "/simulator/UREGS/UART/TSMT/i_sample_tick" \
+                     "/simulator/UREGS/UART/TSMT/i_data" \
+                     "/simulator/UREGS/UART/TSMT/o_deq_txq" \
+                     "/simulator/UREGS/UART/TSMT/r_data" \
+                     "/simulator/UREGS/UART/TSMT/r_cycle_counter" \
+                     "/simulator/UREGS/UART/TSMT/r_bit_counter" \
+                     "/simulator/UREGS/UART/TSMT/w_data_en" \
+                     "/simulator/UREGS/UART/TSMT/w_data_shift" \
+                     "/simulator/UREGS/UART/TSMT/r_data"
+
+wvSetPosition -win $nw {("uart/TSMT/TXFIFO" 0)}
+wvAddSignal -win $nw "/simulator/UREGS/UART/TXFIFO/i_clk" \
+                     "/simulator/UREGS/UART/TXFIFO/i_rst" \
+                     "/simulator/UREGS/UART/TXFIFO/r_num_data" \
+                     "/simulator/UREGS/UART/TXFIFO/r_enq_ptr" \
+                     "/simulator/UREGS/UART/TXFIFO/i_enq" \
+                     "/simulator/UREGS/UART/TXFIFO/w_enq_en" \
+                     "/simulator/UREGS/UART/TXFIFO/o_full" \
+                     "/simulator/UREGS/UART/TXFIFO/r_deq_ptr" \
+                     "/simulator/UREGS/UART/TXFIFO/i_deq" \
+                     "/simulator/UREGS/UART/TXFIFO/o_empty" \
+                     "/simulator/UREGS/UART/TXFIFO/r_data"
+
+wvSelectGroup -win $nw "uart/UREGS"
+wvSetPosition -win $nw {("uart/UREGS" 0)}
+wvAddSignal -win $nw "/simulator/UREGS/i_clk" \
+                     "/simulator/UREGS/i_rst" \
+                     "/simulator/UREGS/r_regs" \
+                     "/simulator/UREGS/o_regs" \
+                     "/simulator/UREGS/w_deq_rxq" \
+                     "/simulator/UREGS/w_rxq_data" \
+                     "/simulator/UREGS/w_rxq_empty" \
+                     "/simulator/UREGS/w_enq_txq" \
+                     "/simulator/UREGS/w_txq_data" \
+                     "/simulator/UREGS/w_rxq_empty" \
+                     "/simulator/UREGS/w_latch_op" \
+                     "/simulator/UREGS/r_op" \
+                     "/simulator/UREGS/w_addr" \
+                     "/simulator/UREGS/w_wr" \
+                     "/simulator/UREGS/w_shift_in" \
+                     "/simulator/UREGS/r_wr_data" \
+                     "/simulator/UREGS/w_rd" \
+                     "/simulator/UREGS/w_shift_out" \
+                     "/simulator/UREGS/r_rd_data" \
+                     "/simulator/UREGS/w_bcnt_en" \
+                     "/simulator/UREGS/w_bcnt_clr" \
+                     "/simulator/UREGS/r_bcnt" \
+                     "/simulator/UREGS/r_state"
+
+wvCollapseGroup -win $nw "uart/RECV/RXFIFO"
+wvCollapseGroup -win $nw "uart/RECV"
+wvCollapseGroup -win $nw "uart/TSMT/TXFIFO"
+wvCollapseGroup -win $nw "uart/TSMT"
+wvCollapseGroup -win $nw "uart/UREGS"
+wvCollapseGroup -win $nw "uart"
 
 for {set ch 23} {$ch >= 0} {incr ch -1} {
 
@@ -188,7 +294,12 @@ for {set ch 23} {$ch >= 0} {incr ch -1} {
                          "/simulator/DCRFLI/DC_GEN\[$ch\]/DC/SEQ/w_last0" \
                          "/simulator/DCRFLI/DC_GEN\[$ch\]/DC/SEQ/w_last0_ff1" \
                          "/simulator/DCRFLI/DC_GEN\[$ch\]/DC/SEQ/w_last0_ff2" \
-                         "/simulator/DCRFLI/DC_GEN\[$ch\]/DC/SEQ/w_new_sequence"
+                         "/simulator/DCRFLI/DC_GEN\[$ch\]/DC/SEQ/w_new_sequence" \
+                         "/simulator/DCRFLI/DC_GEN\[$ch\]/DC/SEQ/i_uregs" \
+                         "/simulator/DCRFLI/DC_GEN\[$ch\]/DC/SEQ/w_ulast0" \
+                         "/simulator/DCRFLI/DC_GEN\[$ch\]/DC/SEQ/w_ulast0_ff1" \
+                         "/simulator/DCRFLI/DC_GEN\[$ch\]/DC/SEQ/w_ulast0_ff2" \
+                         "/simulator/DCRFLI/DC_GEN\[$ch\]/DC/SEQ/w_new_usequence"
 
     wvSetPosition -win $nw [format {("dc/ch%d/SEQ/fetch" 0)} $ch]
     wvAddSignal -win $nw "/simulator/DCRFLI/DC_GEN\[$ch\]/DC/SEQ/r_sequence" \
@@ -267,7 +378,12 @@ for {set ch 23} {$ch >= 0} {incr ch -1} {
                          "/simulator/DCRFLI/DC_GEN\[$ch\]/DC/CTRL/w_last0" \
                          "/simulator/DCRFLI/DC_GEN\[$ch\]/DC/CTRL/w_last0_ff1" \
                          "/simulator/DCRFLI/DC_GEN\[$ch\]/DC/CTRL/w_last0_ff2" \
-                         "/simulator/DCRFLI/DC_GEN\[$ch\]/DC/CTRL/w_new_ctrl"
+                         "/simulator/DCRFLI/DC_GEN\[$ch\]/DC/CTRL/w_new_ctrl" \
+                         "/simulator/DCRFLI/DC_GEN\[$ch\]/DC/CTRL/i_uregs" \
+                         "/simulator/DCRFLI/DC_GEN\[$ch\]/DC/CTRL/w_ulast0" \
+                         "/simulator/DCRFLI/DC_GEN\[$ch\]/DC/CTRL/w_ulast0_ff1" \
+                         "/simulator/DCRFLI/DC_GEN\[$ch\]/DC/CTRL/w_ulast0_ff2" \
+                         "/simulator/DCRFLI/DC_GEN\[$ch\]/DC/CTRL/w_new_uctrl"
 
     # DAC
     wvSelectGroup -win $nw "dc/ch$ch/DAC"
@@ -416,7 +532,12 @@ for {set ch 5} {$ch >= 0} {incr ch -1} {
                          "/simulator/DCRFLI/RF_GEN\[$ch\]/RF/SEQ/w_last0" \
                          "/simulator/DCRFLI/RF_GEN\[$ch\]/RF/SEQ/w_last0_ff1" \
                          "/simulator/DCRFLI/RF_GEN\[$ch\]/RF/SEQ/w_last0_ff2" \
-                         "/simulator/DCRFLI/RF_GEN\[$ch\]/RF/SEQ/w_new_sequence"
+                         "/simulator/DCRFLI/RF_GEN\[$ch\]/RF/SEQ/w_new_sequence" \
+                         "/simulator/DCRFLI/RF_GEN\[$ch\]/RF/SEQ/i_uregs" \
+                         "/simulator/DCRFLI/RF_GEN\[$ch\]/RF/SEQ/w_ulast0" \
+                         "/simulator/DCRFLI/RF_GEN\[$ch\]/RF/SEQ/w_ulast0_ff1" \
+                         "/simulator/DCRFLI/RF_GEN\[$ch\]/RF/SEQ/w_ulast0_ff2" \
+                         "/simulator/DCRFLI/RF_GEN\[$ch\]/RF/SEQ/w_new_usequence"
 
     wvSetPosition -win $nw [format {("rf/ch%d/SEQ/fetch" 0)} $ch]
     wvAddSignal -win $nw "/simulator/DCRFLI/RF_GEN\[$ch\]/RF/SEQ/r_sequence" \
@@ -512,7 +633,12 @@ for {set ch 5} {$ch >= 0} {incr ch -1} {
                          "/simulator/DCRFLI/RF_GEN\[$ch\]/RF/CTRL/w_last0" \
                          "/simulator/DCRFLI/RF_GEN\[$ch\]/RF/CTRL/w_last0_ff1" \
                          "/simulator/DCRFLI/RF_GEN\[$ch\]/RF/CTRL/w_last0_ff2" \
-                         "/simulator/DCRFLI/RF_GEN\[$ch\]/RF/CTRL/w_new_ctrl"
+                         "/simulator/DCRFLI/RF_GEN\[$ch\]/RF/CTRL/w_new_ctrl" \
+                         "/simulator/DCRFLI/RF_GEN\[$ch\]/RF/CTRL/i_uregs" \
+                         "/simulator/DCRFLI/RF_GEN\[$ch\]/RF/CTRL/w_ulast0" \
+                         "/simulator/DCRFLI/RF_GEN\[$ch\]/RF/CTRL/w_ulast0_ff1" \
+                         "/simulator/DCRFLI/RF_GEN\[$ch\]/RF/CTRL/w_ulast0_ff2" \
+                         "/simulator/DCRFLI/RF_GEN\[$ch\]/RF/CTRL/w_new_uctrl"
 
     wvSetPosition -win $nw [format {("rf/ch%d/CTRL/update/nco" 0)} $ch]
     wvAddSignal -win $nw "/simulator/DCRFLI/RF_GEN\[$ch\]/RF/CTRL/w_nco_freq" \

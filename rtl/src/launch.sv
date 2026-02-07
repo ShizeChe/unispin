@@ -9,6 +9,7 @@ module launch
     (input  logic i_clk, i_rst,
 
      input  logic [0:LCH_TOTAL_REGS-1][31:0] i_regs,
+     input  logic [0:LCH_TOTAL_REGS-1][31:0] i_uregs,
 
      input  logic [NUM_DC_CHANNEL-1:0] i_dc_armed,
      input  logic [NUM_RF_CHANNEL-1:0] i_rf_armed,
@@ -32,6 +33,18 @@ module launch
     logic w_new_stream;
     assign w_new_stream = (w_last0_ff2 && !w_last0_ff1);
 
+    logic w_ulast0, w_ulast0_ff1, w_ulast0_ff2;
+
+    assign w_ulast0 = (i_uregs[LCH_TOTAL_REGS-1] == 'h0);
+
+    always_ff @(posedge i_clk) begin
+        w_ulast0_ff1 <= w_ulast0;
+        w_ulast0_ff2 <= w_ulast0_ff1;
+    end
+
+    logic w_new_ustream;
+    assign w_new_ustream = (w_ulast0_ff2 && !w_ulast0_ff1);
+
     logic [NUM_DC_CHANNEL-1:0] r_dc_active_mask;
     logic [NUM_RF_CHANNEL-1:0] r_rf_active_mask;
     logic [NUM_LI_CHANNEL-1:0] r_li_active_mask;
@@ -41,6 +54,11 @@ module launch
             r_dc_active_mask <= 'h0;
             r_rf_active_mask <= 'h0;
             r_li_active_mask <= 'h0;
+        end
+        else if (w_new_ustream) begin
+            r_dc_active_mask <= i_uregs[0][NUM_DC_CHANNEL-1:0];
+            r_rf_active_mask <= i_uregs[1][NUM_RF_CHANNEL-1:0];
+            r_li_active_mask <= i_uregs[2][NUM_LI_CHANNEL-1:0];
         end
         else if (w_new_stream) begin
             r_dc_active_mask <= i_regs[0][NUM_DC_CHANNEL-1:0];
@@ -105,7 +123,7 @@ module launch
 
         case (r_state)
             IDLE: begin
-                w_next_state = w_new_stream ? LAUNCH : IDLE;
+                w_next_state = (w_new_stream || w_new_ustream) ? LAUNCH : IDLE;
             end
             default: begin
                 w_next_state = w_all_ready ? IDLE : LAUNCH;

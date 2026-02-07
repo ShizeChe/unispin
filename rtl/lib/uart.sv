@@ -16,6 +16,8 @@ module uart
      input  logic i_rx,
      output logic o_tx,
 
+     input  logic [10:0] i_dvsr,
+
      input  logic                  i_deq_rxq,
      output logic [DATA_WIDTH-1:0] o_rxq_data,
      output logic                  o_rxq_empty,
@@ -32,17 +34,17 @@ module uart
 
     logic w_sample_tick;
 
-    baudx16_generator baud_gen (
+    baudx16_generator BAUD (
         .i_clk(i_clk),
         .i_rst(i_rst),
-        .i_dvsr(11'd16), // baudrate = 115200, clock period = 100Mhz
+        .i_dvsr(i_dvsr),
         .o_sample_tick(w_sample_tick)
     );
     
     logic w_enq_rxq;
     logic [DATA_WIDTH-1:0] w_data_rx;
 
-    receiver recv (
+    receiver RECV (
         .i_clk(i_clk),
         .i_rst(i_rst),
         .i_rx(i_rx),
@@ -56,7 +58,7 @@ module uart
         .DEPTH(RX_FIFO_DEPTH),
         .AF_DEPTH(RX_FIFO_AF_DEPTH),
         .AE_DEPTH(RX_FIFO_AE_DEPTH)
-    ) rx_fifo (
+    ) RXFIFO (
         .i_clk(i_clk),
         .i_rst(i_rst),
 
@@ -74,7 +76,7 @@ module uart
     logic w_deq_txq;
     logic [DATA_WIDTH-1:0] w_data_tx;
 
-    transmitter tsmt (
+    transmitter TSMT (
         .i_clk(i_clk),
         .i_rst(i_rst),
         .i_sample_tick(w_sample_tick),
@@ -89,7 +91,7 @@ module uart
         .DEPTH(TX_FIFO_DEPTH),
         .AF_DEPTH(TX_FIFO_AF_DEPTH),
         .AE_DEPTH(TX_FIFO_AE_DEPTH)
-    ) tx_fifo (
+    ) TXFIFO (
         .i_clk(i_clk),
         .i_rst(i_rst),
 

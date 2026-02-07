@@ -10,6 +10,10 @@
 #include <assert.h>
 #include <math.h>
 #include <string.h>
+#include <errno.h>
+#include <fcntl.h>
+#include <termios.h>
+#include <inttypes.h>
 
 static int line_empty(char *s) {
     while (isspace((unsigned char)*s))
@@ -479,6 +483,94 @@ static int write_sim(dc_program_t *dc_programs[],
     return 0;
 }
 
+static void write_reg_sim(uint8_t idx, uint32_t data) {
+    sim_sendf("0x%02X\n", (uint8_t)(idx & 0x7f));
+    sim_sendf("0x%02X\n", (uint8_t)(data >> 24));
+    sim_sendf("0x%02X\n", (uint8_t)(data >> 16));
+    sim_sendf("0x%02X\n", (uint8_t)(data >> 8));
+    sim_sendf("0x%02X\n", (uint8_t)(data));
+}
+
+static int write_sim_uart(dc_program_t *dc_programs[], 
+                          rf_program_t *rf_programs[],
+                          launch_t *launch) {
+
+    if (sim_connect(SOCKET) != 0) {
+        printf("Connection unseccessful\n");
+        return -1;
+    }
+
+    for (int i = 0; i < DC_CHANNELS; i++) {
+
+        if (dc_programs[i] != NULL) {
+
+            write_reg_sim(DC_SEQ_REGS + DC_CTRL_REGS - 1, 0);
+            
+            for (unsigned int j = 0; j < DC_CTRL_REGS - 1; j++) {
+                if (dc_programs[i]->ctrl_regs[j] != -1)
+                    write_reg_sim(DC_SEQ_REGS + j, dc_programs[i]->ctrl_regs[j]);
+            }
+
+            write_reg_sim(DC_SEQ_REGS + DC_CTRL_REGS - 1, (1U << i));
+
+            write_reg_sim(DC_SEQ_REGS - 1, 0);
+            
+            for (unsigned int j = 0; j < DC_SEQ_REGS - 1; j++) {
+                write_reg_sim(j, dc_programs[i]->seq_regs[j]);
+            }
+
+            write_reg_sim(DC_SEQ_REGS - 1, (1U << i));
+
+        }
+
+    }
+
+    for (int i = 0; i < RF_CHANNELS; i++) {
+
+        uint32_t base = DC_SEQ_REGS + DC_CTRL_REGS;
+
+        if (rf_programs[i] != NULL) {
+
+            write_reg_sim(base + RF_SEQ_REGS + RF_CTRL_REGS - 1, 0);
+            
+            for (unsigned int j = 0; j < RF_CTRL_REGS - 1; j++) {
+                if (rf_programs[i]->ctrl_regs[j] != -1)
+                    write_reg_sim(base + RF_SEQ_REGS + j, rf_programs[i]->ctrl_regs[j]);
+            }
+
+            write_reg_sim(base + RF_SEQ_REGS + RF_CTRL_REGS - 1, (1U << i));
+
+            write_reg_sim(base + RF_SEQ_REGS - 1, 0);
+            
+            for (unsigned int j = 0; j < RF_SEQ_REGS - 1; j++) {
+                write_reg_sim(base + j, rf_programs[i]->seq_regs[j]);
+            }
+
+            write_reg_sim(base + RF_SEQ_REGS - 1, (1U << i));
+
+        }
+
+    }
+
+    if (launch != NULL) {
+
+        uint32_t base = DC_SEQ_REGS + DC_CTRL_REGS +
+                        RF_SEQ_REGS + RF_CTRL_REGS;
+
+        write_reg_sim(base + LAUNCH_TOTAL_REGS - 1, 0);
+        
+        write_reg_sim(base, launch->dc_chmask);
+        write_reg_sim(base + 1, launch->rf_chmask);
+        write_reg_sim(base + 2, launch->li_chmask);
+        write_reg_sim(base + LAUNCH_TOTAL_REGS - 1, 1);
+
+    }
+
+    sim_sendf("run %lu\n", program_t(dc_programs, rf_programs) + 1000);
+
+    return 0;
+}
+
 static void write_bin(dc_program_t *dc_programs[], 
                       rf_program_t *rf_programs[],
                       launch_t *launch,
@@ -537,6 +629,203 @@ static void write_bin(dc_program_t *dc_programs[],
     }
 }
 
+static int write_single(int uartfd, uint8_t addr, uint32_t tval) {
+
+    uint8_t tx[6] = {0, 0, 0, 0, 0, 0};
+
+    ssize_t n;
+
+    tx[0] = (uint8_t)(addr);
+    tx[1] = (uint8_t)(tval >> 24);
+    tx[2] = (uint8_t)(tval >> 16);
+    tx[3] = (uint8_t)(tval >> 8);
+    tx[4] = (uint8_t)(tval);
+
+    n = write(uartfd, tx, sizeof(tx) - 1);
+    if (n < 0) {
+        perror("write error");
+        return -1;
+    }
+
+    return 0;
+
+}
+
+static int read_uart_regs(int uartfd) {
+
+    uint8_t tx[2] = {0, 0};
+    uint8_t rx[5] = {0, 0, 0, 0, 0};
+
+    uint32_t regval = 0;
+
+    int total_regs = DC_SEQ_REGS + DC_CTRL_REGS +
+                     RF_SEQ_REGS + RF_CTRL_REGS +
+                     LAUNCH_TOTAL_REGS;
+
+    for (int i = 0; i < total_regs; i++) {
+
+        tx[0] = ((uint8_t)i) | (0b10000000);
+        ssize_t n = write(uartfd, tx, sizeof(tx) - 1);
+        if (n < 0) {
+            perror("write error");
+            return -1;
+        }
+
+        ssize_t r = read(uartfd, rx, sizeof(rx) - 1);
+        if (r < 0) {
+            perror("read error");
+            return -1;
+        } else if (r == 0) {
+            printf("read timeout (no data)\n");
+            return -1;
+        } else {
+            regval |= ((uint32_t)rx[0]) << 24;
+            regval |= ((uint32_t)rx[1]) << 16;
+            regval |= ((uint32_t)rx[2]) << 8;
+            regval |= ((uint32_t)rx[3]);
+            printf("0x%08" PRIX32 "\n", regval);
+            regval = 0;
+        }
+
+    }
+
+    return 0;
+
+}
+
+static int read_single(int uartfd, uint8_t addr) {
+
+    uint8_t tx[2] = {0, 0};
+    uint8_t rx[5] = {0, 0, 0, 0, 0};
+
+    uint32_t regval = 0;
+
+
+    tx[0] = ((uint8_t)addr) | (0b10000000);
+    ssize_t n = write(uartfd, tx, sizeof(tx) - 1);
+    if (n < 0) {
+        perror("write error");
+        return -1;
+    }
+
+    ssize_t r = read(uartfd, rx, sizeof(rx) - 1);
+    if (r < 0) {
+        perror("read error");
+        return -1;
+    } else if (r == 0) {
+        printf("read timeout (no data)\n");
+        return -1;
+    } else {
+        regval |= ((uint32_t)rx[0]) << 24;
+        regval |= ((uint32_t)rx[1]) << 16;
+        regval |= ((uint32_t)rx[2]) << 8;
+        regval |= ((uint32_t)rx[3]);
+        printf("0x%08" PRIX32 "\n", regval);
+        regval = 0;
+    }
+
+    return 0;
+
+}
+
+static int setup_uart(int fd, speed_t speed) {
+
+    struct termios tty;
+
+    if (tcgetattr(fd, &tty) != 0) {
+        perror("tcgetattr");
+        return -1;
+    }
+
+    // Set baud rate
+    cfsetispeed(&tty, speed);
+    cfsetospeed(&tty, speed);
+
+    // 8N1, no flow control
+    tty.c_cflag = (tty.c_cflag & ~CSIZE) | CS8; // 8-bit chars
+    tty.c_iflag &= ~(IGNBRK | BRKINT | PARMRK | ISTRIP
+                   | INLCR | IGNCR | ICRNL | IXON | IXOFF | IXANY);
+    tty.c_lflag &= ~(ECHO | ECHONL | ICANON | ISIG | IEXTEN);
+    tty.c_oflag &= ~OPOST;
+
+    tty.c_cflag |= (CLOCAL | CREAD);            // ignore modem controls, enable reading
+    tty.c_cflag &= ~(PARENB | PARODD);          // no parity
+    tty.c_cflag &= ~CSTOPB;                     // 1 stop bit
+    tty.c_cflag &= ~CRTSCTS;                    // no HW flow control
+
+    // Read timeout behavior:
+    // VMIN=0, VTIME=10 => read returns immediately with what’s available,
+    // or waits up to 1.0s (10 deciseconds) for at least 1 byte.
+    tty.c_cc[VMIN]  = 0;
+    tty.c_cc[VTIME] = 10;
+
+    if (tcsetattr(fd, TCSANOW, &tty) != 0) {
+        perror("tcsetattr");
+        return -1;
+    }
+
+    // Flush any pending data
+    tcflush(fd, TCIOFLUSH);
+    return 0;
+
+}
+
+static int parse_u8_optarg(char *s, uint8_t *out)
+{
+    if (!s) return 0;
+
+    // Optional: skip leading spaces
+    while (isspace((unsigned char)*s)) s++;
+    if (*s == '\0') return 0;
+
+    errno = 0;
+    char *end = NULL;
+    unsigned long v = strtoul(s, &end, 0); // base 0: allows 123, 0x7F, 077
+
+    // No digits parsed
+    if (end == s) return 0;
+
+    // Optional: allow trailing spaces
+    while (isspace((unsigned char)*end)) end++;
+    if (*end != '\0') return 0;
+
+    if (errno == ERANGE) return 0;     // overflow from conversion
+    if (v > UINT8_MAX) return 0;       // not fit in uint8_t
+
+    *out = (uint8_t)v;
+    return 1;
+}
+
+static int parse_u32_optarg(const char *s, uint32_t *out)
+{
+    if (!s) return 0;
+
+    while (isspace((unsigned char)*s)) s++;
+    if (*s == '\0') return 0;
+
+    // Reject sign
+    if (*s == '+' || *s == '-') return 0;
+
+    // Allow optional 0x / 0X
+    if (s[0] == '0' && (s[1] == 'x' || s[1] == 'X')) s += 2;
+
+    // Require at least one hex digit
+    if (!isxdigit((unsigned char)*s)) return 0;
+
+    errno = 0;
+    char *end = NULL;
+    unsigned long v = strtoul(s, &end, 16);
+
+    while (isspace((unsigned char)*end)) end++;
+    if (*end != '\0') return 0;     // trailing junk
+    if (errno == ERANGE) return 0;  // overflow in conversion
+
+    if (v > 0xFFFFFFFFUL) return 0; // fit in 32 bits
+
+    *out = (uint32_t)v;
+    return 1;
+}
+
 int main(int argc, char *argv[]) {
 
     int opt;
@@ -544,8 +833,16 @@ int main(int argc, char *argv[]) {
     char *out = NULL;
     int sim = 0;
     int exe = 0;
+    int read = 0;
+    int write = 0;
+    char *wdev = NULL;
+    char *rdev = NULL;
+    int uart = 0;
+    int test = 0;
+    uint8_t addr;
+    uint32_t tval;
 
-    while ((opt = getopt(argc, argv, "f:o:sx")) != -1) {
+    while ((opt = getopt(argc, argv, "f:o:w:r:t:v:sxu")) != -1) {
         switch (opt) {
             case 'f':
                 file = optarg;
@@ -556,17 +853,41 @@ int main(int argc, char *argv[]) {
             case 's':
                 sim = 1;
                 break;
+            case 'u':
+                uart = 1;
+                break;
             case 'x':
                 exe = 1;
                 break;
+            case 'w':
+                write = 1;
+                wdev = optarg;
+                break;
+            case 'r':
+                read = 1;
+                rdev = optarg;
+                break;
+            case 't':
+                test = 1;
+                if (!parse_u8_optarg(optarg, &addr)) {
+                    fprintf(stderr, "Invalid -t (uint8_t): '%s'\n", optarg);
+                    return 1;
+                }
+                break;
+            case 'v':
+                if (!parse_u32_optarg(optarg, &tval)) {
+                    fprintf(stderr, "Invalid -v (uint8_t): '%s'\n", optarg);
+                    return 1;
+                }
+                break;
             default:
-                fprintf(stderr, "Usage: %s [-f file] [-o out] [-s] [-x]\n", argv[0]);
+                fprintf(stderr, "Usage: %s [-f file] [-o out] [-s] [-x] [-w wdev] [-r rdev] [-t addr]\n", argv[0]);
                 return 1;
         }
     }
 
-    if (file == NULL) {
-        fprintf(stderr, "Usage: %s [-f file] [-o out] [-s] [-x]\n", argv[0]);
+    if (file == NULL && !read && !write) {
+        fprintf(stderr, "Usage: %s [-f file] [-o out] [-s] [-x] [-w wdev] [-r rdev] [-t addr]\n", argv[0]);
         return 1;
     }
 
@@ -574,19 +895,68 @@ int main(int argc, char *argv[]) {
         out = "out";
     }
 
-    FILE *fp = fopen(file, "r");
+    FILE *fp = NULL;
+    FILE *op = NULL;
     dc_program_t *dc_programs[DC_CHANNELS] = {NULL};
     rf_program_t *rf_programs[RF_CHANNELS] = {NULL};
     launch_t *launch = NULL;
-    assemble(fp, dc_programs, rf_programs, &launch);
 
-    FILE *op = fopen(out, "w");
-    write_bin(dc_programs, rf_programs, launch, op);
-    printf("program t: %ld ns\n", program_t(dc_programs, rf_programs));
+    int rfd, wfd;
+
+    if (test) {
+
+        if ((!read && !write) || (read && write)) {
+            fprintf(stderr, "must have one of [-r rdev] [-w wdev] specified when using -t");
+            return 1;
+        }
+
+        if (read) {
+            rfd = open(rdev, O_RDWR | O_NOCTTY | O_SYNC);
+            if (rfd < 0) {
+                fprintf(stderr, "open(%s) failed: %s\n", rdev, strerror(errno));
+                return 1;
+            }
+            if (setup_uart(rfd, B921600) != 0) {
+                close(rfd);
+                return 1;
+            }
+
+            for (int i = 0; i < 100; i++) {
+                read_single(rfd, addr);
+            }
+            close(rfd);
+        } else if (write) {
+            wfd = open(wdev, O_RDWR | O_NOCTTY | O_SYNC);
+            if (wfd < 0) {
+                fprintf(stderr, "open(%s) failed: %s\n", wdev, strerror(errno));
+                return 1;
+            }
+            if (setup_uart(wfd, B921600) != 0) {
+                close(wfd);
+                return 1;
+            }
+
+            write_single(wfd, addr, tval);
+            close(wfd);
+        }
+
+        return 0;
+    }
+
+    if (file != NULL) {
+        fp = fopen(file, "r");
+        assemble(fp, dc_programs, rf_programs, &launch);
+        op = fopen(out, "w");
+        write_bin(dc_programs, rf_programs, launch, op);
+        printf("program t: %ld ns\n", program_t(dc_programs, rf_programs));
+    }
 
     if (sim) {
         printf("simulate\n");
-        write_sim(dc_programs, rf_programs, launch);
+        if (uart)
+            write_sim_uart(dc_programs, rf_programs, launch);
+        else
+            write_sim(dc_programs, rf_programs, launch);
     }
 
     if (exe) {
@@ -600,6 +970,43 @@ int main(int argc, char *argv[]) {
         }
         if (launch != NULL)
             launch_load(launch);
+    }
+
+    if (write) {
+        wfd = open(wdev, O_RDWR | O_NOCTTY | O_SYNC);
+        if (wfd < 0) {
+            fprintf(stderr, "open(%s) failed: %s\n", wdev, strerror(errno));
+            return 1;
+        }
+        if (setup_uart(wfd, B921600) != 0) {
+            close(wfd);
+            return 1;
+        }
+        for (int ch = 0; ch < DC_CHANNELS; ch++) {
+            if (dc_programs[ch] != NULL)
+                dc_write_regs(ch, dc_programs[ch], wfd);
+        }
+        for (int ch = 0; ch < RF_CHANNELS; ch++) {
+            if (rf_programs[ch] != NULL)
+                rf_write_regs(ch, rf_programs[ch], wfd);
+        }
+        if (launch != NULL)
+            launch_load(launch);
+        close(wfd);
+    }
+
+    if (read) {
+        rfd = open(rdev, O_RDWR | O_NOCTTY | O_SYNC);
+        if (rfd < 0) {
+            fprintf(stderr, "open(%s) failed: %s\n", rdev, strerror(errno));
+            return 1;
+        }
+        if (setup_uart(rfd, B921600) != 0) {
+            close(rfd);
+            return 1;
+        }
+        read_uart_regs(rfd);
+        close(rfd);
     }
 
     for (int i = 0; i < DC_CHANNELS; i++) {

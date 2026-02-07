@@ -20,6 +20,9 @@ module dc
      input  logic [0:SEQ_REGS-1][31:0] i_seq_regs,
      input  logic [0:CTRL_REGS-1][31:0] i_ctrl_regs,
 
+     input  logic [0:SEQ_REGS-1][31:0] i_seq_uregs,
+     input  logic [0:CTRL_REGS-1][31:0] i_ctrl_uregs,
+
      output logic o_sclk,
      output logic o_mosi,
      input  logic i_miso,
@@ -47,6 +50,7 @@ module dc
         .i_rst(i_rst),
 
         .i_regs(i_seq_regs),
+        .i_uregs(i_seq_uregs),
 
         .o_addr(w_addr),
         .o_insn(w_insn),
@@ -97,6 +101,7 @@ module dc
         .i_rst(i_rst),
 
         .i_regs(i_ctrl_regs),
+        .i_uregs(i_ctrl_uregs),
 
         .o_ctrl(w_ctrl)
     );

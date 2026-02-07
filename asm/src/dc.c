@@ -509,3 +509,97 @@ int dc_load_insns(int dc_channel, dc_program_t *dc_program) {
     return 0;
 }
 
+int dc_write_regs(int dc_channel, dc_program_t *dc_program, int uartfd) {
+
+    uint8_t tx[6] = {0, 0, 0, 0, 0, 0};
+
+    ssize_t n;
+
+    for (int i = 0; i < DC_CTRL_REGS - 1; i++) {
+
+        if (dc_program->ctrl_regs[i] != -1) {
+            tx[0] = (uint8_t)(DC_SEQ_REGS + i);
+            tx[1] = (uint8_t)(((uint32_t)dc_program->ctrl_regs[i]) >> 24);
+            tx[2] = (uint8_t)(((uint32_t)dc_program->ctrl_regs[i]) >> 16);
+            tx[3] = (uint8_t)(((uint32_t)dc_program->ctrl_regs[i]) >> 8);
+            tx[4] = (uint8_t)(((uint32_t)dc_program->ctrl_regs[i]));
+        }
+
+
+        n = write(uartfd, tx, sizeof(tx) - 1);
+        if (n < 0) {
+            perror("write error");
+            return -1;
+        }
+
+    }
+
+    tx[0] = (uint8_t)(DC_SEQ_REGS + DC_CTRL_REGS - 1);
+    tx[1] = 0;
+    tx[2] = 0;
+    tx[3] = 0;
+    tx[4] = 0;
+
+    n = write(uartfd, tx, sizeof(tx) - 1);
+    if (n < 0) {
+        perror("write error");
+        return -1;
+    }
+
+    tx[0] = (uint8_t)(DC_SEQ_REGS + DC_CTRL_REGS - 1);
+    uint32_t chsel = 1U << dc_channel;
+    tx[1] = (uint8_t)(chsel >> 24);
+    tx[2] = (uint8_t)(chsel >> 16);
+    tx[3] = (uint8_t)(chsel >> 8);
+    tx[4] = (uint8_t)(chsel);
+
+    n = write(uartfd, tx, sizeof(tx) - 1);
+    if (n < 0) {
+        perror("write error");
+        return -1;
+    }
+
+    for (int i = 0; i < DC_SEQ_REGS - 1; i++) {
+
+        tx[0] = (uint8_t)i;
+        tx[1] = (uint8_t)(dc_program->seq_regs[i] >> 24);
+        tx[2] = (uint8_t)(dc_program->seq_regs[i] >> 16);
+        tx[3] = (uint8_t)(dc_program->seq_regs[i] >> 8);
+        tx[4] = (uint8_t)(dc_program->seq_regs[i]);
+
+        n = write(uartfd, tx, sizeof(tx) - 1);
+        if (n < 0) {
+            perror("write error");
+            return -1;
+        }
+
+    }
+
+    tx[0] = (uint8_t)(DC_SEQ_REGS - 1);
+    tx[1] = 0;
+    tx[2] = 0;
+    tx[3] = 0;
+    tx[4] = 0;
+
+    n = write(uartfd, tx, sizeof(tx) - 1);
+    if (n < 0) {
+        perror("write error");
+        return -1;
+    }
+
+    tx[0] = (uint8_t)(DC_SEQ_REGS - 1);
+    chsel = 1U << dc_channel;
+    tx[1] = (uint8_t)(chsel >> 24);
+    tx[2] = (uint8_t)(chsel >> 16);
+    tx[3] = (uint8_t)(chsel >> 8);
+    tx[4] = (uint8_t)(chsel);
+
+    n = write(uartfd, tx, sizeof(tx) - 1);
+    if (n < 0) {
+        perror("write error");
+        return -1;
+    }
+
+    return 0;
+
+}

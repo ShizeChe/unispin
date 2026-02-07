@@ -169,9 +169,17 @@ set_property -dict {PACKAGE_PIN AR21 IOSTANDARD LVCMOS12} [get_ports o_bled7]
 
 # button
 set_property -dict {PACKAGE_PIN K12 IOSTANDARD LVCMOS18} [get_ports i_btn_w]
+set_property -dict {PACKAGE_PIN K11 IOSTANDARD LVCMOS18} [get_ports i_btn_c]
+#set_property -dict {PACKAGE_PIN J12 IOSTANDARD LVCMOS18} [get_ports i_btn_e]
+#set_property CLOCK_BUFFER_TYPE NONE [get_ports i_btn_e]
+#set_property CLOCK_BUFFER_TYPE NONE [get_ports i_btn_c]
+
+create_clock -period 10.000 -waveform {0.000 5.000} [get_ports i_pl_clk_p]
+set_property -dict {PACKAGE_PIN E10 IOSTANDARD LVDS_25} [get_ports i_pl_clk_p]
 
 # fpga uart
-#set_property -dict {PACKAGE_PIN C10 IOSTANDARD LVCMOS18} [get_ports i_rx]
+set_property -dict {PACKAGE_PIN C10 IOSTANDARD LVCMOS18} [get_ports i_rx]
+set_property -dict {PACKAGE_PIN B10 IOSTANDARD LVCMOS18} [get_ports o_tx]
 
 #set_property PACKAGE_PIN D4 [get_ports i_dac1_clk_p]
 #set_property PACKAGE_PIN D1 [get_ports i_sysref_n]

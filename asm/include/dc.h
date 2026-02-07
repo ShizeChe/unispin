@@ -98,5 +98,6 @@ typedef struct {
 int dc_parse_insn(char *line, dc_insn_t *insn);
 void dc_assemble(dc_program_t *prog);
 int dc_load_insns(int dc_channel, dc_program_t *dc_program);
+int dc_write_regs(int dc_channel, dc_program_t *dc_program, int uartfd);
 
 #endif

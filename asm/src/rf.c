@@ -1,5 +1,6 @@
 #include "common.h"
 #include "rf.h"
+#include "dc.h"
 #include <math.h>
 #include <string.h>
 #include <stdio.h>
@@ -347,3 +348,98 @@ int rf_load_insns(int rf_channel, rf_program_t *rf_program) {
     return 0;
 }
 
+int rf_write_regs(int rf_channel, rf_program_t *rf_program, int uartfd) {
+
+    uint8_t tx[6] = {0, 0, 0, 0, 0, 0};
+
+    ssize_t n;
+
+    int base = DC_SEQ_REGS + DC_CTRL_REGS;
+
+    for (int i = 0; i < RF_CTRL_REGS - 1; i++) {
+
+        if (rf_program->ctrl_regs[i] != -1) {
+            tx[0] = (uint8_t)(base + RF_SEQ_REGS + i);
+            tx[1] = (uint8_t)(((uint32_t)rf_program->ctrl_regs[i]) >> 24);
+            tx[2] = (uint8_t)(((uint32_t)rf_program->ctrl_regs[i]) >> 16);
+            tx[3] = (uint8_t)(((uint32_t)rf_program->ctrl_regs[i]) >> 8);
+            tx[4] = (uint8_t)(((uint32_t)rf_program->ctrl_regs[i]));
+        }
+
+        n = write(uartfd, tx, sizeof(tx) - 1);
+        if (n < 0) {
+            perror("write error");
+            return -1;
+        }
+
+    }
+
+    tx[0] = (uint8_t)(base + RF_SEQ_REGS + RF_CTRL_REGS - 1);
+    tx[1] = 0;
+    tx[2] = 0;
+    tx[3] = 0;
+    tx[4] = 0;
+
+    n = write(uartfd, tx, sizeof(tx) - 1);
+    if (n < 0) {
+        perror("write error");
+        return -1;
+    }
+
+    tx[0] = (uint8_t)(base + RF_SEQ_REGS + RF_CTRL_REGS - 1);
+    uint32_t chsel = 1U << rf_channel;
+    tx[1] = (uint8_t)(chsel >> 24);
+    tx[2] = (uint8_t)(chsel >> 16);
+    tx[3] = (uint8_t)(chsel >> 8);
+    tx[4] = (uint8_t)(chsel);
+
+    n = write(uartfd, tx, sizeof(tx) - 1);
+    if (n < 0) {
+        perror("write error");
+        return -1;
+    }
+
+    for (int i = 0; i < RF_SEQ_REGS - 1; i++) {
+
+        tx[0] = (uint8_t)(base + i);
+        tx[1] = (uint8_t)(rf_program->seq_regs[i] >> 24);
+        tx[2] = (uint8_t)(rf_program->seq_regs[i] >> 16);
+        tx[3] = (uint8_t)(rf_program->seq_regs[i] >> 8);
+        tx[4] = (uint8_t)(rf_program->seq_regs[i]);
+
+        n = write(uartfd, tx, sizeof(tx) - 1);
+        if (n < 0) {
+            perror("write error");
+            return -1;
+        }
+
+    }
+
+    tx[0] = (uint8_t)(base + RF_SEQ_REGS - 1);
+    tx[1] = 0;
+    tx[2] = 0;
+    tx[3] = 0;
+    tx[4] = 0;
+
+    n = write(uartfd, tx, sizeof(tx) - 1);
+    if (n < 0) {
+        perror("write error");
+        return -1;
+    }
+
+    tx[0] = (uint8_t)(base + RF_SEQ_REGS - 1);
+    chsel = 1U << rf_channel;
+    tx[1] = (uint8_t)(chsel >> 24);
+    tx[2] = (uint8_t)(chsel >> 16);
+    tx[3] = (uint8_t)(chsel >> 8);
+    tx[4] = (uint8_t)(chsel);
+
+    n = write(uartfd, tx, sizeof(tx) - 1);
+    if (n < 0) {
+        perror("write error");
+        return -1;
+    }
+
+    return 0;
+
+}

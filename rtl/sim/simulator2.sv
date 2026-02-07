@@ -116,14 +116,55 @@ module simulator;
     logic [0:LCH_TOTAL_REGS-1][31:0] w_lch_regs;
 
     logic w_trigger;
+    
+    // uart regs
+    localparam TOTAL_UREGS=DC_SEQ_REGS+DC_CTRL_REGS+
+                           RF_SEQ_REGS+RF_CTRL_REGS+
+                           LCH_TOTAL_REGS;
+
+    localparam U_DC_SEQ_START = 0;
+    localparam U_DC_SEQ_END = U_DC_SEQ_START + DC_SEQ_REGS - 1;
+
+    localparam U_DC_CTRL_START = U_DC_SEQ_END + 1;
+    localparam U_DC_CTRL_END = U_DC_CTRL_START + DC_CTRL_REGS - 1;
+
+    localparam U_RF_SEQ_START = U_DC_CTRL_END + 1;
+    localparam U_RF_SEQ_END = U_RF_SEQ_START + RF_SEQ_REGS - 1;
+
+    localparam U_RF_CTRL_START = U_RF_SEQ_END + 1;
+    localparam U_RF_CTRL_END = U_RF_CTRL_START + RF_CTRL_REGS - 1;
+
+    localparam U_LCH_START = U_RF_CTRL_END + 1;
+    localparam U_LCH_END = U_LCH_START + LCH_TOTAL_REGS - 1;
+
+    logic [0:TOTAL_UREGS-1][31:0] w_uregs;
+
+    logic w_rx, w_tx;
 
     /********************************
     * top-level module instantiation
     ********************************/
 
+    uart_regs #(
+        .DATA_WIDTH(8),
+        .RX_FIFO_DEPTH(8),
+        .RX_FIFO_AF_DEPTH(6),
+        .RX_FIFO_AE_DEPTH(2),
+        .TX_FIFO_DEPTH(8),
+        .TX_FIFO_AF_DEPTH(6),
+        .TX_FIFO_AE_DEPTH(2),
+        .NUM_REGS(TOTAL_UREGS)
+    ) UREGS (
+        .i_clk(w_dcrfli_clk),
+        .i_rst(!w_dcrfli_rst_n),
+        .i_rx(w_rx),
+        .o_tx(w_tx),
+        .o_regs(w_uregs)
+    );
+
     logic i_btn_w;
 
-    dcrfli_btn #(
+    dcrfli_uart_btn #(
         .NUM_DC_CHANNEL(NUM_DC_CHANNEL),
         .NUM_RF_CHANNEL(NUM_RF_CHANNEL),
         .NUM_LI_CHANNEL(NUM_LI_CHANNEL),
@@ -135,6 +176,9 @@ module simulator;
         // dc
         .i_dc_seq_regs(w_dc_seq_regs),
         .i_dc_ctrl_regs(w_dc_ctrl_regs),
+
+        .i_dc_seq_uregs(w_uregs[U_DC_SEQ_START:U_DC_SEQ_END]),
+        .i_dc_ctrl_uregs(w_uregs[U_DC_CTRL_START:U_DC_CTRL_END]),
 
         .o_dc_sclk_bus(w_dc_sclk_bus),
         .o_dc_mosi_bus(w_dc_mosi_bus),
@@ -152,6 +196,9 @@ module simulator;
         .i_rf_seq_regs(w_rf_seq_regs),
         .i_rf_ctrl_regs(w_rf_ctrl_regs),
 
+        .i_rf_seq_uregs(w_uregs[U_RF_SEQ_START:U_RF_SEQ_END]),
+        .i_rf_ctrl_uregs(w_uregs[U_RF_CTRL_START:U_RF_CTRL_END]),
+
         .o_rf_QIx8_bus(w_rf_QIx8_bus),
 
         .o_rf_armed_bus(w_rf_armed_bus),
@@ -168,10 +215,59 @@ module simulator;
 
         // launch
         .i_lch_regs(w_lch_regs),
+
+        .i_lch_uregs(w_uregs[U_LCH_START:U_LCH_END]),
         
         // button
         .i_btn(i_btn_w)
     );
+
+    /************
+    * uart tasks
+    *************/
+
+    localparam bit_duration = 1085.069;
+    task pc_tsmt(input logic [7:0] data);
+        // start bit = 0
+        w_rx = 1'b0;
+        #bit_duration;
+
+        // data bits
+        for (int i = 0; i < 8; i++) begin
+            w_rx = data[i];
+            #bit_duration;
+        end
+
+        // end bit = 1
+        w_rx = 1'b1;
+        #bit_duration;
+    endtask
+
+    logic [7:0] pc_received [$];
+    logic [7:0] rx_data;
+
+    task pc_recv;
+
+        // start bit == 0
+        @(negedge w_tx);
+        #(bit_duration / 2);
+        assert (w_tx == 1'b0)
+        else $fatal(1, "At %0.3f ns: o_tx didn't hold start bit as 0", $realtime);
+
+        // data bits
+        for (int i = 0; i < 8; i++) begin
+            #bit_duration;
+            rx_data[i] = w_tx;
+        end
+
+        // stop bit == 1
+        #bit_duration;
+        assert (w_tx == 1'b1)
+        else $fatal(1, "At %0.3f ns: o_tx didn't hold stop bit as 1", $realtime);
+
+        pc_received.push_back(rx_data);
+
+    endtask
 
     /*********************************
     * axil regs and dac instantiation
@@ -633,6 +729,7 @@ module simulator;
         end
     end
 
+    logic [7:0] tx_data;
     logic [31:0] addr, data;
     longint unsigned t;
     int rc;
@@ -672,7 +769,10 @@ module simulator;
                 line = bytes2string(line_buf);
                 $display("RX: %s", line);
 
-                if ($sscanf(line, "0x%8h 0x%8h", addr, data) == 2) begin
+                if ($sscanf(line, "0x%4h", tx_data) == 1) begin
+                    pc_tsmt(tx_data);
+                end
+                else if ($sscanf(line, "0x%8h 0x%8h", addr, data) == 2) begin
                     axil_bus_write(addr, data);
                 end
                 else if ($sscanf(line, "run %d", t) == 1) begin

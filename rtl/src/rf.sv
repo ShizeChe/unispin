@@ -23,6 +23,9 @@ module rf
      input  logic [0:SEQ_REGS-1][31:0] i_seq_regs,
      input  logic [0:CTRL_REGS-1][31:0] i_ctrl_regs,
 
+     input  logic [0:SEQ_REGS-1][31:0] i_seq_uregs,
+     input  logic [0:CTRL_REGS-1][31:0] i_ctrl_uregs,
+
      output logic [DAC_WIDTH*16-1:0] o_QIx8,
 
      input  logic i_start,
@@ -56,6 +59,7 @@ module rf
         .i_rst(i_rst),
 
         .i_regs(i_seq_regs),
+        .i_uregs(i_seq_uregs),
 
         .o_addr(w_addr),
         .o_insn(w_insn),
@@ -109,6 +113,7 @@ module rf
         .i_rst(i_rst),
 
         .i_regs(i_ctrl_regs),
+        .i_uregs(i_ctrl_uregs),
 
         .o_ctrl(w_ctrl),
 

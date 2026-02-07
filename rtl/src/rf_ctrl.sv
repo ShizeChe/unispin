@@ -11,6 +11,7 @@ module rf_ctrl
     (input  logic i_clk, i_rst,
 
      input  logic [0:CTRL_REGS-1][31:0] i_regs,
+     input  logic [0:CTRL_REGS-1][31:0] i_uregs,
 
      output rf_ctrl_t o_ctrl,
 
@@ -36,6 +37,18 @@ module rf_ctrl
     logic w_new_ctrl;
     assign w_new_ctrl = (w_last0_ff2 && !w_last0_ff1);
 
+    logic w_ulast0, w_ulast0_ff1, w_ulast0_ff2;
+
+    assign w_ulast0 = (i_uregs[CTRL_REGS-1] == 'h0);
+
+    always_ff @(posedge i_clk) begin
+        w_ulast0_ff1 <= w_ulast0;
+        w_ulast0_ff2 <= w_ulast0_ff1;
+    end
+
+    logic w_new_uctrl;
+    assign w_new_uctrl = (w_ulast0_ff2 && !w_ulast0_ff1);
+
     logic [NCO_FREQ_WIDTH-1:0] w_nco_freq, r_nco_freq;
     logic [NCO_PHASE_WIDTH-1:0] w_nco_phase, r_nco_phase;
     logic [IQ_WIDTH-1:0] w_default_I, r_default_I;
@@ -56,6 +69,26 @@ module rf_ctrl
         w_nco_en[0] = (w_nco_freq[15:0] != r_nco_freq[15:0]);
     end
 
+    logic [NCO_FREQ_WIDTH-1:0] w_nco_freq_u, r_nco_freq_u;
+    logic [NCO_PHASE_WIDTH-1:0] w_nco_phase_u, r_nco_phase_u;
+    logic [IQ_WIDTH-1:0] w_default_I_u, r_default_I_u;
+    logic [IQ_WIDTH-1:0] w_default_Q_u, r_default_Q_u;
+    logic [NCO_EN_WIDTH-1:0] w_nco_en_u, r_nco_en_u;
+
+    always_comb begin
+        w_nco_freq_u = {i_uregs[0], i_uregs[1]}[NCO_FREQ_WIDTH-1:0];
+        w_nco_phase_u = i_uregs[2][NCO_PHASE_WIDTH-1:0];
+        w_default_I_u = i_uregs[3][IQ_WIDTH-1:0];
+        w_default_Q_u = i_uregs[4][IQ_WIDTH-1:0];
+
+        w_nco_en_u[5] = (w_nco_phase_u == 'h0);
+        w_nco_en_u[4] = (w_nco_phase_u != 'h0) && (w_nco_phase_u[17:16] != r_nco_phase_u[17:16]);
+        w_nco_en_u[3] = (w_nco_phase_u != 'h0) && (w_nco_phase_u[15:0] != r_nco_phase_u[15:0]);
+        w_nco_en_u[2] = (w_nco_freq_u[47:32] != r_nco_freq[47:32]);
+        w_nco_en_u[1] = (w_nco_freq_u[31:16] != r_nco_freq[31:16]);
+        w_nco_en_u[0] = (w_nco_freq_u[15:0] != r_nco_freq[15:0]);
+    end
+
     logic r_start;
 
     always_ff @(posedge i_clk) begin
@@ -66,6 +99,14 @@ module rf_ctrl
             r_nco_en <= 'h0;
             r_default_I <= 'h0;
             r_default_Q <= 'h0;
+        end
+        else if (w_new_uctrl && !i_running) begin
+            r_start <= (w_nco_en_u != 6'b0);
+            r_nco_freq <= w_nco_freq_u;
+            r_nco_phase <= w_nco_phase_u;
+            r_nco_en <= w_nco_en_u;
+            r_default_I <= w_default_I_u;
+            r_default_Q <= w_default_Q_u;
         end
         else if (w_new_ctrl && !i_running) begin
             r_start <= (w_nco_en != 6'b0);

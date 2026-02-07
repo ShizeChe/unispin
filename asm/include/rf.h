@@ -102,5 +102,6 @@ typedef struct {
 int rf_parse_insn(char *line, rf_insn_t *insn, long double fnco_hz);
 void rf_assemble(rf_program_t *prog);
 int rf_load_insns(int rf_channel, rf_program_t *rf_program);
+int rf_write_regs(int rf_channel, rf_program_t *rf_program, int uartfd);
 
 #endif
