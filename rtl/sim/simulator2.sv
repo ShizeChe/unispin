@@ -159,6 +159,7 @@ module simulator;
         .i_rst(!w_dcrfli_rst_n),
         .i_rx(w_rx),
         .o_tx(w_tx),
+        .i_dvsr(11'd16),
         .o_regs(w_uregs)
     );
 

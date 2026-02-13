@@ -1,98 +1,80 @@
-`default_nettype none
+// `default_nettype none
 `timescale 1ns / 1ps
+`include "li.svh"
 
 module li_core
-   #(parameter NUM_SAMPLE_WIDTH=20,
-     parameter STRIDE_WIDTH=30,
-     parameter IQ_WIDTH=14,
-     parameter ADC_WIDTH=16,
-     parameter INSN_WIDTH=STRIDE_WIDTH+NUM_SAMPLE_WIDTH*2)
+   #(parameter NUM_SAMPLE_WIDTH=LI_NUM_SAMPLE_WIDTH,
+     parameter STRIDE_WIDTH=LI_STRIDE_WIDTH,
+     parameter DEPTH=LI_DEPTH,
+     parameter ADC_WIDTH=LI_ADC_WIDTH,
+     parameter SEQ_REGS=LI_SEQ_REGS,
+     parameter CTRL_REGS=LI_CTRL_REGS)
     (input  logic i_clk, i_rst,
-     
-     input  logic i_insn,
+
+     // sequencer interface
+     input  logic [$clog2(DEPTH)-1:0] i_addr,
+     input  li_insn_t i_insn,
      output logic o_next,
      input  logic i_empty,
+     output li_insn_t o_insn_modified,
 
+     // rfadc interface
      input  logic [ADC_WIDTH*16-1:0] i_QIx8,
 
-     output logic [ADC_WIDTH*2-1:0] o_tdata,
-     output logic [(ADC_WIDTH*2)/8-1:0] o_tkeep,
-     output logic o_tlast,
-     input  logic i_tready,
-     output logic o_tvalid,
-
+     // launch interface
      input  logic i_start,
-     output logic o_armed);
+     output logic o_armed,
 
-    logic [NUM_SAMPLE_WIDTH-1:0] w_delays_decode;
-    logic [NUM_SAMPLE_WIDTH-1:0] w_samples_decode;
-    logic [STRIDE_WIDTH-1:0] w_stride_decode;
+     // pipeline empty flag
+     output logic o_empty,
+     
+     // output interface
+     output logic [ADC_WIDTH*16-1:0] o_QIx8,
+     output logic [7:0] o_validx8,
 
-    assign {w_delays_decode, w_samples_decode, w_stride_decode} = i_insn;
+     // eop for verification
+     output li_eop_t o_eop);
 
-    logic [NUM_SAMPLE_WIDTH-1:0] r_delays, r_delays_next;
-    logic [NUM_SAMPLE_WIDTH-1:0] r_samples, r_samples_next;
-    logic [NUM_SAMPLE_WIDTH-1:0] r_samples, w_samples_next;
-    logic [STRIDE_WIDTH-1:0] r_stride, w_stride_next;
 
-    logic r_mode, w_mode_next;
+    /**************
+    * decode stage
+    **************/
 
+    li_decode_stg_t d;
+
+    li_decode #(
+        .DEPTH(DEPTH)
+    ) DECODER (
+        .i_addr(i_addr),
+        .i_insn(i_insn),
+        .d(d),
+        .o_insn_modified(o_insn_modified)
+    );
+
+    /**************
+    * sample stage
+    **************/
+
+    li_sample_stg_t s;
     always_ff @(posedge i_clk) begin
         if (i_rst) begin
-            r_waits <= 'd0;
-            r_keeps <= 'd0;
-            r_samples <= 'd0;
-            r_stride <= 'd0;
-            r_mode <= 1'b0;
+            s <= '{
+                r_addr: 'bx,
+                r_samples: 'bx,
+                r_samples_left: 'd0,
+                r_stride: 'bx,
+                r_stride_left: 'd0,
+                r_arm: 1'b0,
+                r_idle: 1'b0
+            };
         end
-        else begin
-            r_waits <= w_waits_next;
-            r_keeps <= w_keeps_next
-            r_samples <= w_samples_next;
-            r_stride <= w_stride_next;
-            r_mode <= w_mode_next;
+        else if (!w_stall) begin
+
+            if (r_stride_left < 'd8) begin
+
+            end
         end
     end
 
-    logic w_big_propagate, w_small_propagate, w_switch_mode;
-
-    assign w_big_propagate = !i_empty && r_mode && (r_samples == 'd1) && 
-                             ('d0 <= r_stride && r_stride <= 'd7); 
-
-    assign w_small_propagate = (r_samples > 'd1) && 
-                               ('d0 <= r_stride && r_stride <= 'd7);
-
-    assign w_switch_mode = !r_mode && (r_samples == 'd1) && 
-                           ('d0 <= r_stride && r_stride <= 'd7);
-
-    enum {IDLE, ARMED, DELAY, KEEP} r_state;
-
-    always_ff @(posedge i_clk) begin
-        if (i_rst)
-            r_state <= IDLE;
-        else if (r_state == ARMED && i_start)
-            r_state <= 
-    end
-
-    always_comb begin
-        case ({w_big_propagate, w_small_propagate})
-            2'b00: begin
-                w_samples_next = r_samples;
-                w_stride_next = r_stride - 'd8;
-            end
-            2'b01: begin
-                w_samples_next = r_samples - 'd1;
-                w_stride_next = r_stride_rst - ('d8 - r_stride);
-            end
-            2'b10: begin
-                w_samples_next = w_samples_decode;
-                w_stride_next = w_stride_decode;
-            end
-            default: begin
-                w_samples_next = r_samples;
-                w_stride_next = r_stride;
-            end
-        endcase
-    end
-
+     
 endmodule

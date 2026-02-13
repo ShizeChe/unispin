@@ -67,11 +67,6 @@ module axil_slave_regs
     end
 
     // write handshake
-    // initial begin
-    //     for (int i = 0; i < NUM_REGS; i++)
-    //         r_regs[i] = 'h0;
-    // end
-
     logic [ADDR_WIDTH-3:0] w_awireg;
     logic [1:0] w_awls2b;
 
@@ -166,6 +161,11 @@ module axil_slave_regs
     end
 
 `ifdef FORMAL
+
+    initial begin
+        for (int i = 0; i < NUM_REGS; i++)
+            r_regs[i] = 'h0;
+    end
 
     logic [3:0] f_axi_rd_outstanding;
     logic [3:0] f_axi_wr_outstanding;
