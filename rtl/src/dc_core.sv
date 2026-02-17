@@ -129,6 +129,7 @@ module dc_core
                 r_strb_ldac: 1'b0,
                 r_hold_cycles: 'd0,
                 r_arm: 1'b0,
+                r_delay_cycles: 'd0,
                 r_cs_up_cycles: 'd0,
                 r_cs_n: 1'b1,
                 r_spi_start: 1'b0,
@@ -145,15 +146,19 @@ module dc_core
                 r_strb_ldac: i.r_bubble ? 1'b0 : i.r_strb_ldac,
                 r_hold_cycles: i.r_bubble ? 'd0 : i.r_hold_cycles,
                 r_arm: i.r_bubble ? 1'b0 : i.r_arm,
+                r_delay_cycles: i.r_bubble ? 'd0 : i_ctrl.w_delay_cycles,
                 r_cs_up_cycles: i.r_bubble ? 'd0 : i_ctrl.w_cs_up_cycles,
-                r_cs_n: i.r_bubble,
+                r_cs_n: 1'b1,
                 r_spi_start: !i.r_bubble,
                 r_spi_done: i.r_bubble
             };
         end
         else begin
-            s.r_spi_start <= 1'b0;
-            if (!s.r_spi_done) begin
+            if (s.r_delay_cycles > 'd0) begin
+                s.r_delay_cycles <= s.r_delay_cycles - 'd1;
+            end
+            else if (!s.r_spi_done) begin
+                s.r_spi_start <= 1'b0;
                 s.r_cs_n <= w_spi_done;
                 s.r_spi_done <= w_spi_done;
                 s.r_spi_dout <= w_spi_done ? w_spi_dout : 'bx;
@@ -176,7 +181,7 @@ module dc_core
         .i_dvsr(i_ctrl.w_dvsr),
         .i_din(s.r_spi_din),
         .o_dout(w_spi_dout),
-        .i_start(s.r_spi_start),
+        .i_start(s.r_spi_start && s.r_delay_cycles == 'd0),
         .o_done(w_spi_done),
         .i_miso(i_miso),
         .o_mosi(o_mosi),

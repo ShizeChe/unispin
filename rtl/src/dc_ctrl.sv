@@ -5,6 +5,7 @@
 module dc_ctrl
    #(parameter CTRL_REGS=DC_CTRL_REGS,
      parameter SPI_DVSR_WIDTH=DC_SPI_DVSR_WIDTH,
+     parameter SPI_DELAY_WIDTH=DC_SPI_DELAY_WIDTH,
      parameter SPI_CS_UP_WIDTH=DC_SPI_CS_UP_WIDTH,
      parameter SPI_LDAC_WIDTH=DC_SPI_LDAC_WIDTH)
     (input  logic i_clk, i_rst,
@@ -39,28 +40,33 @@ module dc_ctrl
     assign w_new_uctrl = (w_ulast0_ff2 && !w_ulast0_ff1);
 
     logic [SPI_DVSR_WIDTH-1:0] r_dvsr;
+    logic [SPI_DELAY_WIDTH-1:0] r_delay_cycles;
     logic [SPI_CS_UP_WIDTH-1:0] r_cs_up_cycles;
     logic [SPI_LDAC_WIDTH-1:0] r_ldac_cycles;
 
     always_ff @(posedge i_clk) begin
         if (i_rst) begin
             r_dvsr <= 'd6;
+            r_delay_cycles <= 'd3;
             r_cs_up_cycles <= 'd3;
             r_ldac_cycles <= 'd2;
         end
         else if (w_new_uctrl) begin
             r_dvsr <= i_uregs[0][SPI_DVSR_WIDTH-1:0];
-            r_cs_up_cycles <= i_uregs[1][SPI_CS_UP_WIDTH-1:0];
-            r_ldac_cycles <= i_uregs[2][SPI_LDAC_WIDTH-1:0];
+            r_delay_cycles <= i_uregs[1][SPI_DELAY_WIDTH-1:0];
+            r_cs_up_cycles <= i_uregs[2][SPI_CS_UP_WIDTH-1:0];
+            r_ldac_cycles <= i_uregs[3][SPI_LDAC_WIDTH-1:0];
         end
         else if (w_new_ctrl) begin
             r_dvsr <= i_regs[0][SPI_DVSR_WIDTH-1:0];
-            r_cs_up_cycles <= i_regs[1][SPI_CS_UP_WIDTH-1:0];
-            r_ldac_cycles <= i_regs[2][SPI_LDAC_WIDTH-1:0];
+            r_delay_cycles <= i_regs[1][SPI_DELAY_WIDTH-1:0];
+            r_cs_up_cycles <= i_regs[2][SPI_CS_UP_WIDTH-1:0];
+            r_ldac_cycles <= i_regs[3][SPI_LDAC_WIDTH-1:0];
         end
     end
 
     assign o_ctrl.w_dvsr = r_dvsr;
+    assign o_ctrl.w_delay_cycles = r_delay_cycles;
     assign o_ctrl.w_cs_up_cycles = r_cs_up_cycles;
     assign o_ctrl.w_ldac_cycles = r_ldac_cycles;
 

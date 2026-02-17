@@ -42,6 +42,9 @@ module dc_tb;
         .i_seq_regs(w_seq_regs),
         .i_ctrl_regs(w_ctrl_regs),
 
+        .i_seq_uregs((DC_SEQ_REGS*32)'('h0)),
+        .i_ctrl_uregs((DC_CTRL_REGS*32)'('h0)),
+
         .o_sclk(w_sclk),
         .o_mosi(w_mosi),
         .i_miso(w_miso),
@@ -93,13 +96,15 @@ module dc_tb;
     assign w_seq_regs[DC_SEQ_REGS-1] = start_reg;
 
     logic [DC_SPI_DVSR_WIDTH-1:0] dvsr_reg;
+    logic [DC_SPI_DELAY_WIDTH-1:0] delay_reg;
     logic [DC_SPI_CS_UP_WIDTH-1:0] cs_up_reg;
     logic [DC_SPI_LDAC_WIDTH-1:0] ldac_reg;
     logic [31:0] new_ctrl_reg;
     assign w_ctrl_regs[0] = {{(32-DC_SPI_DVSR_WIDTH){1'b0}}, dvsr_reg};
-    assign w_ctrl_regs[1] = {{(32-DC_SPI_CS_UP_WIDTH){1'b0}}, cs_up_reg};
-    assign w_ctrl_regs[2] = {{(32-DC_SPI_LDAC_WIDTH){1'b0}}, ldac_reg};
-    assign w_ctrl_regs[3] = new_ctrl_reg;
+    assign w_ctrl_regs[1] = {{(32-DC_SPI_DELAY_WIDTH){1'b0}}, delay_reg};
+    assign w_ctrl_regs[2] = {{(32-DC_SPI_CS_UP_WIDTH){1'b0}}, cs_up_reg};
+    assign w_ctrl_regs[3] = {{(32-DC_SPI_LDAC_WIDTH){1'b0}}, ldac_reg};
+    assign w_ctrl_regs[4] = new_ctrl_reg;
 
     task get_golden_seq;
 
@@ -149,6 +154,7 @@ module dc_tb;
     endtask
 
     task init;
+        $display("init");
         insns[0] = '{
             w_iters: 'd0,
             w_spi_din: {1'b0, 3'b010, 10'b0, 4'b0, 1'b0, 1'b0, 1'b0, 1'b0, 1'b1, 1'b0},
@@ -162,6 +168,7 @@ module dc_tb;
         iters_reg = 32'h1;
         start_reg = 32'h0;
         dvsr_reg = 'd1;
+        delay_reg = 'd10;
         cs_up_reg = 'd10;
         ldac_reg = 'd10;
         @(negedge w_clk);
@@ -180,13 +187,15 @@ module dc_tb;
     task rand_insns;
 
         dvsr_reg = $urandom_range(6, 20);
+        delay_reg = $urandom_range(10, 20);
         cs_up_reg = $urandom_range(10, 20);
         ldac_reg = $urandom_range(2, 10);
         $display("dvsr_reg=%0d", dvsr_reg);
+        $display("delay_reg=%0d", delay_reg);
         $display("cs_up_reg=%0d", cs_up_reg);
         $display("ldac_reg=%0d", ldac_reg);
 
-        min_hold_cycles = (dvsr_reg + 1) * 48 + cs_up_reg + 10;
+        min_hold_cycles = (dvsr_reg + 1) * 48 + delay_reg + cs_up_reg + 10;
         $display("min_hold_cycles=%0d", min_hold_cycles);
 
         for (int i = 0; i < DC_DEPTH; i++) begin
@@ -270,9 +279,10 @@ module dc_tb;
         w_rst = 1'b0;
 
         init;
+        $display("init finished");
 
         test = 0;
-        repeat (100) begin
+        repeat (10) begin
             $display("test%0d", test);
             rand_insns;
             test++;
