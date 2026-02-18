@@ -34,26 +34,31 @@ typedef struct {
     logic [$clog2(LI_DEPTH)-1:0] r_addr;
     logic [LI_NUM_SAMPLE_WIDTH-1:0] r_samples;
     logic [LI_NUM_SAMPLE_WIDTH-1:0] r_samples_left;
+    logic [LI_NUM_SAMPLE_WIDTH-1:0] w_samples_next;
     logic [LI_STRIDE_WIDTH-1:0] r_stride;
     logic [LI_STRIDE_WIDTH-1:0] r_stride_left;
+    logic [LI_STRIDE_WIDTH-1:0] w_stride_next;
+    logic [7:0] w_validx8;
+    logic w_done;
     logic r_arm;
     logic r_idle;
 } li_sample_stg_t;
 
 typedef struct {
     logic [$clog2(LI_DEPTH)-1:0] r_addr;
-    logic [LI_ADC_WIDTH*16-1:0] r_QIx8;
+    logic [LI_ADC_WIDTH*8-1:0] r_Ix8;
+    logic [LI_ADC_WIDTH*8-1:0] r_Qx8;
     logic [7:0] r_validx8;
-    logic [LI_NUM_SAMPLE_WIDTH-1:0] r_sample_start;
-    logic [LI_NUM_SAMPLE_WIDTH-1:0] r_sample_end;
+    logic r_last;
 } li_output_stg_t;
 
 // eop = end of pipeline
 typedef struct packed {
     logic [$clog2(LI_DEPTH)-1:0] w_addr;
-    logic [7:0] r_validx8;
-    logic [LI_NUM_SAMPLE_WIDTH-1:0] w_sample_start;
-    logic [LI_NUM_SAMPLE_WIDTH-1:0] w_sample_end;
-} rf_eop_t;
+    logic [LI_ADC_WIDTH*8-1:0] w_Ix8;
+    logic [LI_ADC_WIDTH*8-1:0] w_Qx8;
+    logic [7:0] w_validx8;
+    logic w_last;
+} li_eop_t;
 
 `endif
