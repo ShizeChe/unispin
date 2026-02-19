@@ -35,7 +35,7 @@ module li_sample
         end
         else if (i_stride_left == 'd7) begin
 
-            o_samples_next = (i_samples_left < 'd1) ? 'd0 : (i_samples - 'd1);
+            o_samples_next = (i_samples_left < 'd1) ? 'd0 : (i_samples_left - 'd1);
             o_validx8 = (i_samples_left < 'd1) ? 8'h0 : 8'b10000000;
             o_stride_next = i_stride - 'd1;
 
@@ -44,7 +44,7 @@ module li_sample
 
             // i_stride = 1 won't reach here, period = 01234567 | 01234567...
 
-            o_samples_next = (i_samples_left < 'd1) ? 'd0 : (i_samples - 'd1);
+            o_samples_next = (i_samples_left < 'd1) ? 'd0 : (i_samples_left - 'd1);
             o_validx8 = (i_samples_left < 'd1) ? 8'h0 : 8'b01000000;
             o_stride_next = i_stride - 'd2;
 
@@ -54,7 +54,7 @@ module li_sample
             // i_stride = 1 won't reach here, period = 01234567 | 01234567...
             // i_stride = 2 won't reach here, period = 0246 | 0246...
 
-            o_samples_next = (i_samples_left < 'd1) ? 'd0 : (i_samples - 'd1);
+            o_samples_next = (i_samples_left < 'd1) ? 'd0 : (i_samples_left - 'd1);
             o_validx8 = (i_samples_left < 'd1) ? 8'h0 : 8'b00100000;
             o_stride_next = i_stride - 'd3;
 
@@ -65,7 +65,7 @@ module li_sample
             // i_stride = 2 won't reach here, period = 0246 | 0246...
             // i_stride = 3 won't reach here, period = 036 | 147 | 25 | 036...
 
-            o_samples_next = (i_samples_left < 'd1) ? 'd0 : (i_samples - 'd1);
+            o_samples_next = (i_samples_left < 'd1) ? 'd0 : (i_samples_left - 'd1);
             o_validx8 = (i_samples_left < 'd1) ? 8'h0 : 8'b00010000;
             o_stride_next = i_stride - 'd4;
 
@@ -77,7 +77,7 @@ module li_sample
             // i_stride = 3 won't reach here, period = 036 | 147 | 25 | 036...
             // i_stride = 4 won't reach here, period = 04 | 04...
 
-            o_samples_next = (i_samples_left < 'd1) ? 'd0 : (i_samples - 'd1);
+            o_samples_next = (i_samples_left < 'd1) ? 'd0 : (i_samples_left - 'd1);
             o_validx8 = (i_samples_left < 'd1) ? 8'h0 : 8'b00001000;
             o_stride_next = i_stride - 'd5;
 
@@ -92,19 +92,19 @@ module li_sample
 
             case (i_stride)
                 'd3: begin
-                    o_samples_next = (i_samples_left < 'd2) ? 'd0 : (i_samples - 'd2);
+                    o_samples_next = (i_samples_left < 'd2) ? 'd0 : (i_samples_left - 'd2);
                     o_validx8 = (i_samples_left >= 'd2) ? 8'b00100100 : 
                                 (i_samples_left == 'd1) ? 8'b00000100 : 8'h0;
                     o_stride_next = 'd0;
                 end
                 'd5: begin
-                    o_samples_next = (i_samples_left < 'd2) ? 'd0 : (i_samples - 'd2);
+                    o_samples_next = (i_samples_left < 'd2) ? 'd0 : (i_samples_left - 'd2);
                     o_validx8 = (i_samples_left >= 'd2) ? 8'b10000100 : 
                                 (i_samples_left == 'd1) ? 8'b00000100 : 8'h0;
                     o_stride_next = 'd4;
                 end
                 default: begin
-                    o_samples_next = (i_samples_left < 'd1) ? 'd0 : (i_samples - 'd1);
+                    o_samples_next = (i_samples_left < 'd1) ? 'd0 : (i_samples_left - 'd1);
                     o_validx8 = (i_samples_left < 'd1) ? 8'h0 : 8'b00000100;
                     o_stride_next = i_stride - 'd6;
                 end
@@ -122,20 +122,20 @@ module li_sample
 
             case (i_stride)
                 'd3: begin
-                    o_samples_next = (i_samples_left < 'd3) ? 'd0 : (i_samples - 'd3);
+                    o_samples_next = (i_samples_left < 'd3) ? 'd0 : (i_samples_left - 'd3);
                     o_validx8 = (i_samples_left >= 'd3) ? 8'b10010010 : 
                                 (i_samples_left == 'd2) ? 8'b00010010 : 
                                 (i_samples_left == 'd1) ? 8'b00000010 : 8'h0;
                     o_stride_next = 'd2;
                 end
                 'd5: begin
-                    o_samples_next = (i_samples_left < 'd2) ? 'd0 : (i_samples - 'd2);
+                    o_samples_next = (i_samples_left < 'd2) ? 'd0 : (i_samples_left - 'd2);
                     o_validx8 = (i_samples_left >= 'd2) ? 8'b01000010 : 
                                 (i_samples_left == 'd1) ? 8'b00000010 : 8'h0;
                     o_stride_next = 'd3;
                 end
                 default: begin
-                    o_samples_next = (i_samples_left < 'd1) ? 'd0 : (i_samples - 'd1);
+                    o_samples_next = (i_samples_left < 'd1) ? 'd0 : (i_samples_left - 'd1);
                     o_validx8 = (i_samples_left < 'd1) ? 8'h0 : 8'b00000010;
                     o_stride_next = i_stride - 'd7;
                 end
@@ -153,7 +153,7 @@ module li_sample
 
             case (i_stride)
                 'd1: begin
-                    o_samples_next = (i_samples_left < 'd8) ? 'd0 : (i_samples - 'd8);
+                    o_samples_next = (i_samples_left < 'd8) ? 'd0 : (i_samples_left - 'd8);
                     o_validx8 = (i_samples_left >= 'd8) ? 8'b11111111 : 
                                 (i_samples_left == 'd7) ? 8'b01111111 : 
                                 (i_samples_left == 'd6) ? 8'b00111111 : 
@@ -165,7 +165,7 @@ module li_sample
                     o_stride_next = 'd0;
                 end
                 'd2: begin
-                    o_samples_next = (i_samples_left < 'd4) ? 'd0 : (i_samples - 'd4);
+                    o_samples_next = (i_samples_left < 'd4) ? 'd0 : (i_samples_left - 'd4);
                     o_validx8 = (i_samples_left >= 'd4) ? 8'b01010101 : 
                                 (i_samples_left == 'd3) ? 8'b00010101 : 
                                 (i_samples_left == 'd2) ? 8'b00000101 : 
@@ -173,45 +173,45 @@ module li_sample
                     o_stride_next = 'd0;
                 end
                 'd3: begin
-                    o_samples_next = (i_samples_left < 'd3) ? 'd0 : (i_samples - 'd3);
+                    o_samples_next = (i_samples_left < 'd3) ? 'd0 : (i_samples_left - 'd3);
                     o_validx8 = (i_samples_left >= 'd3) ? 8'b01001001 : 
                                 (i_samples_left == 'd2) ? 8'b00001001 :
                                 (i_samples_left == 'd1) ? 8'b00000001 : 8'h0;
                     o_stride_next = 'd1;
                 end
                 'd4: begin
-                    o_samples_next = (i_samples_left < 'd2) ? 'd0 : (i_samples - 'd2);
+                    o_samples_next = (i_samples_left < 'd2) ? 'd0 : (i_samples_left - 'd2);
                     o_validx8 = (i_samples_left >= 'd2) ? 8'b00010001 : 
-                                (i_samples_left == 'd1) ? 8'b00000001 : 'h0
+                                (i_samples_left == 'd1) ? 8'b00000001 : 8'h0;
                     o_stride_next = 'd0;
                 end
                 'd5: begin
-                    o_samples_next = (i_samples_left < 'd2) ? 'd0 : (i_samples - 'd2);
+                    o_samples_next = (i_samples_left < 'd2) ? 'd0 : (i_samples_left - 'd2);
                     o_validx8 = (i_samples_left >= 'd2) ? 8'b00100001 : 
-                                (i_samples_left == 'd1) ? 8'b00000001 : 'h0
+                                (i_samples_left == 'd1) ? 8'b00000001 : 8'h0;
                     o_stride_next = 'd2;
                 end
                 'd6: begin
-                    o_samples_next = (i_samples_left < 'd2) ? 'd0 : (i_samples - 'd2);
+                    o_samples_next = (i_samples_left < 'd2) ? 'd0 : (i_samples_left - 'd2);
                     o_validx8 = (i_samples_left >= 'd2) ? 8'b01000001 : 
-                                (i_samples_left == 'd1) ? 8'b00000001 : 'h0
+                                (i_samples_left == 'd1) ? 8'b00000001 : 8'h0;
                     o_stride_next = 'd4;
                 end
                 'd7: begin
-                    o_samples_next = (i_samples_left < 'd2) ? 'd0 : (i_samples - 'd2);
+                    o_samples_next = (i_samples_left < 'd2) ? 'd0 : (i_samples_left - 'd2);
                     o_validx8 = (i_samples_left >= 'd2) ? 8'b10000001 : 
-                                (i_samples_left == 'd1) ? 8'b00000001 : 'h0
+                                (i_samples_left == 'd1) ? 8'b00000001 : 8'h0;
                     o_stride_next = 'd6;
                 end
                 default: begin
-                    o_samples_next = (i_samples_left < 'd1) ? 'd0 : (i_samples - 'd1);
+                    o_samples_next = (i_samples_left < 'd1) ? 'd0 : (i_samples_left - 'd1);
                     o_validx8 = (i_samples_left < 'd1) ? 8'h0 : 8'b00000001;
                     o_stride_next = i_stride - 'd8;
                 end
             endcase
         end
 
-        o_done = (o_stride_next == 'd0);
+        o_done = (o_samples_next == 'd0);
 
     end
 

@@ -97,7 +97,7 @@ module li_core
                     r_samples: d.w_samples,
                     r_samples_left: d.w_samples,
                     r_stride: d.w_stride,
-                    r_stride_left: d.w_stride,
+                    r_stride_left: 'd0,
                     r_arm: d.w_arm,
                     r_idle: d.w_idle
                 };
