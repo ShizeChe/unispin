@@ -4,6 +4,7 @@
 parameter LI_NUM_SAMPLE_WIDTH=20;
 parameter LI_STRIDE_WIDTH=18;
 parameter LI_INSN_WIDTH=LI_NUM_SAMPLE_WIDTH*2+LI_STRIDE_WIDTH+2;
+parameter LI_ITER_WIDTH=10;
 parameter LI_DEPTH=16;
 parameter LI_ADC_WIDTH=16;
 
@@ -42,7 +43,57 @@ typedef struct {
     logic w_done;
     logic r_arm;
     logic r_idle;
+    logic [LI_ADC_WIDTH*8-1:0] w_Ix8;
+    logic [LI_ADC_WIDTH*8-1:0] w_Qx8;
+    logic w_last;
 } li_sample_stg_t;
+
+typedef struct {
+    logic [$clog2(LI_DEPTH)-1:0] r_addr;
+    logic [LI_ADC_WIDTH*8-1:0] r_Ix8;
+    logic [LI_ADC_WIDTH*8-1:0] r_Qx8;
+    logic [7:0] r_validx8;
+    logic r_last;
+    logic [7:0][2:0] w_validx8_scan;
+    logic [7:0][2:0] w_validx8_shftamt;
+    logic [7:0][6:0] w_IQx8_shftamt;
+    logic [7:0][7:0] w_validx8_shift;
+    logic [7:0][LI_ADC_WIDTH*8-1:0] w_Ix8_shift;
+    logic [7:0][LI_ADC_WIDTH*8-1:0] w_Qx8_shift;
+    logic [7:0] w_validx8_packed;
+    logic [LI_ADC_WIDTH*8-1:0] w_Ix8_packed;
+    logic [LI_ADC_WIDTH*8-1:0] w_Qx8_packed;
+    logic [3:0] w_samples;
+} li_pack_stg_t;
+
+typedef struct {
+    logic [$clog2(LI_DEPTH)-1:0] r_addr;
+    logic [LI_ADC_WIDTH*8-1:0] r_Ix8;
+    logic [LI_ADC_WIDTH*8-1:0] r_Qx8;
+    logic [7:0] r_validx8;
+    logic r_last;
+    logic [3:0] r_samples;
+    logic [15:0] w_validx16_aligned;
+    logic [LI_ADC_WIDTH*16-1:0] w_Ix16_aligned;
+    logic [LI_ADC_WIDTH*16-1:0] w_Qx16_aligned;
+} li_align_stg_t;
+
+typedef struct {
+    logic [$clog2(LI_DEPTH)-1:0] r_addr;
+    logic [LI_ADC_WIDTH*8-1:0] r_Ix8;
+    logic [LI_ADC_WIDTH*8-1:0] r_Qx8;
+    logic [7:0] r_validx8;
+    logic r_last;
+    logic [3:0] r_samples;
+    logic [4:0] w_total_samples;
+    logic w_full;
+    logic [7:0] w_validx8_inbuf;
+    logic [LI_ADC_WIDTH*8-1:0] w_Ix8_inbuf;
+    logic [LI_ADC_WIDTH*8-1:0] w_Qx8_inbuf;
+    logic [7:0] w_validx8_overflow;
+    logic [LI_ADC_WIDTH*8-1:0] w_Ix8_overflow;
+    logic [LI_ADC_WIDTH*8-1:0] w_Qx8_overflow;
+} li_buffer_stg_t;
 
 typedef struct {
     logic [$clog2(LI_DEPTH)-1:0] r_addr;

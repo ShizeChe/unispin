@@ -4,6 +4,7 @@
 
 module li
    #(parameter NUM_SAMPLE_WIDTH=LI_NUM_SAMPLE_WIDTH,
+     parameter ITER_WIDTH=LI_ITER_WIDTH,
      parameter STRIDE_WIDTH=LI_STRIDE_WIDTH,
      parameter INSN_WIDTH=LI_INSN_WIDTH,
      parameter DEPTH=LI_DEPTH,
@@ -21,13 +22,18 @@ module li
      input  logic [ADC_WIDTH*8-1:0] i_Ix8,
      input  logic [ADC_WIDTH*8-1:0] i_Qx8,
 
+     output logic [ADC_WIDTH*8-1:0] o_Ix8,
+     output logic [ADC_WIDTH*8-1:0] o_Qx8,
+     output logic [7:0] o_validx8,
+     output logic o_last,
+
      input  logic i_start,
      output logic o_armed,
      
      output logic o_empty,
 
      // eop for verification
-     output rf_eop_t o_eop);
+     output li_eop_t o_eop);
 
     logic w_next, w_empty;
     logic [$clog2(DEPTH)-1:0] w_addr;
@@ -50,10 +56,6 @@ module li
         .o_empty(w_empty),
         .i_insn_modified(w_insn_modified)
     );
-
-    logic [ADC_WIDTH*8-1:0] w_Ix8,
-    logic [ADC_WIDTH*8-1:0] w_Qx8,
-    logic [7:0] w_validx8,
 
     li_core #(
     	.NUM_SAMPLE_WIDTH(NUM_SAMPLE_WIDTH),
@@ -78,9 +80,10 @@ module li
         .i_start(i_start),
         .o_armed(o_armed),
 
-        .o_Ix8(w_Ix8),
-        .o_Qx8(w_Qx8),
-        .o_validx8(w_validx8),
+        .o_Ix8(o_Ix8),
+        .o_Qx8(o_Qx8),
+        .o_validx8(o_validx8),
+        .o_last(o_last),
 
         .o_empty(o_empty),
 
