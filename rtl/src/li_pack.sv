@@ -3,10 +3,11 @@
 `include "li.svh"
 
 module li_pack
-   (input  logic i_clk, i_rst,
-    input  li_sample_stg_t s,
-    output li_pack_stg_t p,
-    input  logic i_stall);
+   #(parameter ADC_WIDTH=LI_ADC_WIDTH)
+    (input  logic i_clk, i_rst,
+     input  li_sample_stg_t s,
+     output li_pack_stg_t p,
+     input  logic i_stall);
 
     always_ff @(posedge i_clk) begin
         if (i_rst) begin
@@ -42,15 +43,13 @@ module li_pack
         } >> p.w_validx8_shftamt[i] : 'h0;
 
         assign p.w_Ix8_shift[i] = p.r_validx8[i] ? {
-            { (LI_ADC_WIDTH*(7-i)){1'b0} }, 
-            p.r_Ix8[LI_ADC_WIDTH*(i+1)-1:LI_ADC_WIDTH*i],
-            { i{1'b0} }
+            {(ADC_WIDTH*(7-i)){1'b0}}, p.r_Ix8[ADC_WIDTH*(i+1)-1:ADC_WIDTH*i], 
+            {(ADC_WIDTH*i){1'b0}}
         } >> p.w_IQx8_shftamt[i] : 'h0;
 
         assign p.w_Qx8_shift[i] = p.r_validx8[i] ? {
-            { (LI_ADC_WIDTH*(7-i)){1'b0} }, 
-            p.r_Qx8[LI_ADC_WIDTH*(i+1)-1:LI_ADC_WIDTH*i],
-            { i{1'b0} }
+            {(ADC_WIDTH*(7-i)){1'b0}}, p.r_Qx8[ADC_WIDTH*(i+1)-1:ADC_WIDTH*i],
+            {(ADC_WIDTH*i){1'b0}}
         } >> p.w_IQx8_shftamt[i] : 'h0;
 
     end

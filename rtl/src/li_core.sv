@@ -112,6 +112,8 @@ module li_core
     assign s.w_Qx8 = i_Qx8;
     assign s.w_last = s.w_done && (s.w_validx8 != 'h0);
 
+    assign o_next = s.w_done && !i_empty;
+
     /*******************************
     * pack, align and buffer stages
     *******************************/
@@ -132,10 +134,10 @@ module li_core
     always_ff @(posedge i_clk) begin
         if (i_rst) begin
             a.r_addr <= 'bx;
-            a.r_Ix8 <= 'bx;
-            a.r_Qx8 <= 'bx;
+            a.r_Ix8 <= 'b0;
+            a.r_Qx8 <= 'b0;
             a.r_validx8 <= 8'h0;
-            a.r_last <= 1'b1;
+            a.r_last <= 1'b0;
             a.r_samples <= 'd0;
         end
         else begin
@@ -148,14 +150,14 @@ module li_core
         end
     end
 
-    assign a.w_validx16_aligned = {8'h0, b.r_validx8} & 
+    assign a.w_validx16_aligned = {8'h0, b.r_validx8} |
         ({8'h0, a.r_validx8} << b.r_samples);
 
-    assign a.w_Ix16_aligned = {{(LI_ADC_WIDTH*8){1'b0}}, b.r_Ix8} & 
-        ({{(LI_ADC_WIDTH*8){1'b0}}, a.r_Ix8} << {b.r_samples, 4'b0000});
+    assign a.w_Ix16_aligned = {{(ADC_WIDTH*8){1'b0}}, b.r_Ix8} |
+        ({{(ADC_WIDTH*8){1'b0}}, a.r_Ix8} << {b.r_samples, 4'b0000});
 
-    assign a.w_Qx16_aligned = {{(LI_ADC_WIDTH*8){1'b0}}, b.r_Ix8} & 
-        ({{(LI_ADC_WIDTH*8){1'b0}}, a.r_Qx8} << {b.r_samples, 4'b0000});
+    assign a.w_Qx16_aligned = {{(ADC_WIDTH*8){1'b0}}, b.r_Qx8} |
+        ({{(ADC_WIDTH*8){1'b0}}, a.r_Qx8} << {b.r_samples, 4'b0000});
 
     assign b.w_total_samples = {1'b0, a.r_samples} + {1'b0, b.r_samples};
     assign b.w_full = (b.w_total_samples >= 'd8);
@@ -171,10 +173,10 @@ module li_core
     always_ff @(posedge i_clk) begin
         if (i_rst) begin 
             b.r_addr <= 'bx;
-            b.r_Ix8 <= 'bx;
-            b.r_Qx8 <= 'bx;
+            b.r_Ix8 <= 'b0;
+            b.r_Qx8 <= 'b0;
             b.r_validx8 <= 8'h0;
-            b.r_last <= 1'b1;
+            b.r_last <= 1'b0;
             b.r_samples <= 'd0;
         end
         else if (b.r_last) begin
@@ -205,8 +207,8 @@ module li_core
         if (i_rst) begin
             o <= '{
                 r_addr: 'bx,
-                r_Ix8: 'bx,
-                r_Qx8: 'bx,
+                r_Ix8: 'b0,
+                r_Qx8: 'b0,
                 r_validx8: 'h0,
                 r_last: 1'b0
             };
@@ -223,8 +225,8 @@ module li_core
         else begin
             o <= '{
                 r_addr: 'bx,
-                r_Ix8: 'bx,
-                r_Qx8: 'bx,
+                r_Ix8: 'b0,
+                r_Qx8: 'b0,
                 r_validx8: 'h0,
                 r_last: 1'b0
             };

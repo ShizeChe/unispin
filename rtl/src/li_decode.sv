@@ -16,6 +16,7 @@ module li_decode
         d.w_dsamples = i_insn.w_dsamples;
         d.w_arm = i_insn.w_arm;
         d.w_idle = i_insn.w_idle;
+        d.w_stride = i_insn.w_stride;
 
         o_insn_modified = i_insn;
         o_insn_modified.w_arm = 1'b0;
