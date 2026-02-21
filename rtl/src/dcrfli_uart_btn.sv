@@ -46,7 +46,7 @@ module dcrfli_uart_btn
      // rf IQ stream to RFDC IP
      output logic [0:NUM_RF_CHANNEL-1][RF_DAC_WIDTH*16-1:0] o_rf_QIx8_bus,
 
-     // rf armed buses for LED
+     // rf armed bus for LED
      output logic [NUM_RF_CHANNEL-1:0] o_rf_armed_bus,
 
      // rf empty bus for simulation
@@ -61,6 +61,27 @@ module dcrfli_uart_btn
 
      // rf eop bus
      output rf_eop_t [0:NUM_RF_CHANNEL-1] o_rf_eop_bus,
+
+     // li mmio registers
+     input  logic [0:NUM_LI_CHANNEL-1][0:LI_SEQ_REGS-1][31:0] i_li_seq_regs,
+     input  logic [0:NUM_LI_CHANNEL-1][0:LI_CTRL_REGS-1][31:0] i_li_ctrl_regs,
+
+     // li uart registers
+     input  logic [0:LI_SEQ_REGS-1][31:0] i_li_seq_uregs,
+     input  logic [0:LI_CTRL_REGS-1][31:0] i_li_ctrl_uregs,
+
+     // li IQ stream from RFDC IP
+     input  logic [0:NUM_LI_CHANNEL-1][LI_ADC_WIDTH*8-1:0] i_li_Ix8_bus,
+     input  logic [0:NUM_LI_CHANNEL-1][LI_ADC_WIDTH*8-1:0] i_li_Qx8_bus,
+
+     // li armed bus for LED
+     output logic [NUM_LI_CHANNEL-1:0] o_li_armed_bus,
+
+     // li empty bus for simulation
+     output logic [0:NUM_LI_CHANNEL-1] o_li_empty_bus,
+
+     // li eop bus
+     output li_eop_t [0:NUM_LI_CHANNEL-1] o_li_eop_bus,
 
      // launch mmio registers
      input  logic [0:LCH_TOTAL_REGS-1][31:0] i_lch_regs,
@@ -173,6 +194,52 @@ module dcrfli_uart_btn
 
     end
 
+    /****************
+    * li connections
+    ****************/
+
+    logic [NUM_LI_CHANNEL-1:0] w_li_armed_bus;
+    logic [NUM_LI_CHANNEL-1:0] w_li_start_bus;
+
+    logic [0:NUM_LI_CHANNEL] w_li_sample_mask_bus;
+
+    logic [0:NUM_LI_CHANNEL][LI_ADC_WIDTH*8-1:0] w_li_Ix8_save_bus;
+    logic [0:NUM_LI_CHANNEL][LI_ADC_WIDTH*8-1:0] w_li_Qx8_save_bus;
+    logic [0:NUM_LI_CHANNEL][7:0] w_li_validx8_bus;
+    logic [0:NUM_LI_CHANNEL] w_li_last_bus;
+
+    for (genvar i = 0; i < NUM_LI_CHANNEL; i++) begin : LI_GEN
+
+        li LI (
+            .i_clk(i_clk),
+            .i_rst(i_rst),
+
+            .i_seq_regs(i_li_seq_regs[i]),
+            .i_ctrl_regs(i_li_ctrl_regs[i]),
+
+            .i_seq_uregs({i_li_seq_uregs[0:LI_SEQ_REGS-2], 31'h0,
+                          i_li_seq_uregs[LI_SEQ_REGS-1][i]}),
+            .i_ctrl_uregs({i_li_ctrl_uregs[0:LI_CTRL_REGS-2], 31'h0,
+                           i_li_ctrl_uregs[LI_CTRL_REGS-1][i]}),
+
+            .i_Ix8(i_li_Ix8_bus[i]),
+            .i_Qx8(i_li_Qx8_bus[i]),
+
+            .o_sample_mask(w_li_sample_mask_bus[i]),
+
+            .o_Ix8(w_li_Ix8_save_bus),
+            .o_Qx8(w_li_Qx8_save_bus),
+            .o_validx8(w_li_validx8_bus),
+            .o_last(w_li_last_bus),
+
+            .i_start(w_li_start_bus[i]),
+            .o_armed(w_li_armed_bus[i]),
+
+            .o_empty(o_li_empty_bus[i])
+        );
+
+    end
+
     /********************
     * launch connections
     ********************/
@@ -198,7 +265,7 @@ module dcrfli_uart_btn
 
         .o_dc_start(w_dc_start_bus),
         .o_rf_start(w_rf_start_bus),
-        .o_li_start()
+        .o_li_start(w_li_start_bus)
     );
 
     assign o_dc_armed_bus = w_dc_armed_bus;

@@ -22,6 +22,8 @@ module li_core
      input  logic [ADC_WIDTH*8-1:0] i_Ix8,
      input  logic [ADC_WIDTH*8-1:0] i_Qx8,
 
+     output logic [7:0] o_sample_mask,
+
      // launch interface
      input  logic i_start,
      output logic o_armed,
@@ -113,6 +115,7 @@ module li_core
     assign s.w_last = s.w_done && (s.w_validx8 != 'h0);
 
     assign o_next = s.w_done && !i_empty;
+    assign o_sample_mask = s.w_validx8;
 
     /*******************************
     * pack, align and buffer stages
