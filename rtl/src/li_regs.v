@@ -1,9 +1,9 @@
 // `default_nettype none
 `timescale 1ns / 1ps
 
-module li_regs
-   #(parameter NUM_SEQ_REGS=34,
-     parameter NUM_CTRL_REGS=3,
+module rf_regs
+   #(parameter NUM_SEQ_REGS=66,
+     parameter NUM_CTRL_REGS=6,
      parameter ADDR_WIDTH=$clog2(NUM_SEQ_REGS+NUM_CTRL_REGS)+2)
     (input  wire s_axi_aclk,
      input  wire s_axi_aresetn,

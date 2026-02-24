@@ -2,6 +2,7 @@
 `timescale 1ns / 1ps
 `include "include/dc.svh"
 `include "include/rf.svh"
+`include "include/li.svh"
 
 import "DPI-C" function int cmd_open(input string path);
 import "DPI-C" function int cmd_accept_poll(input int timeout_ms);
@@ -12,7 +13,7 @@ module simulator;
     // define number of dc/rf/li channels
     localparam NUM_DC_CHANNEL=24;
     localparam NUM_RF_CHANNEL=6;
-    localparam NUM_LI_CHANNEL=1;
+    localparam NUM_LI_CHANNEL=2;
     localparam NUM_DEBOUNCE_CYCLES=25;
 
     /********************
@@ -20,7 +21,7 @@ module simulator;
     ********************/
 
     // clocks and reset
-    logic w_dcrfli_clk, w_rf_dac_clk, w_dcrfli_rst_n;
+    logic w_dcrfli_clk, w_rf_dac_clk, w_li_adc_clk, w_dcrfli_rst_n;
 
     // dc axi bus
     localparam DC_TOTAL_REGS = DC_SEQ_REGS + DC_CTRL_REGS;
@@ -99,6 +100,39 @@ module simulator;
     logic [RF_IQ_WIDTH-1:0] vrf_I [NUM_RF_CHANNEL];
     real vrf [NUM_RF_CHANNEL];
 
+    // li axi bus
+    localparam LI_TOTAL_REGS = LI_SEQ_REGS + LI_CTRL_REGS;
+
+    logic [0:NUM_LI_CHANNEL-1] w_li_awvalid_bus;
+    logic [0:NUM_LI_CHANNEL-1] w_li_awready_bus;
+    logic [0:NUM_LI_CHANNEL-1][$clog2(LI_TOTAL_REGS*4)-1:0] w_li_awaddr_bus;
+
+    logic [0:NUM_LI_CHANNEL-1] w_li_wvalid_bus;
+    logic [0:NUM_LI_CHANNEL-1] w_li_wready_bus;
+    logic [0:NUM_LI_CHANNEL-1][31:0] w_li_wdata_bus;
+    logic [0:NUM_LI_CHANNEL-1][3:0] w_li_wstrb_bus;
+
+    logic [0:NUM_LI_CHANNEL-1] w_li_bvalid_bus;
+    logic [0:NUM_LI_CHANNEL-1] w_li_bready_bus;
+    logic [0:NUM_LI_CHANNEL-1][1:0] w_li_bresp_bus;
+
+    logic [0:NUM_LI_CHANNEL-1][0:LI_SEQ_REGS-1][31:0] w_li_seq_regs;
+    logic [0:NUM_LI_CHANNEL-1][0:LI_CTRL_REGS-1][31:0] w_li_ctrl_regs;
+
+    // li Ix8/Qx8 bus
+    logic [0:NUM_LI_CHANNEL-1][LI_ADC_WIDTH*8-1:0] w_li_Ix8_bus;
+    logic [0:NUM_LI_CHANNEL-1][LI_ADC_WIDTH*8-1:0] w_li_Qx8_bus;
+
+    // li armed bus
+    logic [NUM_LI_CHANNEL-1:0] w_li_armed_bus;
+
+    // li empty bus
+    logic [0:NUM_LI_CHANNEL-1] w_li_empty_bus;
+
+    // li sample mask/spike bus
+    logic [0:NUM_LI_CHANNEL-1][7:0] w_li_sample_mask_bus;
+    logic [0:NUM_LI_CHANNEL-1] w_li_sample_spike_bus;
+
     // launch axi bus
     logic w_lch_awvalid;
     logic w_lch_awready;
@@ -120,6 +154,7 @@ module simulator;
     // uart regs
     localparam TOTAL_UREGS=DC_SEQ_REGS+DC_CTRL_REGS+
                            RF_SEQ_REGS+RF_CTRL_REGS+
+                           LI_SEQ_REGS+LI_CTRL_REGS+
                            LCH_TOTAL_REGS;
 
     localparam U_DC_SEQ_START = 0;
@@ -134,7 +169,13 @@ module simulator;
     localparam U_RF_CTRL_START = U_RF_SEQ_END + 1;
     localparam U_RF_CTRL_END = U_RF_CTRL_START + RF_CTRL_REGS - 1;
 
-    localparam U_LCH_START = U_RF_CTRL_END + 1;
+    localparam U_LI_SEQ_START = U_RF_CTRL_END + 1;
+    localparam U_LI_SEQ_END = U_LI_SEQ_START + LI_SEQ_REGS - 1;
+
+    localparam U_LI_CTRL_START = U_LI_SEQ_END + 1;
+    localparam U_LI_CTRL_END = U_LI_CTRL_START + LI_CTRL_REGS - 1;
+
+    localparam U_LCH_START = U_LI_CTRL_END + 1;
     localparam U_LCH_END = U_LCH_START + LCH_TOTAL_REGS - 1;
 
     logic [0:TOTAL_UREGS-1][31:0] w_uregs;
@@ -213,6 +254,24 @@ module simulator;
         .o_rf_nco_en_bus(w_rf_nco_en_bus),
 
         .o_rf_eop_bus(),
+
+        // li
+        .i_li_seq_regs(w_li_seq_regs),
+        .i_li_ctrl_regs(w_li_ctrl_regs),
+
+        .i_li_seq_uregs(w_uregs[U_LI_SEQ_START:U_LI_SEQ_END]),
+        .i_li_ctrl_uregs(w_uregs[U_LI_CTRL_START:U_LI_CTRL_END]),
+
+        .i_li_Ix8_bus(w_li_Ix8_bus),
+        .i_li_Qx8_bus(w_li_Qx8_bus),
+
+        .o_li_armed_bus(w_li_armed_bus),
+
+        .o_li_empty_bus(w_li_empty_bus),
+
+        .o_li_sample_mask_bus(w_li_sample_mask_bus),
+
+        .o_li_eop_bus(),
 
         // launch
         .i_lch_regs(w_lch_regs),
@@ -392,6 +451,54 @@ module simulator;
         end
     end
 
+    // li axil regs and adc instantiation
+    for (genvar i = 0; i < NUM_LI_CHANNEL; i++) begin : LI_IO_GEN
+
+        li_regs #(
+            .NUM_SEQ_REGS(LI_SEQ_REGS),
+            .NUM_CTRL_REGS(LI_CTRL_REGS)
+        ) REGS (
+            .s_axi_aclk(w_dcrfli_clk),
+            .s_axi_aresetn(w_dcrfli_rst_n),
+
+            .s_axi_awvalid(w_li_awvalid_bus[i]), 
+            .s_axi_awready(w_li_awready_bus[i]),
+            .s_axi_awaddr(w_li_awaddr_bus[i]),
+
+            .s_axi_wvalid(w_li_wvalid_bus[i]),
+            .s_axi_wready(w_li_wready_bus[i]),
+            .s_axi_wdata(w_li_wdata_bus[i]),
+            .s_axi_wstrb(w_li_wstrb_bus[i]),
+
+            .s_axi_bvalid(w_li_bvalid_bus[i]),
+            .s_axi_bready(w_li_bready_bus[i]),
+            .s_axi_bresp(w_li_bresp_bus[i]),
+
+            // leave read ports unconencted
+            .s_axi_arvalid(1'b0),
+            .s_axi_arready(),
+            .s_axi_araddr(($clog2(LI_TOTAL_REGS*4))'('h0)),
+
+            .s_axi_rvalid(),
+            .s_axi_rready(1'b1),
+            .s_axi_rdata(),
+            .s_axi_rresp(),
+
+            .o_seq_regs(w_li_seq_regs[i]),
+            .o_ctrl_regs(w_li_ctrl_regs[i])
+        );
+
+        zcu216_adc ADC (
+            .i_clk(w_dcrfli_clk),
+            .i_adc_clk(w_li_adc_clk),
+            .i_vli(0.0),
+            .o_Ix8(w_li_Ix8_bus[i]), 
+            .o_Qx8(w_li_Qx8_bus[i]),
+            .i_sample_mask(w_li_sample_mask_bus[i]),
+            .o_sample_spike(w_li_sample_spike_bus[i])
+        );
+
+    end
 
     // launch axil regs instantiation
     launch_regs #(
@@ -540,6 +647,60 @@ module simulator;
 
     endtask
 
+    task automatic li_axil_write(int ch); 
+
+        $display("li_axil_write channel%0d", ch);
+
+        @(negedge w_dcrfli_clk);
+
+        w_li_awvalid_bus[ch] = 1'b1;
+        w_li_wvalid_bus[ch] = 1'b1;
+        w_li_bready_bus[ch] = 1'b0;
+
+        $display("pre fork");
+
+        fork 
+
+            begin: AWREADY
+                forever begin
+                    if (w_li_awvalid_bus[ch] && w_li_awready_bus[ch]) begin
+                        @(negedge w_dcrfli_clk);
+                        w_li_awvalid_bus[ch] = 1'b0;
+                        break;
+                    end
+                    else @(negedge w_dcrfli_clk);
+                end
+            end
+            
+            begin: WREADY
+                forever begin
+                    if (w_li_wvalid_bus[ch] && w_li_wready_bus[ch]) begin
+                        @(negedge w_dcrfli_clk);
+                        w_li_wvalid_bus[ch] = 1'b0;
+                        break;
+                    end
+                    else @(negedge w_dcrfli_clk);
+                end
+            end
+
+        join
+
+        $display("post fork");
+        w_li_bready_bus[ch] = 1'b1;
+
+        forever begin
+            if (w_li_bvalid_bus[ch] && w_li_bready_bus[ch]) begin
+                @(negedge w_dcrfli_clk);
+                w_li_bready_bus[ch] = 1'b0;
+                assert (w_li_bresp_bus[ch] == 2'b00)
+                else $fatal(1, "Bad bresp: %0b", w_li_bresp_bus[ch]);
+                break;
+            end
+            else @(negedge w_dcrfli_clk);
+        end
+
+    endtask
+
     task automatic lch_axil_write; 
 
         $display("lch_axil_write");
@@ -624,6 +785,19 @@ module simulator;
             $display("dc%0d axil write finished", i);
 
         end
+        else if ((NUM_DC_CHANNEL + NUM_RF_CHANNEL) <= i && i < (NUM_DC_CHANNEL + NUM_RF_CHANNEL + NUM_LI_CHANNEL)) begin
+
+            $display("li%0d", i - NUM_DC_CHANNEL - NUM_RF_CHANNEL);
+
+            w_li_awaddr_bus[i - NUM_DC_CHANNEL - NUM_RF_CHANNEL] = addr[$clog2(LI_TOTAL_REGS*4)-1:0];
+            w_li_wdata_bus[i - NUM_DC_CHANNEL - NUM_RF_CHANNEL] = data;
+            w_li_wstrb_bus[i - NUM_DC_CHANNEL - NUM_RF_CHANNEL] = 4'hf;
+
+            li_axil_write(i - NUM_DC_CHANNEL - NUM_RF_CHANNEL);
+
+            $display("dc%0d axil write finished", i);
+
+        end
         else begin
 
             $display("launch"); 
@@ -651,6 +825,11 @@ module simulator;
         forever #0.25 w_rf_dac_clk = !w_rf_dac_clk;
     end
 
+    initial begin
+        w_li_adc_clk = 1'b1;
+        forever #0.25 w_li_adc_clk = !w_li_adc_clk;
+    end
+
     // reset
     initial begin
 
@@ -661,6 +840,10 @@ module simulator;
         w_rf_awvalid_bus = 'h0;
         w_rf_wvalid_bus = 'h0;
         w_rf_bready_bus = 'h0;
+
+        w_li_awvalid_bus = 'h0;
+        w_li_wvalid_bus = 'h0;
+        w_li_bready_bus = 'h0;
 
         w_lch_awvalid = 'h0;
         w_lch_wvalid = 'h0;
@@ -677,6 +860,7 @@ module simulator;
     // tracker
     logic [NUM_DC_CHANNEL-1:0] dc_armed;
     logic [NUM_RF_CHANNEL-1:0] rf_armed;
+    logic [NUM_LI_CHANNEL-1:0] li_armed;
 
     int all_empty;
 
@@ -684,6 +868,7 @@ module simulator;
 
         dc_armed = 'h0;
         rf_armed = 'h0;
+        li_armed = 'h0;
         all_empty = 1;
 
         forever begin
@@ -712,17 +897,30 @@ module simulator;
 
             end
 
+            for (int i = 0; i < NUM_LI_CHANNEL; i++) begin
+
+                if (!li_armed[i] && w_li_armed_bus[i])
+                    $display("At %0.3f: LI %0d armed", $realtime, i);
+                else if (li_armed[i] && !w_li_armed_bus[i])
+                    $display("At %0.3f: LI %0d started", $realtime, i);
+
+                li_armed[i] = w_li_armed_bus[i];
+
+            end
+
             if (DCRFLI.LCH.w_all_ready) begin
                 $display("At %0.3f: LAUNCH sees all ready", $realtime);
             end
 
             if (all_empty && !(w_dc_empty_bus == {(NUM_DC_CHANNEL){1'b1}} && 
-                w_rf_empty_bus == {(NUM_RF_CHANNEL){1'b1}})) begin
+                w_rf_empty_bus == {(NUM_RF_CHANNEL){1'b1}} && 
+                w_li_empty_bus == {(NUM_LI_CHANNEL){1'b1}})) begin
                 $display("At %0.3f: not all empty", $realtime);
                 all_empty = 0;
             end
             else if (!all_empty && (w_dc_empty_bus == {(NUM_DC_CHANNEL){1'b1}} && 
-                w_rf_empty_bus == {(NUM_RF_CHANNEL){1'b1}})) begin
+                w_rf_empty_bus == {(NUM_RF_CHANNEL){1'b1}} &&
+                w_li_empty_bus == {(NUM_LI_CHANNEL){1'b1}})) begin
                 $display("At %0.3f: all empty", $realtime);
                 all_empty = 1;
             end

@@ -2,6 +2,7 @@
 `timescale 1ns / 1ps
 `include "dc.svh"
 `include "rf.svh"
+`include "li.svh"
 `include "launch.vh"
 
 module dcrfli_uart_btn
@@ -79,6 +80,9 @@ module dcrfli_uart_btn
 
      // li empty bus for simulation
      output logic [0:NUM_LI_CHANNEL-1] o_li_empty_bus,
+
+     // li sample mask
+     output logic [0:NUM_LI_CHANNEL-1][7:0] o_li_sample_mask_bus,
 
      // li eop bus
      output li_eop_t [0:NUM_LI_CHANNEL-1] o_li_eop_bus,
@@ -201,12 +205,12 @@ module dcrfli_uart_btn
     logic [NUM_LI_CHANNEL-1:0] w_li_armed_bus;
     logic [NUM_LI_CHANNEL-1:0] w_li_start_bus;
 
-    logic [0:NUM_LI_CHANNEL] w_li_sample_mask_bus;
+    logic [0:NUM_LI_CHANNEL-1] w_li_sample_mask_bus;
 
-    logic [0:NUM_LI_CHANNEL][LI_ADC_WIDTH*8-1:0] w_li_Ix8_save_bus;
-    logic [0:NUM_LI_CHANNEL][LI_ADC_WIDTH*8-1:0] w_li_Qx8_save_bus;
-    logic [0:NUM_LI_CHANNEL][7:0] w_li_validx8_bus;
-    logic [0:NUM_LI_CHANNEL] w_li_last_bus;
+    logic [0:NUM_LI_CHANNEL-1][LI_ADC_WIDTH*8-1:0] w_li_Ix8_save_bus;
+    logic [0:NUM_LI_CHANNEL-1][LI_ADC_WIDTH*8-1:0] w_li_Qx8_save_bus;
+    logic [0:NUM_LI_CHANNEL-1][7:0] w_li_validx8_bus;
+    logic [0:NUM_LI_CHANNEL-1] w_li_last_bus;
 
     for (genvar i = 0; i < NUM_LI_CHANNEL; i++) begin : LI_GEN
 
@@ -225,17 +229,19 @@ module dcrfli_uart_btn
             .i_Ix8(i_li_Ix8_bus[i]),
             .i_Qx8(i_li_Qx8_bus[i]),
 
-            .o_sample_mask(w_li_sample_mask_bus[i]),
+            .o_sample_mask(o_li_sample_mask_bus[i]),
 
-            .o_Ix8(w_li_Ix8_save_bus),
-            .o_Qx8(w_li_Qx8_save_bus),
-            .o_validx8(w_li_validx8_bus),
-            .o_last(w_li_last_bus),
+            .o_Ix8(w_li_Ix8_save_bus[i]),
+            .o_Qx8(w_li_Qx8_save_bus[i]),
+            .o_validx8(w_li_validx8_bus[i]),
+            .o_last(w_li_last_bus[i]),
 
             .i_start(w_li_start_bus[i]),
             .o_armed(w_li_armed_bus[i]),
 
-            .o_empty(o_li_empty_bus[i])
+            .o_empty(o_li_empty_bus[i]),
+
+            .o_eop(o_li_eop_bus[i])
         );
 
     end

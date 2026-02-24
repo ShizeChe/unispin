@@ -22,6 +22,8 @@ module li
      input  logic [ADC_WIDTH*8-1:0] i_Ix8,
      input  logic [ADC_WIDTH*8-1:0] i_Qx8,
 
+     output logic [7:0] o_sample_mask,
+
      output logic [ADC_WIDTH*8-1:0] o_Ix8,
      output logic [ADC_WIDTH*8-1:0] o_Qx8,
      output logic [7:0] o_validx8,
@@ -76,6 +78,8 @@ module li
 
         .i_Ix8(i_Ix8),
         .i_Qx8(i_Qx8),
+
+        .o_sample_mask(o_sample_mask),
 
         .i_start(i_start),
         .o_armed(o_armed),
