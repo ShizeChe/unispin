@@ -19,14 +19,12 @@ module li
      input  logic [0:SEQ_REGS-1][31:0] i_seq_uregs,
      input  logic [0:CTRL_REGS-1][31:0] i_ctrl_uregs,
 
-     input  logic [ADC_WIDTH*8-1:0] i_Ix8,
-     input  logic [ADC_WIDTH*8-1:0] i_Qx8,
+     input  logic [ADC_WIDTH*8-1:0] i_QIx4,
 
-     output logic [7:0] o_sample_mask,
+     output logic [3:0] o_sample_mask,
 
-     output logic [ADC_WIDTH*8-1:0] o_Ix8,
-     output logic [ADC_WIDTH*8-1:0] o_Qx8,
-     output logic [7:0] o_validx8,
+     output logic [ADC_WIDTH*8-1:0] o_QIx4,
+     output logic [3:0] o_validx4,
      output logic o_last,
 
      input  logic i_start,
@@ -76,17 +74,15 @@ module li
         .i_empty(w_empty),
         .o_insn_modified(w_insn_modified),
 
-        .i_Ix8(i_Ix8),
-        .i_Qx8(i_Qx8),
+        .i_QIx4(i_QIx4),
 
         .o_sample_mask(o_sample_mask),
 
         .i_start(i_start),
         .o_armed(o_armed),
 
-        .o_Ix8(o_Ix8),
-        .o_Qx8(o_Qx8),
-        .o_validx8(o_validx8),
+        .o_QIx4(o_QIx4),
+        .o_validx4(o_validx4),
         .o_last(o_last),
 
         .o_empty(o_empty),

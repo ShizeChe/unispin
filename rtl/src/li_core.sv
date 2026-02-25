@@ -19,19 +19,17 @@ module li_core
      output li_insn_t o_insn_modified,
 
      // rfadc interface
-     input  logic [ADC_WIDTH*8-1:0] i_Ix8,
-     input  logic [ADC_WIDTH*8-1:0] i_Qx8,
+     input  logic [ADC_WIDTH*8-1:0] i_QIx4,
 
-     output logic [7:0] o_sample_mask,
+     output logic [3:0] o_sample_mask,
 
      // launch interface
      input  logic i_start,
      output logic o_armed,
 
      // output interface
-     output logic [ADC_WIDTH*8-1:0] o_Ix8,
-     output logic [ADC_WIDTH*8-1:0] o_Qx8,
-     output logic [7:0] o_validx8,
+     output logic [ADC_WIDTH*8-1:0] o_QIx4,
+     output logic [3:0] o_validx4,
      output logic o_last,
 
      // pipeline empty flag
@@ -76,7 +74,7 @@ module li_core
 
         .i_idle(s.r_idle),
 
-        .o_validx8(s.w_validx8),
+        .o_validx4(s.w_validx4),
         .o_done(s.w_done)
     );
 
@@ -110,12 +108,11 @@ module li_core
         end
     end
 
-    assign s.w_Ix8 = i_Ix8;
-    assign s.w_Qx8 = i_Qx8;
-    assign s.w_last = s.w_done && (s.w_validx8 != 'h0);
+    assign s.w_QIx4 = i_QIx4;
+    assign s.w_last = s.w_done && (s.w_validx4 != 'h0);
 
     assign o_next = s.w_done && !i_empty;
-    assign o_sample_mask = s.w_validx8;
+    assign o_sample_mask = s.w_validx4;
 
     /*******************************
     * pack, align and buffer stages
@@ -137,66 +134,56 @@ module li_core
     always_ff @(posedge i_clk) begin
         if (i_rst) begin
             a.r_addr <= 'bx;
-            a.r_Ix8 <= 'b0;
-            a.r_Qx8 <= 'b0;
-            a.r_validx8 <= 8'h0;
+            a.r_QIx4 <= 'b0;
+            a.r_validx4 <= 4'h0;
             a.r_last <= 1'b0;
             a.r_samples <= 'd0;
         end
         else begin
             a.r_addr <= p.r_addr; 
-            a.r_Ix8 <= p.w_Ix8_packed;
-            a.r_Qx8 <= p.w_Qx8_packed;
-            a.r_validx8 <= p.w_validx8_packed;
+            a.r_QIx4 <= p.w_QIx4_packed;
+            a.r_validx4 <= p.w_validx4_packed;
             a.r_last <= p.r_last;
             a.r_samples <= p.w_samples;
         end
     end
 
-    assign a.w_validx16_aligned = {8'h0, b.r_validx8} |
-        ({8'h0, a.r_validx8} << b.r_samples);
+    assign a.w_validx8_aligned = {4'h0, b.r_validx4} |
+        ({4'h0, a.r_validx4} << b.r_samples);
 
-    assign a.w_Ix16_aligned = {{(ADC_WIDTH*8){1'b0}}, b.r_Ix8} |
-        ({{(ADC_WIDTH*8){1'b0}}, a.r_Ix8} << {b.r_samples, 4'b0000});
-
-    assign a.w_Qx16_aligned = {{(ADC_WIDTH*8){1'b0}}, b.r_Qx8} |
-        ({{(ADC_WIDTH*8){1'b0}}, a.r_Qx8} << {b.r_samples, 4'b0000});
+    assign a.w_QIx8_aligned = {{(ADC_WIDTH*8){1'b0}}, b.r_QIx4} |
+        ({{(ADC_WIDTH*8){1'b0}}, a.r_QIx4} << {b.r_samples, 5'b0000});
 
     assign b.w_total_samples = {1'b0, a.r_samples} + {1'b0, b.r_samples};
-    assign b.w_full = (b.w_total_samples >= 'd8);
+    assign b.w_full = (b.w_total_samples >= 'd4);
 
-    assign b.w_validx8_inbuf = b.r_last ? b.r_validx8 : a.w_validx16_aligned[7:0];
-    assign b.w_Ix8_inbuf = b.r_last ? b.r_Ix8 : a.w_Ix16_aligned[8*ADC_WIDTH-1:0];
-    assign b.w_Qx8_inbuf = b.r_last ? b.r_Qx8 : a.w_Qx16_aligned[8*ADC_WIDTH-1:0];
+    assign b.w_validx4_inbuf = b.r_last ? b.r_validx4 : a.w_validx8_aligned[3:0];
+    assign b.w_QIx4_inbuf = b.r_last ? b.r_QIx4 : a.w_QIx8_aligned[8*ADC_WIDTH-1:0];
 
-    assign b.w_validx8_overflow = b.r_last ? 'h0 : a.w_validx16_aligned[15:8];
-    assign b.w_Ix8_overflow = b.r_last ? 'h0 : a.w_Ix16_aligned[16*ADC_WIDTH-1:8*ADC_WIDTH];
-    assign b.w_Qx8_overflow = b.r_last ? 'h0 : a.w_Qx16_aligned[16*ADC_WIDTH-1:8*ADC_WIDTH];
+    assign b.w_validx4_overflow = b.r_last ? 'h0 : a.w_validx8_aligned[7:4];
+    assign b.w_QIx4_overflow = b.r_last ? 'h0 : a.w_QIx8_aligned[16*ADC_WIDTH-1:8*ADC_WIDTH];
 
     always_ff @(posedge i_clk) begin
         if (i_rst) begin 
             b.r_addr <= 'bx;
-            b.r_Ix8 <= 'b0;
-            b.r_Qx8 <= 'b0;
-            b.r_validx8 <= 8'h0;
+            b.r_QIx4 <= 'b0;
+            b.r_validx4 <= 4'h0;
             b.r_last <= 1'b0;
             b.r_samples <= 'd0;
         end
         else if (b.r_last) begin
             b.r_addr <= a.r_addr;
-            b.r_Ix8 <= a.r_Ix8;
-            b.r_Qx8 <= a.r_Qx8;
-            b.r_validx8 <= a.r_validx8;
+            b.r_QIx4 <= a.r_QIx4;
+            b.r_validx4 <= a.r_validx4;
             b.r_last <= a.r_last;
             b.r_samples <= a.r_samples;
         end
         else begin
             b.r_addr <= a.r_addr;
-            b.r_Ix8 <= b.w_full ? b.w_Ix8_overflow : b.w_Ix8_inbuf;
-            b.r_Qx8 <= b.w_full ? b.w_Qx8_overflow : b.w_Qx8_inbuf;
-            b.r_validx8 <= b.w_full ? b.w_validx8_overflow : b.w_validx8_inbuf;
+            b.r_QIx4 <= b.w_full ? b.w_QIx4_overflow : b.w_QIx4_inbuf;
+            b.r_validx4 <= b.w_full ? b.w_validx4_overflow : b.w_validx4_inbuf;
             b.r_last <= a.r_last;
-            b.r_samples <= b.w_full ? (b.w_total_samples - 'd8) : b.w_total_samples;
+            b.r_samples <= b.w_full ? (b.w_total_samples - 'd4) : b.w_total_samples;
         end
     end
 
@@ -210,27 +197,24 @@ module li_core
         if (i_rst) begin
             o <= '{
                 r_addr: 'bx,
-                r_Ix8: 'b0,
-                r_Qx8: 'b0,
-                r_validx8: 'h0,
+                r_QIx4: 'b0,
+                r_validx4: 'h0,
                 r_last: 1'b0
             };
         end
         else if (b.w_full || b.r_last) begin
             o <= '{
                 r_addr: b.r_addr,
-                r_Ix8: b.w_Ix8_inbuf,
-                r_Qx8: b.w_Qx8_inbuf,
-                r_validx8: b.w_validx8_inbuf,
+                r_QIx4: b.w_QIx4_inbuf,
+                r_validx4: b.w_validx4_inbuf,
                 r_last: b.r_last
             };
         end
         else begin
             o <= '{
                 r_addr: 'bx,
-                r_Ix8: 'b0,
-                r_Qx8: 'b0,
-                r_validx8: 'h0,
+                r_QIx4: 'b0,
+                r_validx4: 'h0,
                 r_last: 1'b0
             };
         end
@@ -246,9 +230,8 @@ module li_core
     * output signals
     ****************/
 
-    assign o_Ix8 = o.r_Ix8;
-    assign o_Qx8 = o.r_Qx8;
-    assign o_validx8 = o.r_validx8;
+    assign o_QIx4 = o.r_QIx4;
+    assign o_validx4 = o.r_validx4;
     assign o_last = o.r_last;
 
     assign o_armed = s.r_arm;
@@ -258,9 +241,8 @@ module li_core
 
     assign o_eop = '{
         w_addr: o.r_addr,
-        w_Ix8: o.r_Ix8,
-        w_Qx8: o.r_Qx8,
-        w_validx8: o.r_validx8,
+        w_QIx4: o.r_QIx4,
+        w_validx4: o.r_validx4,
         w_last: o.r_last
     };
      

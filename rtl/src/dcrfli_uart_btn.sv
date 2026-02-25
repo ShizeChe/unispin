@@ -72,8 +72,7 @@ module dcrfli_uart_btn
      input  logic [0:LI_CTRL_REGS-1][31:0] i_li_ctrl_uregs,
 
      // li IQ stream from RFDC IP
-     input  logic [0:NUM_LI_CHANNEL-1][LI_ADC_WIDTH*8-1:0] i_li_Ix8_bus,
-     input  logic [0:NUM_LI_CHANNEL-1][LI_ADC_WIDTH*8-1:0] i_li_Qx8_bus,
+     input  logic [0:NUM_LI_CHANNEL-1][LI_ADC_WIDTH*8-1:0] i_li_QIx4_bus,
 
      // li armed bus for LED
      output logic [NUM_LI_CHANNEL-1:0] o_li_armed_bus,
@@ -82,7 +81,7 @@ module dcrfli_uart_btn
      output logic [0:NUM_LI_CHANNEL-1] o_li_empty_bus,
 
      // li sample mask
-     output logic [0:NUM_LI_CHANNEL-1][7:0] o_li_sample_mask_bus,
+     output logic [0:NUM_LI_CHANNEL-1][3:0] o_li_sample_mask_bus,
 
      // li eop bus
      output li_eop_t [0:NUM_LI_CHANNEL-1] o_li_eop_bus,
@@ -207,9 +206,8 @@ module dcrfli_uart_btn
 
     logic [0:NUM_LI_CHANNEL-1] w_li_sample_mask_bus;
 
-    logic [0:NUM_LI_CHANNEL-1][LI_ADC_WIDTH*8-1:0] w_li_Ix8_save_bus;
-    logic [0:NUM_LI_CHANNEL-1][LI_ADC_WIDTH*8-1:0] w_li_Qx8_save_bus;
-    logic [0:NUM_LI_CHANNEL-1][7:0] w_li_validx8_bus;
+    logic [0:NUM_LI_CHANNEL-1][LI_ADC_WIDTH*8-1:0] w_li_QIx4_save_bus;
+    logic [0:NUM_LI_CHANNEL-1][3:0] w_li_validx4_bus;
     logic [0:NUM_LI_CHANNEL-1] w_li_last_bus;
 
     for (genvar i = 0; i < NUM_LI_CHANNEL; i++) begin : LI_GEN
@@ -226,14 +224,12 @@ module dcrfli_uart_btn
             .i_ctrl_uregs({i_li_ctrl_uregs[0:LI_CTRL_REGS-2], 31'h0,
                            i_li_ctrl_uregs[LI_CTRL_REGS-1][i]}),
 
-            .i_Ix8(i_li_Ix8_bus[i]),
-            .i_Qx8(i_li_Qx8_bus[i]),
+            .i_QIx4(i_li_QIx4_bus[i]),
 
             .o_sample_mask(o_li_sample_mask_bus[i]),
 
-            .o_Ix8(w_li_Ix8_save_bus[i]),
-            .o_Qx8(w_li_Qx8_save_bus[i]),
-            .o_validx8(w_li_validx8_bus[i]),
+            .o_QIx4(w_li_QIx4_save_bus[i]),
+            .o_validx4(w_li_validx4_bus[i]),
             .o_last(w_li_last_bus[i]),
 
             .i_start(w_li_start_bus[i]),

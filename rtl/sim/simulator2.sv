@@ -120,8 +120,7 @@ module simulator;
     logic [0:NUM_LI_CHANNEL-1][0:LI_CTRL_REGS-1][31:0] w_li_ctrl_regs;
 
     // li Ix8/Qx8 bus
-    logic [0:NUM_LI_CHANNEL-1][LI_ADC_WIDTH*8-1:0] w_li_Ix8_bus;
-    logic [0:NUM_LI_CHANNEL-1][LI_ADC_WIDTH*8-1:0] w_li_Qx8_bus;
+    logic [0:NUM_LI_CHANNEL-1][LI_ADC_WIDTH*8-1:0] w_li_QIx4_bus;
 
     // li armed bus
     logic [NUM_LI_CHANNEL-1:0] w_li_armed_bus;
@@ -130,7 +129,7 @@ module simulator;
     logic [0:NUM_LI_CHANNEL-1] w_li_empty_bus;
 
     // li sample mask/spike bus
-    logic [0:NUM_LI_CHANNEL-1][7:0] w_li_sample_mask_bus;
+    logic [0:NUM_LI_CHANNEL-1][3:0] w_li_sample_mask_bus;
     logic [0:NUM_LI_CHANNEL-1] w_li_sample_spike_bus;
 
     // launch axi bus
@@ -262,8 +261,7 @@ module simulator;
         .i_li_seq_uregs(w_uregs[U_LI_SEQ_START:U_LI_SEQ_END]),
         .i_li_ctrl_uregs(w_uregs[U_LI_CTRL_START:U_LI_CTRL_END]),
 
-        .i_li_Ix8_bus(w_li_Ix8_bus),
-        .i_li_Qx8_bus(w_li_Qx8_bus),
+        .i_li_QIx4_bus(w_li_QIx4_bus),
 
         .o_li_armed_bus(w_li_armed_bus),
 
@@ -492,8 +490,7 @@ module simulator;
             .i_clk(w_dcrfli_clk),
             .i_adc_clk(w_li_adc_clk),
             .i_vli(0.0),
-            .o_Ix8(w_li_Ix8_bus[i]), 
-            .o_Qx8(w_li_Qx8_bus[i]),
+            .o_QIx4(w_li_QIx4_bus[i]), 
             .i_sample_mask(w_li_sample_mask_bus[i]),
             .o_sample_spike(w_li_sample_spike_bus[i])
         );

@@ -25,7 +25,7 @@ static inline int clog2_u32(uint32_t n) {
 #define RF_FNCO_MAX ((RF_FSAMPLING_HZ / 2) - (RF_FSAMPLING_HZ / ldexpl(1.0L, RF_FNCO_BITS)))
 #define RF_DAC_HZ 2000000000ULL
 #define RF_DAC_GHZ 2.0
-#define NS_PER_SAMPLE 0.5
+#define RF_NS_PER_SAMPLE 0.5
 #define RF_MAX_SAMPLES ((1u << RF_SAMPLE_BITS) - 1u)
 
 #define RF_KBC_MAX  ((int64_t)((1ULL << (RF_KBC_BITS - 1)) - 1ULL))

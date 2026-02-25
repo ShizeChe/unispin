@@ -23,7 +23,7 @@
 
 #define DC_CHANNELS RF_UIO_BASE - DC_UIO_BASE
 #define RF_CHANNELS LI_UIO_BASE - RF_UIO_BASE
-#define LI_CHANNELS LI_UIO_BASE - RF_UIO_BASE
+#define LI_CHANNELS LAUNCH_UIO - LI_UIO_BASE
 
 void print_binary(FILE *f, uint32_t value);
 int parse_time(char *str, uint32_t *t_ns);
