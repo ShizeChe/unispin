@@ -1,5 +1,21 @@
-.program li0
+.program rf0
 .fnco 10MHz
-.repeat 10
-    idl t=100ns (arm t+10ns)
-    sam n=10 t=100ns (arm t+10ns)
+.repeat 200
+    ply phs=0 t=12ns (arm t+12ns)
+    idl t=50us
+
+.program dc0
+.repeat 200
+    idl t=12ns (arm t+12ns)
+    lvl v=1 t=10us
+    lvl v=2 t=30us
+    lvl v=1 t=10us
+    lvl v=0 t=10us
+
+.program li0
+.repeat 200
+    idl t=12ns (arm t+12ns)
+    idl t=10us
+    sam n=1000 t=30us
+    idl t=10us
+    idl t=10us
