@@ -12,7 +12,7 @@ parameter DC_SPI_DELAY_WIDTH=16;
 parameter DC_SPI_CS_UP_WIDTH=16;
 parameter DC_SPI_LDAC_WIDTH=16;
 parameter DC_DEPTH=10;
-parameter DC_INSN_WIDTH=DC_CORE_ITER_WIDTH+DC_SPI_DATA_WIDTH+DC_DAC_WIDTH+DC_CYCLE_WIDTH+4;
+parameter DC_INSN_WIDTH=DC_CORE_ITER_WIDTH+DC_SPI_DATA_WIDTH+DC_DAC_WIDTH+DC_CYCLE_WIDTH+5;
 parameter DC_REG_PER_INSN=(DC_INSN_WIDTH+31)/32;
 parameter DC_SEQ_REGS=DC_DEPTH*DC_REG_PER_INSN+2;
 parameter DC_CTRL_REGS=4+1;
@@ -33,6 +33,7 @@ typedef struct packed {
     logic [DC_CYCLE_WIDTH-1:0] w_hold_cycles;
     logic w_modify;
     logic w_arm;
+    logic w_idle;
 } dc_insn_t;
 
 typedef struct {
@@ -45,6 +46,7 @@ typedef struct {
     logic [DC_CYCLE_WIDTH-1:0] w_hold_cycles;
     logic w_modify;
     logic w_arm;
+    logic w_idle;
 } dc_decode_stg_t;
 
 typedef struct {
@@ -56,10 +58,12 @@ typedef struct {
     logic r_strb_ldac;
     logic [DC_CYCLE_WIDTH-1:0] r_hold_cycles;
     logic r_arm;
+    logic r_idle;
     logic r_bubble;
 } dc_iterate_stg_t;
 
 typedef struct {
+    logic r_valid;
     logic [$clog2(DC_DEPTH)-1:0] r_addr;
     logic [DC_CORE_ITER_WIDTH-1:0] r_iter;
     logic [DC_SPI_DATA_WIDTH-1:0] r_spi_din;
@@ -73,6 +77,20 @@ typedef struct {
     logic r_cs_n;
     logic r_spi_start;
     logic r_spi_done;
+    logic r_done;
+} dc_spi_t;
+
+typedef struct {
+    logic r_valid;
+    logic [$clog2(DC_DEPTH)-1:0] r_addr;
+    logic [DC_CORE_ITER_WIDTH-1:0] r_iter;
+    logic [DC_CYCLE_WIDTH-1:0] r_hold_cycles;
+    logic r_arm;
+} dc_idle_t;
+
+typedef struct {
+    dc_spi_t r_sbuf;
+    dc_idle_t r_ibuf;
 } dc_spi_stg_t;
 
 typedef struct {
@@ -84,6 +102,7 @@ typedef struct {
     logic [DC_SPI_LDAC_WIDTH-1:0] r_ldac_cycles;
     logic r_ldac_n;
     logic [DC_CYCLE_WIDTH-1:0] r_cycles_left;
+    logic r_done;
 } dc_hold_stg_t;
 
 // eop = end of pipeline

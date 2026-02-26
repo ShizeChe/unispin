@@ -38,7 +38,7 @@ module dc_core
      // eop for verification
      output dc_eop_t o_eop);
 
-    logic w_stall;
+    logic w_propagate_i2s, w_propagate_s2h;
 
     /**************
     * decode stage
@@ -72,10 +72,11 @@ module dc_core
                 r_strb_ldac: 1'b0,
                 r_hold_cycles: 'd0,
                 r_arm: 1'b0,
+                r_idle: 1'b0,
                 r_bubble: 1'b1
             };
         end
-        else if (!w_stall) begin
+        else if (w_propagate_i2s) begin
 
             if (i.r_iters == 'd0) begin
 
@@ -89,11 +90,13 @@ module dc_core
                         r_strb_ldac: d.w_strb_ldac,
                         r_hold_cycles: d.w_hold_cycles,
                         r_arm: d.w_arm,
+                        r_idle: d.w_idle,
                         r_bubble: 1'b0
                     };
                 end
                 else begin
                     i.r_bubble <= 1'b1;
+                    i.r_idle <= 1'b0;
                 end
 
             end
@@ -120,7 +123,8 @@ module dc_core
 
     always_ff @(posedge i_clk) begin
         if (i_rst) begin
-            s <= '{
+            s.r_sbuf <= '{
+                r_valid: 1'b0,
                 r_addr: 'bx,
                 r_iter: 'bx,
                 r_spi_din: 'bx,
@@ -133,11 +137,13 @@ module dc_core
                 r_cs_up_cycles: 'd0,
                 r_cs_n: 1'b1,
                 r_spi_start: 1'b0,
-                r_spi_done: 1'b1
+                r_spi_done: 1'b1,
+                r_done: 1'b1
             };
         end
-        else if (!w_stall) begin
-            s <= '{
+        else if (w_propagate_i2s && !i.r_idle) begin
+            s.r_sbuf <= '{
+                r_valid: !i.r_bubble,
                 r_addr: i.r_bubble ? 'bx : i.r_addr,
                 r_iter: i.r_bubble ? 'bx : i.r_iters,
                 r_spi_din: i.r_bubble ? 'bx : i.r_spi_din,
@@ -150,23 +156,34 @@ module dc_core
                 r_cs_up_cycles: i.r_bubble ? 'd0 : i_ctrl.w_cs_up_cycles,
                 r_cs_n: 1'b1,
                 r_spi_start: !i.r_bubble,
-                r_spi_done: i.r_bubble
+                r_spi_done: i.r_bubble,
+                r_done: i.r_bubble
             };
         end
+        else if (w_propagate_s2h && !s.r_ibuf.r_valid && s.r_sbuf.r_valid) begin
+            s.r_sbuf.r_valid <= 1'b0;
+            s.r_sbuf.r_arm <= 1'b0;
+            s.r_sbuf.r_delay_cycles <= 'd0;
+            s.r_sbuf.r_cs_up_cycles <= 'd0;
+            s.r_sbuf.r_cs_n <= 'd1;
+            s.r_sbuf.r_spi_done <= 'd1;
+            s.r_sbuf.r_done <= 'd1;
+        end
         else begin
-            if (s.r_delay_cycles > 'd0) begin
-                s.r_delay_cycles <= s.r_delay_cycles - 'd1;
+            if (s.r_sbuf.r_delay_cycles > 'd0) begin
+                s.r_sbuf.r_delay_cycles <= s.r_sbuf.r_delay_cycles - 'd1;
             end
-            else if (!s.r_spi_done) begin
-                s.r_spi_start <= 1'b0;
-                s.r_cs_n <= w_spi_done;
-                s.r_spi_done <= w_spi_done;
-                s.r_spi_dout <= w_spi_done ? w_spi_dout : 'bx;
+            else if (!s.r_sbuf.r_spi_done) begin
+                s.r_sbuf.r_spi_start <= 1'b0;
+                s.r_sbuf.r_cs_n <= w_spi_done;
+                s.r_sbuf.r_spi_done <= w_spi_done;
+                s.r_sbuf.r_spi_dout <= w_spi_done ? w_spi_dout : 'bx;
             end
             else begin
-                s.r_cs_n <= 1'b1;
-                s.r_cs_up_cycles <= (s.r_cs_up_cycles > 'd0) ? 
-                    s.r_cs_up_cycles - 'd1 : 'd0;
+                s.r_sbuf.r_cs_n <= 1'b1;
+                s.r_sbuf.r_cs_up_cycles <= (s.r_sbuf.r_cs_up_cycles > 'd0) ? 
+                    (s.r_sbuf.r_cs_up_cycles - 'd1) : 'd0;
+                s.r_sbuf.r_done <= (s.r_sbuf.r_cs_up_cycles <= 'd1);
             end
         end
     end
@@ -179,14 +196,45 @@ module dc_core
         .i_clk(i_clk),
         .i_rst(i_rst),
         .i_dvsr(i_ctrl.w_dvsr),
-        .i_din(s.r_spi_din),
+        .i_din(s.r_sbuf.r_spi_din),
         .o_dout(w_spi_dout),
-        .i_start(s.r_spi_start && s.r_delay_cycles == 'd0),
+        .i_start(s.r_sbuf.r_spi_start && s.r_sbuf.r_delay_cycles == 'd0),
         .o_done(w_spi_done),
         .i_miso(i_miso),
         .o_mosi(o_mosi),
         .o_sclk(o_sclk)
     );
+
+    always_ff @(posedge i_clk) begin
+        if (i_rst) begin
+            s.r_ibuf <= '{
+                r_valid: 1'b0,
+                r_addr: 'bx,
+                r_iter: 'bx,
+                r_hold_cycles: 'd0,
+                r_arm: 1'b0
+            };
+        end
+        else if (w_propagate_i2s && i.r_idle) begin
+
+            if (s.r_ibuf.r_valid) begin
+                s.r_ibuf.r_hold_cycles <= s.r_ibuf.r_hold_cycles + i.r_hold_cycles;
+            end
+            else begin
+                s.r_ibuf <= '{
+                    r_valid: 1'b1,
+                    r_addr: i.r_addr,
+                    r_iter: i.r_iters,
+                    r_hold_cycles: i.r_hold_cycles,
+                    r_arm: i.r_arm
+                };
+            end
+
+        end
+        else if (w_propagate_s2h && s.r_ibuf.r_valid) begin
+            s.r_ibuf.r_valid <= 1'b0;
+        end
+    end
 
     /************
     * hold stage
@@ -204,56 +252,114 @@ module dc_core
                 r_spi_dout: 'bx,
                 r_ldac_cycles: 'd0,
                 r_ldac_n: 1'b1,
-                r_cycles_left: 'd0
+                r_cycles_left: 'd0,
+                r_done: 1'b1
             };
         end
-        else if (!w_stall) begin
-            h <= '{
-                r_addr: s.r_addr,
-                r_iter: s.r_iter,
-                r_spi_din: s.r_spi_din,
-                r_spi_rd: s.r_spi_rd,
-                r_spi_dout: s.r_spi_dout,
-                r_ldac_cycles: s.r_strb_ldac ? i_ctrl.w_ldac_cycles : 'd0, 
-                r_ldac_n: !s.r_strb_ldac,
-                r_cycles_left: s.r_hold_cycles
+        else if (w_propagate_s2h) begin
+            h <= s.r_ibuf.r_valid ? '{
+                r_addr: s.r_ibuf.r_addr,
+                r_iter: s.r_ibuf.r_iter,
+                r_spi_din: 'h0,
+                r_spi_rd: 1'b0,
+                r_spi_dout: 'h0,
+                r_ldac_cycles: 1'b0, 
+                r_ldac_n: 1'b1,
+                r_cycles_left: s.r_ibuf.r_hold_cycles,
+                r_done: 1'b0
+            } : s.r_sbuf.r_valid ? '{
+                r_addr: s.r_sbuf.r_addr,
+                r_iter: s.r_sbuf.r_iter,
+                r_spi_din: s.r_sbuf.r_spi_din,
+                r_spi_rd: s.r_sbuf.r_spi_rd,
+                r_spi_dout: s.r_sbuf.r_spi_dout,
+                r_ldac_cycles: s.r_sbuf.r_strb_ldac ? i_ctrl.w_ldac_cycles : 'd0, 
+                r_ldac_n: !s.r_sbuf.r_strb_ldac,
+                r_cycles_left: s.r_sbuf.r_hold_cycles,
+                r_done: !s.r_sbuf.r_strb_ldac && (s.r_sbuf.r_hold_cycles == 'd0)
+            } : {
+                r_addr: 'bx,
+                r_iter: 'bx,
+                r_spi_din: 'bx,
+                r_spi_rd: 1'b0,
+                r_spi_dout: 'bx,
+                r_ldac_cycles: 'd0,
+                r_ldac_n: 1'b1,
+                r_cycles_left: 'd0,
+                r_done: 1'b1
             };
         end
         else begin
-            if (h.r_ldac_cycles > 'd0) begin
-                h.r_ldac_cycles <= h.r_ldac_cycles - 'd1;
-            end
-            else if (!h.r_ldac_n) begin
-                h.r_ldac_n <= 1'b1;
-            end
-            else begin
-                h.r_cycles_left <= (h.r_cycles_left > 'd0) ? (h.r_cycles_left - 'd1) : 'd0;
-            end
+            h.r_ldac_cycles <= (h.r_ldac_cycles > 'd0) ? (h.r_ldac_cycles - 'd1) : 'd0;
+            h.r_cycles_left <= (h.r_cycles_left > 'd0) ? (h.r_cycles_left - 'd1) : 'd0;
+            h.r_ldac_n <= (h.r_ldac_cycles == 'd0);
+            h.r_done <= (h.r_cycles_left <= 'd1 && h.r_ldac_cycles == 'd0 && h.r_ldac_n);
         end
     end
 
-    /*************
-    * stall logic
-    *************/
+    /*****************
+    * propagate logic
+    *****************/
 
-    assign w_stall = (h.r_ldac_cycles > 'd0) || (h.r_cycles_left > 'd0) || (!h.r_ldac_n) ||
-                     (!s.r_spi_done) || (s.r_cs_up_cycles > 'd0) || (!s.r_cs_n) ||
-                     (o_armed && !i_start);
+    always_comb begin
+
+        case ({s.r_sbuf.r_valid, s.r_ibuf.r_valid})
+
+            // both buffers empty
+            2'b00: begin
+                w_propagate_s2h = h.r_done;
+                w_propagate_i2s = 1'b1;
+            end
+
+            // s buffer empty, i buffer not empty
+            2'b01: begin
+                w_propagate_s2h = h.r_done && i.r_bubble && i_empty && (!s.r_ibuf.r_arm || i_start);
+                w_propagate_i2s = 1'b1;
+            end
+
+            2'b10: begin
+                w_propagate_s2h = h.r_done && s.r_sbuf.r_done && (!s.r_sbuf.r_arm || i_start);
+                w_propagate_i2s = h.r_done && s.r_sbuf.r_done && (!s.r_sbuf.r_arm || i_start);
+            end
+
+            default: begin
+                w_propagate_s2h = h.r_done && s.r_sbuf.r_done && (!s.r_ibuf.r_arm || i_start);
+                w_propagate_i2s = 1'b0;
+            end
+
+        endcase
+
+    end
 
     /****************
     * output signals
     ****************/
 
-    assign o_cs_n = s.r_cs_n;
+    assign o_cs_n = s.r_sbuf.r_cs_n;
     assign o_ldac_n = h.r_ldac_n;
 
-    assign o_armed = s.r_arm && s.r_spi_done && (s.r_cs_up_cycles == 'd0);
+    always_ff @(posedge i_clk) begin
+        if (i_rst) begin
+            o_armed <= 1'b0;
+        end
+        else if (
+            (s.r_sbuf.r_arm && s.r_sbuf.r_done) ||
+            (s.r_ibuf.r_arm && (
+                (s.r_sbuf.r_valid && s.r_sbuf.r_done) ||
+                (i_empty && i.r_bubble)
+            ))
+        ) begin
+            o_armed <= 1'b1;
+        end
+        else begin
+            o_armed <= 1'b0;
+        end
+    end
 
-    assign o_next = !w_stall && (i.r_iters == 'd0) && !i_empty;
+    assign o_next = w_propagate_i2s && (i.r_iters == 'd0) && !i_empty;
 
-    assign o_empty = i_empty && i.r_bubble && s.r_spi_done && (s.r_cs_up_cycles == 'd0) && 
-                     s.r_cs_n && (h.r_ldac_cycles == 'd0) && (h.r_cycles_left == 'd0) &&
-                     h.r_ldac_n;
+    assign o_empty = i_empty && i.r_bubble && !s.r_sbuf.r_valid && 
+                     !s.r_ibuf.r_valid && h.r_done;
 
     assign o_eop = '{
         w_addr: h.r_addr,

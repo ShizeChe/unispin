@@ -163,7 +163,8 @@ module dc_tb;
             w_strb_ldac: 1'b0,
             w_hold_cycles: 'h0,
             w_modify: 1'b0,
-            w_arm: 1'b1
+            w_arm: 1'b1,
+            w_idle: 1'b0
         };
         iters_reg = 32'h1;
         start_reg = 32'h0;
@@ -213,7 +214,8 @@ module dc_tb;
                 w_strb_ldac: 1'b1,
                 w_hold_cycles: $urandom_range(min_hold_cycles, MAX_CYCLES),
                 w_modify: 1'b0,
-                w_arm: (i == 0)
+                w_arm: (i == 0),
+                w_idle: 1'b0
             };
             $display("insn%0d", i);
             $display("w_iters=%0d", insns[i].w_iters);
@@ -259,6 +261,128 @@ module dc_tb;
 
     endtask
 
+    task fixed_insns;
+
+        dvsr_reg = 'd6;
+        delay_reg = 'd10;
+        cs_up_reg = 'd10;
+        ldac_reg = 'd2;
+
+        insns[0] = '{
+            w_iters: 'd0,
+            w_spi_din: 'h0,
+            w_dspi_din: 'h0,
+            w_spi_rd: 1'b0,
+            w_strb_ldac: 1'b0,
+            w_hold_cycles: 'd2,
+            w_modify: 1'b0,
+            w_arm: 1'b1,
+            w_idle: 1'b1
+        };
+
+        insns[1] = '{
+            w_iters: 'd0,
+            w_spi_din: {4'b0001, 20'h2000},
+            w_dspi_din: 'h0,
+            w_spi_rd: 1'b0,
+            w_strb_ldac: 1'b1,
+            w_hold_cycles: 'd500,
+            w_modify: 1'b0,
+            w_arm: 1'b0,
+            w_idle: 1'b0
+        };
+
+        insns[2] = '{
+            w_iters: 'd0,
+            w_spi_din: 'h0,
+            w_dspi_din: 'h0,
+            w_spi_rd: 1'b0,
+            w_strb_ldac: 1'b0,
+            w_hold_cycles: 'd2,
+            w_modify: 1'b0,
+            w_arm: 1'b0,
+            w_idle: 1'b1
+        };
+
+        insns[3] = '{
+            w_iters: 'd0,
+            w_spi_din: {4'b0001, 20'h4000},
+            w_dspi_din: 'h0,
+            w_spi_rd: 1'b0,
+            w_strb_ldac: 1'b1,
+            w_hold_cycles: 'd500,
+            w_modify: 1'b0,
+            w_arm: 1'b0,
+            w_idle: 1'b0
+        };
+
+        insns[4] = '{
+            w_iters: 'd0,
+            w_spi_din: {4'b0001, 20'h6000},
+            w_dspi_din: 'h0,
+            w_spi_rd: 1'b0,
+            w_strb_ldac: 1'b1,
+            w_hold_cycles: 'd500,
+            w_modify: 1'b0,
+            w_arm: 1'b0,
+            w_idle: 1'b0
+        };
+
+        insns[5] = '{
+            w_iters: 'd0,
+            w_spi_din: 'h0,
+            w_dspi_din: 'h0,
+            w_spi_rd: 1'b0,
+            w_strb_ldac: 1'b0,
+            w_hold_cycles: 'd2,
+            w_modify: 1'b0,
+            w_arm: 1'b0,
+            w_idle: 1'b1
+        };
+
+        insns[6] = '{
+            w_iters: 'd0,
+            w_spi_din: 'h0,
+            w_dspi_din: 'h0,
+            w_spi_rd: 1'b0,
+            w_strb_ldac: 1'b0,
+            w_hold_cycles: 'd10,
+            w_modify: 1'b0,
+            w_arm: 1'b0,
+            w_idle: 1'b1
+        };
+
+        insns[7] = '{
+            w_iters: 'd0,
+            w_spi_din: {4'b0001, 20'h8000},
+            w_dspi_din: 'h0,
+            w_spi_rd: 1'b0,
+            w_strb_ldac: 1'b1,
+            w_hold_cycles: 'd500,
+            w_modify: 1'b0,
+            w_arm: 1'b0,
+            w_idle: 1'b0
+        };
+
+        iters_reg = 3;
+        start_reg = 32'h0;
+        new_ctrl_reg = 32'h0;
+
+        @(negedge w_clk);
+        start_reg = 32'b1;
+        new_ctrl_reg = 32'b1;
+
+        wait(w_armed);
+        $display("armed");
+        repeat(3) @(negedge w_clk);
+        start_reg = 'd0;
+        new_ctrl_reg = 'd0;
+        w_start = 1'b1;
+        @(negedge w_clk);
+        w_start = 1'b0;
+
+    endtask
+
     initial begin
         w_clk = 1'b0;
         forever #2 w_clk = !w_clk;
@@ -281,12 +405,14 @@ module dc_tb;
         init;
         $display("init finished");
 
-        test = 0;
-        repeat (10) begin
-            $display("test%0d", test);
-            rand_insns;
-            test++;
-        end
+        // test = 0;
+        // repeat (10) begin
+        //     $display("test%0d", test);
+        //     rand_insns;
+        //     test++;
+        // end
+        fixed_insns;
+        wait(w_empty);
         $finish;
     end
 

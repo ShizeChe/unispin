@@ -20,7 +20,8 @@ module dc_decode
             w_strb_ldac: i_insn.w_strb_ldac,
             w_hold_cycles: i_insn.w_hold_cycles,
             w_modify: i_insn.w_modify,
-            w_arm: i_insn.w_arm
+            w_arm: i_insn.w_arm,
+            w_idle: i_insn.w_idle
         };
 
         o_insn_modified = i_insn;
