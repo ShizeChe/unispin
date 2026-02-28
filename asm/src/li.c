@@ -12,7 +12,7 @@
 #include <sys/mman.h>
 
 static uint32_t li_t2samples(double t_ns) {
-    uint32_t samples = (uint32_t)llround((t_ns + (LI_NS_PER_SAMPLE / 2.0)) / LI_NS_PER_SAMPLE);
+    uint32_t samples = (uint32_t)llround(t_ns / LI_NS_PER_SAMPLE);
     if (samples > LI_MAX_SAMPLES) samples = LI_MAX_SAMPLES;
     samples = (samples + 3) / 4 * 4;
     if (samples == 0) samples = 8;
