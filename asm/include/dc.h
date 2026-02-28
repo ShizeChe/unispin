@@ -34,10 +34,12 @@ typedef struct {
     uint32_t hold_cycles;
     uint32_t modify;
     uint32_t arm;
+    uint32_t idle;
 } dc_insn_t;
 
 typedef struct {
     int32_t dvsr;
+    int32_t delay_cycles;
     int32_t cs_up_cycles;
     int32_t ldac_cycles;
 } dc_ctrl_t;
@@ -94,6 +96,11 @@ typedef struct {
 typedef struct {
     dc_opt_t opt;
 } dc_nop_t;
+
+typedef struct {
+    uint32_t t_ns;
+    dc_opt_t opt;
+} dc_idl_t;
 
 int dc_parse_insn(char *line, dc_insn_t *insn);
 void dc_assemble(dc_program_t *prog);

@@ -405,14 +405,14 @@ module dc_tb;
         init;
         $display("init finished");
 
-        // test = 0;
-        // repeat (10) begin
-        //     $display("test%0d", test);
-        //     rand_insns;
-        //     test++;
-        // end
-        fixed_insns;
-        wait(w_empty);
+        test = 0;
+        repeat (10) begin
+            $display("test%0d", test);
+            rand_insns;
+            test++;
+        end
+        // fixed_insns;
+        // wait(w_empty);
         $finish;
     end
 

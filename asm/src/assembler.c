@@ -85,6 +85,13 @@ static int assemble(FILE *fp,
                     state = RF_CTRL;
                     success = fgets(line, sizeof(line), fp);
 
+                } else if (sscanf(line, ".program li%u ", &channel)) {
+
+                    li_programs[channel] = (li_program_t *)calloc(1, sizeof(li_program_t));
+
+                    state = LI_CTRL;
+                    success = fgets(line, sizeof(line), fp);
+
                 } else if (strncmp(line, ".launch", 7) == 0) {
 
                     *launch = (launch_t *)calloc(1, sizeof(launch_t));
@@ -100,6 +107,7 @@ static int assemble(FILE *fp,
             case DC_CTRL:
 
                 int dc_dvsr;
+                int dc_delay_cycles;
                 int dc_cs_up_cycles;
                 int dc_ldac_cycles;
 
@@ -107,6 +115,13 @@ static int assemble(FILE *fp,
 
                     dc_programs[channel]->ctrl.dvsr = dc_dvsr;
                     assert(dc_dvsr > 0);
+
+                    success = fgets(line, sizeof(line), fp);
+
+                } else if (sscanf(line, ".dlay %d ", &dc_delay_cycles)) {
+
+                    dc_programs[channel]->ctrl.delay_cycles = dc_delay_cycles;
+                    assert(dc_delay_cycles > 0);
 
                     success = fgets(line, sizeof(line), fp);
 
@@ -379,7 +394,7 @@ static int assemble(FILE *fp,
                     }
 
                 } else {
-                    state = RF_REPEAT;
+                    state = LI_REPEAT;
                 }
 
                 break;
@@ -1235,6 +1250,10 @@ int main(int argc, char *argv[]) {
     for (int i = 0; i < RF_CHANNELS; i++) {
         if (rf_programs[i] != NULL)
             free(rf_programs[i]);
+    }
+    for (int i = 0; i < LI_CHANNELS; i++) {
+        if (li_programs[i] != NULL)
+            free(li_programs[i]);
     }
     if (launch != NULL)
         free(launch);

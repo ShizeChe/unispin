@@ -51,6 +51,7 @@ static void dc_swp2insn(dc_swp_t *swp, dc_insn_t *insn) {
     insn->hold_cycles = cycles;
     insn->modify = 0;
     insn->arm = swp->opt.arm;
+    insn->idle = 0;
 
 }
 
@@ -66,6 +67,7 @@ static void dc_lvl2insn(dc_lvl_t *lvl, dc_insn_t *insn) {
     insn->hold_cycles = dc_t2cycles(lvl->t_ns);
     insn->modify = lvl->opt.has_vplus;
     insn->arm = lvl->opt.arm;
+    insn->idle = 0;
 
 }
 
@@ -81,6 +83,7 @@ static void dc_set2insn(dc_set_t *set, dc_insn_t *insn) {
     insn->hold_cycles = 0;
     insn->modify = set->opt.has_vplus;
     insn->arm = set->opt.arm;
+    insn->idle = 0;
 
 }
 
@@ -96,6 +99,7 @@ static void dc_get2insn(dc_get_t *get, dc_insn_t *insn) {
     insn->hold_cycles = 0;
     insn->modify = get->opt.has_vplus;
     insn->arm = get->opt.arm;
+    insn->idle = 0;
 
 }
 
@@ -109,6 +113,21 @@ static void dc_nop2insn(dc_nop_t *nop, dc_insn_t *insn) {
     insn->hold_cycles = 0;
     insn->modify = nop->opt.has_vplus;
     insn->arm = nop->opt.arm;
+    insn->idle = 0;
+
+}
+
+static void dc_idl2insn(dc_idl_t *idl, dc_insn_t *insn) {
+
+    insn->iters = 0;
+    insn->spi_din = 0;
+    insn->dspi_din = idl->opt.has_vplus ? idl->opt.vplus / NS_PER_CYCLE : 0;
+    insn->spi_rd = 0;
+    insn->strb_ldac = 0;
+    insn->hold_cycles = idl->t_ns / NS_PER_CYCLE;
+    insn->modify = idl->opt.has_vplus;
+    insn->arm = idl->opt.arm;
+    insn->idle = 1;
 
 }
 
@@ -122,6 +141,7 @@ static void dc_ful2insn(dc_ful_t *ful, dc_insn_t *insn) {
     insn->hold_cycles = 0;
     insn->modify = ful->opt.has_vplus;
     insn->arm = ful->opt.arm;
+    insn->idle = 1;
 
 }
 
@@ -162,6 +182,11 @@ static int dc_parse_opt(char *paren, dc_opt_t *opt) {
 
             opt->has_vplus = 1;
             opt->vplus = v;
+
+        } else if (strncmp(tok, "t+", 2) == 0) {
+
+            if (parse_time(tok + 2, &opt->vplus) != 0)
+                return -1;
 
         } else {
             // unknown flag/token inside parens
@@ -355,6 +380,34 @@ static int dc_parse_nop(char *line, dc_nop_t *nop) {
 
 }
 
+static int dc_parse_idl(char *line, dc_idl_t *idl) {
+
+    idl->opt.arm = 0;
+    idl->opt.rd = 0;
+    idl->opt.has_vplus = 0;
+    idl->opt.vplus = 0;
+    idl->opt.ldc = 0;
+
+    char dt_tok[32] = {0};
+    char paren[256] = {0};
+
+    int got = sscanf(line, " idl t=%31s ( %255[^)] )", dt_tok, paren);
+
+    if (got < 1) return -1;
+    if (got == 1) paren[0] = '\0';
+
+    if (parse_time(dt_tok, &(idl->t_ns)) != 0) return -1;
+
+    assert(idl->t_ns <= DC_MAX_HOLD_NS);
+
+    if (paren[0] != '\0') {
+        if (dc_parse_opt(paren, &(idl->opt)) != 0) return -1;
+    }
+
+    return 0;
+
+}
+
 static int dc_parse_ful(char *line, dc_ful_t *ful) {
 
     ful->opt.arm = 0;
@@ -428,6 +481,12 @@ int dc_parse_insn(char *line, dc_insn_t *insn) {
         dc_parse_nop(line, &nop);
         dc_nop2insn(&nop, insn);
 
+    } else if (strcmp(op, "idl") == 0) {
+
+        dc_idl_t idl;
+        dc_parse_idl(line, &idl);
+        dc_idl2insn(&idl, insn);
+
     } else if (strcmp(op, "ful") == 0) {
 
         dc_ful_t ful;
@@ -451,11 +510,12 @@ void dc_assemble(dc_program_t *prog) {
         dc_insn_t *insn = &(prog->insns[i]);
         uint32_t *reg = &(prog->seq_regs[i * DC_REG_PER_INSN]);
 
-        reg[0] = (insn->iters << 14) | (insn->spi_din >> 10);
-        reg[1] = (insn->spi_din << 22) | (insn->dspi_din << 2) | 
-                 (insn->spi_rd << 1) | insn->strb_ldac;
-        reg[2] = (insn->hold_cycles << 2) | (insn->modify << 1) | 
-                 (insn->arm);
+        reg[0] = (insn->iters << 15) | (insn->spi_din >> 9);
+        reg[1] = (insn->spi_din << 23) | (insn->dspi_din << 3) | 
+                 (insn->spi_rd << 2) | (insn->strb_ldac << 1) |
+                 (insn->hold_cycles >> 29);
+        reg[2] = (insn->hold_cycles << 3) | (insn->modify << 2) | 
+                 (insn->arm << 1) | (insn->idle);
 
     }
 
@@ -463,11 +523,13 @@ void dc_assemble(dc_program_t *prog) {
     prog->seq_regs[DC_SEQ_REGS-1] = 1;
 
     prog->ctrl_regs[0] = prog->ctrl.dvsr;
-    prog->ctrl_regs[1] = prog->ctrl.cs_up_cycles;
-    prog->ctrl_regs[2] = prog->ctrl.ldac_cycles;
+    prog->ctrl_regs[1] = prog->ctrl.delay_cycles;
+    prog->ctrl_regs[2] = prog->ctrl.cs_up_cycles;
+    prog->ctrl_regs[3] = prog->ctrl.ldac_cycles;
 
     prog->ctrl_regs[DC_CTRL_REGS-1] = (prog->ctrl_regs[0] != -1) ||
-        (prog->ctrl_regs[1] != -1) || (prog->ctrl_regs[2] != -1);
+        (prog->ctrl_regs[1] != -1) || (prog->ctrl_regs[2] != -1) ||
+        (prog->ctrl_regs[3] != -1);
 
 }
 

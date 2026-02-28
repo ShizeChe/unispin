@@ -965,11 +965,11 @@ module simulator;
                 line = bytes2string(line_buf);
                 $display("RX: %s", line);
 
-                if ($sscanf(line, "0x%4h", tx_data) == 1) begin
-                    pc_tsmt(tx_data);
-                end
-                else if ($sscanf(line, "0x%8h 0x%8h", addr, data) == 2) begin
+                if ($sscanf(line, "0x%8h 0x%8h", addr, data) == 2) begin
                     axil_bus_write(addr, data);
+                end
+                else if ($sscanf(line, "0x%4h", tx_data) == 1) begin
+                    pc_tsmt(tx_data);
                 end
                 else if ($sscanf(line, "run %d", t) == 1) begin
                     wait(DCRFLI.LCH.r_state == DCRFLI.LCH.LAUNCH);
