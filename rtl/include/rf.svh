@@ -10,7 +10,7 @@ parameter RF_PHASE_WIDTH=18;
 parameter RF_CORDIC_STAGES=15;
 parameter RF_CORDIC_PAD_ZEROS=8;
 
-parameter RF_ITER_WIDTH=10;
+parameter RF_ITER_WIDTH=20;
 parameter RF_DEPTH=16;
 parameter RF_REG_PER_INSN=(RF_INSN_WIDTH+31)/32;
 parameter RF_SEQ_REGS=RF_DEPTH*RF_REG_PER_INSN+2;

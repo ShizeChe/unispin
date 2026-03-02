@@ -1,9 +1,13 @@
-.program rf3
+.program rf0
 .fnco 10MHz
-.pnco 90
-.defI 1
-.defQ 1
 .repeat 1
-    chp f1=10MHz f2=15MHz t=100us
+    chp f1=-5MHz f2=5MHz t=100us (arm)
+    idl t=10us
 
-.launch rf3
+.program li0
+.repeat 1
+    idl t=100us (arm)
+    sam n=1000 t=10us
+
+.launch rf0 li0
+

@@ -5,7 +5,7 @@
 parameter DC_DAC_WIDTH=20;
 parameter DC_SPI_DATA_WIDTH=24;
 parameter DC_CYCLE_WIDTH=30;
-parameter DC_SEQ_ITER_WIDTH=10;
+parameter DC_SEQ_ITER_WIDTH=20;
 parameter DC_CORE_ITER_WIDTH=10;
 parameter DC_SPI_DVSR_WIDTH=16;
 parameter DC_SPI_DELAY_WIDTH=16;

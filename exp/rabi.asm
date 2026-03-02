@@ -14,11 +14,9 @@
 
 .program li0
 .repeat 200
-    idl t=12ns (arm t+12ns)
-    idl t=10us
+    idl t=10012ns (arm t+12ns)
     sam n=1000 t=30us
-    idl t=10us
-    idl t=10us
+    idl t=20us
 
 .launch rf0 dc0 li0
 

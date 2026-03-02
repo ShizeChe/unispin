@@ -4,7 +4,7 @@
 parameter LI_NUM_SAMPLE_WIDTH=20;
 parameter LI_STRIDE_WIDTH=18;
 parameter LI_INSN_WIDTH=LI_NUM_SAMPLE_WIDTH*2+LI_STRIDE_WIDTH+2;
-parameter LI_ITER_WIDTH=10;
+parameter LI_ITER_WIDTH=20;
 parameter LI_DEPTH=16;
 parameter LI_ADC_WIDTH=16;
 

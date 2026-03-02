@@ -169,8 +169,9 @@ static int dc_parse_opt(char *paren, dc_opt_t *opt) {
             if (endp == tok + 2 || *endp != '\0') 
                 return -1;
 
+            uint32_t v_code = (uint32_t)real2twos(VMIN, VMAX, DC_DAC_BITS, v, 0);
             opt->has_vplus = 1;
-            opt->vplus = v;
+            opt->vplus = v_code;
 
         } else if (strncmp(tok, "t+", 2) == 0) {
 
