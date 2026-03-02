@@ -331,7 +331,8 @@ for {set ch 23} {$ch >= 0} {incr ch -1} {
     wvSetPosition -win $nw [format {("dc/ch%d/CORE" 0)} $ch]
     wvAddSignal -win $nw "/simulator/DCRFLI/DC_GEN\[$ch\]/DC/CORE/i_clk" \
                          "/simulator/DCRFLI/DC_GEN\[$ch\]/DC/CORE/i_rst" \
-                         "/simulator/DCRFLI/DC_GEN\[$ch\]/DC/CORE/w_stall" \
+                         "/simulator/DCRFLI/DC_GEN\[$ch\]/DC/CORE/w_propagate_i2s" \
+                         "/simulator/DCRFLI/DC_GEN\[$ch\]/DC/CORE/w_propagate_s2h" \
                          "/simulator/DCRFLI/DC_GEN\[$ch\]/DC/CORE/o_empty" \
                          "/simulator/DCRFLI/DC_GEN\[$ch\]/DC/CORE/i_ctrl"
 
@@ -769,39 +770,39 @@ for {set ch 1} {$ch >= 0} {incr ch -1} {
     wvAddSubGroup -win $nw "w"
     wvAddSubGroup -win $nw "aw"
 
-    wvSetPosition -win $nw [format {("rf/ch%d/AXIL_REGS" 0)} $ch]
+    wvSetPosition -win $nw [format {("li/ch%d/AXIL_REGS" 0)} $ch]
     wvAddSignal -win $nw "/simulator/LI_IO_GEN\[$ch\]/REGS/AXIL_REGS/i_aclk" \
                          "/simulator/LI_IO_GEN\[$ch\]/REGS/AXIL_REGS/i_aresetn" \
                          "/simulator/LI_IO_GEN\[$ch\]/REGS/AXIL_REGS/r_regs" \
                          "/simulator/LI_IO_GEN\[$ch\]/REGS/AXIL_REGS/o_regs"
 
-    wvSetPosition -win $nw [format {("rf/ch%d/AXIL_REGS/aw" 0)} $ch]
+    wvSetPosition -win $nw [format {("li/ch%d/AXIL_REGS/aw" 0)} $ch]
     wvAddSignal -win $nw "/simulator/LI_IO_GEN\[$ch\]/REGS/AXIL_REGS/o_awready" \
                          "/simulator/LI_IO_GEN\[$ch\]/REGS/AXIL_REGS/i_awvalid" \
                          "/simulator/LI_IO_GEN\[$ch\]/REGS/AXIL_REGS/i_awaddr" \
                          "/simulator/LI_IO_GEN\[$ch\]/REGS/AXIL_REGS/w_awireg" \
                          "/simulator/LI_IO_GEN\[$ch\]/REGS/AXIL_REGS/w_awls2b"
 
-    wvSetPosition -win $nw [format {("rf/ch%d/AXIL_REGS/w" 0)} $ch]
+    wvSetPosition -win $nw [format {("li/ch%d/AXIL_REGS/w" 0)} $ch]
     wvAddSignal -win $nw "/simulator/LI_IO_GEN\[$ch\]/REGS/AXIL_REGS/o_wready" \
                          "/simulator/LI_IO_GEN\[$ch\]/REGS/AXIL_REGS/i_wvalid" \
                          "/simulator/LI_IO_GEN\[$ch\]/REGS/AXIL_REGS/i_wdata" \
                          "/simulator/LI_IO_GEN\[$ch\]/REGS/AXIL_REGS/i_wstrb" \
                          "/simulator/LI_IO_GEN\[$ch\]/REGS/AXIL_REGS/w_wdatastrb"
 
-    wvSetPosition -win $nw [format {("rf/ch%d/AXIL_REGS/b" 0)} $ch]
+    wvSetPosition -win $nw [format {("li/ch%d/AXIL_REGS/b" 0)} $ch]
     wvAddSignal -win $nw "/simulator/LI_IO_GEN\[$ch\]/REGS/AXIL_REGS/i_bready" \
                          "/simulator/LI_IO_GEN\[$ch\]/REGS/AXIL_REGS/o_bvalid" \
                          "/simulator/LI_IO_GEN\[$ch\]/REGS/AXIL_REGS/o_bresp"
 
-    wvSetPosition -win $nw [format {("rf/ch%d/AXIL_REGS/ar" 0)} $ch]
+    wvSetPosition -win $nw [format {("li/ch%d/AXIL_REGS/ar" 0)} $ch]
     wvAddSignal -win $nw "/simulator/LI_IO_GEN\[$ch\]/REGS/AXIL_REGS/o_arready" \
                          "/simulator/LI_IO_GEN\[$ch\]/REGS/AXIL_REGS/i_arvalid" \
                          "/simulator/LI_IO_GEN\[$ch\]/REGS/AXIL_REGS/i_araddr" \
                          "/simulator/LI_IO_GEN\[$ch\]/REGS/AXIL_REGS/w_arireg" \
                          "/simulator/LI_IO_GEN\[$ch\]/REGS/AXIL_REGS/w_arls2b"
 
-    wvSetPosition -win $nw [format {("rf/ch%d/AXIL_REGS/r" 0)} $ch]
+    wvSetPosition -win $nw [format {("li/ch%d/AXIL_REGS/r" 0)} $ch]
     wvAddSignal -win $nw "/simulator/LI_IO_GEN\[$ch\]/REGS/AXIL_REGS/i_rready" \
                          "/simulator/LI_IO_GEN\[$ch\]/REGS/AXIL_REGS/o_rvalid" \
                          "/simulator/LI_IO_GEN\[$ch\]/REGS/AXIL_REGS/o_rdata" \
@@ -813,12 +814,12 @@ for {set ch 1} {$ch >= 0} {incr ch -1} {
     wvAddSubGroup -win $nw "fetch"
     wvAddSubGroup -win $nw "new"
 
-    wvSetPosition -win $nw [format {("rf/ch%d/SEQ" 0)} $ch]
+    wvSetPosition -win $nw [format {("li/ch%d/SEQ" 0)} $ch]
     wvAddSignal -win $nw "/simulator/DCRFLI/LI_GEN\[$ch\]/LI/SEQ/i_clk" \
                          "/simulator/DCRFLI/LI_GEN\[$ch\]/LI/SEQ/i_rst" \
                          "/simulator/DCRFLI/LI_GEN\[$ch\]/LI/SEQ/w_propagate"
 
-    wvSetPosition -win $nw [format {("rf/ch%d/SEQ/new" 0)} $ch]
+    wvSetPosition -win $nw [format {("li/ch%d/SEQ/new" 0)} $ch]
     wvAddSignal -win $nw "/simulator/DCRFLI/LI_GEN\[$ch\]/LI/SEQ/i_regs" \
                          "/simulator/DCRFLI/LI_GEN\[$ch\]/LI/SEQ/w_last0" \
                          "/simulator/DCRFLI/LI_GEN\[$ch\]/LI/SEQ/w_last0_ff1" \
@@ -830,7 +831,7 @@ for {set ch 1} {$ch >= 0} {incr ch -1} {
                          "/simulator/DCRFLI/LI_GEN\[$ch\]/LI/SEQ/w_ulast0_ff2" \
                          "/simulator/DCRFLI/LI_GEN\[$ch\]/LI/SEQ/w_new_usequence"
 
-    wvSetPosition -win $nw [format {("rf/ch%d/SEQ/fetch" 0)} $ch]
+    wvSetPosition -win $nw [format {("li/ch%d/SEQ/fetch" 0)} $ch]
     wvAddSignal -win $nw "/simulator/DCRFLI/LI_GEN\[$ch\]/LI/SEQ/r_sequence" \
                          "/simulator/DCRFLI/LI_GEN\[$ch\]/LI/SEQ/r_iters" \
                          "/simulator/DCRFLI/LI_GEN\[$ch\]/LI/SEQ/r_iptr" \
@@ -839,7 +840,7 @@ for {set ch 1} {$ch >= 0} {incr ch -1} {
                          "/simulator/DCRFLI/LI_GEN\[$ch\]/LI/SEQ/w_iptr_plus1" \
                          "/simulator/DCRFLI/LI_GEN\[$ch\]/LI/SEQ/w_next_null"
 
-    wvSetPosition -win $nw [format {("rf/ch%d/SEQ/out" 0)} $ch]
+    wvSetPosition -win $nw [format {("li/ch%d/SEQ/out" 0)} $ch]
     wvAddSignal -win $nw "/simulator/DCRFLI/LI_GEN\[$ch\]/LI/SEQ/o_empty" \
                          "/simulator/DCRFLI/LI_GEN\[$ch\]/LI/SEQ/i_next" \
                          "/simulator/DCRFLI/LI_GEN\[$ch\]/LI/SEQ/o_addr" \
@@ -860,7 +861,7 @@ for {set ch 1} {$ch >= 0} {incr ch -1} {
     wvAddSignal -win $nw "/simulator/DCRFLI/LI_GEN\[$ch\]/LI/CORE/i_clk" \
                          "/simulator/DCRFLI/LI_GEN\[$ch\]/LI/CORE/i_rst" \
                          "/simulator/DCRFLI/LI_GEN\[$ch\]/LI/CORE/w_stall" \
-                         "/simulator/DCRFLI/LI_GEN\[$ch\]/LI/CORE/o_empty" \
+                         "/simulator/DCRFLI/LI_GEN\[$ch\]/LI/CORE/o_empty"
 
     wvSetPosition -win $nw [format {("li/ch%d/CORE/decode" 0)} $ch]
     wvAddSignal -win $nw "/simulator/DCRFLI/LI_GEN\[$ch\]/LI/CORE/d" \
@@ -868,14 +869,14 @@ for {set ch 1} {$ch >= 0} {incr ch -1} {
                          "/simulator/DCRFLI/LI_GEN\[$ch\]/LI/CORE/o_next" \
                          "/simulator/DCRFLI/LI_GEN\[$ch\]/LI/CORE/i_addr" \
                          "/simulator/DCRFLI/LI_GEN\[$ch\]/LI/CORE/i_insn" \
-                         "/simulator/DCRFLI/LI_GEN\[$ch\]/LI/CORE/o_insn_modified"
+                         "/simulator/DCRFLI/LI_GEN\[$ch\]/LI/CORE/o_insn_modified" \
+                         "/simulator/DCRFLI/LI_GEN\[$ch\]/LI/CORE/o_armed" \
+                         "/simulator/DCRFLI/LI_GEN\[$ch\]/LI/CORE/i_start"
 
     wvSetPosition -win $nw [format {("li/ch%d/CORE/sample" 0)} $ch]
     wvAddSignal -win $nw "/simulator/DCRFLI/LI_GEN\[$ch\]/LI/CORE/s" \
                          "/simulator/DCRFLI/LI_GEN\[$ch\]/LI/CORE/i_QIx4" \
-                         "/simulator/DCRFLI/LI_GEN\[$ch\]/LI/CORE/o_sample_mask" \
-                         "/simulator/DCRFLI/LI_GEN\[$ch\]/LI/CORE/o_armed" \
-                         "/simulator/DCRFLI/LI_GEN\[$ch\]/LI/CORE/i_start"
+                         "/simulator/DCRFLI/LI_GEN\[$ch\]/LI/CORE/o_sample_mask"
 
     wvSetPosition -win $nw [format {("li/ch%d/CORE/pack" 0)} $ch]
     wvAddSignal -win $nw "/simulator/DCRFLI/LI_GEN\[$ch\]/LI/CORE/p"

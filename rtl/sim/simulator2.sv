@@ -824,7 +824,7 @@ module simulator;
 
     initial begin
         w_li_adc_clk = 1'b1;
-        forever #0.25 w_li_adc_clk = !w_li_adc_clk;
+        forever #0.5 w_li_adc_clk = !w_li_adc_clk;
     end
 
     // reset
@@ -971,7 +971,7 @@ module simulator;
                 else if ($sscanf(line, "0x%4h", tx_data) == 1) begin
                     pc_tsmt(tx_data);
                 end
-                else if ($sscanf(line, "run %d", t) == 1) begin
+                else if ($sscanf(line, "launch %d", t) == 1) begin
                     wait(DCRFLI.LCH.r_state == DCRFLI.LCH.LAUNCH);
                     @(negedge w_dcrfli_clk);
                     wait(DCRFLI.LCH.w_dc_ready && 
@@ -981,6 +981,9 @@ module simulator;
                     i_btn_w = 1'b1;
                     repeat(30) @(negedge w_dcrfli_clk);
                     i_btn_w = 1'b0;
+                    repeat (t/4) @(negedge w_dcrfli_clk);
+                end
+                else if ($sscanf(line, "run %d", t) == 1) begin
                     repeat (t/4) @(negedge w_dcrfli_clk);
                 end
                 else begin

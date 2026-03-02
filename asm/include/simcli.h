@@ -5,6 +5,6 @@
 
 int sim_connect(const char *path);
 int sim_sendf(const char*fmt, ...);
-void sim_clos(void);
+void sim_close(void);
 
 #endif

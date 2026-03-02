@@ -81,28 +81,29 @@ module li_core
     always_ff @(posedge i_clk) begin
         if (i_rst) begin
             s.r_addr <= 'bx;
-            s.r_samples <= 'bx;
+            s.r_samples <= 'b0;
             s.r_samples_left <= 'd0;
-            s.r_stride <= 'bx;
+            s.r_stride <= 'd1;
             s.r_stride_left <= 'd0;
-            s.r_arm <= 1'b0;
             s.r_idle <= 1'b0;
+            s.r_done <= 1'b1;
         end
         else if (!w_stall) begin
 
-            if (s.w_done && !i_empty) begin
+            if ((s.w_done || s.r_done) && !i_empty) begin
                 s.r_addr <= d.w_addr;
                 s.r_samples <= d.w_samples;
                 s.r_samples_left <= d.w_samples;
                 s.r_stride <= d.w_stride;
                 s.r_stride_left <= 'd0;
-                s.r_arm <= d.w_arm;
                 s.r_idle <= d.w_idle;
+                s.r_done <= 1'b0;
             end
             else begin
                 s.r_samples_left <= s.w_samples_next;
                 s.r_stride_left <= s.w_stride_next;
-                s.r_arm <= 1'b0;
+                if (!s.r_done)
+                    s.r_done <= s.w_done;
             end
             
         end
@@ -111,7 +112,7 @@ module li_core
     assign s.w_QIx4 = i_QIx4;
     assign s.w_last = s.w_done && (s.w_validx4 != 'h0);
 
-    assign o_next = s.w_done && !i_empty;
+    assign o_next = (s.w_done || s.r_done) && !i_empty && !w_stall;
     assign o_sample_mask = s.w_validx4;
 
     /*******************************
@@ -234,9 +235,9 @@ module li_core
     assign o_validx4 = o.r_validx4;
     assign o_last = o.r_last;
 
-    assign o_armed = s.r_arm;
+    assign o_armed = !i_empty && d.w_arm;
 
-    assign o_empty = i_empty && s.w_done && !PACK.p.r_last && 
+    assign o_empty = i_empty && (s.w_done || s.r_done) && !PACK.p.r_last && 
         !a.r_last && !b.r_last && !o.r_last;
 
     assign o_eop = '{

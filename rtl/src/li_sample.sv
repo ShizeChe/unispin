@@ -22,7 +22,7 @@ module li_sample
         if (i_idle) begin
 
             o_samples_next = (i_samples_left < 'd4) ? 'd0 : (i_samples_left - 'd4);
-            o_stride_next = 'bx;
+            o_stride_next = 'b0;
             o_validx4 = 4'h0;
 
         end
@@ -101,7 +101,7 @@ module li_sample
             endcase
         end
 
-        o_done = (o_samples_next == 'd0);
+        o_done = (o_samples_next == 'd0 && o_stride_next < 'd4);
 
     end
 

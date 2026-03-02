@@ -11,23 +11,10 @@
 #include <sys/mman.h>
 
 
-static uint32_t dc_v2dac_code(double v) {
-    const double span = (VMAX - VMIN);
-    const double fullscale   = (double)((1u << DC_DAC_BITS) - 1u);
-    if (span <= 0.0) return 0;
-
-    double norm   = (v - VMIN) / span;   // ideal 0..1
-    double scaled = norm * fullscale;           // ideal 0..(2^N-1)
-
-    if (scaled < 0.0)       scaled = 0.0;
-    if (scaled > fullscale) scaled = fullscale;
-    return (uint32_t)llround(scaled);
-}
-
 static uint32_t dc_t2cycles(uint32_t t_ns) {
+    if (t_ns < NS_PER_CYCLE) return 0;
     const uint64_t max_cycles = (1ull << DC_CYCLE_BITS) - 1ull;
-    uint64_t cycles = ( (uint64_t)t_ns + (NS_PER_CYCLE/2) ) / (uint64_t)NS_PER_CYCLE;
-    if (cycles == 0) cycles = 1;
+    uint64_t cycles = ((uint64_t)t_ns + (NS_PER_CYCLE/2)) / (uint64_t)NS_PER_CYCLE - 1;
     if (cycles > max_cycles) cycles = max_cycles;
     return (uint32_t)cycles;
 }
@@ -57,7 +44,9 @@ static void dc_swp2insn(dc_swp_t *swp, dc_insn_t *insn) {
 
 static void dc_lvl2insn(dc_lvl_t *lvl, dc_insn_t *insn) {
 
-    uint32_t din = (1u << 20) | dc_v2dac_code(lvl->v);
+    uint32_t v_code = (uint32_t)real2twos(VMIN, VMAX, DC_DAC_BITS, lvl->v, 0);
+
+    uint32_t din = (1u << 20) | (v_code & ((1u << 20) - 1u));
 
     insn->iters = 0;
     insn->spi_din = din;
@@ -124,7 +113,7 @@ static void dc_idl2insn(dc_idl_t *idl, dc_insn_t *insn) {
     insn->dspi_din = idl->opt.has_vplus ? idl->opt.vplus / NS_PER_CYCLE : 0;
     insn->spi_rd = 0;
     insn->strb_ldac = 0;
-    insn->hold_cycles = idl->t_ns / NS_PER_CYCLE;
+    insn->hold_cycles = dc_t2cycles(idl->t_ns);
     insn->modify = idl->opt.has_vplus;
     insn->arm = idl->opt.arm;
     insn->idle = 1;
@@ -187,6 +176,8 @@ static int dc_parse_opt(char *paren, dc_opt_t *opt) {
 
             if (parse_time(tok + 2, &opt->vplus) != 0)
                 return -1;
+
+            opt->has_vplus = 1;
 
         } else {
             // unknown flag/token inside parens

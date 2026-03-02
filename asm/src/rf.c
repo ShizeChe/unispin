@@ -13,8 +13,6 @@
 static uint32_t rf_t2samples(double t_ns) {
     uint32_t samples = (uint32_t)llround(t_ns / RF_NS_PER_SAMPLE);
     if (samples > RF_MAX_SAMPLES) samples = RF_MAX_SAMPLES;
-    samples = (samples + 7) / 8 * 8;
-    if (samples == 0) samples = 8;
     return samples;
 }
 

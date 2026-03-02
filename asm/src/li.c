@@ -14,20 +14,17 @@
 static uint32_t li_t2samples(double t_ns) {
     uint32_t samples = (uint32_t)llround(t_ns / LI_NS_PER_SAMPLE);
     if (samples > LI_MAX_SAMPLES) samples = LI_MAX_SAMPLES;
-    samples = (samples + 3) / 4 * 4;
-    if (samples == 0) samples = 8;
     return samples;
 }
 
 static void li_sam2insn(li_sam_t *sam, li_insn_t *insn) {
     insn->arm = sam->opt.arm;
     insn->idle = 0;
-    uint32_t tsamples = li_t2samples(sam->t_ns);
-    uint32_t tsamples_nxt = li_t2samples(sam->t_ns + sam->opt.tplus_ns);
     insn->samples = sam->samples;
+    uint32_t tsamples = li_t2samples(sam->t_ns);
     insn->stride = (tsamples % sam->samples == 0) ? 
         (tsamples / sam->samples) : (tsamples / sam->samples + 1);
-    insn->dsamples = (tsamples_nxt / insn->stride) - insn->samples;
+    insn->dsamples = li_t2samples(sam->opt.tplus_ns);
 }
 
 static void li_idl2insn(li_idl_t *idl, li_insn_t *insn) {

@@ -68,6 +68,7 @@ static int assemble(FILE *fp,
 
                     dc_programs[channel] = (dc_program_t *)calloc(1, sizeof(dc_program_t));
                     dc_programs[channel]->ctrl.dvsr = -1;
+                    dc_programs[channel]->ctrl.delay_cycles = -1;
                     dc_programs[channel]->ctrl.cs_up_cycles = -1;
                     dc_programs[channel]->ctrl.ldac_cycles = -1;
 
@@ -88,6 +89,8 @@ static int assemble(FILE *fp,
                 } else if (sscanf(line, ".program li%u ", &channel)) {
 
                     li_programs[channel] = (li_program_t *)calloc(1, sizeof(li_program_t));
+                    li_programs[channel]->ctrl.nco_freq = -1;
+                    li_programs[channel]->ctrl.nco_phase = -1;
 
                     state = LI_CTRL;
                     success = fgets(line, sizeof(line), fp);
@@ -419,8 +422,6 @@ static int assemble(FILE *fp,
 
             case LI_INSN:
 
-                assert(li_programs[channel]->ctrl.nco_freq != -1);
-
                 li_insn_t li_insn;
                 i = 0;
 
@@ -662,7 +663,12 @@ static int write_sim(dc_program_t *dc_programs[],
 
     }
 
-    sim_sendf("run %lu\n", program_t(dc_programs, rf_programs, li_programs) + 1000);
+    if (launch != NULL) 
+        sim_sendf("launch %lu\n", program_t(dc_programs, rf_programs, li_programs) + 1000);
+    else
+        sim_sendf("run %lu\n", program_t(dc_programs, rf_programs, li_programs) + 1000);
+
+    sim_close();
 
     return 0;
 }

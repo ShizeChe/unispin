@@ -30,7 +30,7 @@ module dc_decode
         if (i_insn.w_modify) begin
             if (i_insn.w_idle) begin
                 o_insn_modified.w_hold_cycles = i_insn.w_hold_cycles +
-                    {{(DC_CYCLES_WIDTH-DC_DAC_WIDTH){1'b0}}, i_insn.w_dspi_din};
+                    {{(DC_CYCLE_WIDTH-DC_DAC_WIDTH){1'b0}}, i_insn.w_dspi_din};
             end
             else begin
                 o_insn_modified.w_spi_din = {

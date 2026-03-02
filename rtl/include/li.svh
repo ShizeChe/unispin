@@ -41,7 +41,7 @@ typedef struct {
     logic [LI_STRIDE_WIDTH-1:0] w_stride_next;
     logic [3:0] w_validx4;
     logic w_done;
-    logic r_arm;
+    logic r_done;
     logic r_idle;
     logic [LI_ADC_WIDTH*8-1:0] w_QIx4;
     logic w_last;

@@ -261,7 +261,7 @@ module dcrfli_uart_btn
 
         .i_dc_armed(w_dc_armed_bus),
         .i_rf_armed(w_rf_armed_bus),
-        .i_li_armed(NUM_LI_CHANNEL'('h0)),
+        .i_li_armed(w_li_armed_bus),
 
         .i_trigger(w_trigger),
 

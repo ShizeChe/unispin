@@ -94,4 +94,3 @@
 .repeat 1
     set cr 0x2
 
-.launch dc0 dc1 dc2 dc3 dc4 dc5 dc6 dc7 dc8 dc9 dc10 dc11 dc12 dc13 dc14 dc15 dc16 dc17 dc18 dc19 dc20 dc21 dc22 dc23
