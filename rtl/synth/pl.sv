@@ -2,6 +2,7 @@
 `timescale 1ns / 1ps
 `include "dc.svh"
 `include "rf.svh"
+`include "li.svh"
 `include "launch.vh"
 
 module pl
@@ -101,52 +102,47 @@ module pl
      output logic o_bled0, o_bled1, o_bled2, o_bled3,
      output logic o_bled4, o_bled5, o_bled6, o_bled7,
     
-     input  logic i_btn_w, i_btn_c,
+     input  logic i_btn_w,
      
-     input  logic i_pl_clk_n, i_pl_clk_p,
-
      input  logic i_rx,
      output logic o_tx);
      
     localparam NUM_DC_CHANNEL=24;
     localparam NUM_RF_CHANNEL=6;
-    localparam NUM_LI_CHANNEL=1;
+    localparam NUM_LI_CHANNEL=2;
     localparam NUM_DEBOUNCE_CYCLES=25000000;
 
-    logic w_dcrfli_clk, w_rst, w_rst_n;
-    logic w_pl_clk;
-    logic r_btn_c_ff1, r_btn_c_ff2; 
-    
-    IBUFDS BDS (
-        .O(w_pl_clk),
-        .I(i_pl_clk_p),
-        .IB(i_pl_clk_n)
-    );
-    
-    always_ff @(posedge w_dcrfli_clk) begin
-        r_btn_c_ff1 <= i_btn_c;
-        r_btn_c_ff2 <= r_btn_c_ff1;
-    end
+    logic w_dcrfli_clk, w_dcrfli_rst_n;
 
-    assign w_rst = r_btn_c_ff2;
-    assign w_rst_n = !r_btn_c_ff2;
-
+    // uart regs
     localparam TOTAL_UREGS=DC_SEQ_REGS+DC_CTRL_REGS+
                            RF_SEQ_REGS+RF_CTRL_REGS+
+                           LI_SEQ_REGS+LI_CTRL_REGS+
                            LCH_TOTAL_REGS;
+
+    localparam U_DC_SEQ_START = 0;
+    localparam U_DC_SEQ_END = U_DC_SEQ_START + DC_SEQ_REGS - 1;
+
+    localparam U_DC_CTRL_START = U_DC_SEQ_END + 1;
+    localparam U_DC_CTRL_END = U_DC_CTRL_START + DC_CTRL_REGS - 1;
+
+    localparam U_RF_SEQ_START = U_DC_CTRL_END + 1;
+    localparam U_RF_SEQ_END = U_RF_SEQ_START + RF_SEQ_REGS - 1;
+
+    localparam U_RF_CTRL_START = U_RF_SEQ_END + 1;
+    localparam U_RF_CTRL_END = U_RF_CTRL_START + RF_CTRL_REGS - 1;
+
+    localparam U_LI_SEQ_START = U_RF_CTRL_END + 1;
+    localparam U_LI_SEQ_END = U_LI_SEQ_START + LI_SEQ_REGS - 1;
+
+    localparam U_LI_CTRL_START = U_LI_SEQ_END + 1;
+    localparam U_LI_CTRL_END = U_LI_CTRL_START + LI_CTRL_REGS - 1;
+
+    localparam U_LCH_START = U_LI_CTRL_END + 1;
+    localparam U_LCH_END = U_LCH_START + LCH_TOTAL_REGS - 1;
 
     logic [0:TOTAL_UREGS-1][31:0] w_uregs;
     
-    ila_0 ILA (
-        .clk(w_dcrfli_clk), // input wire clk
-    
-        .probe0(i_rx), // input wire [0:0]  probe0  
-        .probe1(o_tx), // input wire [0:0]  probe1 
-        .probe2(REGS.UART.w_sample_tick), // input wire [0:0]  probe2 
-        .probe3(REGS.UART.RECV.r_data), // input wire [7:0]  probe3 
-        .probe4(REGS.UART.TSMT.r_data) // input wire [7:0]  probe4
-    );
-
     uart_regs #(
         .DATA_WIDTH(8),
         .RX_FIFO_DEPTH(8),
@@ -158,13 +154,14 @@ module pl
         .NUM_REGS(TOTAL_UREGS)
     ) REGS (
         .i_clk(w_dcrfli_clk),
-        .i_rst(w_rst),
+        .i_rst(!w_dcrfli_rst_n),
         .i_rx(i_rx),
         .o_tx(o_tx),
         .i_dvsr(11'd16),
         .o_regs(w_uregs)
     );
 
+    // dc signals
     logic [0:NUM_DC_CHANNEL-1] w_dc_sclk_bus;
     logic [0:NUM_DC_CHANNEL-1] w_dc_mosi_bus;
     logic [0:NUM_DC_CHANNEL-1] w_dc_cs_n_bus;
@@ -182,8 +179,8 @@ module pl
 
     logic [NUM_DC_CHANNEL-1:0] w_dc_armed_bus;
     logic [NUM_DC_CHANNEL-1:0] w_dc_empty_bus;
-    logic [NUM_DC_CHANNEL-1:0] w_dc_sarm_bus;
 
+    // rf signals
     logic [0:NUM_RF_CHANNEL-1][0:RF_SEQ_REGS-1][31:0] w_rf_seq_regs;
     logic [0:NUM_RF_CHANNEL-1][0:RF_CTRL_REGS-1][31:0] w_rf_ctrl_regs;
 
@@ -199,14 +196,18 @@ module pl
     logic [0:NUM_RF_CHANNEL-1][RF_NCO_PHASE_WIDTH-1:0] w_rf_nco_phase_bus;
     logic [0:NUM_RF_CHANNEL-1][RF_NCO_EN_WIDTH-1:0] w_rf_nco_en_bus;
 
-    logic [0:LCH_TOTAL_REGS-1][31:0] w_lch_regs;
+    // li signals
+    logic [0:NUM_LI_CHANNEL-1][0:LI_SEQ_REGS-1][31:0] w_li_seq_regs;
+    logic [0:NUM_LI_CHANNEL-1][0:LI_CTRL_REGS-1][31:0] w_li_ctrl_regs;
 
-    logic [0:1] w_li_valid_bus;
-    
-    logic [23:0] r_clk_alive;
-    always_ff @(posedge w_dcrfli_clk) begin
-        r_clk_alive <= r_clk_alive + 'd1;
-    end
+    logic [0:NUM_LI_CHANNEL-1] w_li_valid_bus;
+    logic [0:NUM_LI_CHANNEL-1][LI_ADC_WIDTH*8-1:0] w_li_QIx4_bus;
+
+    logic [NUM_LI_CHANNEL-1:0] w_li_armed_bus;
+    logic [0:NUM_LI_CHANNEL-1] w_li_empty_bus;
+
+    // launch signals
+    logic [0:LCH_TOTAL_REGS-1][31:0] w_lch_regs;
     
     bd_wrapper BD (
 
@@ -217,10 +218,9 @@ module pl
         .dac1_clk_0_clk_p(i_dac1_clk_p),
         .clk_dac1_0(w_dcrfli_clk),
         .dcrfli_clk(w_dcrfli_clk),
-        .s_axi_aclk_0(w_pl_clk),
         
         // reset
-        .i_rst_n(w_rst_n),
+        .dcrfli_rst_n(w_dcrfli_rst_n),
 
         // dc x 24
         .o_dc_seq_regs0(w_dc_seq_regs[0]),
@@ -378,11 +378,24 @@ module pl
         .dac2_nco_0_nco_update_busy('h0),
         .dac2_nco_0_nco_update_request(1'b0),
 
-        // rf adc tile 225-0/1
-        .m10_axis_tvalid_0(w_li_valid_bus[0]),
+        // li x 2
+        .o_li_seq_regs0(w_li_seq_regs[0]),
+        .o_li_seq_regs1(w_li_ctrl_regs[0]),
+
+        .o_li_ctrl_regs0(w_li_seq_regs[1]),
+        .o_li_ctrl_regs1(w_li_ctrl_regs[1]),
+
+        // rf adc tile 225-0
+        .m10_axis_0_tdata(w_li_QIx4_bus[0]),
+        .m10_axis_0_tready(1'b1),
+        .m10_axis_0_tvalid(w_li_valid_bus[0]),
         .vin10_0_v_n(i_vin10_n),
         .vin10_0_v_p(i_vin10_p),
-        .m11_axis_tvalid_0(w_li_valid_bus[1]),
+
+        // rf adc tile 225-1
+        .m11_axis_0_tdata(w_li_QIx4_bus[1]),
+        .m11_axis_0_tready(1'b1),
+        .m11_axis_0_tvalid(w_li_valid_bus[1]),
         .vin11_0_v_n(i_vin11_n),
         .vin11_0_v_p(i_vin11_p),
 
@@ -391,47 +404,97 @@ module pl
 
         // launch x 1
         .o_lch_regs(w_lch_regs),
-        
-        .s_axi_0_araddr('h0),
-        .s_axi_0_arready(),
-        .s_axi_0_arvalid(1'b0),
-        .s_axi_0_awaddr('h0),
-        .s_axi_0_awready(),
-        .s_axi_0_awvalid(1'b0),
-        .s_axi_0_bready(1'b1),
-        .s_axi_0_bresp(),
-        .s_axi_0_bvalid(),
-        .s_axi_0_rdata(),
-        .s_axi_0_rready(1'b1),
-        .s_axi_0_rresp(),
-        .s_axi_0_rvalid(),
-        .s_axi_0_wdata('h0),
-        .s_axi_0_wready(),
-        .s_axi_0_wstrb('h0),
-        .s_axi_0_wvalid(1'b0),
-        
-        .probe0_0(w_dc_armed_bus),
-        .probe1_0(w_dc_empty_bus),
-        .probe2_0(w_rst),
-        .probe3_0(w_dc_sarm_bus),
-        .probe4_0(r_clk_alive)
-    
+
+        // axi slave ports 0
+        .S_AXI_HP0_FPD_0_araddr(),
+        .S_AXI_HP0_FPD_0_arburst(),
+        .S_AXI_HP0_FPD_0_arcache(),
+        .S_AXI_HP0_FPD_0_arid(),
+        .S_AXI_HP0_FPD_0_arlen(),
+        .S_AXI_HP0_FPD_0_arlock(),
+        .S_AXI_HP0_FPD_0_arprot(),
+        .S_AXI_HP0_FPD_0_arqos(),
+        .S_AXI_HP0_FPD_0_arready(),
+        .S_AXI_HP0_FPD_0_arsize(),
+        .S_AXI_HP0_FPD_0_aruser(),
+        .S_AXI_HP0_FPD_0_arvalid(),
+
+        .S_AXI_HP0_FPD_0_awaddr(),
+        .S_AXI_HP0_FPD_0_awburst(),
+        .S_AXI_HP0_FPD_0_awcache(),
+        .S_AXI_HP0_FPD_0_awid(),
+        .S_AXI_HP0_FPD_0_awlen(),
+        .S_AXI_HP0_FPD_0_awlock(),
+        .S_AXI_HP0_FPD_0_awprot(),
+        .S_AXI_HP0_FPD_0_awqos(),
+        .S_AXI_HP0_FPD_0_awready(),
+        .S_AXI_HP0_FPD_0_awsize(),
+        .S_AXI_HP0_FPD_0_awuser(),
+        .S_AXI_HP0_FPD_0_awvalid(),
+
+        .S_AXI_HP0_FPD_0_bid(),
+        .S_AXI_HP0_FPD_0_bready(),
+        .S_AXI_HP0_FPD_0_bresp(),
+        .S_AXI_HP0_FPD_0_bvalid(),
+
+        .S_AXI_HP0_FPD_0_rdata(),
+        .S_AXI_HP0_FPD_0_rid(),
+        .S_AXI_HP0_FPD_0_rlast(),
+        .S_AXI_HP0_FPD_0_rready(),
+        .S_AXI_HP0_FPD_0_rresp(),
+        .S_AXI_HP0_FPD_0_rvalid(),
+
+        .S_AXI_HP0_FPD_0_wdata(),
+        .S_AXI_HP0_FPD_0_wlast(),
+        .S_AXI_HP0_FPD_0_wready(),
+        .S_AXI_HP0_FPD_0_wstrb(),
+        .S_AXI_HP0_FPD_0_wvalid(),
+
+        // axi slave ports 1
+        .S_AXI_HP1_FPD_0_araddr(),
+        .S_AXI_HP1_FPD_0_arburst(),
+        .S_AXI_HP1_FPD_0_arcache(),
+        .S_AXI_HP1_FPD_0_arid(),
+        .S_AXI_HP1_FPD_0_arlen(),
+        .S_AXI_HP1_FPD_0_arlock(),
+        .S_AXI_HP1_FPD_0_arprot(),
+        .S_AXI_HP1_FPD_0_arqos(),
+        .S_AXI_HP1_FPD_0_arready(),
+        .S_AXI_HP1_FPD_0_arsize(),
+        .S_AXI_HP1_FPD_0_aruser(),
+        .S_AXI_HP1_FPD_0_arvalid(),
+
+        .S_AXI_HP1_FPD_0_awaddr(),
+        .S_AXI_HP1_FPD_0_awburst(),
+        .S_AXI_HP1_FPD_0_awcache(),
+        .S_AXI_HP1_FPD_0_awid(),
+        .S_AXI_HP1_FPD_0_awlen(),
+        .S_AXI_HP1_FPD_0_awlock(),
+        .S_AXI_HP1_FPD_0_awprot(),
+        .S_AXI_HP1_FPD_0_awqos(),
+        .S_AXI_HP1_FPD_0_awready(),
+        .S_AXI_HP1_FPD_0_awsize(),
+        .S_AXI_HP1_FPD_0_awuser(),
+        .S_AXI_HP1_FPD_0_awvalid(),
+
+        .S_AXI_HP1_FPD_0_bid(),
+        .S_AXI_HP1_FPD_0_bready(),
+        .S_AXI_HP1_FPD_0_bresp(),
+        .S_AXI_HP1_FPD_0_bvalid(),
+
+        .S_AXI_HP1_FPD_0_rdata(),
+        .S_AXI_HP1_FPD_0_rid(),
+        .S_AXI_HP1_FPD_0_rlast(),
+        .S_AXI_HP1_FPD_0_rready(),
+        .S_AXI_HP1_FPD_0_rresp(),
+        .S_AXI_HP1_FPD_0_rvalid(),
+
+        .S_AXI_HP1_FPD_0_wdata(),
+        .S_AXI_HP1_FPD_0_wlast(),
+        .S_AXI_HP1_FPD_0_wready(),
+        .S_AXI_HP1_FPD_0_wstrb(),
+        .S_AXI_HP1_FPD_0_wvalid()
     );
-
-    localparam U_DC_SEQ_START = 0;
-    localparam U_DC_SEQ_END = U_DC_SEQ_START + DC_SEQ_REGS - 1;
-
-    localparam U_DC_CTRL_START = U_DC_SEQ_END + 1;
-    localparam U_DC_CTRL_END = U_DC_CTRL_START + DC_CTRL_REGS - 1;
-
-    localparam U_RF_SEQ_START = U_DC_CTRL_END + 1;
-    localparam U_RF_SEQ_END = U_RF_SEQ_START + RF_SEQ_REGS - 1;
-
-    localparam U_RF_CTRL_START = U_RF_SEQ_END + 1;
-    localparam U_RF_CTRL_END = U_RF_CTRL_START + RF_CTRL_REGS - 1;
-
-    localparam U_LCH_START = U_RF_CTRL_END + 1;
-    localparam U_LCH_END = U_LCH_START + LCH_TOTAL_REGS - 1;
 
     dcrfli_uart_btn #(
         .NUM_DC_CHANNEL(NUM_DC_CHANNEL),
@@ -440,7 +503,7 @@ module pl
         .NUM_DEBOUNCE_CYCLES(NUM_DEBOUNCE_CYCLES)
     ) DCRFLI (
         .i_clk(w_dcrfli_clk),
-        .i_rst(w_rst),
+        .i_rst(!w_dcrfli_rst_n),
 
         // dc
         .i_dc_seq_regs(w_dc_seq_regs),
@@ -482,6 +545,24 @@ module pl
 
         .o_rf_eop_bus(),
 
+        // li
+        .i_li_seq_regs(w_li_seq_regs),
+        .i_li_ctrl_regs(w_li_ctrl_regs),
+
+        .i_li_seq_uregs(w_uregs[U_LI_SEQ_START:U_LI_SEQ_END]),
+        .i_li_ctrl_uregs(w_uregs[U_LI_CTRL_START:U_LI_CTRL_END]),
+
+        .i_li_QIx4_bus(w_li_QIx4_bus),
+
+        .o_li_armed_bus(w_li_armed_bus),
+
+        .o_li_empty_bus(),
+
+        .o_li_sample_mask_bus(w_li_sample_mask_bus),
+
+        .o_li_eop_bus(),
+
+
         // launch
         .i_lch_regs(w_lch_regs),
 
@@ -491,33 +572,6 @@ module pl
         .i_btn(i_btn_w)
     );
     
-    assign w_dc_sarm_bus = {
-        DCRFLI.DC_GEN[23].DC.CORE.s.r_arm,
-        DCRFLI.DC_GEN[22].DC.CORE.s.r_arm,
-        DCRFLI.DC_GEN[21].DC.CORE.s.r_arm,
-        DCRFLI.DC_GEN[20].DC.CORE.s.r_arm,
-        DCRFLI.DC_GEN[19].DC.CORE.s.r_arm,
-        DCRFLI.DC_GEN[18].DC.CORE.s.r_arm,
-        DCRFLI.DC_GEN[17].DC.CORE.s.r_arm,
-        DCRFLI.DC_GEN[16].DC.CORE.s.r_arm,
-        DCRFLI.DC_GEN[15].DC.CORE.s.r_arm,
-        DCRFLI.DC_GEN[14].DC.CORE.s.r_arm,
-        DCRFLI.DC_GEN[13].DC.CORE.s.r_arm,
-        DCRFLI.DC_GEN[12].DC.CORE.s.r_arm,
-        DCRFLI.DC_GEN[11].DC.CORE.s.r_arm,
-        DCRFLI.DC_GEN[10].DC.CORE.s.r_arm,
-        DCRFLI.DC_GEN[9].DC.CORE.s.r_arm,
-        DCRFLI.DC_GEN[8].DC.CORE.s.r_arm,
-        DCRFLI.DC_GEN[7].DC.CORE.s.r_arm,
-        DCRFLI.DC_GEN[6].DC.CORE.s.r_arm,
-        DCRFLI.DC_GEN[5].DC.CORE.s.r_arm,
-        DCRFLI.DC_GEN[4].DC.CORE.s.r_arm,
-        DCRFLI.DC_GEN[3].DC.CORE.s.r_arm,
-        DCRFLI.DC_GEN[2].DC.CORE.s.r_arm,
-        DCRFLI.DC_GEN[1].DC.CORE.s.r_arm,
-        DCRFLI.DC_GEN[0].DC.CORE.s.r_arm
-    };
-
     assign w_rf_nco_tile_busy_bus = 'h0;
 
     assign w_dc_clr = 1'b1;

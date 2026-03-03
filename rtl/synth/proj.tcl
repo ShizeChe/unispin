@@ -7,8 +7,6 @@ add_files [glob ../include/*.vh]
 add_files [glob ../src/*.sv]
 add_files [glob ../src/*.v]
 add_files [glob ./*.xdc]
-remove_files  ../include/li.svh
-remove_files  ../src/li_core.sv
 remove_files  ../src/dcrfli.sv
 add_files [glob ../lib/axil_slave_regs.sv]
 add_files [glob ../lib/debouncer.sv]

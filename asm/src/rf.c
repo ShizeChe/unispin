@@ -37,7 +37,7 @@ static void rf_ply2insn(rf_ply_t *ply, rf_insn_t *insn) {
     insn->arm = ply->opt.arm;
     insn->kbc_mode = 2;
     insn->kbc1 = 0;
-    insn->kbc2 = ply->phs;
+    insn->kbc2 = real2twos(-180, 180 - ldexpl(1.0L, -RF_KBC_BITS), RF_KBC_BITS, ply->phs, 1);
     insn->samples = rf_t2samples(ply->t_ns);
     insn->dsamples = rf_t2samples(ply->opt.tplus_ns);
 }
