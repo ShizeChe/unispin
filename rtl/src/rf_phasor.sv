@@ -76,4 +76,38 @@ module rf_phasor
 
     end
 
+`ifdef FORMAL
+
+    default clocking @(posedge i_clk); endclocking
+    default disable iff (i_rst);
+
+    logic [IW-1:0] k, b, c;
+    logic [IW-1:0] n;
+
+    always_ff @(posedge i_clk) begin
+        if (i_rst) begin
+            k <= 'h0;
+            b <= 'h0;
+            c <= 'h0;
+            n <= 'h0;
+        end
+        else if (!i_stall && i_set) begin
+            k <= i_k;
+            b <= i_b;
+            c <= i_c;
+            n <= 'd0;
+        end
+        else if (!i_stall) begin
+            n <= n + 'd8;
+        end
+    end
+
+    generate for (genvar i = 0; i < 8; i++) begin
+        parabolic: assert property (
+            !i_stall |=> (r_p[i] == (k * n * n + (b - k) * n + c))
+        );
+    end endgenerate
+
+`endif
+
 endmodule
