@@ -15,6 +15,14 @@ parameter LI_SEQ_REGS=LI_DEPTH*LI_REG_PER_INSN+2;
 parameter LI_CTRL_REGS=3;
 
 typedef struct packed {
+    logic [LI_IQ_WIDTH-1:0] w_default_I;
+    logic [LI_IQ_WIDTH-1:0] w_default_Q;
+    logic [7:0] w_max_burst;
+    logic [47:0] w_base_addr;
+    logic w_clear_lost;
+} rf_ctrl_t;
+
+typedef struct packed {
     logic w_arm;
     logic w_idle;
     logic [LI_NUM_SAMPLE_WIDTH-1:0] w_samples;
@@ -94,10 +102,16 @@ typedef struct {
 } li_output_stg_t;
 
 typedef struct {
-} li_axiaw_stg_t;
+    logic [48:0] r_addr;
+    logic [5:0] r_id;
+    logic r_awvalid;
+    logic [5:0] r_awid;
+    logic [48:0] r_awaddr;
+    logic [7:0] r_awlen;
+} li_axi_aw_stg_t;
 
 typedef struct {
-} li_axiw_stg_t;
+} li_axi_w_stg_t;
 
 // eop = end of pipeline
 typedef struct packed {
