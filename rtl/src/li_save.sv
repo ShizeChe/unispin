@@ -1,8 +1,12 @@
 `timescale 1ns / 1ps
 
 module li_save
-   #()
+   #(parameter ADC_WIDTH=LI_ADC_WIDTH)
     (input  logic i_clk, i_rst,
+
+     input  logic [3:0] i_validx4,
+     input  logic i_last,
+     input  logic [ADC_WIDTH*8-1:0] i_QIx4,
 
      // aw
      output logic o_awvalid,

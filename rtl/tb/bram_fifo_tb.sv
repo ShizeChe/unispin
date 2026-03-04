@@ -2,8 +2,9 @@
 
 module fifo_tb;
 
-    localparam WIDTH = 8;
-    localparam DEPTH = 20;
+    localparam WIDTH = 128;
+    localparam ADDR_WIDTH = 8;
+    localparam DEPTH = 2 ** ADDR_WIDTH;
 
     logic             i_clk, i_rst;
     logic [WIDTH-1:0] i_data;
@@ -11,56 +12,20 @@ module fifo_tb;
     logic             i_deq;
     logic [WIDTH-1:0] o_data;
     logic             o_full, o_empty;
-    logic             o_almost_full;
-    logic             o_almost_empty;
+    logic [ADDR_WIDTH:0] o_num_data;
 
-    fifo #(WIDTH, DEPTH, 16, 4) dut(.*);
+    bram_fifo #(WIDTH, ADDR_WIDTH) dut(.*);
 
-    initial begin
-        $dumpfile("waveform.vcd");
-        $dumpvars(0);
-    end
-
-    logic [7:0] randarray [8];
+    logic [WIDTH-1:0] randarray [DEPTH];
     logic [WIDTH-1:0] queue [$:DEPTH];
 
     localparam NUM_ITER = 10000;
     integer iter, length, i, whatToDo, delay;
 
-    logic [7:0] randdata, data;
-
-    logic [WIDTH-1:0] fifo_logical [DEPTH];
-
-    generate
-        for (genvar g = 0; g < DEPTH; g++) begin: fifo_logical_assign
-            always_comb begin
-                if (g < dut.q_num_data) begin
-                    fifo_logical[g] = dut.q_data[({1'b0, dut.q_deq_ptr} + g) % DEPTH];
-                end
-                else begin
-                    fifo_logical[g] = 'd0;
-                end
-            end
-        end
-    endgenerate
-
-    logic [WIDTH-1:0] queue_logical [DEPTH];
-
-    generate
-        for (genvar g = 0; g < DEPTH; g++) begin: queue_logical_assign
-            always_ff @(posedge i_clk) begin
-                if (g < queue.size()) begin
-                    queue_logical[g] <= queue[g];
-                end
-                else begin
-                    queue_logical[g] <= 'd0;
-                end
-            end
-        end
-    endgenerate
+    logic [WIDTH-1:0] randdata, data;
 
     initial begin
-        i_clk = 1'b1;
+        i_clk = 1'b0;
         forever #5 i_clk = !i_clk;
     end
 
@@ -69,8 +34,8 @@ module fifo_tb;
         $display("Performing reset...");
 
         i_rst = 1'b1;
-        @(posedge i_clk);
-        i_rst <= 1'b0;
+        @(negedge i_clk);
+        i_rst = 1'b0;
 
         $display("Finished reset...");
 
@@ -85,7 +50,7 @@ module fifo_tb;
         for (iter = 0; iter < NUM_ITER; iter++) begin
 
             randomize(length) with {
-                length >= 1 && length <= 8;
+                length >= 1 && length <= DEPTH;
             };
 
             randomize(randarray);
@@ -94,8 +59,7 @@ module fifo_tb;
             while (i < length) begin
                 i_data = randarray[i];
                 i_enq = 1'b1;
-                @(posedge i_clk);
-                #1;
+                @(negedge i_clk);
                 i = i + 1;
             end
 
@@ -105,15 +69,14 @@ module fifo_tb;
             i = 0;
             while (i < length) begin
                 i_deq = 1'b1;
+                @(negedge i_clk);
                 assert(o_data == randarray[i]) else begin
-                    $display("deque value incorrect");
+                    $fatal(1, "deque value incorrect");
                 end
-                @(posedge i_clk);
-                #1;
                 i = i + 1;
             end
 
-            i_deq <= 1'b0;
+            i_deq = 1'b0;
         
         end
 
@@ -124,7 +87,7 @@ module fifo_tb;
         for (iter = 0; iter < NUM_ITER; iter++) begin
 
             randomize(length) with {
-                length >= 1 && length <= 8;
+                length >= 1 && length <= DEPTH;
             };
 
             randomize(randarray);
@@ -133,11 +96,10 @@ module fifo_tb;
             while (i < length) begin
                 i_data = randarray[i];
                 i_enq = 1'b1;
-                @(posedge i_clk);
                 @(negedge i_clk);
                 i_enq = 1'b0;
                 randomize(delay) with {
-                    delay >= 0 && delay <= 1000;
+                    delay >= 0 && delay <= 100;
                 };
                 #delay;
                 @(negedge i_clk);
@@ -150,14 +112,13 @@ module fifo_tb;
             i = 0;
             while (i < length) begin
                 i_deq = 1'b1;
-                assert(o_data == randarray[i]) else begin
-                    $display("deque value incorrect");
-                end
-                @(posedge i_clk);
                 @(negedge i_clk);
+                assert(o_data == randarray[i]) else begin
+                    $fatal(1, "deque value incorrect");
+                end
                 i_deq = 1'b0;
                 randomize(delay) with {
-                    delay >= 0 && delay <= 1000;
+                    delay >= 0 && delay <= 100;
                 };
                 #delay;
                 @(negedge i_clk);
@@ -179,7 +140,7 @@ module fifo_tb;
             if (queue.size() == 0) begin
 
                 assert(o_empty == 1'b1) else begin
-                    $display("o_empty not flagged when fifo is suppose to be empty");
+                    $fatal(1, "o_empty not flagged when fifo is suppose to be empty");
                 end
 
                 i_enq = 1'b1;
@@ -188,19 +149,28 @@ module fifo_tb;
 
                 queue.push_back(randdata);
 
+                @(negedge i_clk);
+
+                i_enq = 1'b0;
+
             end
             else if (queue.size == DEPTH) begin
 
                 assert(o_full == 1'b1) else begin
-                    $display("o_full not flagged when fifo is suppose to be full");
+                    $fatal(1, "o_full not flagged when fifo is suppose to be full");
                 end
 
                 data = queue.pop_front();
+                i_deq = 1'b1;
+
+                @(negedge i_clk);
+
                 assert(o_data == data) else begin
-                    $display("dequeue incorrect");
+                    $display(1, "dequeue incorrect");
                 end
 
-                i_deq = 1'b1;
+                i_deq = 1'b0;
+
             end
             else begin
 
@@ -214,13 +184,17 @@ module fifo_tb;
                         randomize(randdata);
                         i_data = randdata;
                         queue.push_back(randdata);
+                        @(negedge i_clk);
+                        i_enq = 1'b0;
                     end
                     1: begin
                         data = queue.pop_front();
-                        assert(o_data == data) else begin
-                            $display("dequeue incorrect");
-                        end
                         i_deq = 1'b1;
+                        @(negedge i_clk);
+                        assert(o_data == data) else begin
+                            $fatal(1, "dequeue incorrect");
+                        end
+                        i_deq = 1'b0;
                     end
                     default: begin
                         i_enq = 1'b0;
@@ -230,13 +204,8 @@ module fifo_tb;
                 endcase
             end
 
-            @(posedge i_clk);
-            @(negedge i_clk);
-
-            i_enq = 1'b0;
-            i_deq = 1'b0;
-            i_data = 'd0;
             i++;
+
         end
 
         i = 0;
@@ -244,15 +213,14 @@ module fifo_tb;
         while (queue.size() > 0) begin
             i_deq = 1'b1;
             data = queue.pop_front();
-            assert(data == o_data) else begin
-                $display("dequeue incorrect");
-            end
-            @(posedge i_clk);
             @(negedge i_clk);
+            assert(data == o_data) else begin
+                $fatal(1, "dequeue incorrect");
+            end
         end
 
         assert(o_empty == 1'b1) else begin
-            $display("o_empty not flagged when fifo is suppose to be empty");
+            $fatal(1, "o_empty not flagged when fifo is suppose to be empty");
         end
 
         $finish;

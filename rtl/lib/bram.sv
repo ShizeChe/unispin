@@ -15,9 +15,9 @@ module bram
      input  logic [DATA_WIDTH-1:0] i_din_b,
      output logic [DATA_WIDTH-1:0] o_dout_b);
 
-    logic [DATA_WIDTH-1:0] mem [(2**ADDR_WIDTH)-1];
+    logic [DATA_WIDTH-1:0] mem [2**ADDR_WIDTH];
 
-    always_ff @(posedge i_clk_a) begin
+    always @(posedge i_clk_a) begin
         o_dout_a <= mem[i_addr_a];
         if (i_wr_a) begin
             o_dout_a <= i_din_a;
@@ -25,7 +25,7 @@ module bram
         end
     end
 
-    always_ff @(posedge i_clk_b) begin
+    always @(posedge i_clk_b) begin
         o_dout_b <= mem[i_addr_b];
         if (i_wr_b) begin
             o_dout_b <= i_din_b;

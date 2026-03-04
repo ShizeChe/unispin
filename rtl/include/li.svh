@@ -93,6 +93,12 @@ typedef struct {
     logic r_last;
 } li_output_stg_t;
 
+typedef struct {
+} li_axiaw_stg_t;
+
+typedef struct {
+} li_axiw_stg_t;
+
 // eop = end of pipeline
 typedef struct packed {
     logic [$clog2(LI_DEPTH)-1:0] w_addr;
