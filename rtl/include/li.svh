@@ -12,7 +12,7 @@ parameter LI_IQ_WIDTH=14;
 
 parameter LI_REG_PER_INSN=(LI_INSN_WIDTH+31)/32;
 parameter LI_SEQ_REGS=LI_DEPTH*LI_REG_PER_INSN+2;
-parameter LI_CTRL_REGS=3;
+parameter LI_CTRL_REGS=6;
 
 typedef struct packed {
     logic [LI_IQ_WIDTH-1:0] w_default_I;
@@ -20,7 +20,7 @@ typedef struct packed {
     logic [7:0] w_max_burst;
     logic [47:0] w_base_addr;
     logic w_clear_lost;
-} rf_ctrl_t;
+} li_ctrl_t;
 
 typedef struct packed {
     logic w_arm;
@@ -101,18 +101,6 @@ typedef struct {
     logic r_last;
 } li_output_stg_t;
 
-typedef struct {
-    logic [48:0] r_addr;
-    logic [5:0] r_id;
-    logic r_awvalid;
-    logic [5:0] r_awid;
-    logic [48:0] r_awaddr;
-    logic [7:0] r_awlen;
-} li_axi_aw_stg_t;
-
-typedef struct {
-} li_axi_w_stg_t;
-
 // eop = end of pipeline
 typedef struct packed {
     logic [$clog2(LI_DEPTH)-1:0] w_addr;
@@ -120,5 +108,42 @@ typedef struct packed {
     logic [3:0] w_validx4;
     logic w_last;
 } li_eop_t;
+
+typedef struct {
+    logic [48:0] r_addr_nxt;
+    logic [5:0] r_id_nxt;
+    logic r_valid;
+    logic [5:0] r_id;
+    logic [48:0] r_addr;
+    logic [7:0] r_len;
+    logic r_bubble;
+    logic w_handshake;
+    logic w_done;
+    logic r_done;
+} li_axi_aw_stg_t;
+
+typedef struct {
+    logic r_valid;
+    logic [5:0] r_id;
+    logic [127:0] w_data;
+    logic [7:0] r_len;
+    logic r_last;
+    logic r_bubble;
+    logic w_handshake;
+    logic w_done;
+    logic r_done;
+} li_axi_w_stg_t;
+
+typedef struct {
+    logic r_ready;
+    logic [5:0] r_id;
+    logic r_bubble;
+    logic w_handshake;
+    logic w_ackb;
+    logic r_ackb;
+    logic w_ackw;
+    logic r_ackw;
+    logic w_done;
+} li_axi_b_stg_t;
 
 `endif

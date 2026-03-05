@@ -4,7 +4,8 @@
 
 module li_ctrl
    #(parameter CTRL_REGS=LI_CTRL_REGS,
-     parameter IQ_WIDTH=LI_IQ_WIDTH)
+     parameter IQ_WIDTH=LI_IQ_WIDTH,
+     parameter ADC_WIDTH=LI_ADC_WIDTH)
     (input  logic i_clk, i_rst,
 
      input  logic [0:CTRL_REGS-1][31:0] i_regs,
