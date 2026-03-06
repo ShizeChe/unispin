@@ -14,6 +14,8 @@ parameter LI_REG_PER_INSN=(LI_INSN_WIDTH+31)/32;
 parameter LI_SEQ_REGS=LI_DEPTH*LI_REG_PER_INSN+2;
 parameter LI_CTRL_REGS=6;
 
+parameter LI_AXIBUF_ADDR_WIDTH=8;
+
 typedef struct packed {
     logic [LI_IQ_WIDTH-1:0] w_default_I;
     logic [LI_IQ_WIDTH-1:0] w_default_Q;
@@ -110,8 +112,16 @@ typedef struct packed {
 } li_eop_t;
 
 typedef struct {
-    logic [48:0] r_addr_nxt;
-    logic [5:0] r_id_nxt;
+    logic [48:0] r_addr;
+    logic [5:0] r_id;
+    logic w_dispatch;
+    logic [LI_AXIBUF_ADDR_WIDTH:0] r_num_inbuf_post_txn; 
+    logic [7:0] w_burst_len;
+    logic [12:0] w_bytes2page;
+    logic r_flush_buf;
+} li_axi_dispatch_stg_t;
+
+typedef struct {
     logic r_valid;
     logic [5:0] r_id;
     logic [48:0] r_addr;
@@ -130,6 +140,8 @@ typedef struct {
     logic r_last;
     logic r_bubble;
     logic w_handshake;
+    logic r_hold;
+    logic [127:0] r_hold_buf;
     logic w_done;
     logic r_done;
 } li_axi_w_stg_t;
