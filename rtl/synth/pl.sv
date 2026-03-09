@@ -376,6 +376,44 @@ module pl
         .dac2_nco_0_converter2_update_en('h0),
         .dac2_nco_0_nco_update_busy('h0),
         .dac2_nco_0_nco_update_request(1'b0),
+        
+        // rf_dac tile 231-0/1/2/3
+        .s30_axis_0_tdata(),
+        .s30_axis_0_tready(),
+        .s30_axis_0_tvalid(),
+        .s31_axis_0_tdata(),
+        .s31_axis_0_tready(),
+        .s31_axis_0_tvalid(),
+        .s32_axis_0_tdata(),
+        .s32_axis_0_tready(),
+        .s32_axis_0_tvalid(),
+        .s33_axis_0_tdata(),
+        .s33_axis_0_tready(),
+        .s33_axis_0_tvalid(),
+        
+        // rf_dac tile 231 nco update
+        .dac3_nco_0_converter0_nco_freq(),
+        .dac3_nco_0_converter0_nco_phase(),
+        .dac3_nco_0_converter0_phase_reset(),
+        .dac3_nco_0_converter0_update_en(),
+        
+        .dac3_nco_0_converter1_nco_freq(),
+        .dac3_nco_0_converter1_nco_phase(),
+        .dac3_nco_0_converter1_phase_reset(),
+        .dac3_nco_0_converter1_update_en(),
+        
+        .dac3_nco_0_converter2_nco_freq(),
+        .dac3_nco_0_converter2_nco_phase(),
+        .dac3_nco_0_converter2_phase_reset(),
+        .dac3_nco_0_converter2_update_en(),
+        
+        .dac3_nco_0_converter3_nco_freq(),
+        .dac3_nco_0_converter3_nco_phase(),
+        .dac3_nco_0_converter3_phase_reset(),
+        .dac3_nco_0_converter3_update_en(),
+        
+        .dac3_nco_0_nco_update_busy(),
+        .dac3_nco_0_nco_update_request(),
 
         // li x 2
         .o_li_seq_regs0(w_li_seq_regs[0]),

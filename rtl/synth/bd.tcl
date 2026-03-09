@@ -1261,27 +1261,32 @@ Port;FD4A0000;FD4AFFFF;0|FPD;DPDMA;FD4C0000;FD4CFFFF;0|FPD;DDR_XMPU5_CFG;FD05000
     CONFIG.DAC_Data_Type12 {1} \
     CONFIG.DAC_Data_Type20 {1} \
     CONFIG.DAC_Data_Type22 {1} \
+    CONFIG.DAC_Data_Width30 {16} \
+    CONFIG.DAC_Interpolation_Mode30 {1} \
+    CONFIG.DAC_Interpolation_Mode31 {1} \
+    CONFIG.DAC_Mixer_Mode30 {2} \
+    CONFIG.DAC_Mixer_Mode31 {2} \
     CONFIG.DAC_Mixer_Type00 {2} \
     CONFIG.DAC_Mixer_Type02 {2} \
     CONFIG.DAC_Mixer_Type10 {2} \
     CONFIG.DAC_Mixer_Type12 {2} \
     CONFIG.DAC_Mixer_Type20 {2} \
     CONFIG.DAC_Mixer_Type22 {2} \
-    CONFIG.DAC_Mixer_Type30 {2} \
-    CONFIG.DAC_Mixer_Type31 {2} \
+    CONFIG.DAC_Mixer_Type30 {1} \
+    CONFIG.DAC_Mixer_Type31 {1} \
     CONFIG.DAC_Mixer_Type32 {2} \
     CONFIG.DAC_Mixer_Type33 {2} \
+    CONFIG.DAC_Mode30 {0} \
     CONFIG.DAC_NCO_Freq00 {0.01} \
     CONFIG.DAC_NCO_Freq02 {0.01} \
     CONFIG.DAC_NCO_Freq10 {0.01} \
     CONFIG.DAC_NCO_Freq12 {0.01} \
     CONFIG.DAC_NCO_Freq20 {0.01} \
     CONFIG.DAC_NCO_Freq22 {0.01} \
-    CONFIG.DAC_NCO_Freq30 {0.01} \
-    CONFIG.DAC_NCO_Freq31 {0.01} \
     CONFIG.DAC_NCO_Freq32 {0.01} \
     CONFIG.DAC_NCO_Freq33 {0.01} \
     CONFIG.DAC_NCO_RTS {true} \
+    CONFIG.DAC_RTS {false} \
     CONFIG.DAC_Slice00_Enable {true} \
     CONFIG.DAC_Slice01_Enable {true} \
     CONFIG.DAC_Slice02_Enable {true} \
@@ -1298,6 +1303,7 @@ Port;FD4A0000;FD4AFFFF;0|FPD;DPDMA;FD4C0000;FD4CFFFF;0|FPD;DDR_XMPU5_CFG;FD05000
     CONFIG.DAC_Slice31_Enable {true} \
     CONFIG.DAC_Slice32_Enable {true} \
     CONFIG.DAC_Slice33_Enable {true} \
+    CONFIG.DAC_VOP_RTS {false} \
   ] $usp_rf_data_converter_0
 
 
