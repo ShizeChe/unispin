@@ -20,7 +20,7 @@ typedef struct packed {
     logic [LI_IQ_WIDTH-1:0] w_default_I;
     logic [LI_IQ_WIDTH-1:0] w_default_Q;
     logic [7:0] w_max_burst;
-    logic [47:0] w_base_addr;
+    logic [48:0] w_base_addr;
     logic w_clear_lost;
 } li_ctrl_t;
 
@@ -65,7 +65,7 @@ typedef struct {
     logic [3:0][1:0] w_validx4_scan;
     logic [3:0][1:0] w_validx4_shftamt;
     logic [3:0][6:0] w_QIx4_shftamt;
-    logic [3:0][7:0] w_validx4_shift;
+    logic [3:0][3:0] w_validx4_shift;
     logic [3:0][LI_ADC_WIDTH*8-1:0] w_QIx4_shift;
     logic [3:0] w_validx4_packed;
     logic [LI_ADC_WIDTH*8-1:0] w_QIx4_packed;
@@ -80,6 +80,7 @@ typedef struct {
     logic [2:0] r_samples;
     logic [15:0] w_validx8_aligned;
     logic [LI_ADC_WIDTH*16-1:0] w_QIx8_aligned;
+    logic w_forward_last;
 } li_align_stg_t;
 
 typedef struct {

@@ -110,24 +110,70 @@ module li_core
     end
 
     assign s.w_QIx4 = i_QIx4;
-    assign s.w_last = s.w_done && (s.w_validx4 != 'h0);
+    assign s.w_last = (s.w_samples_next == 'd0) && (s.w_validx4 != 'h0);
 
     assign o_next = (s.w_done || s.r_done) && !i_empty && !w_stall;
     assign o_sample_mask = s.w_validx4;
 
-    /*******************************
-    * pack, align and buffer stages
-    *******************************/
+    /************
+    * pack stage
+    *************/
 
     li_pack_stg_t p;
+    
+    always_ff @(posedge i_clk) begin
+        if (i_rst) begin
+            p.r_addr <= 'bx;
+            p.r_QIx4 <= 'bx;
+            p.r_validx4 <= 8'h0;
+            p.r_last <= 1'b0;
+        end
+        else begin
+            p.r_addr <= w_stall ? 'bx : s.r_addr;
+            p.r_QIx4 <= w_stall ? 'bx : s.w_QIx4;
+            p.r_validx4 <= w_stall ? 8'h0 : s.w_validx4;
+            p.r_last <= w_stall ? 1'b0 : s.w_last;
+        end
+    end
 
-    li_pack PACK (
-        .i_clk(i_clk),
-        .i_rst(i_rst),
-        .s(s),
-        .p(p),
-        .i_stall(w_stall)
-    );
+    assign p.w_validx4_scan[0] = 2'd0;
+    assign p.w_validx4_scan[1] = {1'b0, p.r_validx4[0]} + p.w_validx4_scan[0];
+    assign p.w_validx4_scan[2] = {1'b0, p.r_validx4[1]} + p.w_validx4_scan[1];
+    assign p.w_validx4_scan[3] = {1'b0, p.r_validx4[2]} + p.w_validx4_scan[2];
+
+    assign p.w_validx4_shftamt[0] =  2'd0;
+    assign p.w_validx4_shftamt[1] =  2'd1 - p.w_validx4_scan[1];
+    assign p.w_validx4_shftamt[2] =  2'd2 - p.w_validx4_scan[2];
+    assign p.w_validx4_shftamt[3] =  2'd3 - p.w_validx4_scan[3];
+
+    assign p.w_QIx4_shftamt[0] = {p.w_validx4_shftamt[0], 5'b00000};
+    assign p.w_QIx4_shftamt[1] = {p.w_validx4_shftamt[1], 5'b00000};
+    assign p.w_QIx4_shftamt[2] = {p.w_validx4_shftamt[2], 5'b00000};
+    assign p.w_QIx4_shftamt[3] = {p.w_validx4_shftamt[3], 5'b00000};
+
+    for (genvar i = 0; i < 4; i++) begin : SCAN_SHIFT_GEN
+
+        assign p.w_validx4_shift[i] = p.r_validx4[i] ? {
+            {(3-i){1'b0}}, p.r_validx4[i], {i{1'b0}}
+        } >> p.w_validx4_shftamt[i] : 'h0;
+
+        assign p.w_QIx4_shift[i] = p.r_validx4[i] ? {
+            {(ADC_WIDTH*2*(3-i)){1'b0}}, p.r_QIx4[ADC_WIDTH*2*(i+1)-1:ADC_WIDTH*2*i], 
+            {(ADC_WIDTH*2*i){1'b0}}
+        } >> p.w_QIx4_shftamt[i] : 'h0;
+
+    end
+
+    assign p.w_validx4_packed = p.w_validx4_shift[0] | p.w_validx4_shift[1] |
+        p.w_validx4_shift[2] | p.w_validx4_shift[3];
+    assign p.w_QIx4_packed = p.w_QIx4_shift[0] | p.w_QIx4_shift[1] |
+        p.w_QIx4_shift[2] | p.w_QIx4_shift[3];
+
+    assign p.w_samples = {1'b0, p.w_validx4_scan[3]} + {2'b00, p.r_validx4[3]};
+
+    /*******************************
+    * align and buffer stages
+    *******************************/
 
     li_align_stg_t a;
     li_buffer_stg_t b;
@@ -154,6 +200,8 @@ module li_core
 
     assign a.w_QIx8_aligned = {{(ADC_WIDTH*8){1'b0}}, b.r_QIx4} |
         ({{(ADC_WIDTH*8){1'b0}}, a.r_QIx4} << {b.r_samples, 5'b0000});
+
+    assign a.w_forward_last = (b.w_total_samples == 'd4) && !b.r_last && a.r_last;
 
     assign b.w_total_samples = {1'b0, a.r_samples} + {1'b0, b.r_samples};
     assign b.w_full = (b.w_total_samples >= 'd4);
@@ -183,7 +231,7 @@ module li_core
             b.r_addr <= a.r_addr;
             b.r_QIx4 <= b.w_full ? b.w_QIx4_overflow : b.w_QIx4_inbuf;
             b.r_validx4 <= b.w_full ? b.w_validx4_overflow : b.w_validx4_inbuf;
-            b.r_last <= a.r_last;
+            b.r_last <= a.w_forward_last ? 1'b0 : a.r_last;
             b.r_samples <= b.w_full ? (b.w_total_samples - 'd4) : b.w_total_samples;
         end
     end
@@ -208,7 +256,7 @@ module li_core
                 r_addr: b.r_addr,
                 r_QIx4: b.w_QIx4_inbuf,
                 r_validx4: b.w_validx4_inbuf,
-                r_last: b.r_last
+                r_last: b.r_last || a.w_forward_last
             };
         end
         else begin
@@ -237,8 +285,8 @@ module li_core
 
     assign o_armed = !i_empty && d.w_arm;
 
-    assign o_empty = i_empty && (s.w_done || s.r_done) && !PACK.p.r_last && 
-        !a.r_last && !b.r_last && !o.r_last;
+    assign o_empty = i_empty && (s.w_done || s.r_done) && !s.w_last && 
+        !p.r_last && !a.r_last && !b.r_last && !o.r_last;
 
     assign o_eop = '{
         w_addr: o.r_addr,

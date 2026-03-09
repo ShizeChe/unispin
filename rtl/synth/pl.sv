@@ -162,11 +162,6 @@ module pl
     );
 
     // dc signals
-    logic [0:NUM_DC_CHANNEL-1] w_dc_sclk_bus;
-    logic [0:NUM_DC_CHANNEL-1] w_dc_mosi_bus;
-    logic [0:NUM_DC_CHANNEL-1] w_dc_cs_n_bus;
-    logic [0:NUM_DC_CHANNEL-1] w_dc_ldac_n_bus;
-
     logic [0:NUM_DC_CHANNEL-1][0:DC_SEQ_REGS-1][31:0] w_dc_seq_regs;
     logic [0:NUM_DC_CHANNEL-1][0:DC_CTRL_REGS-1][31:0] w_dc_ctrl_regs;
 
@@ -178,7 +173,6 @@ module pl
     logic w_dc_clr, w_dc_rst;
 
     logic [NUM_DC_CHANNEL-1:0] w_dc_armed_bus;
-    logic [NUM_DC_CHANNEL-1:0] w_dc_empty_bus;
 
     // rf signals
     logic [0:NUM_RF_CHANNEL-1][0:RF_SEQ_REGS-1][31:0] w_rf_seq_regs;
@@ -203,8 +197,13 @@ module pl
     logic [0:NUM_LI_CHANNEL-1] w_li_valid_bus;
     logic [0:NUM_LI_CHANNEL-1][LI_ADC_WIDTH*8-1:0] w_li_QIx4_bus;
 
+    logic [0:NUM_LI_CHANNEL-1][3:0] w_li_validx4_bus;
+    logic [0:NUM_LI_CHANNEL-1][LI_ADC_WIDTH*8-1:0] w_li_QIx4_save_bus;
+    logic [0:NUM_LI_CHANNEL-1] w_li_last_bus;
+
     logic [NUM_LI_CHANNEL-1:0] w_li_armed_bus;
-    logic [0:NUM_LI_CHANNEL-1] w_li_empty_bus;
+
+    li_ctrl_t [0:NUM_LI_CHANNEL-1] w_li_ctrl_bus;
 
     // launch signals
     logic [0:LCH_TOTAL_REGS-1][31:0] w_lch_regs;
@@ -380,10 +379,16 @@ module pl
 
         // li x 2
         .o_li_seq_regs0(w_li_seq_regs[0]),
-        .o_li_seq_regs1(w_li_ctrl_regs[0]),
+        .o_li_ctrl_regs0(w_li_ctrl_regs[0]),
+        .i_li_QIx4_0(w_li_QIx4_save_bus[0]),
+        .i_li_validx4_0(w_li_validx4_bus[0]),
+        .i_li_last_0(w_li_last_bus[0]),
 
-        .o_li_ctrl_regs0(w_li_seq_regs[1]),
+        .o_li_seq_regs1(w_li_seq_regs[1]),
         .o_li_ctrl_regs1(w_li_ctrl_regs[1]),
+        .i_li_QIx4_1(w_li_QIx4_save_bus[1]),
+        .i_li_validx4_1(w_li_validx4_bus[1]),
+        .i_li_last_1(w_li_last_bus[1]),
 
         // rf adc tile 225-0
         .m10_axis_0_tdata(w_li_QIx4_bus[0]),
@@ -403,97 +408,8 @@ module pl
         .sysref_in_0_diff_p(i_sysref_p),
 
         // launch x 1
-        .o_lch_regs(w_lch_regs),
+        .o_lch_regs(w_lch_regs)
 
-        // axi slave ports 0
-        .S_AXI_HP0_FPD_0_araddr(),
-        .S_AXI_HP0_FPD_0_arburst(),
-        .S_AXI_HP0_FPD_0_arcache(),
-        .S_AXI_HP0_FPD_0_arid(),
-        .S_AXI_HP0_FPD_0_arlen(),
-        .S_AXI_HP0_FPD_0_arlock(),
-        .S_AXI_HP0_FPD_0_arprot(),
-        .S_AXI_HP0_FPD_0_arqos(),
-        .S_AXI_HP0_FPD_0_arready(),
-        .S_AXI_HP0_FPD_0_arsize(),
-        .S_AXI_HP0_FPD_0_aruser(),
-        .S_AXI_HP0_FPD_0_arvalid(),
-
-        .S_AXI_HP0_FPD_0_awaddr(),
-        .S_AXI_HP0_FPD_0_awburst(),
-        .S_AXI_HP0_FPD_0_awcache(),
-        .S_AXI_HP0_FPD_0_awid(),
-        .S_AXI_HP0_FPD_0_awlen(),
-        .S_AXI_HP0_FPD_0_awlock(),
-        .S_AXI_HP0_FPD_0_awprot(),
-        .S_AXI_HP0_FPD_0_awqos(),
-        .S_AXI_HP0_FPD_0_awready(),
-        .S_AXI_HP0_FPD_0_awsize(),
-        .S_AXI_HP0_FPD_0_awuser(),
-        .S_AXI_HP0_FPD_0_awvalid(),
-
-        .S_AXI_HP0_FPD_0_bid(),
-        .S_AXI_HP0_FPD_0_bready(),
-        .S_AXI_HP0_FPD_0_bresp(),
-        .S_AXI_HP0_FPD_0_bvalid(),
-
-        .S_AXI_HP0_FPD_0_rdata(),
-        .S_AXI_HP0_FPD_0_rid(),
-        .S_AXI_HP0_FPD_0_rlast(),
-        .S_AXI_HP0_FPD_0_rready(),
-        .S_AXI_HP0_FPD_0_rresp(),
-        .S_AXI_HP0_FPD_0_rvalid(),
-
-        .S_AXI_HP0_FPD_0_wdata(),
-        .S_AXI_HP0_FPD_0_wlast(),
-        .S_AXI_HP0_FPD_0_wready(),
-        .S_AXI_HP0_FPD_0_wstrb(),
-        .S_AXI_HP0_FPD_0_wvalid(),
-
-        // axi slave ports 1
-        .S_AXI_HP1_FPD_0_araddr(),
-        .S_AXI_HP1_FPD_0_arburst(),
-        .S_AXI_HP1_FPD_0_arcache(),
-        .S_AXI_HP1_FPD_0_arid(),
-        .S_AXI_HP1_FPD_0_arlen(),
-        .S_AXI_HP1_FPD_0_arlock(),
-        .S_AXI_HP1_FPD_0_arprot(),
-        .S_AXI_HP1_FPD_0_arqos(),
-        .S_AXI_HP1_FPD_0_arready(),
-        .S_AXI_HP1_FPD_0_arsize(),
-        .S_AXI_HP1_FPD_0_aruser(),
-        .S_AXI_HP1_FPD_0_arvalid(),
-
-        .S_AXI_HP1_FPD_0_awaddr(),
-        .S_AXI_HP1_FPD_0_awburst(),
-        .S_AXI_HP1_FPD_0_awcache(),
-        .S_AXI_HP1_FPD_0_awid(),
-        .S_AXI_HP1_FPD_0_awlen(),
-        .S_AXI_HP1_FPD_0_awlock(),
-        .S_AXI_HP1_FPD_0_awprot(),
-        .S_AXI_HP1_FPD_0_awqos(),
-        .S_AXI_HP1_FPD_0_awready(),
-        .S_AXI_HP1_FPD_0_awsize(),
-        .S_AXI_HP1_FPD_0_awuser(),
-        .S_AXI_HP1_FPD_0_awvalid(),
-
-        .S_AXI_HP1_FPD_0_bid(),
-        .S_AXI_HP1_FPD_0_bready(),
-        .S_AXI_HP1_FPD_0_bresp(),
-        .S_AXI_HP1_FPD_0_bvalid(),
-
-        .S_AXI_HP1_FPD_0_rdata(),
-        .S_AXI_HP1_FPD_0_rid(),
-        .S_AXI_HP1_FPD_0_rlast(),
-        .S_AXI_HP1_FPD_0_rready(),
-        .S_AXI_HP1_FPD_0_rresp(),
-        .S_AXI_HP1_FPD_0_rvalid(),
-
-        .S_AXI_HP1_FPD_0_wdata(),
-        .S_AXI_HP1_FPD_0_wlast(),
-        .S_AXI_HP1_FPD_0_wready(),
-        .S_AXI_HP1_FPD_0_wstrb(),
-        .S_AXI_HP1_FPD_0_wvalid()
     );
 
     dcrfli_uart_btn #(
@@ -520,7 +436,7 @@ module pl
 
         .o_dc_armed_bus(w_dc_armed_bus),
 
-        .o_dc_empty_bus(w_dc_empty_bus),
+        .o_dc_empty_bus(),
 
         .o_dc_eop_bus(),
 
@@ -559,6 +475,12 @@ module pl
         .o_li_empty_bus(),
 
         .o_li_sample_mask_bus(w_li_sample_mask_bus),
+        
+        .o_li_QIx4_bus(w_li_QIx4_save_bus),
+        .o_li_validx4_bus(w_li_validx4_bus),
+        .o_li_last_bus(w_li_last_bus),
+
+        .o_li_ctrl_bus(w_li_ctrl_bus),
 
         .o_li_eop_bus(),
 

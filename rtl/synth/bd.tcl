@@ -46,7 +46,7 @@ if { [string first $scripts_vivado_version $current_vivado_version] == -1 } {
 
 # The design that will be created by this Tcl script contains the following 
 # module references:
-# dc_regs, launch_regs, rf_regs, dc_regs, dc_regs, dc_regs, dc_regs, dc_regs, dc_regs, dc_regs, dc_regs, dc_regs, dc_regs, dc_regs, dc_regs, dc_regs, dc_regs, dc_regs, dc_regs, dc_regs, dc_regs, dc_regs, dc_regs, dc_regs, dc_regs, dc_regs, rf_regs, rf_regs, rf_regs, rf_regs, rf_regs, li_regs, li_regs
+# dc_regs, launch_regs, rf_regs, dc_regs, dc_regs, dc_regs, dc_regs, dc_regs, dc_regs, dc_regs, dc_regs, dc_regs, dc_regs, dc_regs, dc_regs, dc_regs, dc_regs, dc_regs, dc_regs, dc_regs, dc_regs, dc_regs, dc_regs, dc_regs, dc_regs, dc_regs, rf_regs, rf_regs, rf_regs, rf_regs, rf_regs, li_regs, li_regs, li_axi_write, li_axi_write
 
 # Please add the sources of those modules before sourcing this Tcl script.
 
@@ -199,6 +199,8 @@ rf_regs\
 rf_regs\
 li_regs\
 li_regs\
+li_axi_write\
+li_axi_write\
 "
 
    set list_mods_missing ""
@@ -385,70 +387,6 @@ proc create_root_design { parentCell } {
 
   set dac2_nco_0 [ create_bd_intf_port -mode Slave -vlnv xilinx.com:interface:rfdc_nco_pins_rtl:1.0 dac2_nco_0 ]
 
-  set S_AXI_HP0_FPD_0 [ create_bd_intf_port -mode Slave -vlnv xilinx.com:interface:aximm_rtl:1.0 S_AXI_HP0_FPD_0 ]
-  set_property -dict [ list \
-   CONFIG.ADDR_WIDTH {49} \
-   CONFIG.ARUSER_WIDTH {1} \
-   CONFIG.AWUSER_WIDTH {1} \
-   CONFIG.BUSER_WIDTH {0} \
-   CONFIG.DATA_WIDTH {128} \
-   CONFIG.FREQ_HZ {250000000} \
-   CONFIG.HAS_BRESP {1} \
-   CONFIG.HAS_BURST {1} \
-   CONFIG.HAS_CACHE {1} \
-   CONFIG.HAS_LOCK {1} \
-   CONFIG.HAS_PROT {1} \
-   CONFIG.HAS_QOS {1} \
-   CONFIG.HAS_REGION {0} \
-   CONFIG.HAS_RRESP {1} \
-   CONFIG.HAS_WSTRB {1} \
-   CONFIG.ID_WIDTH {6} \
-   CONFIG.MAX_BURST_LENGTH {4} \
-   CONFIG.NUM_READ_OUTSTANDING {16} \
-   CONFIG.NUM_READ_THREADS {1} \
-   CONFIG.NUM_WRITE_OUTSTANDING {16} \
-   CONFIG.NUM_WRITE_THREADS {1} \
-   CONFIG.PROTOCOL {AXI4} \
-   CONFIG.READ_WRITE_MODE {READ_WRITE} \
-   CONFIG.RUSER_BITS_PER_BYTE {0} \
-   CONFIG.RUSER_WIDTH {0} \
-   CONFIG.SUPPORTS_NARROW_BURST {0} \
-   CONFIG.WUSER_BITS_PER_BYTE {0} \
-   CONFIG.WUSER_WIDTH {0} \
-   ] $S_AXI_HP0_FPD_0
-
-  set S_AXI_HP1_FPD_0 [ create_bd_intf_port -mode Slave -vlnv xilinx.com:interface:aximm_rtl:1.0 S_AXI_HP1_FPD_0 ]
-  set_property -dict [ list \
-   CONFIG.ADDR_WIDTH {49} \
-   CONFIG.ARUSER_WIDTH {1} \
-   CONFIG.AWUSER_WIDTH {1} \
-   CONFIG.BUSER_WIDTH {0} \
-   CONFIG.DATA_WIDTH {128} \
-   CONFIG.FREQ_HZ {250000000} \
-   CONFIG.HAS_BRESP {1} \
-   CONFIG.HAS_BURST {1} \
-   CONFIG.HAS_CACHE {1} \
-   CONFIG.HAS_LOCK {1} \
-   CONFIG.HAS_PROT {1} \
-   CONFIG.HAS_QOS {1} \
-   CONFIG.HAS_REGION {0} \
-   CONFIG.HAS_RRESP {1} \
-   CONFIG.HAS_WSTRB {1} \
-   CONFIG.ID_WIDTH {6} \
-   CONFIG.MAX_BURST_LENGTH {4} \
-   CONFIG.NUM_READ_OUTSTANDING {16} \
-   CONFIG.NUM_READ_THREADS {1} \
-   CONFIG.NUM_WRITE_OUTSTANDING {16} \
-   CONFIG.NUM_WRITE_THREADS {1} \
-   CONFIG.PROTOCOL {AXI4} \
-   CONFIG.READ_WRITE_MODE {READ_WRITE} \
-   CONFIG.RUSER_BITS_PER_BYTE {0} \
-   CONFIG.RUSER_WIDTH {0} \
-   CONFIG.SUPPORTS_NARROW_BURST {0} \
-   CONFIG.WUSER_BITS_PER_BYTE {0} \
-   CONFIG.WUSER_WIDTH {0} \
-   ] $S_AXI_HP1_FPD_0
-
   set m10_axis_0 [ create_bd_intf_port -mode Master -vlnv xilinx.com:interface:axis_rtl:1.0 m10_axis_0 ]
   set_property -dict [ list \
    CONFIG.FREQ_HZ {250000000} \
@@ -462,6 +400,9 @@ proc create_root_design { parentCell } {
 
   # Create ports
   set dcrfli_clk [ create_bd_port -dir I -type clk -freq_hz 250000000 dcrfli_clk ]
+  set_property -dict [ list \
+   CONFIG.ASSOCIATED_BUSIF {s00_axis_0:s02_axis_0:s10_axis_0:s12_axis_0:s20_axis_0:s22_axis_0:m10_axis_0:m11_axis_0} \
+ ] $dcrfli_clk
   set clk_dac1_0 [ create_bd_port -dir O -type clk clk_dac1_0 ]
   set o_dc_seq_regs0 [ create_bd_port -dir O -from 1023 -to 0 o_dc_seq_regs0 ]
   set o_dc_seq_regs1 [ create_bd_port -dir O -from 1023 -to 0 o_dc_seq_regs1 ]
@@ -529,6 +470,14 @@ proc create_root_design { parentCell } {
   set o_li_ctrl_regs0 [ create_bd_port -dir O -from 95 -to 0 o_li_ctrl_regs0 ]
   set o_li_seq_regs1 [ create_bd_port -dir O -from 1087 -to 0 o_li_seq_regs1 ]
   set o_li_ctrl_regs1 [ create_bd_port -dir O -from 95 -to 0 o_li_ctrl_regs1 ]
+  set i_li_validx4_0 [ create_bd_port -dir I -from 3 -to 0 i_li_validx4_0 ]
+  set i_li_validx4_1 [ create_bd_port -dir I -from 3 -to 0 i_li_validx4_1 ]
+  set i_li_last_0 [ create_bd_port -dir I i_li_last_0 ]
+  set i_li_QIx4_0 [ create_bd_port -dir I -from 127 -to 0 i_li_QIx4_0 ]
+  set i_li_ctrl_0 [ create_bd_port -dir I -from 85 -to 0 i_li_ctrl_0 ]
+  set i_li_QIx4_1 [ create_bd_port -dir I -from 127 -to 0 i_li_QIx4_1 ]
+  set i_li_last_1 [ create_bd_port -dir I i_li_last_1 ]
+  set i_li_ctrl_1 [ create_bd_port -dir I -from 85 -to 0 i_li_ctrl_1 ]
 
   # Create instance: zynq_ultra_ps_e_0, and set properties
   set zynq_ultra_ps_e_0 [ create_bd_cell -type ip -vlnv xilinx.com:ip:zynq_ultra_ps_e:3.5 zynq_ultra_ps_e_0 ]
@@ -1289,14 +1238,44 @@ Port;FD4A0000;FD4AFFFF;0|FPD;DPDMA;FD4C0000;FD4CFFFF;0|FPD;DDR_XMPU5_CFG;FD05000
      return 1
    }
   
+  # Create instance: li_axi_write_0, and set properties
+  set block_name li_axi_write
+  set block_cell_name li_axi_write_0
+  if { [catch {set li_axi_write_0 [create_bd_cell -type module -reference $block_name $block_cell_name] } errmsg] } {
+     catch {common::send_gid_msg -ssname BD::TCL -id 2095 -severity "ERROR" "Unable to add referenced block <$block_name>. Please add the files for ${block_name}'s definition into the project."}
+     return 1
+   } elseif { $li_axi_write_0 eq "" } {
+     catch {common::send_gid_msg -ssname BD::TCL -id 2096 -severity "ERROR" "Unable to referenced block <$block_name>. Please add the files for ${block_name}'s definition into the project."}
+     return 1
+   }
+  
+  set_property -dict [ list \
+   CONFIG.FREQ_HZ {250000000} \
+ ] [get_bd_intf_pins /li_axi_write_0/m_axi]
+
+  # Create instance: li_axi_write_1, and set properties
+  set block_name li_axi_write
+  set block_cell_name li_axi_write_1
+  if { [catch {set li_axi_write_1 [create_bd_cell -type module -reference $block_name $block_cell_name] } errmsg] } {
+     catch {common::send_gid_msg -ssname BD::TCL -id 2095 -severity "ERROR" "Unable to add referenced block <$block_name>. Please add the files for ${block_name}'s definition into the project."}
+     return 1
+   } elseif { $li_axi_write_1 eq "" } {
+     catch {common::send_gid_msg -ssname BD::TCL -id 2096 -severity "ERROR" "Unable to referenced block <$block_name>. Please add the files for ${block_name}'s definition into the project."}
+     return 1
+   }
+  
+  set_property -dict [ list \
+   CONFIG.FREQ_HZ {250000000} \
+ ] [get_bd_intf_pins /li_axi_write_1/m_axi]
+
   # Create interface connections
-  connect_bd_intf_net -intf_net S_AXI_HP0_FPD_0_1 [get_bd_intf_ports S_AXI_HP0_FPD_0] [get_bd_intf_pins zynq_ultra_ps_e_0/S_AXI_HP0_FPD]
-  connect_bd_intf_net -intf_net S_AXI_HP1_FPD_0_1 [get_bd_intf_ports S_AXI_HP1_FPD_0] [get_bd_intf_pins zynq_ultra_ps_e_0/S_AXI_HP1_FPD]
   connect_bd_intf_net -intf_net adc1_clk_0_1 [get_bd_intf_ports adc1_clk_0] [get_bd_intf_pins usp_rf_data_converter_0/adc1_clk]
   connect_bd_intf_net -intf_net dac0_nco_0_1 [get_bd_intf_ports dac0_nco_0] [get_bd_intf_pins usp_rf_data_converter_0/dac0_nco]
   connect_bd_intf_net -intf_net dac1_clk_0_1 [get_bd_intf_ports dac1_clk_0] [get_bd_intf_pins usp_rf_data_converter_0/dac1_clk]
   connect_bd_intf_net -intf_net dac1_nco_0_1 [get_bd_intf_ports dac1_nco_0] [get_bd_intf_pins usp_rf_data_converter_0/dac1_nco]
   connect_bd_intf_net -intf_net dac2_nco_0_1 [get_bd_intf_ports dac2_nco_0] [get_bd_intf_pins usp_rf_data_converter_0/dac2_nco]
+  connect_bd_intf_net -intf_net li_axi_write_0_m_axi [get_bd_intf_pins li_axi_write_0/m_axi] [get_bd_intf_pins zynq_ultra_ps_e_0/S_AXI_HP0_FPD]
+  connect_bd_intf_net -intf_net li_axi_write_1_m_axi [get_bd_intf_pins li_axi_write_1/m_axi] [get_bd_intf_pins zynq_ultra_ps_e_0/S_AXI_HP1_FPD]
   connect_bd_intf_net -intf_net s00_axis_0_1 [get_bd_intf_ports s00_axis_0] [get_bd_intf_pins usp_rf_data_converter_0/s00_axis]
   connect_bd_intf_net -intf_net s02_axis_0_1 [get_bd_intf_ports s02_axis_0] [get_bd_intf_pins usp_rf_data_converter_0/s02_axis]
   connect_bd_intf_net -intf_net s10_axis_0_1 [get_bd_intf_ports s10_axis_0] [get_bd_intf_pins usp_rf_data_converter_0/s10_axis]
@@ -1453,6 +1432,22 @@ Port;FD4A0000;FD4AFFFF;0|FPD;DPDMA;FD4C0000;FD4CFFFF;0|FPD;DDR_XMPU5_CFG;FD05000
   [get_bd_ports o_dc_ctrl_regs9]
   connect_bd_net -net dc_regs_9_o_seq_regs  [get_bd_pins dc_regs_9/o_seq_regs] \
   [get_bd_ports o_dc_seq_regs9]
+  connect_bd_net -net i_QIx4_0_1  [get_bd_ports i_li_QIx4_0] \
+  [get_bd_pins li_axi_write_0/i_QIx4]
+  connect_bd_net -net i_QIx4_0_2  [get_bd_ports i_li_QIx4_1] \
+  [get_bd_pins li_axi_write_1/i_QIx4]
+  connect_bd_net -net i_ctrl_0_1  [get_bd_ports i_li_ctrl_0] \
+  [get_bd_pins li_axi_write_0/i_ctrl]
+  connect_bd_net -net i_ctrl_0_2  [get_bd_ports i_li_ctrl_1] \
+  [get_bd_pins li_axi_write_1/i_ctrl]
+  connect_bd_net -net i_last_0_1  [get_bd_ports i_li_last_0] \
+  [get_bd_pins li_axi_write_0/i_last]
+  connect_bd_net -net i_last_0_2  [get_bd_ports i_li_last_1] \
+  [get_bd_pins li_axi_write_1/i_last]
+  connect_bd_net -net i_li_validx4_1  [get_bd_ports i_li_validx4_0] \
+  [get_bd_pins li_axi_write_0/i_validx4]
+  connect_bd_net -net i_li_validx4_1_1  [get_bd_ports i_li_validx4_1] \
+  [get_bd_pins li_axi_write_1/i_validx4]
   connect_bd_net -net launch_regs_0_o_regs  [get_bd_pins launch_regs_0/o_regs] \
   [get_bd_ports o_lch_regs]
   connect_bd_net -net li_regs_0_o_ctrl_regs  [get_bd_pins li_regs_0/o_ctrl_regs] \
@@ -1504,7 +1499,9 @@ Port;FD4A0000;FD4AFFFF;0|FPD;DPDMA;FD4C0000;FD4CFFFF;0|FPD;DDR_XMPU5_CFG;FD05000
   [get_bd_pins rf_regs_5/s_axi_aresetn] \
   [get_bd_ports dcrfli_rst_n] \
   [get_bd_pins li_regs_1/s_axi_aresetn] \
-  [get_bd_pins li_regs_0/s_axi_aresetn]
+  [get_bd_pins li_regs_0/s_axi_aresetn] \
+  [get_bd_pins li_axi_write_0/s_axi_aresetn] \
+  [get_bd_pins li_axi_write_1/s_axi_aresetn]
   connect_bd_net -net rf_regs_0_o_ctrl_regs  [get_bd_pins rf_regs_0/o_ctrl_regs] \
   [get_bd_ports o_rf_ctrl_regs0]
   connect_bd_net -net rf_regs_0_o_seq_regs  [get_bd_pins rf_regs_0/o_seq_regs] \
@@ -1572,7 +1569,9 @@ Port;FD4A0000;FD4AFFFF;0|FPD;DPDMA;FD4C0000;FD4CFFFF;0|FPD;DDR_XMPU5_CFG;FD05000
   [get_bd_pins rf_regs_4/s_axi_aclk] \
   [get_bd_pins rf_regs_5/s_axi_aclk] \
   [get_bd_pins li_regs_0/s_axi_aclk] \
-  [get_bd_pins li_regs_1/s_axi_aclk]
+  [get_bd_pins li_regs_1/s_axi_aclk] \
+  [get_bd_pins li_axi_write_0/s_axi_aclk] \
+  [get_bd_pins li_axi_write_1/s_axi_aclk]
   connect_bd_net -net zynq_ultra_ps_e_0_pl_clk0  [get_bd_pins zynq_ultra_ps_e_0/pl_clk0] \
   [get_bd_pins smartconnect_0/aclk1] \
   [get_bd_pins proc_sys_reset_0/slowest_sync_clk] \
@@ -1617,14 +1616,14 @@ Port;FD4A0000;FD4AFFFF;0|FPD;DPDMA;FD4C0000;FD4CFFFF;0|FPD;DDR_XMPU5_CFG;FD05000
   assign_bd_address -offset 0xA001C000 -range 0x00001000 -target_address_space [get_bd_addr_spaces zynq_ultra_ps_e_0/Data] [get_bd_addr_segs rf_regs_4/s_axi/reg0] -force
   assign_bd_address -offset 0xA001D000 -range 0x00001000 -target_address_space [get_bd_addr_spaces zynq_ultra_ps_e_0/Data] [get_bd_addr_segs rf_regs_5/s_axi/reg0] -force
   assign_bd_address -offset 0xA0040000 -range 0x00040000 -target_address_space [get_bd_addr_spaces zynq_ultra_ps_e_0/Data] [get_bd_addr_segs usp_rf_data_converter_0/s_axi/Reg] -force
-  assign_bd_address -offset 0x000800000000 -range 0x000800000000 -target_address_space [get_bd_addr_spaces S_AXI_HP0_FPD_0] [get_bd_addr_segs zynq_ultra_ps_e_0/SAXIGP2/HP0_DDR_HIGH] -force
-  assign_bd_address -offset 0x00000000 -range 0x80000000 -target_address_space [get_bd_addr_spaces S_AXI_HP0_FPD_0] [get_bd_addr_segs zynq_ultra_ps_e_0/SAXIGP2/HP0_DDR_LOW] -force
-  assign_bd_address -offset 0xFF000000 -range 0x01000000 -target_address_space [get_bd_addr_spaces S_AXI_HP0_FPD_0] [get_bd_addr_segs zynq_ultra_ps_e_0/SAXIGP2/HP0_LPS_OCM] -force
-  assign_bd_address -offset 0xC0000000 -range 0x20000000 -target_address_space [get_bd_addr_spaces S_AXI_HP0_FPD_0] [get_bd_addr_segs zynq_ultra_ps_e_0/SAXIGP2/HP0_QSPI] -force
-  assign_bd_address -offset 0x000800000000 -range 0x000800000000 -target_address_space [get_bd_addr_spaces S_AXI_HP1_FPD_0] [get_bd_addr_segs zynq_ultra_ps_e_0/SAXIGP3/HP1_DDR_HIGH] -force
-  assign_bd_address -offset 0x00000000 -range 0x80000000 -target_address_space [get_bd_addr_spaces S_AXI_HP1_FPD_0] [get_bd_addr_segs zynq_ultra_ps_e_0/SAXIGP3/HP1_DDR_LOW] -force
-  assign_bd_address -offset 0xFF000000 -range 0x01000000 -target_address_space [get_bd_addr_spaces S_AXI_HP1_FPD_0] [get_bd_addr_segs zynq_ultra_ps_e_0/SAXIGP3/HP1_LPS_OCM] -force
-  assign_bd_address -offset 0xC0000000 -range 0x20000000 -target_address_space [get_bd_addr_spaces S_AXI_HP1_FPD_0] [get_bd_addr_segs zynq_ultra_ps_e_0/SAXIGP3/HP1_QSPI] -force
+  assign_bd_address -offset 0x000800000000 -range 0x000800000000 -target_address_space [get_bd_addr_spaces li_axi_write_0/m_axi] [get_bd_addr_segs zynq_ultra_ps_e_0/SAXIGP2/HP0_DDR_HIGH] -force
+  assign_bd_address -offset 0x00000000 -range 0x80000000 -target_address_space [get_bd_addr_spaces li_axi_write_0/m_axi] [get_bd_addr_segs zynq_ultra_ps_e_0/SAXIGP2/HP0_DDR_LOW] -force
+  assign_bd_address -offset 0xFF000000 -range 0x01000000 -target_address_space [get_bd_addr_spaces li_axi_write_0/m_axi] [get_bd_addr_segs zynq_ultra_ps_e_0/SAXIGP2/HP0_LPS_OCM] -force
+  assign_bd_address -offset 0xC0000000 -range 0x20000000 -target_address_space [get_bd_addr_spaces li_axi_write_0/m_axi] [get_bd_addr_segs zynq_ultra_ps_e_0/SAXIGP2/HP0_QSPI] -force
+  assign_bd_address -offset 0x000800000000 -range 0x000800000000 -target_address_space [get_bd_addr_spaces li_axi_write_1/m_axi] [get_bd_addr_segs zynq_ultra_ps_e_0/SAXIGP3/HP1_DDR_HIGH] -force
+  assign_bd_address -offset 0x00000000 -range 0x80000000 -target_address_space [get_bd_addr_spaces li_axi_write_1/m_axi] [get_bd_addr_segs zynq_ultra_ps_e_0/SAXIGP3/HP1_DDR_LOW] -force
+  assign_bd_address -offset 0xFF000000 -range 0x01000000 -target_address_space [get_bd_addr_spaces li_axi_write_1/m_axi] [get_bd_addr_segs zynq_ultra_ps_e_0/SAXIGP3/HP1_LPS_OCM] -force
+  assign_bd_address -offset 0xC0000000 -range 0x20000000 -target_address_space [get_bd_addr_spaces li_axi_write_1/m_axi] [get_bd_addr_segs zynq_ultra_ps_e_0/SAXIGP3/HP1_QSPI] -force
 
 
   # Restore current instance

@@ -69,11 +69,11 @@ module rf_ctrl
         w_nco_en[0] = (w_nco_freq[15:0] != r_nco_freq[15:0]);
     end
 
-    logic [NCO_FREQ_WIDTH-1:0] w_nco_freq_u, r_nco_freq_u;
-    logic [NCO_PHASE_WIDTH-1:0] w_nco_phase_u, r_nco_phase_u;
-    logic [IQ_WIDTH-1:0] w_default_I_u, r_default_I_u;
-    logic [IQ_WIDTH-1:0] w_default_Q_u, r_default_Q_u;
-    logic [NCO_EN_WIDTH-1:0] w_nco_en_u, r_nco_en_u;
+    logic [NCO_FREQ_WIDTH-1:0] w_nco_freq_u;
+    logic [NCO_PHASE_WIDTH-1:0] w_nco_phase_u;
+    logic [IQ_WIDTH-1:0] w_default_I_u;
+    logic [IQ_WIDTH-1:0] w_default_Q_u;
+    logic [NCO_EN_WIDTH-1:0] w_nco_en_u;
 
     always_comb begin
         w_nco_freq_u = {i_uregs[0], i_uregs[1]}[NCO_FREQ_WIDTH-1:0];
@@ -82,8 +82,8 @@ module rf_ctrl
         w_default_Q_u = i_uregs[4][IQ_WIDTH-1:0];
 
         w_nco_en_u[5] = (w_nco_phase_u == 'h0);
-        w_nco_en_u[4] = (w_nco_phase_u != 'h0) && (w_nco_phase_u[17:16] != r_nco_phase_u[17:16]);
-        w_nco_en_u[3] = (w_nco_phase_u != 'h0) && (w_nco_phase_u[15:0] != r_nco_phase_u[15:0]);
+        w_nco_en_u[4] = (w_nco_phase_u != 'h0) && (w_nco_phase_u[17:16] != r_nco_phase[17:16]);
+        w_nco_en_u[3] = (w_nco_phase_u != 'h0) && (w_nco_phase_u[15:0] != r_nco_phase[15:0]);
         w_nco_en_u[2] = (w_nco_freq_u[47:32] != r_nco_freq[47:32]);
         w_nco_en_u[1] = (w_nco_freq_u[31:16] != r_nco_freq[31:16]);
         w_nco_en_u[0] = (w_nco_freq_u[15:0] != r_nco_freq[15:0]);

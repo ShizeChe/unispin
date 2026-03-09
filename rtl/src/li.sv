@@ -9,6 +9,7 @@ module li
      parameter INSN_WIDTH=LI_INSN_WIDTH,
      parameter DEPTH=LI_DEPTH,
      parameter ADC_WIDTH=LI_ADC_WIDTH,
+     parameter IQ_WIDTH=LI_IQ_WIDTH,
      parameter SEQ_REGS=LI_SEQ_REGS,
      parameter CTRL_REGS=LI_CTRL_REGS)
     (input  logic i_clk, i_rst,
@@ -31,6 +32,8 @@ module li
      output logic o_armed,
      
      output logic o_empty,
+
+     output li_ctrl_t o_ctrl,
 
      // eop for verification
      output li_eop_t o_eop);
@@ -88,6 +91,20 @@ module li
         .o_empty(o_empty),
 
         .o_eop(o_eop)
+    );
+
+    li_ctrl #(
+        .CTRL_REGS(CTRL_REGS),
+        .IQ_WIDTH(IQ_WIDTH),
+        .ADC_WIDTH(ADC_WIDTH)
+    ) CTRL (
+        .i_clk(i_clk),
+        .i_rst(i_rst),
+
+        .i_regs(i_ctrl_regs),
+        .i_uregs(i_ctrl_uregs),
+
+        .o_ctrl(o_ctrl)
     );
 
 endmodule

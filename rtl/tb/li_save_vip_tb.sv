@@ -4,6 +4,7 @@
 
 module li_save_vip_tb;
 
+    import axi_vip_pkg::*;
     typedef axi_vip_0_pkg::axi_vip_0_slv_mem_t axi_mem_t;
 
     logic w_clk, w_rst;
@@ -172,10 +173,30 @@ module li_save_vip_tb;
     );
     
     axi_mem_t axi_mem;
-
+    axi_ready_gen awready_gen;
+    axi_ready_gen wready_gen;
+    
     initial begin
-        axi_mem = new("axi_mem", XILINX_VIP.inst.IF);
-        axi_mem.start_slave();
+      axi_mem = new("axi_mem", XILINX_VIP.inst.IF);
+      axi_mem.start_slave();
+    
+      // AWREADY random backpressure
+      awready_gen = axi_mem.wr_driver.create_ready("awready");
+      awready_gen.set_ready_policy(XIL_AXI_READY_GEN_RANDOM);
+      awready_gen.use_variable_ranges = 1;
+      awready_gen.min_low_time  = 0;  awready_gen.max_low_time  = 10;
+      awready_gen.min_high_time = 1;  awready_gen.max_high_time = 10;
+      awready_gen.min_event_count = 1; awready_gen.max_event_count = 4;
+      axi_mem.wr_driver.send_awready(awready_gen);
+    
+      // WREADY random backpressure (often more important)
+      wready_gen = axi_mem.wr_driver.create_ready("wready");
+      wready_gen.set_ready_policy(XIL_AXI_READY_GEN_RANDOM);
+      wready_gen.use_variable_ranges = 1;
+      wready_gen.min_low_time  = 0;  wready_gen.max_low_time  = 10;
+      wready_gen.min_high_time = 1;  wready_gen.max_high_time = 5;
+      wready_gen.min_event_count = 1; wready_gen.max_event_count = 16;
+      axi_mem.wr_driver.send_wready(wready_gen);
     end
 
     task dump_axi_vip_mem(input logic [48:0] base, input logic [48:0] words);

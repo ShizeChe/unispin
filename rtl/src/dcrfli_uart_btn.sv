@@ -83,6 +83,14 @@ module dcrfli_uart_btn
      // li sample mask
      output logic [0:NUM_LI_CHANNEL-1][3:0] o_li_sample_mask_bus,
 
+     // li output
+     output logic [0:NUM_LI_CHANNEL-1][LI_ADC_WIDTH*8-1:0] o_li_QIx4_bus,
+     output logic [0:NUM_LI_CHANNEL-1][3:0] o_li_validx4_bus,
+     output logic [0:NUM_LI_CHANNEL-1] o_li_last_bus,
+
+     // li ctrl bus
+     output li_ctrl_t [0:NUM_LI_CHANNEL-1] o_li_ctrl_bus,
+
      // li eop bus
      output li_eop_t [0:NUM_LI_CHANNEL-1] o_li_eop_bus,
 
@@ -204,12 +212,6 @@ module dcrfli_uart_btn
     logic [NUM_LI_CHANNEL-1:0] w_li_armed_bus;
     logic [NUM_LI_CHANNEL-1:0] w_li_start_bus;
 
-    logic [0:NUM_LI_CHANNEL-1] w_li_sample_mask_bus;
-
-    logic [0:NUM_LI_CHANNEL-1][LI_ADC_WIDTH*8-1:0] w_li_QIx4_save_bus;
-    logic [0:NUM_LI_CHANNEL-1][3:0] w_li_validx4_bus;
-    logic [0:NUM_LI_CHANNEL-1] w_li_last_bus;
-
     for (genvar i = 0; i < NUM_LI_CHANNEL; i++) begin : LI_GEN
 
         li LI (
@@ -228,14 +230,16 @@ module dcrfli_uart_btn
 
             .o_sample_mask(o_li_sample_mask_bus[i]),
 
-            .o_QIx4(w_li_QIx4_save_bus[i]),
-            .o_validx4(w_li_validx4_bus[i]),
-            .o_last(w_li_last_bus[i]),
+            .o_QIx4(o_li_QIx4_bus[i]),
+            .o_validx4(o_li_validx4_bus[i]),
+            .o_last(o_li_last_bus[i]),
 
             .i_start(w_li_start_bus[i]),
             .o_armed(w_li_armed_bus[i]),
 
             .o_empty(o_li_empty_bus[i]),
+
+            .o_ctrl(o_li_ctrl_bus[i]),
 
             .o_eop(o_li_eop_bus[i])
         );
@@ -272,6 +276,7 @@ module dcrfli_uart_btn
 
     assign o_dc_armed_bus = w_dc_armed_bus;
     assign o_rf_armed_bus = w_rf_armed_bus;
+    assign o_li_armed_bus = w_li_armed_bus;
 
     /********************
     * button for trigger
