@@ -113,6 +113,7 @@ module pl
     localparam NUM_DEBOUNCE_CYCLES=25000000;
 
     logic w_dcrfli_clk, w_dcrfli_rst_n;
+    logic w_pl_clk;
 
     // uart regs
     localparam TOTAL_UREGS=DC_SEQ_REGS+DC_CTRL_REGS+
