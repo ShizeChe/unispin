@@ -2,47 +2,68 @@
 
 module async_fifo
    #(parameter DATA_WIDTH=8,
-     parameter ADDR_WIDTH=4,
-     parameter AF_WINDOW=4,
-     parameter AE_WINDOW=4)
+     parameter ADDR_WIDTH=4)
     (input  logic                  i_wr_clk, i_wr_rst,
      input  logic [DATA_WIDTH-1:0] i_data,
      input  logic                  i_wr_en,
      output logic                  o_full,
-     output logic                  o_almost_full,
 
      input  logic                  i_rd_clk, i_rd_rst,
      output logic [DATA_WIDTH-1:0] o_data,
      input  logic                  i_rd_en,
-     output logic                  o_empty,
-     output logic                  o_almost_empty);
+     output logic                  o_empty);
 
     localparam DEPTH=2**ADDR_WIDTH;
 
     logic [DATA_WIDTH-1:0] r_data [DEPTH];
 
     // write clock domain address signals
-    logic [ADDR_WIDTH-1:0] r_wr_addr;
+    logic [ADDR_WIDTH-1:0] r_wr_addr, w_wr_addr_nxt;
+    logic w_wr_full_nxt;
+
+    // write clock domain sync chain
     logic [ADDR_WIDTH-1:0] w_rd_addr_gray, r_rd_addr_gray_ff1, r_rd_addr_gray_ff2;
     logic [ADDR_WIDTH-1:0] w_rd_addr_sync;
 
     // read clock domain address signals
-    logic [ADDR_WIDTH-1:0] r_rd_addr;
+    logic [ADDR_WIDTH-1:0] r_rd_addr, w_rd_addr_nxt;
+    logic w_rd_empty_nxt;
+
+    // read clock domain sync chain
     logic [ADDR_WIDTH-1:0] w_wr_addr_gray, r_wr_addr_gray_ff1, r_wr_addr_gray_ff2;
     logic [ADDR_WIDTH-1:0] w_wr_addr_sync;
 
-    // write clock domain
+    /*****************
+    * i_wr_clk domain
+    *****************/
+
     always_ff @(posedge i_wr_clk) begin
         if (i_wr_rst) begin
             r_wr_addr <= 'h0;
+            o_full <= 1'b0;
         end
-        else if (i_wr_en && !o_full) begin
-            r_data[r_wr_addr] <= i_data;
-            r_wr_addr <= r_wr_addr + 'd1;
+        else begin 
+            if (i_wr_en && !o_full) begin
+                r_data[r_wr_addr] <= i_data;
+            end
+            r_wr_addr <= w_wr_addr_nxt;
+            o_full <= w_wr_full_nxt;
         end
     end
 
-    // synchronize w_rd_addr_gray from read clock domain
+    assign w_wr_addr_nxt = r_wr_addr + {{(ADDR_WIDTH-1){1'b0}}, i_wr_en && !o_full};
+    assign w_wr_full_nxt = (w_wr_addr_nxt == w_rd_addr_sync);
+
+    // sync r_rd_addr to i_wr_clk domain
+    // r_rd_addr -> w_rd_addr_gray -> r_rd_addr_gray_ff1 -> r_rd_addr_gray_ff1
+    // -> w_rd_addr_sync
+    bin2gray #(
+        .WIDTH(ADDR_WIDTH)
+    ) RD_ADDR_B2G (
+        .i_bin(r_rd_addr),
+        .o_gray(w_rd_addr_gray)
+    );
+
     always_ff @(posedge i_wr_clk) begin
         if (i_wr_rst) begin
             r_rd_addr_gray_ff1 <= 'h0;
@@ -61,11 +82,34 @@ module async_fifo
         .o_bin(w_rd_addr_sync)
     );
 
-    // infer o_full and o_almost_full from w_rd_addr_sync
-    assign o_full = (r_wr_addr - w_rd_addr_sync) > DEPTH - 2; 
-    assign o_almost_full = (r_wr_addr - w_rd_addr_sync) > DEPTH - 2 - AF_WINDOW; 
+    /*****************
+    * i_rd_clk domain
+    *****************/
 
-    // convert r_wr_addr to gray code for read domain synchronization
+    // read clock domain
+    always_ff @(posedge i_rd_clk) begin
+        if (i_rd_rst) begin
+            o_data <= 'h0;
+            r_rd_addr <= 'h0;
+            o_empty <= 1'b1;
+        end
+        else begin
+            if (i_rd_en && !o_empty) begin
+                o_data <= r_data[r_rd_addr];
+                r_rd_addr <= r_rd_addr + 'd1;
+                o_empty <= ((r_rd_addr + 'd1) == w_wr_addr_sync);
+            end
+            r_rd_addr <= w_rd_addr_nxt;
+            o_empty <= w_rd_empty_nxt;
+        end
+    end
+
+    assign w_rd_addr_nxt = {{(ADDR_WIDTH-1){1'b0}}, i_rd_en && !o_empty};
+    assign w_rd_empty_nxt = (w_rd_addr_nxt == w_wr_addr_sync);
+
+    // sync r_wr_addr to i_rd_clk domain
+    // r_wr_addr -> w_wr_addr_gray -> r_wr_addr_gray_ff1 -> r_wr_addr_gray_ff1
+    // -> w_wr_addr_sync
     bin2gray #(
         .WIDTH(ADDR_WIDTH)
     ) WR_ADDR_B2G (
@@ -73,19 +117,6 @@ module async_fifo
         .o_gray(w_wr_addr_gray)
     );
 
-    // read clock domain
-    always_ff @(posedge i_rd_clk) begin
-        if (i_rd_rst) begin
-            o_data <= 'h0;
-            r_rd_addr <= 'h0;
-        end
-        else if (i_rd_en && !o_empty) begin
-            o_data <= r_data[r_rd_addr];
-            r_rd_addr <= r_rd_addr + 'd1;
-        end
-    end
-
-    // synchronize w_wr_addr_gray from write clock domain
     always_ff @(posedge i_rd_clk) begin
         if (i_rd_rst) begin
             r_wr_addr_gray_ff1 <= 'h0;
@@ -104,16 +135,60 @@ module async_fifo
         .o_bin(w_wr_addr_sync)
     );
 
-    // infer o_empty and o_almost_empty from w_wr_addr_sync
-    assign o_empty = (w_wr_addr_sync - r_rd_addr) < 1;
-    assign o_almost_empty = (w_wr_addr_sync - r_rd_addr) < 1 + AE_WINDOW;
+`ifdef FORMAL
 
-    // conver r_rd_addr to gray code for write domain synchronization
-    bin2gray #(
-        .WIDTH(ADDR_WIDTH)
-    ) RD_ADDR_B2G (
-        .i_bin(r_rd_addr),
-        .o_gray(w_rd_addr_gray)
+    global clocking f_gclk @(posedge i_wr_clk or posedge i_rd_clk); endclocking
+    default clocking @(posedge f_gclk); endclocking
+    default disable iff (i_wr_rst || i_rd_rst);
+
+    logic f_past_valid;
+    initial f_past_valid = 1'b1;
+    always_ff @(posedge i_wr_clk) begin
+        if (i_wr_rst) begin
+            f_past_valid <= 1'b0;
+        end
+        else begin
+            f_past_valid <= 1'b1;
+        end
+    end
+
+    wr_addr_1bit_change: assert property (
+        @(posedge i_wr_clk)
+        disable iff (i_wr_rst || !f_past_valid)
+        $changed(w_wr_addr_gray) |-> $onehot(w_wr_addr_gray ^ $past(w_wr_addr_gray))
     );
+
+    rd_addr_1bit_change: assert property (
+        $changed(w_rd_addr_gray) |-> $onehot(w_rd_addr_gray ^ $past(w_rd_addr_gray))
+    );
+
+    logic [ADDR_WIDTH:0] f_num_data;
+
+    always @(posedge f_gclk) begin
+        if (i_wr_rst || i_rd_rst) begin
+            f_num_data <= 0;
+        end
+        else begin
+            if (i_wr_en && !o_full && i_rd_en && !o_empty) begin
+                f_num_data <= f_num_data;
+            end
+            else if (i_wr_en && !o_full) begin
+                f_num_data = f_num_data + 'd1;
+            end
+            else if (i_rd_en && !o_full) begin
+                f_num_data = f_num_data - 'd1;
+            end
+        end
+    end
+
+    full: assert property (
+        $rose(o_full) |-> (f_num_data == (2 ** ADDR_WIDTH))
+    );
+
+    empty: assert property (
+        $rose(o_empty) |-> (f_num_data == 0)
+    );
+
+`endif 
     
 endmodule
