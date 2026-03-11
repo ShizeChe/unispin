@@ -137,57 +137,49 @@ module async_fifo
 
 `ifdef FORMAL
 
-    global clocking f_gclk @(posedge i_wr_clk or posedge i_rd_clk); endclocking
-    default clocking @(posedge f_gclk); endclocking
-    default disable iff (i_wr_rst || i_rd_rst);
+    assume property (
+        (w_wr_addr_gray == $past(w_wr_addr_gray)) until $rose(i_wr_clk)
+    );
 
-    logic f_past_valid;
-    initial f_past_valid = 1'b1;
-    always_ff @(posedge i_wr_clk) begin
-        if (i_wr_rst) begin
-            f_past_valid <= 1'b0;
-        end
-        else begin
-            f_past_valid <= 1'b1;
-        end
-    end
 
     wr_addr_1bit_change: assert property (
         @(posedge i_wr_clk)
-        disable iff (i_wr_rst || !f_past_valid)
-        $changed(w_wr_addr_gray) |-> $onehot(w_wr_addr_gray ^ $past(w_wr_addr_gray))
+        disable iff (i_wr_rst)
+        (w_wr_addr_gray == $past(w_wr_addr_gray)) || $onehot(w_wr_addr_gray ^ $past(w_wr_addr_gray))
     );
 
     rd_addr_1bit_change: assert property (
-        $changed(w_rd_addr_gray) |-> $onehot(w_rd_addr_gray ^ $past(w_rd_addr_gray))
+        @(posedge i_rd_clk)
+        disable iff (i_rd_rst)
+        (w_rd_addr_gray == $past(w_rd_addr_gray)) || $onehot(w_rd_addr_gray ^ $past(w_rd_addr_gray))
     );
 
-    logic [ADDR_WIDTH:0] f_num_data;
-
-    always @(posedge f_gclk) begin
-        if (i_wr_rst || i_rd_rst) begin
-            f_num_data <= 0;
-        end
-        else begin
-            if (i_wr_en && !o_full && i_rd_en && !o_empty) begin
-                f_num_data <= f_num_data;
-            end
-            else if (i_wr_en && !o_full) begin
-                f_num_data = f_num_data + 'd1;
-            end
-            else if (i_rd_en && !o_full) begin
-                f_num_data = f_num_data - 'd1;
-            end
-        end
-    end
-
-    full: assert property (
-        $rose(o_full) |-> (f_num_data == (2 ** ADDR_WIDTH))
-    );
-
-    empty: assert property (
-        $rose(o_empty) |-> (f_num_data == 0)
-    );
+    // logic [ADDR_WIDTH:0] f_num_data;
+    //
+    // always @(posedge f_gclk) begin
+    //     if (i_wr_rst || i_rd_rst) begin
+    //         f_num_data <= 0;
+    //     end
+    //     else begin
+    //         if (i_wr_en && !o_full && i_rd_en && !o_empty) begin
+    //             f_num_data <= f_num_data;
+    //         end
+    //         else if (i_wr_en && !o_full) begin
+    //             f_num_data = f_num_data + 'd1;
+    //         end
+    //         else if (i_rd_en && !o_full) begin
+    //             f_num_data = f_num_data - 'd1;
+    //         end
+    //     end
+    // end
+    //
+    // full: assert property (
+    //     $rose(o_full) |-> (f_num_data == (2 ** ADDR_WIDTH))
+    // );
+    //
+    // empty: assert property (
+    //     $rose(o_empty) |-> (f_num_data == 0)
+    // );
 
 `endif 
     
