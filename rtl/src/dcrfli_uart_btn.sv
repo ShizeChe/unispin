@@ -3,12 +3,14 @@
 `include "dc.svh"
 `include "rf.svh"
 `include "li.svh"
+`include "ex.svh"
 `include "launch.vh"
 
 module dcrfli_uart_btn
    #(parameter NUM_DC_CHANNEL=24,
      parameter NUM_RF_CHANNEL=6,
-     parameter NUM_LI_CHANNEL=1,
+     parameter NUM_LI_CHANNEL=2,
+     parameter NUM_EX_CHANNEL=2,
      parameter NUM_DEBOUNCE_CYCLES=25)
     (input  logic i_clk, i_rst,
 
@@ -86,6 +88,24 @@ module dcrfli_uart_btn
 
      // li eop bus
      output li_eop_t [0:NUM_LI_CHANNEL-1] o_li_eop_bus,
+
+     // ex mmio registers
+     input  logic [0:NUM_EX_CHANNEL-1][0:EX_SEQ_REGS-1][31:0] i_ex_seq_regs,
+
+     // ex uart registers
+     input  logic [0:EX_SEQ_REGS-1][31:0] i_ex_seq_uregs,
+
+     // ex real stream to RFDC IP
+     output logic [0:NUM_EX_CHANNEL-1][EX_DAC_WIDTH*16-1:0] o_ex_realx16_bus,
+
+     // ex armed bus for LED
+     output logic [NUM_EX_CHANNEL-1:0] o_ex_armed_bus,
+
+     // ex empty bus for simulation
+     output logic [0:NUM_EX_CHANNEL-1] o_ex_empty_bus,
+
+     // ex eop bus
+     output ex_eop_t [0:NUM_EX_CHANNEL-1] o_ex_eop_bus,
 
      // launch mmio registers
      input  logic [0:LCH_TOTAL_REGS-1][31:0] i_lch_regs,
@@ -208,6 +228,36 @@ module dcrfli_uart_btn
 
     end
 
+    /****************
+    * ex connections
+    ****************/
+
+    logic [NUM_EX_CHANNEL-1:0] w_ex_armed_bus;
+    logic [NUM_EX_CHANNEL-1:0] w_ex_start_bus;
+    
+    for (genvar i = 0; i < NUM_EX_CHANNEL; i++) begin : EX_GEN
+
+        ex EX (
+            .i_clk(i_clk),
+            .i_rst(i_rst),
+
+            .i_seq_regs(i_ex_seq_regs[i]),
+
+            .i_seq_uregs({i_ex_seq_uregs[0:EX_SEQ_REGS-2], 31'h0,
+                          i_ex_seq_uregs[EX_SEQ_REGS-1][i]}),
+
+            .o_realx16(o_ex_realx16_bus[i]),
+
+            .i_start(w_ex_start_bus[i]),
+            .o_armed(w_ex_armed_bus[i]),
+
+            .o_empty(o_ex_empty_bus[i]),
+
+            .o_eop(o_ex_eop_bus[i])
+        );
+
+    end
+
     /********************
     * launch connections
     ********************/
@@ -217,7 +267,8 @@ module dcrfli_uart_btn
     launch #(
         .NUM_DC_CHANNEL(NUM_DC_CHANNEL),
         .NUM_RF_CHANNEL(NUM_RF_CHANNEL),
-        .NUM_LI_CHANNEL(NUM_LI_CHANNEL)
+        .NUM_LI_CHANNEL(NUM_LI_CHANNEL),
+        .NUM_EX_CHANNEL(NUM_EX_CHANNEL)
     ) LCH (
         .i_clk(i_clk),
         .i_rst(i_rst),
@@ -228,17 +279,20 @@ module dcrfli_uart_btn
         .i_dc_armed(w_dc_armed_bus),
         .i_rf_armed(w_rf_armed_bus),
         .i_li_armed(w_li_armed_bus),
+        .i_ex_armed(w_ex_armed_bus),
 
         .i_trigger(w_trigger),
 
         .o_dc_start(w_dc_start_bus),
         .o_rf_start(w_rf_start_bus),
-        .o_li_start(w_li_start_bus)
+        .o_li_start(w_li_start_bus),
+        .o_ex_start(w_ex_start_bus)
     );
 
     assign o_dc_armed_bus = w_dc_armed_bus;
     assign o_rf_armed_bus = w_rf_armed_bus;
     assign o_li_armed_bus = w_li_armed_bus;
+    assign o_ex_armed_bus = w_ex_armed_bus;
 
     /********************
     * button for trigger

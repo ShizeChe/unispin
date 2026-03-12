@@ -110,6 +110,7 @@ module pl
     localparam NUM_DC_CHANNEL=24;
     localparam NUM_RF_CHANNEL=6;
     localparam NUM_LI_CHANNEL=2;
+    localparam NUM_EX_CHANNEL=2;
     localparam NUM_DEBOUNCE_CYCLES=25000000;
 
     localparam NUM_DAC_TILE=4;
@@ -120,52 +121,55 @@ module pl
     logic w_dcrfli_clk, w_dcrfli_rst_n;
     logic w_pl_clk, w_pl_rst_n;
 
-    // uart regs
-    localparam TOTAL_UREGS=DC_SEQ_REGS+DC_CTRL_REGS+
-                           RF_SEQ_REGS+RF_CTRL_REGS+
-                           LI_SEQ_REGS+LI_CTRL_REGS+
-                           LCH_TOTAL_REGS;
-
-    localparam U_DC_SEQ_START = 0;
-    localparam U_DC_SEQ_END = U_DC_SEQ_START + DC_SEQ_REGS - 1;
-
-    localparam U_DC_CTRL_START = U_DC_SEQ_END + 1;
-    localparam U_DC_CTRL_END = U_DC_CTRL_START + DC_CTRL_REGS - 1;
-
-    localparam U_RF_SEQ_START = U_DC_CTRL_END + 1;
-    localparam U_RF_SEQ_END = U_RF_SEQ_START + RF_SEQ_REGS - 1;
-
-    localparam U_RF_CTRL_START = U_RF_SEQ_END + 1;
-    localparam U_RF_CTRL_END = U_RF_CTRL_START + RF_CTRL_REGS - 1;
-
-    localparam U_LI_SEQ_START = U_RF_CTRL_END + 1;
-    localparam U_LI_SEQ_END = U_LI_SEQ_START + LI_SEQ_REGS - 1;
-
-    localparam U_LI_CTRL_START = U_LI_SEQ_END + 1;
-    localparam U_LI_CTRL_END = U_LI_CTRL_START + LI_CTRL_REGS - 1;
-
-    localparam U_LCH_START = U_LI_CTRL_END + 1;
-    localparam U_LCH_END = U_LCH_START + LCH_TOTAL_REGS - 1;
-
-    logic [0:TOTAL_UREGS-1][31:0] w_uregs;
-    
-    uart_regs #(
-        .DATA_WIDTH(8),
-        .RX_FIFO_DEPTH(8),
-        .RX_FIFO_AF_DEPTH(6),
-        .RX_FIFO_AE_DEPTH(2),
-        .TX_FIFO_DEPTH(8),
-        .TX_FIFO_AF_DEPTH(6),
-        .TX_FIFO_AE_DEPTH(2),
-        .NUM_REGS(TOTAL_UREGS)
-    ) REGS (
-        .i_clk(w_dcrfli_clk),
-        .i_rst(!w_dcrfli_rst_n),
-        .i_rx(i_rx),
-        .o_tx(o_tx),
-        .i_dvsr(11'd16),
-        .o_regs(w_uregs)
-    );
+    // uart regs (mostly for debug purpose)
+    // localparam TOTAL_UREGS=DC_SEQ_REGS+DC_CTRL_REGS+
+    //                        RF_SEQ_REGS+RF_CTRL_REGS+
+    //                        LI_SEQ_REGS+LI_CTRL_REGS+
+    //                        EX_SEQ_REGS+LCH_TOTAL_REGS;
+    //
+    // localparam U_DC_SEQ_START = 0;
+    // localparam U_DC_SEQ_END = U_DC_SEQ_START + DC_SEQ_REGS - 1;
+    //
+    // localparam U_DC_CTRL_START = U_DC_SEQ_END + 1;
+    // localparam U_DC_CTRL_END = U_DC_CTRL_START + DC_CTRL_REGS - 1;
+    //
+    // localparam U_RF_SEQ_START = U_DC_CTRL_END + 1;
+    // localparam U_RF_SEQ_END = U_RF_SEQ_START + RF_SEQ_REGS - 1;
+    //
+    // localparam U_RF_CTRL_START = U_RF_SEQ_END + 1;
+    // localparam U_RF_CTRL_END = U_RF_CTRL_START + RF_CTRL_REGS - 1;
+    //
+    // localparam U_LI_SEQ_START = U_RF_CTRL_END + 1;
+    // localparam U_LI_SEQ_END = U_LI_SEQ_START + LI_SEQ_REGS - 1;
+    //
+    // localparam U_LI_CTRL_START = U_LI_SEQ_END + 1;
+    // localparam U_LI_CTRL_END = U_LI_CTRL_START + LI_CTRL_REGS - 1;
+    //
+    // localparam U_EX_SEQ_START = U_LI_CTRL_END + 1;
+    // localparam U_EX_SEQ_END = U_EX_SEQ_START + EX_SEQ_REGS - 1;
+    //
+    // localparam U_LCH_START = U_EX_SEQ_END + 1;
+    // localparam U_LCH_END = U_LCH_START + LCH_TOTAL_REGS - 1;
+    //
+    // logic [0:TOTAL_UREGS-1][31:0] w_uregs;
+    //
+    // uart_regs #(
+    //     .DATA_WIDTH(8),
+    //     .RX_FIFO_DEPTH(8),
+    //     .RX_FIFO_AF_DEPTH(6),
+    //     .RX_FIFO_AE_DEPTH(2),
+    //     .TX_FIFO_DEPTH(8),
+    //     .TX_FIFO_AF_DEPTH(6),
+    //     .TX_FIFO_AE_DEPTH(2),
+    //     .NUM_REGS(TOTAL_UREGS)
+    // ) REGS (
+    //     .i_clk(w_dcrfli_clk),
+    //     .i_rst(!w_dcrfli_rst_n),
+    //     .i_rx(i_rx),
+    //     .o_tx(o_tx),
+    //     .i_dvsr(11'd16),
+    //     .o_regs(w_uregs)
+    // );
 
     // dc signals
     logic [0:NUM_DC_CHANNEL-1][0:DC_SEQ_REGS-1][31:0] w_dc_seq_regs;
@@ -205,6 +209,15 @@ module pl
     logic [NUM_LI_CHANNEL-1:0] w_li_armed_bus;
 
     li_ctrl_t [0:NUM_LI_CHANNEL-1] w_li_ctrl_bus;
+
+    // ex signals
+    logic [0:NUM_EX_CHANNEL-1][0:EX_SEQ_REGS-1][31:0] w_ex_seq_regs;
+
+    logic [0:NUM_EX_CHANNEL-1][EX_DAC_WIDTH*16-1:0] w_ex_realx16_bus;
+
+    logic [NUM_EX_CHANNEL-1:0] w_ex_armed_bus;
+
+    logic [0:NUM_EX_CHANNEL-1] w_ex_ready_bus;
 
     // launch signals
     logic [0:LCH_TOTAL_REGS-1][31:0] w_lch_regs;
@@ -310,6 +323,10 @@ module pl
         .o_rf_ctrl_regs4(w_rf_ctrl_regs[4]),
         .o_rf_ctrl_regs5(w_rf_ctrl_regs[5]),
 
+        // ex x 2
+        .o_ex_seq_regs0(w_ex_seq_regs[0]),
+        .o_ex_seq_regs1(w_ex_seq_regs[1]),
+
         // nco update regs
         .o_nco_update_regs_0(w_dac_nco_regs[0]),
         .o_nco_update_regs_1(w_dac_nco_regs[1]),
@@ -408,12 +425,12 @@ module pl
         .dac2_nco_0_nco_update_request(w_dac_nco_req[2]),
         
         // rf_dac tile 231-0/1/2/3
-        .s30_axis_0_tdata(),
+        .s30_axis_0_tdata(w_ex_realx16_bus[0]),
         .s30_axis_0_tready(),
-        .s30_axis_0_tvalid(),
-        .s31_axis_0_tdata(),
+        .s30_axis_0_tvalid(1'b1),
+        .s31_axis_0_tdata(w_ex_realx16_bus[1]),
         .s31_axis_0_tready(),
-        .s31_axis_0_tvalid(),
+        .s31_axis_0_tvalid(1'b1),
         .s32_axis_0_tdata(w_li_QIx8_bus[0]),
         .s32_axis_0_tready(),
         .s32_axis_0_tvalid(1'b1),
@@ -495,8 +512,10 @@ module pl
         .i_dc_seq_regs(w_dc_seq_regs),
         .i_dc_ctrl_regs(w_dc_ctrl_regs),
 
-        .i_dc_seq_uregs(w_uregs[U_DC_SEQ_START:U_DC_SEQ_END]),
-        .i_dc_ctrl_uregs(w_uregs[U_DC_CTRL_START:U_DC_CTRL_END]),
+        // .i_dc_seq_uregs(w_uregs[U_DC_SEQ_START:U_DC_SEQ_END]),
+        // .i_dc_ctrl_uregs(w_uregs[U_DC_CTRL_START:U_DC_CTRL_END]),
+        .i_dc_seq_uregs('h0),
+        .i_dc_ctrl_uregs('h0),
 
         .o_dc_sclk_bus(w_dc_sclk_bus),
         .o_dc_mosi_bus(w_dc_mosi_bus),
@@ -514,8 +533,10 @@ module pl
         .i_rf_seq_regs(w_rf_seq_regs),
         .i_rf_ctrl_regs(w_rf_ctrl_regs),
 
-        .i_rf_seq_uregs(w_uregs[U_RF_SEQ_START:U_RF_SEQ_END]),
-        .i_rf_ctrl_uregs(w_uregs[U_RF_CTRL_START:U_RF_CTRL_END]),
+        // .i_rf_seq_uregs(w_uregs[U_RF_SEQ_START:U_RF_SEQ_END]),
+        // .i_rf_ctrl_uregs(w_uregs[U_RF_CTRL_START:U_RF_CTRL_END]),
+        .i_rf_seq_uregs('h0),
+        .i_rf_ctrl_uregs('h0),
 
         .o_rf_QIx8_bus(w_rf_QIx8_bus),
 
@@ -529,8 +550,10 @@ module pl
         .i_li_seq_regs(w_li_seq_regs),
         .i_li_ctrl_regs(w_li_ctrl_regs),
 
-        .i_li_seq_uregs(w_uregs[U_LI_SEQ_START:U_LI_SEQ_END]),
-        .i_li_ctrl_uregs(w_uregs[U_LI_CTRL_START:U_LI_CTRL_END]),
+        // .i_li_seq_uregs(w_uregs[U_LI_SEQ_START:U_LI_SEQ_END]),
+        // .i_li_ctrl_uregs(w_uregs[U_LI_CTRL_START:U_LI_CTRL_END]),
+        .i_li_seq_uregs('h0),
+        .i_li_ctrl_uregs('h0),
 
         .i_li_QIx4_bus(w_li_QIx4_bus),
 
@@ -548,11 +571,26 @@ module pl
 
         .o_li_eop_bus(),
 
+        // ex
+        .i_ex_seq_regs(w_ex_seq_regs),
+
+        // .i_ex_seq_uregs(w_uregs[U_EX_SEQ_START:U_EX_SEQ_END]),
+        .i_ex_seq_uregs('h0),
+
+        .o_ex_realx16_bus(w_ex_realx16_bus),
+
+        .o_ex_armed_bus(w_ex_armed_bus),
+
+        .o_ex_empty_bus(),
+
+        .o_ex_eop_bus(),
+
 
         // launch
         .i_lch_regs(w_lch_regs),
 
-        .i_lch_uregs(w_uregs[U_LCH_START:U_LCH_END]),
+        // .i_lch_uregs(w_uregs[U_LCH_START:U_LCH_END]),
+        .i_lch_uregs('h0),
         
         // button
         .i_btn(i_btn_w)
