@@ -1,6 +1,17 @@
-Scriapin (Spin + Control Resource Integration Architecture) is an integrated quantum control platform designed specifically for quantum dot spin qubits. It's goal is to reduce control stack complexity and cost while improving transparency and programmability.
+Overview
+========
+Scriapin (Spin + Control Resource Integration Architecture) is an integrated quantum control platform designed specifically for quantum dot spin qubits. Its goal is to reduce control stack complexity and cost while improving performance and programmability by integrating all the requried control resources onto a single FPGA. With the two custom PCBs (FMC breakout board and bias DAC board), the current configuration has:
 
-It does so by letting each signal channel have its dedicated control core, allowing channels to run independently in parallel. Each core iteratively executes a small set of custom assembly instructions in which precise timing is specified, allowing them to coordinate with minimal orchestration components. See the annotated Rabi example below for a feeling of this.
+* 24x bias DC channels (AD5791BRUZ)
+* 6x RF IQ pairs for further analog upconversion
+* 2x singled-ended RF channels and 2x ADC channels for lockin-in measurement
+* 2x singled-ended fast DC channels
+
+<p align="center">
+ <img src="img/boards.jpg" alt="boards" width=100% height=auto>
+</p>
+
+Each aforementioned signal/measurement channel has its own fully-pipelined control core. Each core/channel can be programmed to iteratively executes a set of custom assembly instructions in which precise timing of the pulses can be specified. See the annotated Rabi example below for a feeling of this execution model.
 
 ```asm
 .program rf0                 # program for RF channel 0
@@ -33,13 +44,11 @@ It does so by letting each signal channel have its dedicated control core, allow
  <img src="img/rabi_example.png" alt="rabi example" width="100%" height=auto> 
 </p>
 
-The project has three parts:
-* RTL design, along with testbenches and formal properties used for verification (under rtl)
-* PCB design for low-noise DC, along with assembly instrctions (under pcb)
-* Assembler for compiling and executing Squish programs (under asm)
 
-The project is currently work in progress.
+## Project Status
+The project currently has three parts:
+* RTL design, along with testbenches and some formal properties used for verification (under rtl)
+* PCB design for the 24 bias DC channels, along with assembly instrctions (under pcb)
+* Assembler for compiling and executing the custom assembly programs (under asm)
 
-<p align="center">
- <img src="img/boards.jpg" alt="boards" width=100% height=auto>
-</p>
+This project is currently under active development. The RTL design, assembler, and PCB design may continue to evolve as functionality is validated experimentally and the system is further refined. More detailed documentation and user guides will be added as the project matures.
