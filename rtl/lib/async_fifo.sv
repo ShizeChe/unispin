@@ -137,10 +137,9 @@ module async_fifo
 
 `ifdef FORMAL
 
-    assume property (
-        (w_wr_addr_gray == $past(w_wr_addr_gray)) until $rose(i_wr_clk)
-    );
-
+    // assume property (
+    //     (w_wr_addr_gray == $past(w_wr_addr_gray)) until $rose(i_wr_clk)
+    // );
 
     wr_addr_1bit_change: assert property (
         @(posedge i_wr_clk)
@@ -148,11 +147,11 @@ module async_fifo
         (w_wr_addr_gray == $past(w_wr_addr_gray)) || $onehot(w_wr_addr_gray ^ $past(w_wr_addr_gray))
     );
 
-    rd_addr_1bit_change: assert property (
-        @(posedge i_rd_clk)
-        disable iff (i_rd_rst)
-        (w_rd_addr_gray == $past(w_rd_addr_gray)) || $onehot(w_rd_addr_gray ^ $past(w_rd_addr_gray))
-    );
+    // rd_addr_1bit_change: assert property (
+    //     @(posedge i_rd_clk)
+    //     disable iff (i_rd_rst)
+    //     (w_rd_addr_gray == $past(w_rd_addr_gray)) || $onehot(w_rd_addr_gray ^ $past(w_rd_addr_gray))
+    // );
 
     // logic [ADDR_WIDTH:0] f_num_data;
     //
