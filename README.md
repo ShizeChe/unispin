@@ -29,7 +29,9 @@ It does so by letting each signal channel have its dedicated control core, allow
 .launch rf0 dc0 li0          # launch RF channel 0, DC channel 0, LI channel 0 
 ```
 
-<p align="center"> <img src="img/rabi_example.svg" alt="rabi example" width="70%"> </p>
+<p align="center"> 
+ <img src="img/rabi_example.svg" alt="rabi example" width="70%" height=auto> 
+</p>
 
 The project has three parts:
 * RTL design, along with testbenches and formal properties used for verification (under rtl)
