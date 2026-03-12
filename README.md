@@ -30,7 +30,7 @@ It does so by letting each signal channel have its dedicated control core, allow
 ```
 
 <p align="center"> 
- <img src="img/rabi_example.svg" alt="rabi example" width="70%" height=auto> 
+ <img src="img/rabi_example.png" alt="rabi example" width="100%" height=auto> 
 </p>
 
 The project has three parts:
@@ -41,5 +41,5 @@ The project has three parts:
 The project is currently work in progress.
 
 <p align="center">
- <img src="img/boards.jpg" alt="boards" width=70% height=auto>
+ <img src="img/boards.jpg" alt="boards" width=100% height=auto>
 </p>
