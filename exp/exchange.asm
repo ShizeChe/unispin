@@ -42,7 +42,7 @@
     ply phs=90 t=60ns
     idl t=12us
 
-.program fdc0
+.program ex0
 .repeat 100
     idl t=19us (arm)
     idl t=180ns
@@ -59,5 +59,5 @@
     sam n=1000 t=10us
     idl t=2us
 
-.launch rf0 rf1 dc0 dc1 li0
+.launch rf0 rf1 dc0 dc1 ex0 li0
 

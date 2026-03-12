@@ -13,9 +13,6 @@ module rf
      parameter CORDIC_STAGES=RF_CORDIC_STAGES,
      parameter CORDIC_PAD_ZEROS=RF_CORDIC_PAD_ZEROS,
      parameter DEPTH=RF_DEPTH,
-     parameter NCO_FREQ_WIDTH=RF_NCO_FREQ_WIDTH,
-     parameter NCO_PHASE_WIDTH=RF_NCO_PHASE_WIDTH,
-     parameter NCO_EN_WIDTH=RF_NCO_EN_WIDTH,
      parameter SEQ_REGS=RF_SEQ_REGS,
      parameter CTRL_REGS=RF_CTRL_REGS)
     (input  logic i_clk, i_rst,
@@ -32,16 +29,6 @@ module rf
      output logic o_armed,
      
      output logic o_empty,
-
-     // nco interface
-     input  logic i_nco_wait,
-     output logic o_nco_wait,
-
-     output logic o_nco_req,
-     input  logic i_nco_busy,
-     output logic [NCO_FREQ_WIDTH-1:0] o_nco_freq,
-     output logic [NCO_PHASE_WIDTH-1:0] o_nco_phase,
-     output logic [NCO_EN_WIDTH-1:0] o_nco_en,
 
      // eop for verification
      output rf_eop_t o_eop);
@@ -104,9 +91,6 @@ module rf
 
     rf_ctrl #(
         .CTRL_REGS(CTRL_REGS),
-        .NCO_FREQ_WIDTH(NCO_FREQ_WIDTH),
-        .NCO_PHASE_WIDTH(NCO_PHASE_WIDTH),
-        .NCO_EN_WIDTH(NCO_EN_WIDTH),
         .IQ_WIDTH(IQ_WIDTH)
     ) CTRL (
         .i_clk(i_clk),
@@ -115,17 +99,7 @@ module rf
         .i_regs(i_ctrl_regs),
         .i_uregs(i_ctrl_uregs),
 
-        .o_ctrl(w_ctrl),
-
-        .i_running(!o_empty),
-        .i_nco_wait(i_nco_wait),
-        .o_nco_wait(o_nco_wait),
-
-        .o_nco_req(o_nco_req),
-        .i_nco_busy(i_nco_busy),
-        .o_nco_freq(o_nco_freq),
-        .o_nco_phase(o_nco_phase),
-        .o_nco_en(o_nco_en)
+        .o_ctrl(w_ctrl)
     );
 
 endmodule

@@ -1,19 +1,18 @@
 // `default_nettype none
 `timescale 1ns / 1ps
-`include "rf.svh"
 
 module nco_update
    #(parameter NUM_NCO=2,
-     parameter NUM_NCO_UPDATE_REGS=3*NUM_NCO+1)
+     parameter NUM_REGS=3*NUM_NCO+1)
     (input  logic i_clk, i_rst,
 
      input  logic [0:NUM_REGS-1][31:0] i_regs,
      input  logic [0:NUM_REGS-1][31:0] i_uregs,
 
-     output logic [0:NUM_REGS-1][47:0] o_freq,
-     output logic [0:NUM_REGS-1][17:0] o_phase,
-     output logic [0:NUM_REGS-1] o_phase_rst,
-     output logic [0:NUM_REGS-1][5:0] o_phase_en,
+     output logic [0:NUM_NCO-1][47:0] o_freq,
+     output logic [0:NUM_NCO-1][17:0] o_phase,
+     output logic [0:NUM_NCO-1] o_phase_rst,
+     output logic [0:NUM_NCO-1][5:0] o_en,
      output logic o_req,
      input  logic i_busy);
 
@@ -44,17 +43,17 @@ module nco_update
     for (genvar i = 0; i < NUM_NCO; i++) begin : NCO_PARAM_GEN
         always_ff @(posedge i_clk) begin
             if (i_rst) begin
-                {o_freq[i], o_phase[i], o_req[i], o_en[i]} <= 'h0;
+                {o_freq[i], o_phase[i], o_phase_rst[i], o_en[i]} <= 'h0;
             end
             else if (w_new_uparam) begin
-                {o_freq[i], o_phase[i], o_req[i], o_en[i]} <= {
+                {o_freq[i], o_phase[i], o_phase_rst[i], o_en[i]} <= {
                     i_uregs[3 * i][8:0],
                     i_uregs[3 * i + 1],
                     i_uregs[3 * i + 2]
                 };
             end
             else if (w_new_param) begin
-                {o_freq[i], o_phase[i], o_req[i], o_en[i]} <= {
+                {o_freq[i], o_phase[i], o_phase_rst[i], o_en[i]} <= {
                     i_regs[3 * i][8:0],
                     i_regs[3 * i + 1],
                     i_regs[3 * i + 2]
@@ -95,7 +94,7 @@ module nco_update
 
         case (r_state)
             IDLE: begin
-                w_next_state = (i_new_param || i_new_uparam) ? REQ : IDLE;
+                w_next_state = (w_new_param || w_new_uparam) ? REQ : IDLE;
             end
             REQ: begin
                 w_next_state = REQ;

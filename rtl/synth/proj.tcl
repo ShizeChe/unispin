@@ -9,6 +9,8 @@ add_files [glob ../src/*.v]
 add_files [glob ./*.xdc]
 remove_files  ../src/dcrfli.sv
 add_files [glob ../lib/axil_slave_regs.sv]
+add_files [glob ../lib/bram.sv]
+add_files [glob ../lib/bram_fifo.sv]
 add_files [glob ../lib/debouncer.sv]
 add_files [glob ../lib/button_detector.sv]
 add_files [glob ./*.sv]

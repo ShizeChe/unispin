@@ -39,26 +39,24 @@ module li_ctrl
 
     logic [IQ_WIDTH-1:0] r_default_I, r_default_Q;
     logic [7:0] r_max_burst;
-    logic [47:0] r_base_addr;
+    logic [48:0] r_base_addr;
 
     always_ff @(posedge i_clk) begin
         if (i_rst) begin
-            r_default_I <= {1'b0, {(ADC_WIDTH-1){1'b1}}};
-            r_default_Q <= {1'b0, {(ADC_WIDTH-1){1'b1}}};
+            r_default_I <= {1'b0, {(IQ_WIDTH-1){1'b1}}};
+            r_default_Q <= {1'b0, {(IQ_WIDTH-1){1'b1}}};
             r_max_burst <= 'd15;
             r_base_addr <= 'h0;
         end
         else if (w_new_uctrl) begin
-            r_default_I <= i_uregs[0][ADC_WIDTH-1:0];
-            r_default_Q <= i_uregs[1][ADC_WIDTH-1:0];
-            r_max_burst <= i_uregs[2][7:0];
-            r_base_addr <= {i_uregs[3], i_uregs[4]}[47:0];
+            r_default_I <= i_uregs[0][IQ_WIDTH+1:2];
+            r_default_Q <= i_uregs[0][IQ_WIDTH+17:18];
+            {r_max_burst, r_base_addr} <= {i_uregs[1], i_uregs[2]}[56:0];
         end
         else if (w_new_ctrl) begin
-            r_default_I <= i_regs[0][ADC_WIDTH-1:0];
-            r_default_Q <= i_regs[1][ADC_WIDTH-1:0];
-            r_max_burst <= i_regs[2][7:0];
-            r_base_addr <= {i_regs[3], i_regs[4]}[47:0];
+            r_default_I <= i_regs[0][IQ_WIDTH+1:2];
+            r_default_Q <= i_regs[0][IQ_WIDTH+17:18];
+            {r_max_burst, r_base_addr} <= {i_regs[1], i_regs[2]}[56:0];
         end
     end
 

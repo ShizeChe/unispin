@@ -176,7 +176,7 @@ module rf_core
     * stall logic
     *************/
 
-    assign w_stall = (o_armed && !i_start) || !i_ctrl.w_nco_ready; 
+    assign w_stall = (o_armed && !i_start); 
 
     /****************
     * output signals
