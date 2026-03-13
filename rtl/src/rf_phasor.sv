@@ -1,5 +1,6 @@
 // `default_nettype none
 `timescale 1ns / 1ps
+`include "rf.svh"
 
 module rf_phasor
    #(parameter IW=RF_KBC_WIDTH,

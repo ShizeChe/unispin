@@ -16,18 +16,61 @@ static uint32_t rf_t2samples(double t_ns) {
     return samples;
 }
 
+static inline int64_t round_clamp(long double x) {
+    // Clamp to representable interval first
+    long double xc = fminl((long double)RF_KBC_MAX, fmaxl((long double)RF_KBC_MIN, x));
+    // Round to nearest (ties away from zero, per llroundl)
+    int64_t rx = (int64_t)llroundl(xc);
+    // Defensive clamp (in case of odd libm modes)
+    if (rx > RF_KBC_MAX) rx = RF_KBC_MAX;
+    if (rx < RF_KBC_MIN) rx = RF_KBC_MIN;
+    return rx;
+}
+
+static inline int64_t k_formula(long double f_span_hz, long double t_ns) {
+    long double f_span_ghz      = f_span_hz * 1e-9L;
+    long double f_span_over_dac = f_span_ghz / (long double)RF_DAC_GHZ;
+    long double t_times_f_dac   = t_ns * (long double)RF_DAC_GHZ;
+
+    // 2^(N+1) safely
+    long double two_pow = ldexpl(1.0L, RF_KBC_BITS + 1);
+
+    long double k = two_pow / t_times_f_dac * f_span_over_dac;
+
+    return round_clamp(k);
+}
+
+static inline int64_t b_formula(long double f_span_hz, long double f_nco_hz, long double t_ns) {
+    long double f_span_ghz          = f_span_hz * 1e-9L;
+    long double f_nco_ghz           = f_nco_hz * 1e-9L;
+    long double f_span_over_dac     = f_span_ghz / (long double)RF_DAC_GHZ;
+    long double f_span_nco_over_dac = (f_span_ghz + f_nco_ghz) / (long double)RF_DAC_GHZ;
+    long double t_times_f_dac       = t_ns * (long double)RF_DAC_GHZ;
+
+    // 2^N safely
+    long double two_pow = ldexpl(1.0L, RF_KBC_BITS);
+
+    long double first_term = two_pow / t_times_f_dac * f_span_over_dac;
+    long double second_term = two_pow * f_span_nco_over_dac;
+    long double b = first_term - second_term;
+
+    return round_clamp(b);
+}
+
 static void rf_chp2insn(rf_chp_t *chp, rf_insn_t *insn, long double fnco_hz) {
 
-    long double k_deg = (chp->f2 - chp->f1) / ((long double)chp->t_ns) * 90e-9;
-    long double b_deg = (chp->f1 - fnco_hz) * 180e-9 + k_deg;
+    // long double k_deg = (chp->f2 - chp->f1) / ((long double)chp->t_ns) * 90e-9;
+    // long double b_deg = (chp->f1 - fnco_hz) * 180e-9 + k_deg;
 
-    uint64_t k = real2twos(-180, 180 - ldexpl(1.0L, -RF_KBC_BITS), RF_KBC_BITS, k_deg, 1);
-    uint64_t b = real2twos(-180, 180 - ldexpl(1.0L, -RF_KBC_BITS), RF_KBC_BITS, b_deg, 1);
+    // uint64_t k = real2twos(-180, 180 - ldexpl(1.0L, -RF_KBC_BITS), RF_KBC_BITS, k_deg, 1);
+    // uint64_t b = real2twos(-180, 180 - ldexpl(1.0L, -RF_KBC_BITS), RF_KBC_BITS, b_deg, 1);
+    int64_t k = k_formula(chp->f2 - chp->f1, chp->t_ns);
+    int64_t b = b_formula(chp->f2 - chp->f1, fnco_hz, chp->t_ns);
 
     insn->arm = chp->opt.arm;
     insn->kbc_mode = 1;
-    insn->kbc1 = k;
-    insn->kbc2 = b;
+    insn->kbc1 = (uint64_t)k;
+    insn->kbc2 = (uint64_t)b;
     insn->samples = rf_t2samples(chp->t_ns);
     insn->dsamples = rf_t2samples(chp->opt.tplus_ns);
 
@@ -286,8 +329,8 @@ void rf_assemble(rf_program_t *prog) {
         uint32_t *reg = &(prog->seq_regs[i * RF_REG_PER_INSN]);
 
         reg[0] = (insn->arm << 18) | (insn->kbc_mode << 16) | 
-                 ((uint32_t)(insn->kbc1 >> 20));
-        reg[1] = ((uint32_t)(insn->kbc1 << 12)) | ((uint32_t)(insn->kbc2 >> 24));
+                 ((uint32_t)(insn->kbc1 >> 25));
+        reg[1] = ((uint32_t)(insn->kbc1 << 12)) | ((uint32_t)(insn->kbc2 >> 24) & 0xfff);
         reg[2] = ((uint32_t)(insn->kbc2 << 8)) | (insn->samples >> 12);
         reg[3] = (insn->samples << 20) | (insn->dsamples);
 
