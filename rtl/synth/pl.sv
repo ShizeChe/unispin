@@ -217,8 +217,6 @@ module pl
 
     logic [NUM_EX_CHANNEL-1:0] w_ex_armed_bus;
 
-    logic [0:NUM_EX_CHANNEL-1] w_ex_ready_bus;
-
     // launch signals
     logic [0:LCH_TOTAL_REGS-1][31:0] w_lch_regs;
 

@@ -14,6 +14,7 @@ module simulator;
     localparam NUM_DC_CHANNEL=24;
     localparam NUM_RF_CHANNEL=6;
     localparam NUM_LI_CHANNEL=2;
+    localparam NUM_EX_CHANNEL=2;
     localparam NUM_DEBOUNCE_CYCLES=25;
 
     /********************
@@ -87,14 +88,6 @@ module simulator;
     // rf empty bus
     logic [0:NUM_RF_CHANNEL-1] w_rf_empty_bus;
 
-    // rf nco bus
-    logic [0:(NUM_RF_CHANNEL+1)/2-1] w_rf_nco_req_bus;
-    logic [0:(NUM_RF_CHANNEL+1)/2-1] w_rf_nco_tile_busy_bus;
-    logic [0:NUM_RF_CHANNEL-1] w_rf_nco_busy_bus;
-    logic [0:NUM_RF_CHANNEL-1][RF_NCO_FREQ_WIDTH-1:0] w_rf_nco_freq_bus;
-    logic [0:NUM_RF_CHANNEL-1][RF_NCO_PHASE_WIDTH-1:0] w_rf_nco_phase_bus;
-    logic [0:NUM_RF_CHANNEL-1][RF_NCO_EN_WIDTH-1:0] w_rf_nco_en_bus;
-
     // rf voltage output
     logic [RF_IQ_WIDTH-1:0] vrf_Q [NUM_RF_CHANNEL];
     logic [RF_IQ_WIDTH-1:0] vrf_I [NUM_RF_CHANNEL];
@@ -119,7 +112,7 @@ module simulator;
     logic [0:NUM_LI_CHANNEL-1][0:LI_SEQ_REGS-1][31:0] w_li_seq_regs;
     logic [0:NUM_LI_CHANNEL-1][0:LI_CTRL_REGS-1][31:0] w_li_ctrl_regs;
 
-    // li Ix8/Qx8 bus
+    // li QIx4 bus
     logic [0:NUM_LI_CHANNEL-1][LI_ADC_WIDTH*8-1:0] w_li_QIx4_bus;
 
     // li armed bus
@@ -131,6 +124,31 @@ module simulator;
     // li sample mask/spike bus
     logic [0:NUM_LI_CHANNEL-1][3:0] w_li_sample_mask_bus;
     logic [0:NUM_LI_CHANNEL-1] w_li_sample_spike_bus;
+
+    // ex axi bus
+    localparam EX_TOTAL_REGS = EX_SEQ_REGS;
+
+    logic [0:NUM_EX_CHANNEL-1] w_ex_awvalid_bus;
+    logic [0:NUM_EX_CHANNEL-1] w_ex_awready_bus;
+    logic [0:NUM_EX_CHANNEL-1][$clog2(EX_TOTAL_REGS*4)-1:0] w_ex_awaddr_bus;
+
+    logic [0:NUM_EX_CHANNEL-1] w_ex_wvalid_bus;
+    logic [0:NUM_EX_CHANNEL-1] w_ex_wready_bus;
+    logic [0:NUM_EX_CHANNEL-1][31:0] w_ex_wdata_bus;
+    logic [0:NUM_EX_CHANNEL-1][3:0] w_ex_wstrb_bus;
+
+    logic [0:NUM_EX_CHANNEL-1] w_ex_bvalid_bus;
+    logic [0:NUM_EX_CHANNEL-1] w_ex_bready_bus;
+    logic [0:NUM_EX_CHANNEL-1][1:0] w_ex_bresp_bus;
+
+    logic [0:NUM_EX_CHANNEL-1][0:EX_SEQ_REGS-1][31:0] w_ex_seq_regs;
+
+    logic [0:NUM_EX_CHANNEL-1][EX_DAC_WIDTH*16-1:0] w_ex_realx16_bus;
+
+    logic [NUM_EX_CHANNEL-1:0] w_ex_armed_bus;
+
+    // ex voltage output
+    logic [0:NUM_EX_CHANNEL-1][EX_IQ_WIDTH-1:0] vex;
 
     // launch axi bus
     logic w_lch_awvalid;
@@ -154,7 +172,7 @@ module simulator;
     localparam TOTAL_UREGS=DC_SEQ_REGS+DC_CTRL_REGS+
                            RF_SEQ_REGS+RF_CTRL_REGS+
                            LI_SEQ_REGS+LI_CTRL_REGS+
-                           LCH_TOTAL_REGS;
+                           EX_SEQ_REGS+LCH_TOTAL_REGS;
 
     localparam U_DC_SEQ_START = 0;
     localparam U_DC_SEQ_END = U_DC_SEQ_START + DC_SEQ_REGS - 1;
@@ -174,7 +192,10 @@ module simulator;
     localparam U_LI_CTRL_START = U_LI_SEQ_END + 1;
     localparam U_LI_CTRL_END = U_LI_CTRL_START + LI_CTRL_REGS - 1;
 
-    localparam U_LCH_START = U_LI_CTRL_END + 1;
+    localparam U_EX_SEQ_START = U_LI_CTRL_END + 1;
+    localparam U_EX_SEQ_END = U_EX_SEQ_START + EX_SEQ_REGS - 1;
+
+    localparam U_LCH_START = U_EX_SEQ_END + 1;
     localparam U_LCH_END = U_LCH_START + LCH_TOTAL_REGS - 1;
 
     logic [0:TOTAL_UREGS-1][31:0] w_uregs;
@@ -246,12 +267,6 @@ module simulator;
 
         .o_rf_empty_bus(w_rf_empty_bus),
 
-        .o_rf_nco_req_bus(w_rf_nco_req_bus),
-        .i_rf_nco_busy_bus(w_rf_nco_tile_busy_bus),
-        .o_rf_nco_freq_bus(w_rf_nco_freq_bus),
-        .o_rf_nco_phase_bus(w_rf_nco_phase_bus),
-        .o_rf_nco_en_bus(w_rf_nco_en_bus),
-
         .o_rf_eop_bus(),
 
         // li
@@ -269,7 +284,26 @@ module simulator;
 
         .o_li_sample_mask_bus(w_li_sample_mask_bus),
 
+        .o_li_QIx4_bus(w_li_QIx4_save_bus),
+        .o_li_validx4_bus(w_li_validx4_bus),
+        .o_li_last_bus(w_li_last_bus),
+
+        .o_li_ctrl_bus(w_li_ctrl_bus),
+
         .o_li_eop_bus(),
+
+        // ex
+        .i_ex_seq_regs(w_ex_seq_regs),
+
+        .i_ex_seq_uregs(w_uregs[U_EX_SEQ_START:U_EX_SEQ_END]),
+
+        .o_ex_realx16_bus(w_ex_realx16_bus),
+
+        .o_ex_armed_bus(w_ex_armed_bus),
+
+        .o_ex_empty_bus(),
+
+        .o_ex_eop_bus(),
 
         // launch
         .i_lch_regs(w_lch_regs),
@@ -430,23 +464,13 @@ module simulator;
             .o_Q(vrf_Q[i]),
             .o_vrf(vrf[i]),
 
-            .i_nco_req(w_rf_nco_req_bus[i / 2]),
-            .o_nco_busy(w_rf_nco_busy_bus[i]),
-            .i_nco_freq(w_rf_nco_freq_bus[i]),
-            .i_nco_phase(w_rf_nco_phase_bus[i]),
-            .i_nco_en(w_rf_nco_en_bus[i])
+            .i_nco_req(1'b0),
+            .o_nco_busy(),
+            .i_nco_freq('h0),
+            .i_nco_phase('h0),
+            .i_nco_en('h0)
         );
 
-    end
-
-    for (genvar i = 0; i < (NUM_RF_CHANNEL + 1) / 2; i++) begin : RF_NCO_TILE_BUSY_GEN
-        if (2 * i + 1 < NUM_RF_CHANNEL) begin : PAIR
-            assign w_rf_nco_tile_busy_bus[i] = w_rf_nco_busy_bus[2 * i] | 
-                                               w_rf_nco_busy_bus[2 * i + 1];
-        end
-        else begin : SINGLE
-            assign w_rf_nco_tile_busy_bus[i] = w_rf_nco_busy_bus[2 * i];
-        end
     end
 
     // li axil regs and adc instantiation
@@ -480,7 +504,6 @@ module simulator;
             .s_axi_rvalid(),
             .s_axi_rready(1'b1),
             .s_axi_rdata(),
-            .s_axi_rresp(),
 
             .o_seq_regs(w_li_seq_regs[i]),
             .o_ctrl_regs(w_li_ctrl_regs[i])
@@ -493,6 +516,43 @@ module simulator;
             .o_QIx4(w_li_QIx4_bus[i]), 
             .i_sample_mask(w_li_sample_mask_bus[i]),
             .o_sample_spike(w_li_sample_spike_bus[i])
+        );
+
+    end
+
+    // ex axil regs and dac instantiation
+    for (genvar i = 0; i < NUM_RF_CHANNEL; i++) begin : RF_IO_GEN
+
+        ex_regs #(
+            .NUM_SEQ_REGS(EX_SEQ_REGS),
+        ) REGS (
+            .s_axi_aclk(w_dcrfli_clk),
+            .s_axi_aresetn(w_dcrfli_rst_n),
+
+            .s_axi_awvalid(w_rf_awvalid_bus[i]), 
+            .s_axi_awready(w_rf_awready_bus[i]),
+            .s_axi_awaddr(w_rf_awaddr_bus[i]),
+
+            .s_axi_wvalid(w_rf_wvalid_bus[i]),
+            .s_axi_wready(w_rf_wready_bus[i]),
+            .s_axi_wdata(w_rf_wdata_bus[i]),
+            .s_axi_wstrb(w_rf_wstrb_bus[i]),
+
+            .s_axi_bvalid(w_rf_bvalid_bus[i]),
+            .s_axi_bready(w_rf_bready_bus[i]),
+            .s_axi_bresp(w_rf_bresp_bus[i]),
+
+            // leave read ports unconencted
+            .s_axi_arvalid(1'b0),
+            .s_axi_arready(),
+            .s_axi_araddr(($clog2(EX_TOTAL_REGS*4))'('h0)),
+
+            .s_axi_rvalid(),
+            .s_axi_rready(1'b1),
+            .s_axi_rdata(),
+            .s_axi_rresp(),
+
+            .o_seq_regs(w_rf_seq_regs[i])
         );
 
     end
