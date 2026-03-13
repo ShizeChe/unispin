@@ -3,6 +3,7 @@ wvRenameGroup -win $nw {G1} {uart}
 wvAddGroup -win $nw {dc}
 wvAddGroup -win $nw {rf}
 wvAddGroup -win $nw {li}
+wvAddGroup -win $nw {ex}
 wvAddGroup -win $nw {launch}
 wvAddGroup -win $nw {v}
 
@@ -12,6 +13,7 @@ wvAddSignal -win $nw "simulator/vdc" \
                      "simulator/vrf" \
                      "simulator/vrf_I" \
                      "simulator/vrf_Q" \
+                     "simulator/vex" \
                      "simulator/w_li_sample_mask_bus" \
                      "simulator/w_li_sample_spike_bus"
 
@@ -78,7 +80,8 @@ wvAddSignal -win $nw "/simulator/DCRFLI/LCH/i_clk" \
                      "/simulator/DCRFLI/LCH/w_next_state" \
                      "/simulator/DCRFLI/LCH/r_dc_active_mask" \
                      "/simulator/DCRFLI/LCH/r_rf_active_mask" \
-                     "/simulator/DCRFLI/LCH/r_li_active_mask"
+                     "/simulator/DCRFLI/LCH/r_li_active_mask" \
+                     "/simulator/DCRFLI/LCH/r_ex_active_mask"
 
 wvSetPosition -win $nw {("launch/LCH/new" 0)}
 wvAddSignal -win $nw "/simulator/DCRFLI/LCH/i_regs" \
@@ -97,18 +100,22 @@ wvAddSignal -win $nw "/simulator/DCRFLI/LCH/i_trigger" \
                      "/simulator/DCRFLI/LCH/i_dc_armed" \
                      "/simulator/DCRFLI/LCH/i_rf_armed" \
                      "/simulator/DCRFLI/LCH/i_li_armed" \
+                     "/simulator/DCRFLI/LCH/i_ex_armed" \
                      "/simulator/DCRFLI/LCH/r_dc_armed" \
                      "/simulator/DCRFLI/LCH/r_rf_armed" \
                      "/simulator/DCRFLI/LCH/r_li_armed" \
+                     "/simulator/DCRFLI/LCH/r_ex_armed" \
                      "/simulator/DCRFLI/LCH/w_dc_ready" \
                      "/simulator/DCRFLI/LCH/w_rf_ready" \
                      "/simulator/DCRFLI/LCH/w_li_ready" \
+                     "/simulator/DCRFLI/LCH/w_ex_ready" \
                      "/simulator/DCRFLI/LCH/w_all_ready"
 
 wvSetPosition -win $nw {("launch/LCH/start" 0)}
 wvAddSignal -win $nw "/simulator/DCRFLI/LCH/o_dc_start" \
                      "/simulator/DCRFLI/LCH/o_rf_start" \
-                     "/simulator/DCRFLI/LCH/o_li_start"
+                     "/simulator/DCRFLI/LCH/o_li_start" \
+                     "/simulator/DCRFLI/LCH/o_ex_start"
 
 wvCollapseGroup -win $nw "launch/AXIL_REGS/aw"
 wvCollapseGroup -win $nw "launch/AXIL_REGS/w"
@@ -627,8 +634,6 @@ for {set ch 5} {$ch >= 0} {incr ch -1} {
 
     wvSetPosition -win $nw [format {("rf/ch%d/CTRL" 0)} $ch]
     wvAddSignal -win $nw "/simulator/DCRFLI/RF_GEN\[$ch\]/RF/CTRL/o_ctrl" \
-                         "/simulator/DCRFLI/RF_GEN\[$ch\]/RF/CTRL/r_nco_freq" \
-                         "/simulator/DCRFLI/RF_GEN\[$ch\]/RF/CTRL/r_nco_phase" \
                          "/simulator/DCRFLI/RF_GEN\[$ch\]/RF/CTRL/r_default_I" \
                          "/simulator/DCRFLI/RF_GEN\[$ch\]/RF/CTRL/r_default_Q"
 
@@ -643,23 +648,6 @@ for {set ch 5} {$ch >= 0} {incr ch -1} {
                          "/simulator/DCRFLI/RF_GEN\[$ch\]/RF/CTRL/w_ulast0_ff1" \
                          "/simulator/DCRFLI/RF_GEN\[$ch\]/RF/CTRL/w_ulast0_ff2" \
                          "/simulator/DCRFLI/RF_GEN\[$ch\]/RF/CTRL/w_new_uctrl"
-
-    wvSetPosition -win $nw [format {("rf/ch%d/CTRL/update/nco" 0)} $ch]
-    wvAddSignal -win $nw "/simulator/DCRFLI/RF_GEN\[$ch\]/RF/CTRL/w_nco_freq" \
-                         "/simulator/DCRFLI/RF_GEN\[$ch\]/RF/CTRL/w_nco_phase" \
-                         "/simulator/DCRFLI/RF_GEN\[$ch\]/RF/CTRL/w_nco_en" \
-                         "/simulator/DCRFLI/RF_GEN\[$ch\]/RF/CTRL/w_default_I" \
-                         "/simulator/DCRFLI/RF_GEN\[$ch\]/RF/CTRL/w_default_Q"
-
-    wvSetPosition -win $nw [format {("rf/ch%d/CTRL/update/fsm" 0)} $ch]
-    wvAddSignal -win $nw "/simulator/DCRFLI/RF_GEN\[$ch\]/RF/CTRL/FSM/i_wait" \
-                         "/simulator/DCRFLI/RF_GEN\[$ch\]/RF/CTRL/FSM/o_wait" \
-                         "/simulator/DCRFLI/RF_GEN\[$ch\]/RF/CTRL/FSM/i_start" \
-                         "/simulator/DCRFLI/RF_GEN\[$ch\]/RF/CTRL/FSM/w_set_req" \
-                         "/simulator/DCRFLI/RF_GEN\[$ch\]/RF/CTRL/FSM/o_req" \
-                         "/simulator/DCRFLI/RF_GEN\[$ch\]/RF/CTRL/FSM/i_busy" \
-                         "/simulator/DCRFLI/RF_GEN\[$ch\]/RF/CTRL/FSM/r_state" \
-                         "/simulator/DCRFLI/RF_GEN\[$ch\]/RF/CTRL/FSM/w_next_state"
 
     # DAC
     wvSelectGroup -win $nw "rf/ch$ch/DAC"
@@ -942,6 +930,173 @@ for {set ch 1} {$ch >= 0} {incr ch -1} {
 }
 
 wvCollapseGroup -win $nw "li"
+
+# ex
+for {set ch 1} {$ch >= 0} {incr ch -1} {
+
+    wvSelectGroup -win $nw {ex}
+    wvAddSubGroup -win $nw "ch$ch"
+
+    wvSelectGroup -win $nw "ex/ch$ch"
+    wvAddSubGroup -win $nw "DAC"
+    wvAddSubGroup -win $nw "CORE"
+    wvAddSubGroup -win $nw "SEQ"
+    wvAddSubGroup -win $nw "AXIL_REGS"
+
+    # AXIL REGS
+    wvSelectGroup -win $nw "ex/ch$ch/AXIL_REGS"
+    wvAddSubGroup -win $nw "r"
+    wvAddSubGroup -win $nw "ar"
+    wvAddSubGroup -win $nw "b"
+    wvAddSubGroup -win $nw "w"
+    wvAddSubGroup -win $nw "aw"
+
+    wvSetPosition -win $nw [format {("ex/ch%d/AXIL_REGS" 0)} $ch]
+    wvAddSignal -win $nw "/simulator/EX_IO_GEN\[$ch\]/REGS/AXIL_REGS/i_aclk" \
+                         "/simulator/EX_IO_GEN\[$ch\]/REGS/AXIL_REGS/i_aresetn" \
+                         "/simulator/EX_IO_GEN\[$ch\]/REGS/AXIL_REGS/r_regs" \
+                         "/simulator/EX_IO_GEN\[$ch\]/REGS/AXIL_REGS/o_regs"
+
+    wvSetPosition -win $nw [format {("ex/ch%d/AXIL_REGS/aw" 0)} $ch]
+    wvAddSignal -win $nw "/simulator/EX_IO_GEN\[$ch\]/REGS/AXIL_REGS/o_awready" \
+                         "/simulator/EX_IO_GEN\[$ch\]/REGS/AXIL_REGS/i_awvalid" \
+                         "/simulator/EX_IO_GEN\[$ch\]/REGS/AXIL_REGS/i_awaddr" \
+                         "/simulator/EX_IO_GEN\[$ch\]/REGS/AXIL_REGS/w_awireg" \
+                         "/simulator/EX_IO_GEN\[$ch\]/REGS/AXIL_REGS/w_awls2b"
+
+    wvSetPosition -win $nw [format {("ex/ch%d/AXIL_REGS/w" 0)} $ch]
+    wvAddSignal -win $nw "/simulator/EX_IO_GEN\[$ch\]/REGS/AXIL_REGS/o_wready" \
+                         "/simulator/EX_IO_GEN\[$ch\]/REGS/AXIL_REGS/i_wvalid" \
+                         "/simulator/EX_IO_GEN\[$ch\]/REGS/AXIL_REGS/i_wdata" \
+                         "/simulator/EX_IO_GEN\[$ch\]/REGS/AXIL_REGS/i_wstrb" \
+                         "/simulator/EX_IO_GEN\[$ch\]/REGS/AXIL_REGS/w_wdatastrb"
+
+    wvSetPosition -win $nw [format {("ex/ch%d/AXIL_REGS/b" 0)} $ch]
+    wvAddSignal -win $nw "/simulator/EX_IO_GEN\[$ch\]/REGS/AXIL_REGS/i_bready" \
+                         "/simulator/EX_IO_GEN\[$ch\]/REGS/AXIL_REGS/o_bvalid" \
+                         "/simulator/EX_IO_GEN\[$ch\]/REGS/AXIL_REGS/o_bresp"
+
+    wvSetPosition -win $nw [format {("ex/ch%d/AXIL_REGS/ar" 0)} $ch]
+    wvAddSignal -win $nw "/simulator/EX_IO_GEN\[$ch\]/REGS/AXIL_REGS/o_arready" \
+                         "/simulator/EX_IO_GEN\[$ch\]/REGS/AXIL_REGS/i_arvalid" \
+                         "/simulator/EX_IO_GEN\[$ch\]/REGS/AXIL_REGS/i_araddr" \
+                         "/simulator/EX_IO_GEN\[$ch\]/REGS/AXIL_REGS/w_arireg" \
+                         "/simulator/EX_IO_GEN\[$ch\]/REGS/AXIL_REGS/w_arls2b"
+
+    wvSetPosition -win $nw [format {("ex/ch%d/AXIL_REGS/r" 0)} $ch]
+    wvAddSignal -win $nw "/simulator/EX_IO_GEN\[$ch\]/REGS/AXIL_REGS/i_rready" \
+                         "/simulator/EX_IO_GEN\[$ch\]/REGS/AXIL_REGS/o_rvalid" \
+                         "/simulator/EX_IO_GEN\[$ch\]/REGS/AXIL_REGS/o_rdata" \
+                         "/simulator/EX_IO_GEN\[$ch\]/REGS/AXIL_REGS/o_rresp"
+
+    # SEQ
+    wvSelectGroup -win $nw "ex/ch$ch/SEQ"
+    wvAddSubGroup -win $nw "out"
+    wvAddSubGroup -win $nw "fetch"
+    wvAddSubGroup -win $nw "new"
+
+    wvSetPosition -win $nw [format {("ex/ch%d/SEQ" 0)} $ch]
+    wvAddSignal -win $nw "/simulator/DCRFLI/EX_GEN\[$ch\]/EX/SEQ/i_clk" \
+                         "/simulator/DCRFLI/EX_GEN\[$ch\]/EX/SEQ/i_rst" \
+                         "/simulator/DCRFLI/EX_GEN\[$ch\]/EX/SEQ/w_propagate"
+
+    wvSetPosition -win $nw [format {("ex/ch%d/SEQ/new" 0)} $ch]
+    wvAddSignal -win $nw "/simulator/DCRFLI/EX_GEN\[$ch\]/EX/SEQ/i_regs" \
+                         "/simulator/DCRFLI/EX_GEN\[$ch\]/EX/SEQ/w_last0" \
+                         "/simulator/DCRFLI/EX_GEN\[$ch\]/EX/SEQ/w_last0_ff1" \
+                         "/simulator/DCRFLI/EX_GEN\[$ch\]/EX/SEQ/w_last0_ff2" \
+                         "/simulator/DCRFLI/EX_GEN\[$ch\]/EX/SEQ/w_new_sequence" \
+                         "/simulator/DCRFLI/EX_GEN\[$ch\]/EX/SEQ/i_uregs" \
+                         "/simulator/DCRFLI/EX_GEN\[$ch\]/EX/SEQ/w_ulast0" \
+                         "/simulator/DCRFLI/EX_GEN\[$ch\]/EX/SEQ/w_ulast0_ff1" \
+                         "/simulator/DCRFLI/EX_GEN\[$ch\]/EX/SEQ/w_ulast0_ff2" \
+                         "/simulator/DCRFLI/EX_GEN\[$ch\]/EX/SEQ/w_new_usequence"
+
+    wvSetPosition -win $nw [format {("ex/ch%d/SEQ/fetch" 0)} $ch]
+    wvAddSignal -win $nw "/simulator/DCRFLI/EX_GEN\[$ch\]/EX/SEQ/r_sequence" \
+                         "/simulator/DCRFLI/EX_GEN\[$ch\]/EX/SEQ/r_iters" \
+                         "/simulator/DCRFLI/EX_GEN\[$ch\]/EX/SEQ/r_iptr" \
+                         "/simulator/DCRFLI/EX_GEN\[$ch\]/EX/SEQ/w_insn_fetch" \
+                         "/simulator/DCRFLI/EX_GEN\[$ch\]/EX/SEQ/w_insn_bubble" \
+                         "/simulator/DCRFLI/EX_GEN\[$ch\]/EX/SEQ/w_iptr_plus1" \
+                         "/simulator/DCRFLI/EX_GEN\[$ch\]/EX/SEQ/w_next_null"
+
+    wvSetPosition -win $nw [format {("ex/ch%d/SEQ/out" 0)} $ch]
+    wvAddSignal -win $nw "/simulator/DCRFLI/EX_GEN\[$ch\]/EX/SEQ/o_empty" \
+                         "/simulator/DCRFLI/EX_GEN\[$ch\]/EX/SEQ/i_next" \
+                         "/simulator/DCRFLI/EX_GEN\[$ch\]/EX/SEQ/o_addr" \
+                         "/simulator/DCRFLI/EX_GEN\[$ch\]/EX/SEQ/o_insn" \
+                         "/simulator/DCRFLI/EX_GEN\[$ch\]/EX/SEQ/r_iptr_modify" \
+                         "/simulator/DCRFLI/EX_GEN\[$ch\]/EX/SEQ/i_insn_modified"
+
+    # CORE
+    wvSelectGroup -win $nw "ex/ch$ch/CORE"
+    wvAddSubGroup -win $nw "out"
+    wvAddSubGroup -win $nw "count"
+    wvAddSubGroup -win $nw "decode"
+
+    wvSetPosition -win $nw [format {("ex/ch%d/CORE" 0)} $ch]
+    wvAddSignal -win $nw "/simulator/DCRFLI/EX_GEN\[$ch\]/EX/CORE/i_clk" \
+                         "/simulator/DCRFLI/EX_GEN\[$ch\]/EX/CORE/i_rst" \
+                         "/simulator/DCRFLI/EX_GEN\[$ch\]/EX/CORE/w_stall" \
+                         "/simulator/DCRFLI/EX_GEN\[$ch\]/EX/CORE/o_empty"
+
+    wvSetPosition -win $nw [format {("ex/ch%d/CORE/decode" 0)} $ch]
+    wvAddSignal -win $nw "/simulator/DCRFLI/EX_GEN\[$ch\]/EX/CORE/d" \
+                         "/simulator/DCRFLI/EX_GEN\[$ch\]/EX/CORE/i_empty" \
+                         "/simulator/DCRFLI/EX_GEN\[$ch\]/EX/CORE/o_next" \
+                         "/simulator/DCRFLI/EX_GEN\[$ch\]/EX/CORE/i_addr" \
+                         "/simulator/DCRFLI/EX_GEN\[$ch\]/EX/CORE/i_insn" \
+                         "/simulator/DCRFLI/EX_GEN\[$ch\]/EX/CORE/o_insn_modified" \
+                         "/simulator/DCRFLI/EX_GEN\[$ch\]/EX/CORE/i_start"
+
+    wvSetPosition -win $nw [format {("ex/ch%d/CORE/count" 0)} $ch]
+    wvAddSignal -win $nw "/simulator/DCRFLI/EX_GEN\[$ch\]/EX/CORE/c"
+
+    wvSetPosition -win $nw [format {("ex/ch%d/CORE/out" 0)} $ch]
+    wvAddSignal -win $nw "/simulator/DCRFLI/EX_GEN\[$ch\]/EX/CORE/o" \
+                         "/simulator/DCRFLI/EX_GEN\[$ch\]/EX/CORE/o_realx16" \
+                         "/simulator/DCRFLI/EX_GEN\[$ch\]/EX/CORE/o_eop"
+
+    # DAC
+    wvSelectGroup -win $nw "ex/ch$ch/DAC"
+
+    wvSetPosition -win $nw [format {("ex/ch%d/DAC" 0)} $ch]
+    wvAddSignal -win $nw "/simulator/EX_IO_GEN\[$ch\]/DAC/i_clk" \
+                         "/simulator/EX_IO_GEN\[$ch\]/DAC/i_dac_clk" \
+                         "/simulator/EX_IO_GEN\[$ch\]/DAC/dac_cycle" \
+                         "/simulator/EX_IO_GEN\[$ch\]/DAC/i_realx16" \
+                         "/simulator/EX_IO_GEN\[$ch\]/DAC/w_realx16" \
+                         "/simulator/EX_IO_GEN\[$ch\]/DAC/o_vex"
+
+}
+
+for {set ch 1} {$ch >= 0} {incr ch -1} {
+
+    wvCollapseGroup -win $nw "ex/ch$ch/AXIL_REGS/aw"
+    wvCollapseGroup -win $nw "ex/ch$ch/AXIL_REGS/w"
+    wvCollapseGroup -win $nw "ex/ch$ch/AXIL_REGS/b"
+    wvCollapseGroup -win $nw "ex/ch$ch/AXIL_REGS/ar"
+    wvCollapseGroup -win $nw "ex/ch$ch/AXIL_REGS/r"
+    wvCollapseGroup -win $nw "ex/ch$ch/AXIL_REGS"
+
+    wvCollapseGroup -win $nw "ex/ch$ch/SEQ/new"
+    wvCollapseGroup -win $nw "ex/ch$ch/SEQ/fetch"
+    wvCollapseGroup -win $nw "ex/ch$ch/SEQ/out"
+    wvCollapseGroup -win $nw "ex/ch$ch/SEQ"
+
+    wvCollapseGroup -win $nw "ex/ch$ch/CORE/decode"
+    wvCollapseGroup -win $nw "ex/ch$ch/CORE/count"
+    wvCollapseGroup -win $nw "ex/ch$ch/CORE/out"
+    wvCollapseGroup -win $nw "ex/ch$ch/CORE"
+
+    wvCollapseGroup -win $nw "ex/ch$ch/DAC"
+
+    wvCollapseGroup -win $nw "ex/ch$ch"
+
+}
+
+wvCollapseGroup -win $nw "ex"
 
 wvAddGroup -win $nw {btn}
 

@@ -13,7 +13,7 @@ Scriapin (Spin + Control Resource Integration Architecture) is an integrated qua
 
 Each aforementioned signal/measurement channel has its own fully-pipelined control core. Each core/channel can be programmed to iteratively executes a set of custom assembly instructions in which precise timing of the pulses can be specified. See the annotated Rabi example below for a feeling of this execution model.
 
-```asm
+```text
 .program rf0                 # program for RF channel 0
 .fnco 10MHz                  # baseband signal is 10MHz
 .repeat 100                  # this program repeats 100 times

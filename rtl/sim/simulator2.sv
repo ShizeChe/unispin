@@ -3,6 +3,7 @@
 `include "include/dc.svh"
 `include "include/rf.svh"
 `include "include/li.svh"
+`include "include/ex.svh"
 
 import "DPI-C" function int cmd_open(input string path);
 import "DPI-C" function int cmd_accept_poll(input int timeout_ms);
@@ -22,7 +23,7 @@ module simulator;
     ********************/
 
     // clocks and reset
-    logic w_dcrfli_clk, w_rf_dac_clk, w_li_adc_clk, w_dcrfli_rst_n;
+    logic w_dcrfli_clk, w_rf_dac_clk, w_li_adc_clk, w_ex_dac_clk, w_dcrfli_rst_n;
 
     // dc axi bus
     localparam DC_TOTAL_REGS = DC_SEQ_REGS + DC_CTRL_REGS;
@@ -125,6 +126,12 @@ module simulator;
     logic [0:NUM_LI_CHANNEL-1][3:0] w_li_sample_mask_bus;
     logic [0:NUM_LI_CHANNEL-1] w_li_sample_spike_bus;
 
+    // li axi write
+    logic [0:NUM_LI_CHANNEL-1][LI_ADC_WIDTH*8-1:0] w_li_QIx4_save_bus;
+    logic [0:NUM_LI_CHANNEL-1][3:0] w_li_validx4_bus;
+    logic [0:NUM_LI_CHANNEL-1] w_li_last_bus;
+    li_ctrl_t [0:NUM_LI_CHANNEL-1] w_li_ctrl_bus;
+
     // ex axi bus
     localparam EX_TOTAL_REGS = EX_SEQ_REGS;
 
@@ -147,8 +154,11 @@ module simulator;
 
     logic [NUM_EX_CHANNEL-1:0] w_ex_armed_bus;
 
+    // ex empty bus
+    logic [0:NUM_EX_CHANNEL-1] w_ex_empty_bus;
+
     // ex voltage output
-    logic [0:NUM_EX_CHANNEL-1][EX_IQ_WIDTH-1:0] vex;
+    logic [0:NUM_EX_CHANNEL-1][EX_REAL_WIDTH-1:0] vex;
 
     // launch axi bus
     logic w_lch_awvalid;
@@ -466,9 +476,9 @@ module simulator;
 
             .i_nco_req(1'b0),
             .o_nco_busy(),
-            .i_nco_freq('h0),
-            .i_nco_phase('h0),
-            .i_nco_en('h0)
+            .i_nco_freq(48'h0),
+            .i_nco_phase(18'h0),
+            .i_nco_en(6'h0)
         );
 
     end
@@ -504,6 +514,7 @@ module simulator;
             .s_axi_rvalid(),
             .s_axi_rready(1'b1),
             .s_axi_rdata(),
+            .s_axi_rresp(),
 
             .o_seq_regs(w_li_seq_regs[i]),
             .o_ctrl_regs(w_li_ctrl_regs[i])
@@ -521,26 +532,26 @@ module simulator;
     end
 
     // ex axil regs and dac instantiation
-    for (genvar i = 0; i < NUM_RF_CHANNEL; i++) begin : RF_IO_GEN
+    for (genvar i = 0; i < NUM_EX_CHANNEL; i++) begin : EX_IO_GEN
 
         ex_regs #(
-            .NUM_SEQ_REGS(EX_SEQ_REGS),
+            .NUM_SEQ_REGS(EX_SEQ_REGS)
         ) REGS (
             .s_axi_aclk(w_dcrfli_clk),
             .s_axi_aresetn(w_dcrfli_rst_n),
 
-            .s_axi_awvalid(w_rf_awvalid_bus[i]), 
-            .s_axi_awready(w_rf_awready_bus[i]),
-            .s_axi_awaddr(w_rf_awaddr_bus[i]),
+            .s_axi_awvalid(w_ex_awvalid_bus[i]), 
+            .s_axi_awready(w_ex_awready_bus[i]),
+            .s_axi_awaddr(w_ex_awaddr_bus[i]),
 
-            .s_axi_wvalid(w_rf_wvalid_bus[i]),
-            .s_axi_wready(w_rf_wready_bus[i]),
-            .s_axi_wdata(w_rf_wdata_bus[i]),
-            .s_axi_wstrb(w_rf_wstrb_bus[i]),
+            .s_axi_wvalid(w_ex_wvalid_bus[i]),
+            .s_axi_wready(w_ex_wready_bus[i]),
+            .s_axi_wdata(w_ex_wdata_bus[i]),
+            .s_axi_wstrb(w_ex_wstrb_bus[i]),
 
-            .s_axi_bvalid(w_rf_bvalid_bus[i]),
-            .s_axi_bready(w_rf_bready_bus[i]),
-            .s_axi_bresp(w_rf_bresp_bus[i]),
+            .s_axi_bvalid(w_ex_bvalid_bus[i]),
+            .s_axi_bready(w_ex_bready_bus[i]),
+            .s_axi_bresp(w_ex_bresp_bus[i]),
 
             // leave read ports unconencted
             .s_axi_arvalid(1'b0),
@@ -552,7 +563,14 @@ module simulator;
             .s_axi_rdata(),
             .s_axi_rresp(),
 
-            .o_seq_regs(w_rf_seq_regs[i])
+            .o_seq_regs(w_ex_seq_regs[i])
+        );
+
+        zcu216_real_dac DAC (
+            .i_clk(w_dcrfli_clk),
+            .i_dac_clk(w_ex_dac_clk),
+            .i_realx16(w_ex_realx16_bus[i]), 
+            .o_vex(vex[i])
         );
 
     end
@@ -758,6 +776,60 @@ module simulator;
 
     endtask
 
+    task automatic ex_axil_write(int ch); 
+
+        $display("ex_axil_write channel%0d", ch);
+
+        @(negedge w_dcrfli_clk);
+
+        w_ex_awvalid_bus[ch] = 1'b1;
+        w_ex_wvalid_bus[ch] = 1'b1;
+        w_ex_bready_bus[ch] = 1'b0;
+
+        $display("pre fork");
+
+        fork 
+
+            begin: AWREADY
+                forever begin
+                    if (w_ex_awvalid_bus[ch] && w_ex_awready_bus[ch]) begin
+                        @(negedge w_dcrfli_clk);
+                        w_ex_awvalid_bus[ch] = 1'b0;
+                        break;
+                    end
+                    else @(negedge w_dcrfli_clk);
+                end
+            end
+            
+            begin: WREADY
+                forever begin
+                    if (w_ex_wvalid_bus[ch] && w_ex_wready_bus[ch]) begin
+                        @(negedge w_dcrfli_clk);
+                        w_ex_wvalid_bus[ch] = 1'b0;
+                        break;
+                    end
+                    else @(negedge w_dcrfli_clk);
+                end
+            end
+
+        join
+
+        $display("post fork");
+        w_ex_bready_bus[ch] = 1'b1;
+
+        forever begin
+            if (w_ex_bvalid_bus[ch] && w_ex_bready_bus[ch]) begin
+                @(negedge w_dcrfli_clk);
+                w_ex_bready_bus[ch] = 1'b0;
+                assert (w_ex_bresp_bus[ch] == 2'b00)
+                else $fatal(1, "Bad bresp: %0b", w_ex_bresp_bus[ch]);
+                break;
+            end
+            else @(negedge w_dcrfli_clk);
+        end
+
+    endtask
+
     task automatic lch_axil_write; 
 
         $display("lch_axil_write");
@@ -839,7 +911,7 @@ module simulator;
 
             rf_axil_write(i - NUM_DC_CHANNEL);
 
-            $display("dc%0d axil write finished", i);
+            $display("rf%0d axil write finished", i);
 
         end
         else if ((NUM_DC_CHANNEL + NUM_RF_CHANNEL) <= i && i < (NUM_DC_CHANNEL + NUM_RF_CHANNEL + NUM_LI_CHANNEL)) begin
@@ -852,7 +924,21 @@ module simulator;
 
             li_axil_write(i - NUM_DC_CHANNEL - NUM_RF_CHANNEL);
 
-            $display("dc%0d axil write finished", i);
+            $display("li%0d axil write finished", i);
+
+        end
+        else if ((NUM_DC_CHANNEL + NUM_RF_CHANNEL + NUM_LI_CHANNEL) <= i && 
+            i < (NUM_DC_CHANNEL + NUM_RF_CHANNEL + NUM_LI_CHANNEL + NUM_EX_CHANNEL)) begin
+
+            $display("li%0d", i - NUM_LI_CHANNEL - NUM_DC_CHANNEL - NUM_RF_CHANNEL);
+
+            w_ex_awaddr_bus[i - NUM_LI_CHANNEL - NUM_DC_CHANNEL - NUM_RF_CHANNEL] = addr[$clog2(EX_TOTAL_REGS*4)-1:0];
+            w_ex_wdata_bus[i - NUM_LI_CHANNEL - NUM_DC_CHANNEL - NUM_RF_CHANNEL] = data;
+            w_ex_wstrb_bus[i - NUM_LI_CHANNEL - NUM_DC_CHANNEL - NUM_RF_CHANNEL] = 4'hf;
+
+            ex_axil_write(i - NUM_LI_CHANNEL - NUM_DC_CHANNEL - NUM_RF_CHANNEL);
+
+            $display("ex%0d axil write finished", i);
 
         end
         else begin
@@ -887,6 +973,11 @@ module simulator;
         forever #0.5 w_li_adc_clk = !w_li_adc_clk;
     end
 
+    initial begin
+        w_ex_dac_clk = 1'b1;
+        forever #0.125 w_ex_dac_clk = !w_ex_dac_clk;
+    end
+
     // reset
     initial begin
 
@@ -918,6 +1009,7 @@ module simulator;
     logic [NUM_DC_CHANNEL-1:0] dc_armed;
     logic [NUM_RF_CHANNEL-1:0] rf_armed;
     logic [NUM_LI_CHANNEL-1:0] li_armed;
+    logic [NUM_EX_CHANNEL-1:0] ex_armed;
 
     int all_empty;
 
@@ -926,6 +1018,7 @@ module simulator;
         dc_armed = 'h0;
         rf_armed = 'h0;
         li_armed = 'h0;
+        ex_armed = 'h0;
         all_empty = 1;
 
         forever begin
@@ -965,19 +1058,32 @@ module simulator;
 
             end
 
+            for (int i = 0; i < NUM_EX_CHANNEL; i++) begin
+
+                if (!ex_armed[i] && w_ex_armed_bus[i])
+                    $display("At %0.3f: EX %0d armed", $realtime, i);
+                else if (ex_armed[i] && !w_ex_armed_bus[i])
+                    $display("At %0.3f: EX %0d started", $realtime, i);
+
+                ex_armed[i] = w_ex_armed_bus[i];
+
+            end
+
             if (DCRFLI.LCH.w_all_ready) begin
                 $display("At %0.3f: LAUNCH sees all ready", $realtime);
             end
 
             if (all_empty && !(w_dc_empty_bus == {(NUM_DC_CHANNEL){1'b1}} && 
                 w_rf_empty_bus == {(NUM_RF_CHANNEL){1'b1}} && 
-                w_li_empty_bus == {(NUM_LI_CHANNEL){1'b1}})) begin
+                w_li_empty_bus == {(NUM_LI_CHANNEL){1'b1}} &&
+                w_ex_empty_bus == {(NUM_EX_CHANNEL){1'b1}})) begin
                 $display("At %0.3f: not all empty", $realtime);
                 all_empty = 0;
             end
             else if (!all_empty && (w_dc_empty_bus == {(NUM_DC_CHANNEL){1'b1}} && 
                 w_rf_empty_bus == {(NUM_RF_CHANNEL){1'b1}} &&
-                w_li_empty_bus == {(NUM_LI_CHANNEL){1'b1}})) begin
+                w_li_empty_bus == {(NUM_LI_CHANNEL){1'b1}} &&
+                w_ex_empty_bus == {(NUM_EX_CHANNEL){1'b1}})) begin
                 $display("At %0.3f: all empty", $realtime);
                 all_empty = 1;
             end

@@ -4,7 +4,7 @@
 #include <stdint.h>
 #include "common.h"
 
-#define LAUNCH_TOTAL_REGS 4
+#define LAUNCH_TOTAL_REGS 5
 
 typedef struct {
     uint32_t dc_chmask;

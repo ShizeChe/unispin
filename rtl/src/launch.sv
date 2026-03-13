@@ -64,20 +64,20 @@ module launch
             r_dc_active_mask <= i_uregs[0][NUM_DC_CHANNEL-1:0];
             r_rf_active_mask <= i_uregs[1][NUM_RF_CHANNEL-1:0];
             r_li_active_mask <= i_uregs[2][NUM_LI_CHANNEL-1:0];
-            r_ex_active_mask <= i_uregs[3][NUM_LI_CHANNEL-1:0];
+            r_ex_active_mask <= i_uregs[3][NUM_EX_CHANNEL-1:0];
         end
         else if (w_new_stream) begin
             r_dc_active_mask <= i_regs[0][NUM_DC_CHANNEL-1:0];
             r_rf_active_mask <= i_regs[1][NUM_RF_CHANNEL-1:0];
             r_li_active_mask <= i_regs[2][NUM_LI_CHANNEL-1:0];
-            r_ex_active_mask <= i_regs[3][NUM_LI_CHANNEL-1:0];
+            r_ex_active_mask <= i_regs[3][NUM_EX_CHANNEL-1:0];
         end
     end
 
     logic [NUM_DC_CHANNEL-1:0] r_dc_armed;
     logic [NUM_RF_CHANNEL-1:0] r_rf_armed;
     logic [NUM_LI_CHANNEL-1:0] r_li_armed;
-    logic [NUM_LI_CHANNEL-1:0] r_ex_armed;
+    logic [NUM_EX_CHANNEL-1:0] r_ex_armed;
 
     always_ff @(posedge i_clk) begin
         if (i_rst) begin

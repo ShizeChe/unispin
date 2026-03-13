@@ -652,13 +652,14 @@ static int write_sim(dc_program_t *dc_programs[],
 
     if (launch != NULL) {
 
-        uint32_t base = (DC_CHANNELS + RF_CHANNELS + LI_CHANNELS) * page_size;
+        uint32_t base = (DC_CHANNELS + RF_CHANNELS + LI_CHANNELS + 2) * page_size;
 
         sim_sendf("0x%08X 0x%08X\n", base + (LAUNCH_TOTAL_REGS - 1) * 4, 0);
         
         sim_sendf("0x%08X 0x%08X\n", base, launch->dc_chmask);
         sim_sendf("0x%08X 0x%08X\n", base + 4, launch->rf_chmask);
         sim_sendf("0x%08X 0x%08X\n", base + 8, launch->li_chmask);
+        sim_sendf("0x%08X 0x%08X\n", base + 12, 0);
         sim_sendf("0x%08X 0x%08X\n", base + (LAUNCH_TOTAL_REGS - 1) * 4, 1);
 
     }

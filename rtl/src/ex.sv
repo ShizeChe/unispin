@@ -28,7 +28,7 @@ module ex
 
     logic w_next, w_empty;
     logic [$clog2(DEPTH)-1:0] w_addr;
-    rf_insn_t w_insn, w_insn_modified;
+    ex_insn_t w_insn, w_insn_modified;
 
     sequencer #(
         .INSN_WIDTH(INSN_WIDTH),
