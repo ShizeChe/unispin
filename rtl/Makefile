@@ -5,9 +5,10 @@ SIM := vcs
 # SRC := src/rf_decode.sv src/rf_phasor.sv src/rf_cordic.sv src/rf_core.sv src/sequencer.sv src/rf_nco_update.sv src/rf_ctrl.sv src/rf_format.sv src/rf.sv lib/zcu216_dac.sv
 # SRC :=  src/li.sv src/sequencer.sv src/li_core.sv src/li_ctrl.sv src/li_decode.sv src/li_sample.sv
 # SRC := lib/bram.sv lib/bram_fifo.sv
-SRC := src/rf_phasor.sv
+# SRC := src/rf_phasor.sv
+SRC := src/rf_cordic.sv
 
-TB ?= rf_phasor_tb
+TB ?= rf_cordic_tb
 # TB_SRC := sim/$(TB).sv
 TB_SRC := tb/$(TB).sv
 TARGET := $(TB)
