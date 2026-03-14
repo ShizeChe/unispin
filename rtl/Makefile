@@ -8,7 +8,7 @@ SRC := $(wildcard src/dc*) $(wildcard src/rf*) $(wildcard src/li*) $(wildcard sr
 # SRC := src/rf_phasor.sv
 # SRC := src/rf_cordic.sv
 
-TB ?= simulator2
+TB ?= simulator
 TB_SRC := sim/$(TB).sv
 # TB_SRC := tb/$(TB).sv
 TARGET := $(TB)
