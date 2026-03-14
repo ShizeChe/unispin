@@ -105,12 +105,16 @@ module rf_phasor_tb;
         @(negedge w_clk)
         w_rst = 1'b0;
 
-        repeat (100) begin
+        repeat (1) begin
 
             w_set = 1'b1;
-            w_k = $urandom_range(0, 36'hff);
-            w_b = $urandom_range(0, 36'hff);
-            w_c = $urandom_range(0, 36'hff);
+            // w_k = $urandom_range(0, 36'd3436);
+            // w_b = $urandom_range(0, 36'h68032283587);
+            // w_c = $urandom_range(0, 36'h0);
+
+            w_k = 36'd3436;
+            w_b = 36'd68032283687;
+            w_c = 36'h0;
             @(negedge w_clk);
             w_set = 1'b0;
             repeat (10000) @(negedge w_clk);

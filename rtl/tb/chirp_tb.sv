@@ -2,21 +2,16 @@
 
 module chirp_tb;
 
-    localparam PHASE_WIDTH = 18;
-    localparam IQ_WIDTH = 14;
-    localparam NUM_STAGES = 15;
-    localparam PAD_ZEROS = 8;
-
     logic w_clk, w_rst;
     logic w_set;
-    logic [35:0] w_k;
-    logic [35:0] w_b;
-    logic [35:0] w_c;
-    logic [7:0][17:0] w_p;
+    logic [RF_KBC_WIDTH:0] w_k;
+    logic [RF_KBC_WIDTH:0] w_b;
+    logic [RF_KBC_WIDTH:0] w_c;
+    logic [7:0][RF_PHASE_WIDTH:0] w_p;
 
-    parabolic_counterx8 #(
-        .IW(36),
-        .OW(PHASE_WIDTH)
+    rf_phasor #(
+        .IW(RF_KBC_WIDTH),
+        .OW(RF_PHASE_WIDTH)
     ) phase_counter (
         .i_clk(w_clk),
         .i_rst(w_rst),
@@ -27,13 +22,13 @@ module chirp_tb;
         .o_p(w_p)
     );
 
-    logic [7:0][PHASE_WIDTH-1:0] w_phasex8;
-    logic [7:0][IQ_WIDTH-1:0] w_Ix8, w_Qx8;
+    logic [7:0][RF_PHASE_WIDTH-1:0] w_phasex8;
+    logic [7:0][RF_IQ_WIDTH-1:0] w_Ix8, w_Qx8;
 
     assign w_phasex8 = w_p;
 
     for (genvar i = 0; i < 8; i++) begin
-        cordic #(
+        rf_cordic #(
             .PHASE_WIDTH(PHASE_WIDTH),
             .IQ_WIDTH(IQ_WIDTH),
             .NUM_STAGES(NUM_STAGES),

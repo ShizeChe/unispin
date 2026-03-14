@@ -1,7 +1,7 @@
 .program rf0
 .fnco 10MHz
 .repeat 1
-    chp f1=-5MHz f2=5MHz t=100us (arm)
+    ful kb 0xD6C 0xFD70A4427 t=100us (arm)
     idl t=10us
 
 .program li0

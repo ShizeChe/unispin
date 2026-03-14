@@ -27,34 +27,38 @@ static inline int64_t round_clamp(long double x) {
     return rx;
 }
 
-static inline int64_t k_formula(long double f_span_hz, long double t_ns) {
-    long double f_span_ghz      = f_span_hz * 1e-9L;
-    long double f_span_over_dac = f_span_ghz / (long double)RF_DAC_GHZ;
-    long double t_times_f_dac   = t_ns * (long double)RF_DAC_GHZ;
-
-    // 2^(N+1) safely
-    long double two_pow = ldexpl(1.0L, RF_KBC_BITS + 1);
-
-    long double k = two_pow / t_times_f_dac * f_span_over_dac;
-
-    return round_clamp(k);
+static uint64_t i64_to_u36(int64_t x)
+{
+    return ((uint64_t)x) & ((1ULL << 36) - 1);
 }
 
-static inline int64_t b_formula(long double f_span_hz, long double f_nco_hz, long double t_ns) {
-    long double f_span_ghz          = f_span_hz * 1e-9L;
-    long double f_nco_ghz           = f_nco_hz * 1e-9L;
-    long double f_span_over_dac     = f_span_ghz / (long double)RF_DAC_GHZ;
-    long double f_span_nco_over_dac = (f_span_ghz + f_nco_ghz) / (long double)RF_DAC_GHZ;
-    long double t_times_f_dac       = t_ns * (long double)RF_DAC_GHZ;
+uint64_t b_formula(long double f1)
+{
+    const long double Ts = 0.5e-9L;
+    const long double phase_scale = 68719476736.0L; // 2^36
 
-    // 2^N safely
-    long double two_pow = ldexpl(1.0L, RF_KBC_BITS);
+    long double b_real = f1 * Ts * phase_scale;
+    int64_t b_i64 = (int64_t)llroundl(b_real);
 
-    long double first_term = two_pow / t_times_f_dac * f_span_over_dac;
-    long double second_term = two_pow * f_span_nco_over_dac;
-    long double b = first_term - second_term;
+    return i64_to_u36(b_i64);
+}
 
-    return round_clamp(b);
+uint64_t k_formula(long double f1, long double f2, long double t_ns)
+{
+    const long double Ts = 0.5e-9L;
+    const long double phase_scale = 68719476736.0L; // 2^36
+
+    int64_t N = (int64_t)llroundl(t_ns / 0.5L);
+    if (N < 2) {
+        return 0;
+    }
+
+    long double k_real =
+        (f2 - f1) * Ts * phase_scale / (long double)(N - 1);
+
+    int64_t k_i64 = (int64_t)llroundl(k_real);
+
+    return i64_to_u36(k_i64);
 }
 
 static void rf_chp2insn(rf_chp_t *chp, rf_insn_t *insn, long double fnco_hz) {
@@ -64,13 +68,13 @@ static void rf_chp2insn(rf_chp_t *chp, rf_insn_t *insn, long double fnco_hz) {
 
     // uint64_t k = real2twos(-180, 180 - ldexpl(1.0L, -RF_KBC_BITS), RF_KBC_BITS, k_deg, 1);
     // uint64_t b = real2twos(-180, 180 - ldexpl(1.0L, -RF_KBC_BITS), RF_KBC_BITS, b_deg, 1);
-    int64_t k = k_formula(chp->f2 - chp->f1, chp->t_ns);
-    int64_t b = b_formula(chp->f2 - chp->f1, fnco_hz, chp->t_ns);
+    uint64_t k = k_formula(chp->f2, chp->f1, (long double) chp->t_ns);
+    uint64_t b = b_formula(chp->f1 - fnco_hz);
 
     insn->arm = chp->opt.arm;
     insn->kbc_mode = 1;
-    insn->kbc1 = (uint64_t)k;
-    insn->kbc2 = (uint64_t)b;
+    insn->kbc1 = k;
+    insn->kbc2 = b;
     insn->samples = rf_t2samples(chp->t_ns);
     insn->dsamples = rf_t2samples(chp->opt.tplus_ns);
 

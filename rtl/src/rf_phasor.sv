@@ -36,6 +36,17 @@ module rf_phasor
     assign w_v_start[6] = 76 * i_k + (i_b << 3);
     assign w_v_start[7] = 84 * i_k + (i_b << 3);
 
+    logic [IW-1:0] r_kx64;
+
+    always_ff @(posedge i_clk) begin
+        if (i_rst) begin
+            r_kx64 <= 'h0;
+        end
+        else if (i_set) begin
+            r_kx64 <= i_k << 6;
+        end
+    end
+
     logic [7:0][IW-1:0] w_out;
 
     for (genvar i = 0; i < 8; i++) begin : PHASEx8
@@ -67,7 +78,8 @@ module rf_phasor
                     o_p[i] <= w_out[i][IW-1:IW-OW];
                     end
                 else begin
-                    r_v[i] <= r_v[i] + (i_k << 6);
+                    // r_v[i] <= r_v[i] + (i_k << 6);
+                    r_v[i] <= r_v[i] + r_kx64;
                     r_p[i] <= r_p[i] + r_v[i];
                     o_p[i] <= w_out[i][IW-1:IW-OW];
                 end
