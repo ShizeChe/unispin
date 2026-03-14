@@ -62,7 +62,7 @@ module rf_phasor_tb;
 
             // w_phase_golden = w_k * n * (n - 1) / 2 + w_b * n + w_c;
 
-            t_n   = 72'(n);
+            t_n   = 72'(n + 8);
             t1    = (72'(w_k) * t_n * (t_n - 72'd1)) / 72'd2;
             t2    = 72'(w_b) * t_n;
             t3    = 72'(w_c);
@@ -105,16 +105,16 @@ module rf_phasor_tb;
         @(negedge w_clk)
         w_rst = 1'b0;
 
-        repeat (1) begin
+        repeat (100) begin
 
             w_set = 1'b1;
-            // w_k = $urandom_range(0, 36'd3436);
-            // w_b = $urandom_range(0, 36'h68032283587);
-            // w_c = $urandom_range(0, 36'h0);
+            w_k = $urandom_range(0, 36'hFFFFFFFFF);
+            w_b = $urandom_range(0, 36'hFFFFFFFFF);
+            w_c = $urandom_range(0, 36'hFFFFFFFFF);
 
-            w_k = 36'd3436;
-            w_b = 36'd68032283687;
-            w_c = 36'h0;
+            // w_k = 36'd3436;
+            // w_b = 36'd68032283687;
+            // w_c = 36'h0;
             @(negedge w_clk);
             w_set = 1'b0;
             repeat (10000) @(negedge w_clk);

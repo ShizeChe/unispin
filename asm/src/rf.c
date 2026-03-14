@@ -16,60 +16,13 @@ static uint32_t rf_t2samples(double t_ns) {
     return samples;
 }
 
-static inline int64_t round_clamp(long double x) {
-    // Clamp to representable interval first
-    long double xc = fminl((long double)RF_KBC_MAX, fmaxl((long double)RF_KBC_MIN, x));
-    // Round to nearest (ties away from zero, per llroundl)
-    int64_t rx = (int64_t)llroundl(xc);
-    // Defensive clamp (in case of odd libm modes)
-    if (rx > RF_KBC_MAX) rx = RF_KBC_MAX;
-    if (rx < RF_KBC_MIN) rx = RF_KBC_MIN;
-    return rx;
-}
-
-static uint64_t i64_to_u36(int64_t x)
-{
-    return ((uint64_t)x) & ((1ULL << 36) - 1);
-}
-
-uint64_t b_formula(long double f1)
-{
-    const long double Ts = 0.5e-9L;
-    const long double phase_scale = 68719476736.0L; // 2^36
-
-    long double b_real = f1 * Ts * phase_scale;
-    int64_t b_i64 = (int64_t)llroundl(b_real);
-
-    return i64_to_u36(b_i64);
-}
-
-uint64_t k_formula(long double f1, long double f2, long double t_ns)
-{
-    const long double Ts = 0.5e-9L;
-    const long double phase_scale = 68719476736.0L; // 2^36
-
-    int64_t N = (int64_t)llroundl(t_ns / 0.5L);
-    if (N < 2) {
-        return 0;
-    }
-
-    long double k_real =
-        (f2 - f1) * Ts * phase_scale / (long double)(N - 1);
-
-    int64_t k_i64 = (int64_t)llroundl(k_real);
-
-    return i64_to_u36(k_i64);
-}
-
 static void rf_chp2insn(rf_chp_t *chp, rf_insn_t *insn, long double fnco_hz) {
 
-    // long double k_deg = (chp->f2 - chp->f1) / ((long double)chp->t_ns) * 90e-9;
-    // long double b_deg = (chp->f1 - fnco_hz) * 180e-9 + k_deg;
+    long double k_deg = (chp->f2 - chp->f1) / ((long double)chp->t_ns) * 90e-9;
+    long double b_deg = (chp->f1 - fnco_hz) * 180e-9 + k_deg;
 
-    // uint64_t k = real2twos(-180, 180 - ldexpl(1.0L, -RF_KBC_BITS), RF_KBC_BITS, k_deg, 1);
-    // uint64_t b = real2twos(-180, 180 - ldexpl(1.0L, -RF_KBC_BITS), RF_KBC_BITS, b_deg, 1);
-    uint64_t k = k_formula(chp->f2, chp->f1, (long double) chp->t_ns);
-    uint64_t b = b_formula(chp->f1 - fnco_hz);
+    uint64_t k = real2twos(-180, 180 - ldexpl(1.0L, -RF_KBC_BITS), RF_KBC_BITS, k_deg, 1);
+    uint64_t b = real2twos(-180, 180 - ldexpl(1.0L, -RF_KBC_BITS), RF_KBC_BITS, b_deg, 1);
 
     insn->arm = chp->opt.arm;
     insn->kbc_mode = 1;
@@ -333,7 +286,7 @@ void rf_assemble(rf_program_t *prog) {
         uint32_t *reg = &(prog->seq_regs[i * RF_REG_PER_INSN]);
 
         reg[0] = (insn->arm << 18) | (insn->kbc_mode << 16) | 
-                 ((uint32_t)(insn->kbc1 >> 25));
+                 ((uint32_t)(insn->kbc1 >> 20) & 0xffff);
         reg[1] = ((uint32_t)(insn->kbc1 << 12)) | ((uint32_t)(insn->kbc2 >> 24) & 0xfff);
         reg[2] = ((uint32_t)(insn->kbc2 << 8)) | (insn->samples >> 12);
         reg[3] = (insn->samples << 20) | (insn->dsamples);

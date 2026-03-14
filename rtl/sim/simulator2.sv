@@ -483,15 +483,6 @@ module simulator;
 
     end
 
-    logic [17:0] w_phase_obs;
-
-    phase_observe PHASE (
-        .i_clk(w_dcrfli_clk),
-        .i_dac_clk(w_rf_dac_clk),
-        .i_phasex8(DCRFLI.RF_GEN[0].RF.CORE.p.w_phasex8),
-        .o_phase(w_phase_obs)
-    );
-
     // li axil regs and adc instantiation
     for (genvar i = 0; i < NUM_LI_CHANNEL; i++) begin : LI_IO_GEN
 

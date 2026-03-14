@@ -59,6 +59,7 @@ typedef struct {
     logic r_idle;
     logic [7:0] w_zerox8;
     logic [7:0][RF_PHASE_WIDTH-1:0] w_phasex8;
+    logic r_new_phase;
 } rf_phase_stg_t;
 
 typedef struct {

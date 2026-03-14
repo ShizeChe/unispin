@@ -13,8 +13,10 @@ module rf_phasor
      output logic [7:0][OW-1:0] o_p,
      input  logic i_stall);
 
+    // logic [7:0][IW-1:0] w_v_start;
+    // logic [7:0][IW-1:0] w_p_start;
     logic [7:0][IW-1:0] w_v_start;
-    logic [7:0][IW-1:0] w_p_start;
+    logic [15:0][IW-1:0] w_p_start;
     logic [7:0][IW-1:0] r_v;
     logic [7:0][IW-1:0] r_p;
 
@@ -26,15 +28,31 @@ module rf_phasor
     assign w_p_start[5] = 10*i_k + 5*i_b + i_c;
     assign w_p_start[6] = 15*i_k + 6*i_b + i_c;
     assign w_p_start[7] = 21*i_k + 7*i_b + i_c;
+    assign w_p_start[8] = 28*i_k + 8*i_b + i_c;
+    assign w_p_start[9] = 36*i_k + 9*i_b + i_c;
+    assign w_p_start[10] = 45*i_k + 10*i_b + i_c;
+    assign w_p_start[11] = 55*i_k + 11*i_b + i_c;
+    assign w_p_start[12] = 66*i_k + 12*i_b + i_c;
+    assign w_p_start[13] = 78*i_k + 13*i_b + i_c;
+    assign w_p_start[14] = 91*i_k + 14*i_b + i_c;
+    assign w_p_start[15] = 105*i_k + 15*i_b + i_c;
 
-    assign w_v_start[0] = 28 * i_k + (i_b << 3);
-    assign w_v_start[1] = 36 * i_k + (i_b << 3);
-    assign w_v_start[2] = 44 * i_k + (i_b << 3);
-    assign w_v_start[3] = 52 * i_k + (i_b << 3);
-    assign w_v_start[4] = 60 * i_k + (i_b << 3);
-    assign w_v_start[5] = 68 * i_k + (i_b << 3);
-    assign w_v_start[6] = 76 * i_k + (i_b << 3);
-    assign w_v_start[7] = 84 * i_k + (i_b << 3);
+    // assign w_v_start[0] = 28 * i_k + (i_b << 3);
+    // assign w_v_start[1] = 36 * i_k + (i_b << 3);
+    // assign w_v_start[2] = 44 * i_k + (i_b << 3);
+    // assign w_v_start[3] = 52 * i_k + (i_b << 3);
+    // assign w_v_start[4] = 60 * i_k + (i_b << 3);
+    // assign w_v_start[5] = 68 * i_k + (i_b << 3);
+    // assign w_v_start[6] = 76 * i_k + (i_b << 3);
+    // assign w_v_start[7] = 84 * i_k + (i_b << 3);
+    assign w_v_start[0] = 92 * i_k + (i_b << 3);
+    assign w_v_start[1] = 100 * i_k + (i_b << 3);
+    assign w_v_start[2] = 108 * i_k + (i_b << 3);
+    assign w_v_start[3] = 116 * i_k + (i_b << 3);
+    assign w_v_start[4] = 124 * i_k + (i_b << 3);
+    assign w_v_start[5] = 132 * i_k + (i_b << 3);
+    assign w_v_start[6] = 140 * i_k + (i_b << 3);
+    assign w_v_start[7] = 148 * i_k + (i_b << 3);
 
     logic [IW-1:0] r_kx64;
 
@@ -74,11 +92,10 @@ module rf_phasor
 
                 if (i_set) begin
                     r_v[i] <= w_v_start[i];
-                    r_p[i] <= w_p_start[i];
+                    r_p[i] <= w_p_start[i + 8];
                     o_p[i] <= w_out[i][IW-1:IW-OW];
                     end
                 else begin
-                    // r_v[i] <= r_v[i] + (i_k << 6);
                     r_v[i] <= r_v[i] + r_kx64;
                     r_p[i] <= r_p[i] + r_v[i];
                     o_p[i] <= w_out[i][IW-1:IW-OW];
@@ -117,7 +134,7 @@ module rf_phasor
 
     generate for (genvar i = 0; i < 8; i++) begin
         parabolic: assert property (
-            !i_stall |=> (r_p[i] == (k * n * n + (b - k) * n + c))
+            !i_stall |=> (r_p[i] == (k/2 * n * n + (b - k/2) * n + c))
         );
     end endgenerate
 
