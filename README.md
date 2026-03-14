@@ -1,3 +1,10 @@
+<h1 align="center">Unispin</h1>
+<p align="center">A unified quantum control platform for quantum dot spin qubits</p>
+
+<p align="center">
+ <img src="img/boards.jpg" alt="boards" width=100% height=auto>
+</p>
+
 Overview
 ========
 Unispin is a unified quantum control platform designed specifically for quantum dot spin qubits. Its goal is to reduce control stack complexity and cost while improving performance by integrating all the requried control resources onto a single FPGA. With the two custom PCBs (FMC breakout board and low-noise DAC board), the current configuration has:
@@ -6,10 +13,6 @@ Unispin is a unified quantum control platform designed specifically for quantum 
 * 6x RF IQ pairs for further analog upconversion
 * 2x singled-ended RF channels and 2x ADC channels for lockin-in measurement
 * 2x singled-ended fast DC channels
-
-<p align="center">
- <img src="img/boards.jpg" alt="boards" width=100% height=auto>
-</p>
 
 Each signal and measurement channel has its own dedicated, fully-pipelined control core. Each core can be programmed to iteratively executes a sequence of custom assembly instructions with cycle-precise timing. The annotated Rabi example below demonstrates this execution model.
 
