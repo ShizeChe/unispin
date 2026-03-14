@@ -108,5 +108,5 @@ Example assembling a .asm file and send to the simulator to visualize exection (
 ```
 
 ## Petalinux
-A Petalinux os can be built to interface with the cores in FPGA. os/petalinux-steps.md describe the exact steps we took to build a bootable image with an uio driver for each core.
+A Petalinux OS can be built to interface with the cores in FPGA. os/petalinux-steps.md describes the steps we took to build a bootable image with an uio driver for each core.
 
