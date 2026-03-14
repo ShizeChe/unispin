@@ -1,6 +1,6 @@
 Overview
 ========
-Scriapin (Spin + Control Resource Integration Architecture) is an integrated quantum control platform designed specifically for quantum dot spin qubits. Its goal is to reduce control stack complexity and cost while improving performance and programmability by integrating all the requried control resources onto a single FPGA. With the two custom PCBs (FMC breakout board and bias DAC board), the current configuration has:
+Unispin is a unified quantum control platform designed specifically for quantum dot spin qubits. Its goal is to reduce control stack complexity and cost while improving performance by integrating all the requried control resources onto a single FPGA. With the two custom PCBs (FMC breakout board and low-noise DAC board), the current configuration has:
 
 * 24x bias DC channels (AD5791BRUZ)
 * 6x RF IQ pairs for further analog upconversion
@@ -11,7 +11,7 @@ Scriapin (Spin + Control Resource Integration Architecture) is an integrated qua
  <img src="img/boards.jpg" alt="boards" width=100% height=auto>
 </p>
 
-Each aforementioned signal/measurement channel has its own fully-pipelined control core. Each core/channel can be programmed to iteratively executes a set of custom assembly instructions in which precise timing of the pulses can be specified. See the annotated Rabi example below for a feeling of this execution model.
+Each signal and measurement channel has its own dedicated, fully-pipelined control core. Each core can be programmed to iteratively executes a sequence of custom assembly instructions with cycle-precise timing. The annotated Rabi example below demonstrates this execution model.
 
 ```text
 .program rf0                 # program for RF channel 0
@@ -51,4 +51,43 @@ The project currently has three parts:
 * PCB design for the 24 bias DC channels, along with assembly instrctions (under pcb)
 * Assembler for compiling and executing the custom assembly programs (under asm)
 
-This project is currently under active development. The RTL design, assembler, and PCB design may continue to evolve as functionality is validated experimentally and the system is further refined. More detailed documentation and user guides will be added as the project matures.
+This project is currently under active development. The RTL design, assembler, and PCB design may continue to evolve as functionality is validated experimentally and the system is further refined. More detailed documentation and user guides will be added after real-device experiments.
+
+## Building the rtl design project and bistream in Vivado
+```bash
+git clone <repo-url>
+cd unispin/rtl/synth
+vivado -script proj.tcl &
+```
+
+## Building the simulator (requires VCS+Verdi)
+This simulator is our go-to method to visualize the full-system waveforms. It incorporates all the channels and cores and have simulated DAC and ADC modules for directly visualizing analog waveforms. It simulates AXI memory operations by accepting address and data through a socket interface, the received address and data are then written to the sequencer through its AXI interface.
+
+Build the simulator 
+```bash
+git clone <repo-url>
+cd unispin/rtl
+make
+```
+This will create a simulator executable under rtl/
+
+Execute the simulator in Verdi
+```bash
+./simulator -gui -do sim/wv.tcl &
+```
+
+This will open up Verdi and load the waveforms. It will listen for connections and read address and data once running. Verdi can stop it at anytime to examine waveforms.
+
+## Building the assembler
+```bash
+git clone <repo-url>
+cd asm
+make
+```
+This will create an executable named "squish" under asm
+
+Example assembling a .asm file and send to the simulator to visualize exection (with simulator running)
+```bash
+./squish -s -f ../exp/hahn_echo.asm
+```
+
