@@ -95,7 +95,7 @@ module ex_core
 
             case (c.r_samples_left) 
                 'd0: c.w_realx16 = 'h0;
-                'd1: c.w_realx16 = {{15{16'h0}}, c.r_real};
+                'd1: c.w_realx16 = {{15{16'h0}}, {c.r_real, 2'b00}};
                 'd2: c.w_realx16 = {{14{16'h0}}, {2{c.r_real, 2'b00}}};
                 'd3: c.w_realx16 = {{13{16'h0}}, {3{c.r_real, 2'b00}}};
                 'd4: c.w_realx16 = {{12{16'h0}}, {4{c.r_real, 2'b00}}};

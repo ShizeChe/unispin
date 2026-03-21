@@ -7,6 +7,7 @@ SRC := $(wildcard src/dc*) $(wildcard src/rf*) $(wildcard src/li*) $(wildcard sr
 # SRC := lib/bram.sv lib/bram_fifo.sv
 # SRC := src/rf_phasor.sv
 # SRC := src/rf_cordic.sv
+# SRC := src/sequencer.sv src/ex_core.sv src/ex.sv lib/axil_slave_regs.sv
 
 TB ?= simulator
 TB_SRC := sim/$(TB).sv
