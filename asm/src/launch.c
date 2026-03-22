@@ -61,6 +61,18 @@ int launch_parse(char *line, launch_t *launch) {
 
             launch->li_chmask |= 1U << ch;
 
+        } else if (strncmp(tok, "ex", 2) == 0) {
+
+            char *endp = NULL;
+            uint32_t ch = strtoul(tok + 2, &endp, 0);
+
+            assert(ch < EX_CHANNELS);
+
+            if (endp == tok + 2 || *endp != '\0') 
+                return -1;
+
+            launch->ex_chmask |= 1U << ch;
+
         } else {
             // unknown flag/token inside parens
             return -1;
@@ -95,6 +107,7 @@ int launch_load(launch_t *launch) {
     *(launch_base) = launch->dc_chmask;
     *(launch_base + 1) = launch->rf_chmask;
     *(launch_base + 2) = launch->li_chmask;
+    *(launch_base + 3) = launch->ex_chmask;
     *(launch_base + LAUNCH_TOTAL_REGS - 1) = 1;
 
 #if EXE

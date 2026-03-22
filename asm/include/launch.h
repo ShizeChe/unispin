@@ -10,6 +10,7 @@ typedef struct {
     uint32_t dc_chmask;
     uint32_t rf_chmask;
     uint32_t li_chmask;
+    uint32_t ex_chmask;
 } launch_t;
 
 int launch_parse(char *line, launch_t *launch);
