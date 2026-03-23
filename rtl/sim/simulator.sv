@@ -898,7 +898,7 @@ module simulator;
 
             dc_axil_write(i);
 
-            $display("dc%0d axil write finished", i);
+            $display("dc%0d axil write finished\n", i);
 
         end
         else if (NUM_DC_CHANNEL <= i && i < (NUM_DC_CHANNEL + NUM_RF_CHANNEL)) begin
@@ -911,7 +911,7 @@ module simulator;
 
             rf_axil_write(i - NUM_DC_CHANNEL);
 
-            $display("rf%0d axil write finished", i);
+            $display("rf%0d axil write finished\n", i - NUM_DC_CHANNEL);
 
         end
         else if ((NUM_DC_CHANNEL + NUM_RF_CHANNEL) <= i && i < (NUM_DC_CHANNEL + NUM_RF_CHANNEL + NUM_LI_CHANNEL)) begin
@@ -924,13 +924,13 @@ module simulator;
 
             li_axil_write(i - NUM_DC_CHANNEL - NUM_RF_CHANNEL);
 
-            $display("li%0d axil write finished", i);
+            $display("li%0d axil write finished\n", i - NUM_DC_CHANNEL - NUM_RF_CHANNEL);
 
         end
         else if ((NUM_DC_CHANNEL + NUM_RF_CHANNEL + NUM_LI_CHANNEL) <= i && 
             i < (NUM_DC_CHANNEL + NUM_RF_CHANNEL + NUM_LI_CHANNEL + NUM_EX_CHANNEL)) begin
 
-            $display("li%0d", i - NUM_LI_CHANNEL - NUM_DC_CHANNEL - NUM_RF_CHANNEL);
+            $display("ex%0d", i - NUM_LI_CHANNEL - NUM_DC_CHANNEL - NUM_RF_CHANNEL);
 
             w_ex_awaddr_bus[i - NUM_LI_CHANNEL - NUM_DC_CHANNEL - NUM_RF_CHANNEL] = addr[$clog2(EX_TOTAL_REGS*4)-1:0];
             w_ex_wdata_bus[i - NUM_LI_CHANNEL - NUM_DC_CHANNEL - NUM_RF_CHANNEL] = data;
@@ -938,7 +938,7 @@ module simulator;
 
             ex_axil_write(i - NUM_LI_CHANNEL - NUM_DC_CHANNEL - NUM_RF_CHANNEL);
 
-            $display("ex%0d axil write finished", i);
+            $display("ex%0d axil write finished\n", i - NUM_LI_CHANNEL - NUM_DC_CHANNEL - NUM_RF_CHANNEL);
 
         end
         else begin
@@ -951,7 +951,7 @@ module simulator;
 
             lch_axil_write;
 
-            $display("launch axil write finished");
+            $display("launch axil write finished\n");
 
         end
 

@@ -752,8 +752,8 @@ static int write_sim(dc_program_t *dc_programs[],
 
             sim_sendf("0x%08X 0x%08X\n", base + (EX_SEQ_REGS - 1) * 4, 0);
             
-            for (unsigned int j = 0; j < LI_SEQ_REGS; j++) {
-                sim_sendf("0x%08X 0x%08X\n", base + j * 4, (li_programs[i]->seq_regs)[j]);
+            for (unsigned int j = 0; j < EX_SEQ_REGS; j++) {
+                sim_sendf("0x%08X 0x%08X\n", base + j * 4, (ex_programs[i]->seq_regs)[j]);
             }
 
         }
