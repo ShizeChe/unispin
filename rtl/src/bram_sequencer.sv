@@ -255,8 +255,8 @@ module bram_sequencer
         else if (w_propagate) begin
             o.r_pc_addr <= i.r_pc_addr;
             o.r_pc <= i.w_pc2use;
-            o.r_insn <= (i.r_pc_valid && (i.r_pc == o.r_pc)) ? i_insn_modified : 'h0;
-            o.r_insn_buffered <= (i.r_pc_valid && (i.r_pc == o.r_pc));
+            o.r_insn <= (i.r_pc_valid && o.r_insn_valid && (i.w_pc2use == o.r_pc)) ? i_insn_modified : 'h0;
+            o.r_insn_buffered <= (i.r_pc_valid && o.r_insn_valid && (i.w_pc2use == o.r_pc));
             o.r_insn_valid <= i.r_pc_valid;
         end
         else begin
@@ -298,7 +298,7 @@ module bram_sequencer
     * propagate logic
     *****************/
 
-    assign w_propagate = p.r_active && (!o.r_insn_valid || (o.r_insn_valid && i_next));
+    assign w_propagate = (o.r_insn_valid && i_next) || (!o.r_insn_valid && (i.r_pc_valid || p.r_active));
 
     /****************
     * output signals

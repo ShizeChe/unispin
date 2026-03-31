@@ -73,13 +73,12 @@ module bram_sequencer_tb;
 
         w_regs[IST_ADDR_REG][PC_WIDTH-1:0] = addr;
 
-        w_regs[0][INSN_WIDTH - (REG_PER_INSN - 1) * 32 - 1:0] =
+        w_regs[IST_REG_LO][INSN_WIDTH - (REG_PER_INSN - 1) * 32 - 1:0] =
             insn[(REG_PER_INSN - 1) * 32 +: INSN_WIDTH - (REG_PER_INSN - 1) * 32];
         for (int i = 1; i < REG_PER_INSN; i++) begin
-            w_regs[IST_REG_LO + i] = insn[i * 32 +: 32];
+            w_regs[IST_REG_LO + i] = insn[(REG_PER_INSN - 1 - i) * 32 +: 32];
         end
 
-        @(negedge w_clk);
         w_regs[IST_STRB_REG][0] = 1'b1;
 
         @(negedge w_clk);
@@ -99,8 +98,6 @@ module bram_sequencer_tb;
         w_regs[PCST_REG][PC_WIDTH-1:0] = pc;
 
         w_regs[PCST_STRB_REG] = '0;
-
-        @(negedge w_clk);
         w_regs[PCST_STRB_REG][0] = 1'b1;
 
         @(negedge w_clk);
@@ -109,9 +106,6 @@ module bram_sequencer_tb;
 
     task start_seq;
         @(negedge w_clk);
-        w_regs[START_STRB_REG] = '0;
-
-        @(negedge w_clk);
         w_regs[START_STRB_REG][0] = 1'b1;
 
         @(negedge w_clk);
@@ -119,9 +113,6 @@ module bram_sequencer_tb;
     endtask
 
     task halt_seq;
-        @(negedge w_clk);
-        w_regs[HALT_STRB_REG] = '0;
-
         @(negedge w_clk);
         w_regs[HALT_STRB_REG][0] = 1'b1;
 
@@ -192,6 +183,8 @@ module bram_sequencer_tb;
 
         while (out_idx < total_out) begin
 
+            w_insn_modified = w_insn;
+
             assert (!w_empty)
             else $fatal(1, "At %0.3f ns: w_empty asserted while w_next is held high at out_idx=%0d", $realtime, out_idx);
 
@@ -229,6 +222,8 @@ module bram_sequencer_tb;
         forever #2 w_clk = !w_clk;
     end
 
+    int test;
+
     initial begin
         w_rst = 1'b1;
         w_regs = '{default:'0};
@@ -238,7 +233,12 @@ module bram_sequencer_tb;
         @(negedge w_clk);
         w_rst = 1'b0;
 
-        run_rand_seq;
+        test = 0;
+        repeat (100) begin
+            $display("test%0d", test);
+            run_rand_seq;
+            test++;
+        end
 
         $finish;
     end
