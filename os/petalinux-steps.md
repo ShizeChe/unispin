@@ -25,7 +25,7 @@
     --There should be "/ {}" prepared for you to override existing device tree setups
     --In pl.dtsi, you should recognize the blocks for your axi ips in pl
     --Copy the text that starts with "ambda_pl" in pl.dtsi to system-user.dtsi, put it into the "/ {}": "/ {'amba_pl...'}" 
-    --Change the compatible="[place holder for driver]" in your axi ips to compatible="generic-uio,ui_pdrv"
+    --Change the compatible="[place holder for driver]" in your axi ips to compatible="generic-uio"
     --Add 
     "&{/axi/mmc@ff170000} {
         status = "okay";
