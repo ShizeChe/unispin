@@ -209,12 +209,94 @@ module bram_sequencer_tb;
             @(negedge w_clk);
         end
 
-        @(negedge w_clk);
-        w_next = 1'b0;
-
-        @(negedge w_clk);
         assert (w_empty)
         else $fatal(1, "At %0.3f ns: w_empty=%0b after sequence completion, should be 1", $realtime, w_empty);
+
+    endtask
+
+    task run_rand_next;
+        logic [ITER_WIDTH-1:0] iters;
+        logic [DEPTH_WIDTH-1:0] depth;
+        logic [PC_WIDTH-1:0] pc;
+        logic [INSN_WIDTH-1:0] insn;
+        int total_out;
+        int out_idx;
+        int seq_idx;
+        logic prev_next;
+
+        depth = $urandom_range(0, (1 << DEPTH_WIDTH) - 1);
+        iters = $urandom_range(1, 16);
+
+        for (int i = 0; i < (1 << PC_ADDR_WIDTH); i++)
+            ref_pcs[i] = '0;
+
+        for (int i = 0; i < (1 << PC_WIDTH); i++)
+            ref_insns[i] = '0;
+
+        for (int pc_addr = 0; pc_addr <= depth; pc_addr++) begin
+            pc = $urandom_range(0, (1 << PC_WIDTH) - 1);
+            insn = '0;
+            for (int i = 0; i < REG_PER_INSN - 1; i++)
+                insn[i * 32 +: 32] = $urandom;
+            insn[INSN_WIDTH - (REG_PER_INSN - 1) * 32 - 1:0] = $urandom;
+
+            ref_pcs[pc_addr] = pc;
+            ref_insns[pc] = insn;
+
+            load_pc(pc_addr, pc);
+            load_insn(pc, insn);
+        end
+
+        load_iters(iters);
+        load_depth(depth);
+
+        total_out = (depth + 1) * iters;
+        out_idx = 0;
+        seq_idx = 0;
+
+        start_seq;
+
+        wait(!w_empty);
+
+        @(negedge w_clk);
+
+        while (out_idx < total_out) begin
+
+            w_next = $urandom_range(0, 1);
+            w_insn_modified = w_insn;
+
+            assert (!w_empty)
+            else $fatal(1, "At %0.3f ns: w_empty asserted while w_next is held high at out_idx=%0d", $realtime, out_idx);
+
+            assert (w_pc_addr == seq_idx)
+            else $fatal(1, "At %0.3f ns: w_pc_addr=%0d, should be %0d", $realtime, w_pc_addr, seq_idx);
+
+            assert (w_pc == ref_pcs[seq_idx])
+            else $fatal(1, "At %0.3f ns: w_pc=0x%0x, should be 0x%0x for pc_addr=%0d",
+                         $realtime, w_pc, ref_pcs[seq_idx], seq_idx);
+
+            assert (w_insn == ref_insns[ref_pcs[seq_idx]])
+            else $fatal(1, "At %0.3f ns: w_insn=0x%0x, should be 0x%0x for pc_addr=%0d pc=0x%0x",
+                         $realtime, w_insn, ref_insns[ref_pcs[seq_idx]], seq_idx, ref_pcs[seq_idx]);
+
+            if (w_next) begin
+
+                out_idx++;
+
+                if (seq_idx == depth)
+                    seq_idx = 0;
+                else
+                    seq_idx++;
+
+            end
+
+            @(negedge w_clk);
+        end
+
+        w_next = 1'b0;
+        assert (w_empty)
+        else $fatal(1, "At %0.3f ns: w_empty=%0b after sequence completion, should be 1", $realtime, w_empty);
+
     endtask
 
     initial begin
@@ -236,7 +318,7 @@ module bram_sequencer_tb;
         test = 0;
         repeat (100) begin
             $display("test%0d", test);
-            run_rand_seq;
+            run_rand_next;
             test++;
         end
 
