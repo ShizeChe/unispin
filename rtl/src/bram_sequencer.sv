@@ -8,7 +8,7 @@ module bram_sequencer
      parameter REG_PER_INSN=(INSN_WIDTH+31)/32,
      parameter ITER_WIDTH=16,
      parameter DEPTH_WIDTH=PC_ADDR_WIDTH,
-     parameter SEQ_REGS=REG_PER_INSN+3)
+     parameter SEQ_REGS=REG_PER_INSN+9)
     (input  logic i_clk, i_rst,
 
      input  logic [0:SEQ_REGS-1][31:0] i_regs,
@@ -81,12 +81,12 @@ module bram_sequencer
     localparam START_STRB_REG = DEPTH_REG + 1;
     localparam HALT_STRB_REG = START_STRB_REG + 1;
 
-    logic [ITERS_WIDTH-1:0] w_iters;
+    logic [ITER_WIDTH-1:0] w_iters;
     logic [DEPTH_WIDTH-1:0] w_depth;
     logic w_start_strb;
     logic w_halt_strb;
 
-    assign w_iters = i_regs[ITERS_REG][ITERS_WIDTH-1:0];
+    assign w_iters = i_regs[ITERS_REG][ITER_WIDTH-1:0];
     assign w_depth = i_regs[DEPTH_REG][DEPTH_WIDTH-1:0];
     assign w_start_strb = i_regs[START_STRB_REG][0];
     assign w_halt_strb = i_regs[HALT_STRB_REG][0];
@@ -120,7 +120,7 @@ module bram_sequencer
 
     always_ff @(posedge i_clk) begin
         if (i_rst) begin
-            p.r_pc_addr <= 'bx;
+            p.r_pc_addr <= 'b0;
             p.r_iters <= 'd0;
             p.r_depth <= 'd0;
             p.r_active <= 1'b0;
@@ -130,6 +130,7 @@ module bram_sequencer
             p.r_active <= 1'b0;
         end
         else if (p.w_start && !p.r_active) begin
+            p.r_pc_addr <= 'h0;
             p.r_iters <= w_iters;
             p.r_depth <= w_depth;
             p.r_active <= 1'b1;
@@ -156,16 +157,19 @@ module bram_sequencer
         logic [PC_WIDTH-1:0] w_pc;
         logic [PC_WIDTH-1:0] r_pc;
         logic r_pc_buffered;
+        logic [PC_WIDTH-1:0] w_pc2use;
         logic r_pc_valid;
     } insn_stg_t;
 
     insn_stg_t i;
 
     logic w_pcmem_wr;
+    logic [PC_ADDR_WIDTH-1:0] w_pcmem_wr_addr;
+    logic [PC_WIDTH-1:0] w_pcmem_wr_data;
 
     bram #(
         .DATA_WIDTH(PC_WIDTH),
-        .ADDR_WIDTH(PC_ADDR_WIDTH),
+        .ADDR_WIDTH(PC_ADDR_WIDTH)
     ) PCMEM (
         .i_clk_a(i_clk),
         .i_wr_a(w_pcmem_wr),
@@ -176,14 +180,14 @@ module bram_sequencer
         .i_clk_b(i_clk),
         .i_wr_b(1'b0),
         .i_addr_b(p.r_pc_addr),
-        .i_din_b('h0),
+        .i_din_b({PC_WIDTH{1'b0}}),
         .o_dout_b(i.w_pc)
     );
 
     always_ff @(posedge i_clk) begin
         if (i_rst) begin
-            i.r_pc_addr <= 'hx;
-            i.r_pc <= 'hx
+            i.r_pc_addr <= 'h0;
+            i.r_pc <= 'h0;
             i.r_pc_buffered <= 1'b0;
             i.r_pc_valid <= 1'b0;
         end
@@ -194,12 +198,14 @@ module bram_sequencer
             i.r_pc_valid <= p.r_active;
         end
         else begin
-            if (i.r_pc_valid) begin
+            if (i.r_pc_valid && !i.r_pc_buffered) begin
                 i.r_pc <= i.w_pc;
                 i.r_pc_buffered <= 1'b1;
             end
         end
     end
+
+    assign i.w_pc2use = i.r_pc_buffered ? i.r_pc : i.w_pc;
 
     /***********
     * out stage
@@ -211,11 +217,19 @@ module bram_sequencer
         logic [INSN_WIDTH-1:0] w_insn;
         logic [INSN_WIDTH-1:0] r_insn;
         logic r_insn_buffered;
-    };
+        logic [INSN_WIDTH-1:0] w_insn2use;
+        logic r_insn_valid;
+    } output_stg_t;
+
+    output_stg_t o;
+
+    logic w_imem_wr;
+    logic [PC_WIDTH-1:0] w_imem_wr_addr;
+    logic [INSN_WIDTH-1:0] w_imem_wr_data;
 
     bram #(
         .DATA_WIDTH(INSN_WIDTH),
-        .ADDR_WIDTH(PC_WIDTH),
+        .ADDR_WIDTH(PC_WIDTH)
     ) IMEM (
         .i_clk_a(i_clk),
         .i_wr_a(w_imem_wr),
@@ -224,10 +238,75 @@ module bram_sequencer
         .o_dout_a(),
 
         .i_clk_b(i_clk),
-        .i_wr_b(),
-        .i_addr_b(),
+        .i_wr_b(1'b0),
+        .i_addr_b(i.w_pc2use),
         .i_din_b(),
-        .o_dout_b()
+        .o_dout_b(o.w_insn)
     );
+
+    always_ff @(posedge i_clk) begin
+        if (i_rst) begin
+            o.r_pc_addr <= 'h0;
+            o.r_pc <= 'h0;
+            o.r_insn <= 'h0;
+            o.r_insn_buffered <= 1'b0;
+            o.r_insn_valid <= 1'b0;
+        end
+        else if (w_propagate) begin
+            o.r_pc_addr <= i.r_pc_addr;
+            o.r_pc <= i.w_pc2use;
+            o.r_insn <= (i.r_pc_valid && (i.r_pc == o.r_pc)) ? i_insn_modified : 'h0;
+            o.r_insn_buffered <= (i.r_pc_valid && (i.r_pc == o.r_pc));
+            o.r_insn_valid <= i.r_pc_valid;
+        end
+        else begin
+            if (o.r_insn_valid && !o.r_insn_buffered) begin
+                o.r_insn <= o.w_insn;
+                o.r_insn_buffered <= 1'b1;
+            end
+        end
+    end
+
+    assign o.w_insn2use = o.r_insn_buffered ? o.r_insn : o.w_insn;
+
+    /******************
+    * pcmem imem write
+    ******************/
+
+    always_comb begin
+        if (!p.r_active) begin
+            w_pcmem_wr = w_pcst_wr;
+            w_pcmem_wr_addr = w_pcst_addr;
+            w_pcmem_wr_data = w_pcst;
+
+            w_imem_wr = w_ist_wr;
+            w_imem_wr_addr = w_ist_addr;
+            w_imem_wr_data = w_ist;
+        end
+        else begin
+            w_pcmem_wr = 1'b0;
+            w_pcmem_wr_addr = 'h0;
+            w_pcmem_wr_data = 'h0;
+
+            w_imem_wr = i_next && !o_empty;
+            w_imem_wr_addr = o_pc;
+            w_imem_wr_data = i_insn_modified;
+        end
+    end
+
+    /*****************
+    * propagate logic
+    *****************/
+
+    assign w_propagate = p.r_active && (!o.r_insn_valid || (o.r_insn_valid && i_next));
+
+    /****************
+    * output signals
+    ****************/
+
+    assign o_pc_addr = o.r_pc_addr;
+    assign o_pc = o.r_pc;
+    assign o_insn = o.w_insn2use;
+    assign o_empty = !o.r_insn_valid;
 
 endmodule
