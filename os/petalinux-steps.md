@@ -36,7 +36,7 @@
 15. Run "petalinux-package --boot --fsbl ./images/linux/zynqmp_fsbl.elf --fpga ./images/linux/system.bit --u-boot" to package
 16. Run '''petalinux-package --wic --bootfiles "BOOT.BIN image.ub system.dtb boot.scr" \
            --rootfs-file ./images/linux/rootfs.tar.gz''' to build the sd card image
-17. You should see [petalinux dir]/images/linux/petalinux-sdimage/wic, dd it to your sd card
+17. You should see [petalinux dir]/images/linux/petalinux-sdimage.wic, dd it to your sd card
 18. After the kernel boots, go check /sys/class/uio/uio?/maps/map0/{name,addr}, 
     cat them and you should see your ip name and memory mapped addresses
 19. If pl is not programmed, run "sudo fpgautil -b [bitstream] -f Full" to program pl
