@@ -380,7 +380,8 @@ module simulator;
 
         dc_regs #(
             .NUM_SEQ_REGS(DC_SEQ_REGS),
-            .NUM_CTRL_REGS(DC_CTRL_REGS)
+            .NUM_CTRL_REGS(DC_CTRL_REGS),
+            .ADDR_BASE(32'hA0000000 + i * 32'h1000)
         ) REGS (
             .s_axi_aclk(w_dcrfli_clk),
             .s_axi_aresetn(w_dcrfli_rst_n),
@@ -434,7 +435,8 @@ module simulator;
 
         rf_regs #(
             .NUM_SEQ_REGS(RF_SEQ_REGS),
-            .NUM_CTRL_REGS(RF_CTRL_REGS)
+            .NUM_CTRL_REGS(RF_CTRL_REGS),
+            .ADDR_BASE(32'hA0000000 + (NUM_DC_CHANNEL + i) * 32'h1000)
         ) REGS (
             .s_axi_aclk(w_dcrfli_clk),
             .s_axi_aresetn(w_dcrfli_rst_n),
@@ -488,7 +490,8 @@ module simulator;
 
         li_regs #(
             .NUM_SEQ_REGS(LI_SEQ_REGS),
-            .NUM_CTRL_REGS(LI_CTRL_REGS)
+            .NUM_CTRL_REGS(LI_CTRL_REGS),
+            .ADDR_BASE(32'hA0000000 + (NUM_DC_CHANNEL + NUM_RF_CHANNEL + i) * 32'h1000)
         ) REGS (
             .s_axi_aclk(w_dcrfli_clk),
             .s_axi_aresetn(w_dcrfli_rst_n),
@@ -535,7 +538,8 @@ module simulator;
     for (genvar i = 0; i < NUM_EX_CHANNEL; i++) begin : EX_IO_GEN
 
         ex_regs #(
-            .NUM_SEQ_REGS(EX_SEQ_REGS)
+            .NUM_SEQ_REGS(EX_SEQ_REGS),
+            .ADDR_BASE(32'hA0000000 + (NUM_DC_CHANNEL + NUM_RF_CHANNEL + NUM_LI_CHANNEL + i) * 32'h1000)
         ) REGS (
             .s_axi_aclk(w_dcrfli_clk),
             .s_axi_aresetn(w_dcrfli_rst_n),
@@ -577,7 +581,8 @@ module simulator;
 
     // launch axil regs instantiation
     launch_regs #(
-        .NUM_REGS(LCH_TOTAL_REGS)
+        .NUM_REGS(LCH_TOTAL_REGS),
+        .ADDR_BASE(32'hA0000000 + (NUM_DC_CHANNEL + NUM_RF_CHANNEL + NUM_LI_CHANNEL + NUM_EX_CHANNEL) * 32'h1000)
     ) LCH_REGS (
         .s_axi_aclk(w_dcrfli_clk),
         .s_axi_aresetn(w_dcrfli_rst_n),

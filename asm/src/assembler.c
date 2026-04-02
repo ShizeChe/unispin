@@ -1425,6 +1425,14 @@ int main(int argc, char *argv[]) {
             if (rf_programs[ch] != NULL)
                 rf_load_insns(ch, rf_programs[ch]);
         }
+        for (int ch = 0; ch < LI_CHANNELS; ch++) {
+            if (li_programs[ch] != NULL)
+                li_load_insns(ch, li_programs[ch]);
+        }
+        for (int ch = 0; ch < EX_CHANNELS; ch++) {
+            if (ex_programs[ch] != NULL)
+                ex_load_insns(ch, ex_programs[ch]);
+        }
         if (launch != NULL)
             launch_load(launch);
     }
