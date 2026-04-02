@@ -4,7 +4,8 @@
 module dc_regs
    #(parameter NUM_SEQ_REGS=32,
      parameter NUM_CTRL_REGS=4,
-     parameter ADDR_WIDTH=$clog2(NUM_SEQ_REGS+NUM_CTRL_REGS)+2)
+     parameter ADDR_WIDTH=$clog2(NUM_SEQ_REGS+NUM_CTRL_REGS)+2,
+     parameter [31:0] ADDR_BASE=32'hA0000000)
     (input  wire s_axi_aclk,
      input  wire s_axi_aresetn,
      
@@ -39,7 +40,8 @@ module dc_regs
      output wire [0:NUM_CTRL_REGS-1][31:0] o_ctrl_regs);
 
      axil_slave_regs #(
-         .NUM_REGS(NUM_SEQ_REGS+NUM_CTRL_REGS)
+         .NUM_REGS(NUM_SEQ_REGS+NUM_CTRL_REGS),
+         .ADDR_BASE(ADDR_BASE)
      ) AXIL_REGS (
 
         .i_aclk(s_axi_aclk),

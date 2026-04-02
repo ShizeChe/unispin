@@ -539,7 +539,7 @@ proc create_root_design { parentCell } {
   set o_rf_ctrl_regs3 [ create_bd_port -dir O -from 63 -to 0 o_rf_ctrl_regs3 ]
   set o_rf_ctrl_regs4 [ create_bd_port -dir O -from 63 -to 0 o_rf_ctrl_regs4 ]
   set o_rf_ctrl_regs5 [ create_bd_port -dir O -from 63 -to 0 o_rf_ctrl_regs5 ]
-  set o_lch_regs [ create_bd_port -dir O -from 127 -to 0 o_lch_regs ]
+  set o_lch_regs [ create_bd_port -dir O -from 159 -to 0 o_lch_regs ]
   set dcrfli_rst_n [ create_bd_port -dir O -from 0 -to 0 dcrfli_rst_n ]
   set o_li_seq_regs0 [ create_bd_port -dir O -from 1087 -to 0 o_li_seq_regs0 ]
   set o_li_ctrl_regs0 [ create_bd_port -dir O -from 127 -to 0 o_li_ctrl_regs0 ]
@@ -902,7 +902,9 @@ Port;FD4A0000;FD4AFFFF;0|FPD;DPDMA;FD4C0000;FD4CFFFF;0|FPD;DDR_XMPU5_CFG;FD05000
      catch {common::send_gid_msg -ssname BD::TCL -id 2096 -severity "ERROR" "Unable to referenced block <$block_name>. Please add the files for ${block_name}'s definition into the project."}
      return 1
    }
-  
+    set_property CONFIG.ADDR_BASE {0xA0022000} $launch_regs_0
+
+
   # Create instance: rf_regs_0, and set properties
   set block_name rf_regs
   set block_cell_name rf_regs_0
@@ -913,7 +915,9 @@ Port;FD4A0000;FD4AFFFF;0|FPD;DPDMA;FD4C0000;FD4CFFFF;0|FPD;DDR_XMPU5_CFG;FD05000
      catch {common::send_gid_msg -ssname BD::TCL -id 2096 -severity "ERROR" "Unable to referenced block <$block_name>. Please add the files for ${block_name}'s definition into the project."}
      return 1
    }
-  
+    set_property CONFIG.ADDR_BASE {0xA0018000} $rf_regs_0
+
+
   # Create instance: smartconnect_0, and set properties
   set smartconnect_0 [ create_bd_cell -type ip -vlnv xilinx.com:ip:smartconnect:1.0 smartconnect_0 ]
   set_property -dict [list \
@@ -936,7 +940,9 @@ Port;FD4A0000;FD4AFFFF;0|FPD;DPDMA;FD4C0000;FD4CFFFF;0|FPD;DDR_XMPU5_CFG;FD05000
      catch {common::send_gid_msg -ssname BD::TCL -id 2096 -severity "ERROR" "Unable to referenced block <$block_name>. Please add the files for ${block_name}'s definition into the project."}
      return 1
    }
-  
+    set_property CONFIG.ADDR_BASE {0xA0001000} $dc_regs_1
+
+
   # Create instance: dc_regs_2, and set properties
   set block_name dc_regs
   set block_cell_name dc_regs_2
@@ -947,7 +953,9 @@ Port;FD4A0000;FD4AFFFF;0|FPD;DPDMA;FD4C0000;FD4CFFFF;0|FPD;DDR_XMPU5_CFG;FD05000
      catch {common::send_gid_msg -ssname BD::TCL -id 2096 -severity "ERROR" "Unable to referenced block <$block_name>. Please add the files for ${block_name}'s definition into the project."}
      return 1
    }
-  
+    set_property CONFIG.ADDR_BASE {0xA0002000} $dc_regs_2
+
+
   # Create instance: dc_regs_3, and set properties
   set block_name dc_regs
   set block_cell_name dc_regs_3
@@ -958,7 +966,9 @@ Port;FD4A0000;FD4AFFFF;0|FPD;DPDMA;FD4C0000;FD4CFFFF;0|FPD;DDR_XMPU5_CFG;FD05000
      catch {common::send_gid_msg -ssname BD::TCL -id 2096 -severity "ERROR" "Unable to referenced block <$block_name>. Please add the files for ${block_name}'s definition into the project."}
      return 1
    }
-  
+    set_property CONFIG.ADDR_BASE {0xA0003000} $dc_regs_3
+
+
   # Create instance: dc_regs_4, and set properties
   set block_name dc_regs
   set block_cell_name dc_regs_4
@@ -969,7 +979,9 @@ Port;FD4A0000;FD4AFFFF;0|FPD;DPDMA;FD4C0000;FD4CFFFF;0|FPD;DDR_XMPU5_CFG;FD05000
      catch {common::send_gid_msg -ssname BD::TCL -id 2096 -severity "ERROR" "Unable to referenced block <$block_name>. Please add the files for ${block_name}'s definition into the project."}
      return 1
    }
-  
+    set_property CONFIG.ADDR_BASE {0xA0004000} $dc_regs_4
+
+
   # Create instance: dc_regs_5, and set properties
   set block_name dc_regs
   set block_cell_name dc_regs_5
@@ -980,7 +992,9 @@ Port;FD4A0000;FD4AFFFF;0|FPD;DPDMA;FD4C0000;FD4CFFFF;0|FPD;DDR_XMPU5_CFG;FD05000
      catch {common::send_gid_msg -ssname BD::TCL -id 2096 -severity "ERROR" "Unable to referenced block <$block_name>. Please add the files for ${block_name}'s definition into the project."}
      return 1
    }
-  
+    set_property CONFIG.ADDR_BASE {0xA0005000} $dc_regs_5
+
+
   # Create instance: dc_regs_6, and set properties
   set block_name dc_regs
   set block_cell_name dc_regs_6
@@ -991,7 +1005,9 @@ Port;FD4A0000;FD4AFFFF;0|FPD;DPDMA;FD4C0000;FD4CFFFF;0|FPD;DDR_XMPU5_CFG;FD05000
      catch {common::send_gid_msg -ssname BD::TCL -id 2096 -severity "ERROR" "Unable to referenced block <$block_name>. Please add the files for ${block_name}'s definition into the project."}
      return 1
    }
-  
+    set_property CONFIG.ADDR_BASE {0xA0006000} $dc_regs_6
+
+
   # Create instance: dc_regs_7, and set properties
   set block_name dc_regs
   set block_cell_name dc_regs_7
@@ -1002,7 +1018,9 @@ Port;FD4A0000;FD4AFFFF;0|FPD;DPDMA;FD4C0000;FD4CFFFF;0|FPD;DDR_XMPU5_CFG;FD05000
      catch {common::send_gid_msg -ssname BD::TCL -id 2096 -severity "ERROR" "Unable to referenced block <$block_name>. Please add the files for ${block_name}'s definition into the project."}
      return 1
    }
-  
+    set_property CONFIG.ADDR_BASE {0xA0007000} $dc_regs_7
+
+
   # Create instance: dc_regs_8, and set properties
   set block_name dc_regs
   set block_cell_name dc_regs_8
@@ -1013,7 +1031,9 @@ Port;FD4A0000;FD4AFFFF;0|FPD;DPDMA;FD4C0000;FD4CFFFF;0|FPD;DDR_XMPU5_CFG;FD05000
      catch {common::send_gid_msg -ssname BD::TCL -id 2096 -severity "ERROR" "Unable to referenced block <$block_name>. Please add the files for ${block_name}'s definition into the project."}
      return 1
    }
-  
+    set_property CONFIG.ADDR_BASE {0xA0008000} $dc_regs_8
+
+
   # Create instance: dc_regs_9, and set properties
   set block_name dc_regs
   set block_cell_name dc_regs_9
@@ -1024,7 +1044,9 @@ Port;FD4A0000;FD4AFFFF;0|FPD;DPDMA;FD4C0000;FD4CFFFF;0|FPD;DDR_XMPU5_CFG;FD05000
      catch {common::send_gid_msg -ssname BD::TCL -id 2096 -severity "ERROR" "Unable to referenced block <$block_name>. Please add the files for ${block_name}'s definition into the project."}
      return 1
    }
-  
+    set_property CONFIG.ADDR_BASE {0xA0009000} $dc_regs_9
+
+
   # Create instance: dc_regs_10, and set properties
   set block_name dc_regs
   set block_cell_name dc_regs_10
@@ -1035,7 +1057,9 @@ Port;FD4A0000;FD4AFFFF;0|FPD;DPDMA;FD4C0000;FD4CFFFF;0|FPD;DDR_XMPU5_CFG;FD05000
      catch {common::send_gid_msg -ssname BD::TCL -id 2096 -severity "ERROR" "Unable to referenced block <$block_name>. Please add the files for ${block_name}'s definition into the project."}
      return 1
    }
-  
+    set_property CONFIG.ADDR_BASE {0xA000A000} $dc_regs_10
+
+
   # Create instance: dc_regs_11, and set properties
   set block_name dc_regs
   set block_cell_name dc_regs_11
@@ -1046,7 +1070,9 @@ Port;FD4A0000;FD4AFFFF;0|FPD;DPDMA;FD4C0000;FD4CFFFF;0|FPD;DDR_XMPU5_CFG;FD05000
      catch {common::send_gid_msg -ssname BD::TCL -id 2096 -severity "ERROR" "Unable to referenced block <$block_name>. Please add the files for ${block_name}'s definition into the project."}
      return 1
    }
-  
+    set_property CONFIG.ADDR_BASE {0xA000B000} $dc_regs_11
+
+
   # Create instance: dc_regs_12, and set properties
   set block_name dc_regs
   set block_cell_name dc_regs_12
@@ -1057,7 +1083,9 @@ Port;FD4A0000;FD4AFFFF;0|FPD;DPDMA;FD4C0000;FD4CFFFF;0|FPD;DDR_XMPU5_CFG;FD05000
      catch {common::send_gid_msg -ssname BD::TCL -id 2096 -severity "ERROR" "Unable to referenced block <$block_name>. Please add the files for ${block_name}'s definition into the project."}
      return 1
    }
-  
+    set_property CONFIG.ADDR_BASE {0xA000C000} $dc_regs_12
+
+
   # Create instance: dc_regs_13, and set properties
   set block_name dc_regs
   set block_cell_name dc_regs_13
@@ -1068,7 +1096,9 @@ Port;FD4A0000;FD4AFFFF;0|FPD;DPDMA;FD4C0000;FD4CFFFF;0|FPD;DDR_XMPU5_CFG;FD05000
      catch {common::send_gid_msg -ssname BD::TCL -id 2096 -severity "ERROR" "Unable to referenced block <$block_name>. Please add the files for ${block_name}'s definition into the project."}
      return 1
    }
-  
+    set_property CONFIG.ADDR_BASE {0xA000D000} $dc_regs_13
+
+
   # Create instance: dc_regs_14, and set properties
   set block_name dc_regs
   set block_cell_name dc_regs_14
@@ -1079,7 +1109,9 @@ Port;FD4A0000;FD4AFFFF;0|FPD;DPDMA;FD4C0000;FD4CFFFF;0|FPD;DDR_XMPU5_CFG;FD05000
      catch {common::send_gid_msg -ssname BD::TCL -id 2096 -severity "ERROR" "Unable to referenced block <$block_name>. Please add the files for ${block_name}'s definition into the project."}
      return 1
    }
-  
+    set_property CONFIG.ADDR_BASE {0xA000E000} $dc_regs_14
+
+
   # Create instance: dc_regs_15, and set properties
   set block_name dc_regs
   set block_cell_name dc_regs_15
@@ -1090,7 +1122,9 @@ Port;FD4A0000;FD4AFFFF;0|FPD;DPDMA;FD4C0000;FD4CFFFF;0|FPD;DDR_XMPU5_CFG;FD05000
      catch {common::send_gid_msg -ssname BD::TCL -id 2096 -severity "ERROR" "Unable to referenced block <$block_name>. Please add the files for ${block_name}'s definition into the project."}
      return 1
    }
-  
+    set_property CONFIG.ADDR_BASE {0xA000F000} $dc_regs_15
+
+
   # Create instance: dc_regs_16, and set properties
   set block_name dc_regs
   set block_cell_name dc_regs_16
@@ -1101,7 +1135,9 @@ Port;FD4A0000;FD4AFFFF;0|FPD;DPDMA;FD4C0000;FD4CFFFF;0|FPD;DDR_XMPU5_CFG;FD05000
      catch {common::send_gid_msg -ssname BD::TCL -id 2096 -severity "ERROR" "Unable to referenced block <$block_name>. Please add the files for ${block_name}'s definition into the project."}
      return 1
    }
-  
+    set_property CONFIG.ADDR_BASE {0xA0010000} $dc_regs_16
+
+
   # Create instance: dc_regs_17, and set properties
   set block_name dc_regs
   set block_cell_name dc_regs_17
@@ -1112,7 +1148,9 @@ Port;FD4A0000;FD4AFFFF;0|FPD;DPDMA;FD4C0000;FD4CFFFF;0|FPD;DDR_XMPU5_CFG;FD05000
      catch {common::send_gid_msg -ssname BD::TCL -id 2096 -severity "ERROR" "Unable to referenced block <$block_name>. Please add the files for ${block_name}'s definition into the project."}
      return 1
    }
-  
+    set_property CONFIG.ADDR_BASE {0xA0011000} $dc_regs_17
+
+
   # Create instance: dc_regs_18, and set properties
   set block_name dc_regs
   set block_cell_name dc_regs_18
@@ -1123,7 +1161,9 @@ Port;FD4A0000;FD4AFFFF;0|FPD;DPDMA;FD4C0000;FD4CFFFF;0|FPD;DDR_XMPU5_CFG;FD05000
      catch {common::send_gid_msg -ssname BD::TCL -id 2096 -severity "ERROR" "Unable to referenced block <$block_name>. Please add the files for ${block_name}'s definition into the project."}
      return 1
    }
-  
+    set_property CONFIG.ADDR_BASE {0xA0012000} $dc_regs_18
+
+
   # Create instance: dc_regs_19, and set properties
   set block_name dc_regs
   set block_cell_name dc_regs_19
@@ -1134,7 +1174,9 @@ Port;FD4A0000;FD4AFFFF;0|FPD;DPDMA;FD4C0000;FD4CFFFF;0|FPD;DDR_XMPU5_CFG;FD05000
      catch {common::send_gid_msg -ssname BD::TCL -id 2096 -severity "ERROR" "Unable to referenced block <$block_name>. Please add the files for ${block_name}'s definition into the project."}
      return 1
    }
-  
+    set_property CONFIG.ADDR_BASE {0xA0013000} $dc_regs_19
+
+
   # Create instance: dc_regs_20, and set properties
   set block_name dc_regs
   set block_cell_name dc_regs_20
@@ -1145,7 +1187,9 @@ Port;FD4A0000;FD4AFFFF;0|FPD;DPDMA;FD4C0000;FD4CFFFF;0|FPD;DDR_XMPU5_CFG;FD05000
      catch {common::send_gid_msg -ssname BD::TCL -id 2096 -severity "ERROR" "Unable to referenced block <$block_name>. Please add the files for ${block_name}'s definition into the project."}
      return 1
    }
-  
+    set_property CONFIG.ADDR_BASE {0xA0014000} $dc_regs_20
+
+
   # Create instance: dc_regs_21, and set properties
   set block_name dc_regs
   set block_cell_name dc_regs_21
@@ -1156,7 +1200,9 @@ Port;FD4A0000;FD4AFFFF;0|FPD;DPDMA;FD4C0000;FD4CFFFF;0|FPD;DDR_XMPU5_CFG;FD05000
      catch {common::send_gid_msg -ssname BD::TCL -id 2096 -severity "ERROR" "Unable to referenced block <$block_name>. Please add the files for ${block_name}'s definition into the project."}
      return 1
    }
-  
+    set_property CONFIG.ADDR_BASE {0xA0015000} $dc_regs_21
+
+
   # Create instance: dc_regs_22, and set properties
   set block_name dc_regs
   set block_cell_name dc_regs_22
@@ -1167,7 +1213,9 @@ Port;FD4A0000;FD4AFFFF;0|FPD;DPDMA;FD4C0000;FD4CFFFF;0|FPD;DDR_XMPU5_CFG;FD05000
      catch {common::send_gid_msg -ssname BD::TCL -id 2096 -severity "ERROR" "Unable to referenced block <$block_name>. Please add the files for ${block_name}'s definition into the project."}
      return 1
    }
-  
+    set_property CONFIG.ADDR_BASE {0xA0016000} $dc_regs_22
+
+
   # Create instance: dc_regs_23, and set properties
   set block_name dc_regs
   set block_cell_name dc_regs_23
@@ -1178,7 +1226,9 @@ Port;FD4A0000;FD4AFFFF;0|FPD;DPDMA;FD4C0000;FD4CFFFF;0|FPD;DDR_XMPU5_CFG;FD05000
      catch {common::send_gid_msg -ssname BD::TCL -id 2096 -severity "ERROR" "Unable to referenced block <$block_name>. Please add the files for ${block_name}'s definition into the project."}
      return 1
    }
-  
+    set_property CONFIG.ADDR_BASE {0xA0017000} $dc_regs_23
+
+
   # Create instance: rf_regs_1, and set properties
   set block_name rf_regs
   set block_cell_name rf_regs_1
@@ -1189,7 +1239,9 @@ Port;FD4A0000;FD4AFFFF;0|FPD;DPDMA;FD4C0000;FD4CFFFF;0|FPD;DDR_XMPU5_CFG;FD05000
      catch {common::send_gid_msg -ssname BD::TCL -id 2096 -severity "ERROR" "Unable to referenced block <$block_name>. Please add the files for ${block_name}'s definition into the project."}
      return 1
    }
-  
+    set_property CONFIG.ADDR_BASE {0xA0019000} $rf_regs_1
+
+
   # Create instance: rf_regs_2, and set properties
   set block_name rf_regs
   set block_cell_name rf_regs_2
@@ -1200,7 +1252,9 @@ Port;FD4A0000;FD4AFFFF;0|FPD;DPDMA;FD4C0000;FD4CFFFF;0|FPD;DDR_XMPU5_CFG;FD05000
      catch {common::send_gid_msg -ssname BD::TCL -id 2096 -severity "ERROR" "Unable to referenced block <$block_name>. Please add the files for ${block_name}'s definition into the project."}
      return 1
    }
-  
+    set_property CONFIG.ADDR_BASE {0xA001A000} $rf_regs_2
+
+
   # Create instance: rf_regs_3, and set properties
   set block_name rf_regs
   set block_cell_name rf_regs_3
@@ -1211,7 +1265,9 @@ Port;FD4A0000;FD4AFFFF;0|FPD;DPDMA;FD4C0000;FD4CFFFF;0|FPD;DDR_XMPU5_CFG;FD05000
      catch {common::send_gid_msg -ssname BD::TCL -id 2096 -severity "ERROR" "Unable to referenced block <$block_name>. Please add the files for ${block_name}'s definition into the project."}
      return 1
    }
-  
+    set_property CONFIG.ADDR_BASE {0xA001B000} $rf_regs_3
+
+
   # Create instance: rf_regs_4, and set properties
   set block_name rf_regs
   set block_cell_name rf_regs_4
@@ -1222,7 +1278,9 @@ Port;FD4A0000;FD4AFFFF;0|FPD;DPDMA;FD4C0000;FD4CFFFF;0|FPD;DDR_XMPU5_CFG;FD05000
      catch {common::send_gid_msg -ssname BD::TCL -id 2096 -severity "ERROR" "Unable to referenced block <$block_name>. Please add the files for ${block_name}'s definition into the project."}
      return 1
    }
-  
+    set_property CONFIG.ADDR_BASE {0xA001C000} $rf_regs_4
+
+
   # Create instance: rf_regs_5, and set properties
   set block_name rf_regs
   set block_cell_name rf_regs_5
@@ -1233,7 +1291,9 @@ Port;FD4A0000;FD4AFFFF;0|FPD;DPDMA;FD4C0000;FD4CFFFF;0|FPD;DDR_XMPU5_CFG;FD05000
      catch {common::send_gid_msg -ssname BD::TCL -id 2096 -severity "ERROR" "Unable to referenced block <$block_name>. Please add the files for ${block_name}'s definition into the project."}
      return 1
    }
-  
+    set_property CONFIG.ADDR_BASE {0xA001D000} $rf_regs_5
+
+
   # Create instance: usp_rf_data_converter_0, and set properties
   set usp_rf_data_converter_0 [ create_bd_cell -type ip -vlnv xilinx.com:ip:usp_rf_data_converter:2.6 usp_rf_data_converter_0 ]
   set_property -dict [list \
@@ -1337,7 +1397,9 @@ Port;FD4A0000;FD4AFFFF;0|FPD;DPDMA;FD4C0000;FD4CFFFF;0|FPD;DDR_XMPU5_CFG;FD05000
      catch {common::send_gid_msg -ssname BD::TCL -id 2096 -severity "ERROR" "Unable to referenced block <$block_name>. Please add the files for ${block_name}'s definition into the project."}
      return 1
    }
-  
+    set_property CONFIG.ADDR_BASE {0xA001E000} $li_regs_0
+
+
   # Create instance: li_regs_1, and set properties
   set block_name li_regs
   set block_cell_name li_regs_1
@@ -1348,7 +1410,9 @@ Port;FD4A0000;FD4AFFFF;0|FPD;DPDMA;FD4C0000;FD4CFFFF;0|FPD;DDR_XMPU5_CFG;FD05000
      catch {common::send_gid_msg -ssname BD::TCL -id 2096 -severity "ERROR" "Unable to referenced block <$block_name>. Please add the files for ${block_name}'s definition into the project."}
      return 1
    }
-  
+    set_property CONFIG.ADDR_BASE {0xA001F000} $li_regs_1
+
+
   # Create instance: li_axi_write_0, and set properties
   set block_name li_axi_write
   set block_cell_name li_axi_write_0
@@ -1389,7 +1453,9 @@ Port;FD4A0000;FD4AFFFF;0|FPD;DPDMA;FD4C0000;FD4CFFFF;0|FPD;DDR_XMPU5_CFG;FD05000
      catch {common::send_gid_msg -ssname BD::TCL -id 2096 -severity "ERROR" "Unable to referenced block <$block_name>. Please add the files for ${block_name}'s definition into the project."}
      return 1
    }
-  
+    set_property CONFIG.ADDR_BASE {0xB0000000} $nco_update_regs_0
+
+
   # Create instance: nco_update_regs_1, and set properties
   set block_name nco_update_regs
   set block_cell_name nco_update_regs_1
@@ -1400,7 +1466,9 @@ Port;FD4A0000;FD4AFFFF;0|FPD;DPDMA;FD4C0000;FD4CFFFF;0|FPD;DDR_XMPU5_CFG;FD05000
      catch {common::send_gid_msg -ssname BD::TCL -id 2096 -severity "ERROR" "Unable to referenced block <$block_name>. Please add the files for ${block_name}'s definition into the project."}
      return 1
    }
-  
+    set_property CONFIG.ADDR_BASE {0xB0001000} $nco_update_regs_1
+
+
   # Create instance: nco_update_regs_2, and set properties
   set block_name nco_update_regs
   set block_cell_name nco_update_regs_2
@@ -1411,7 +1479,9 @@ Port;FD4A0000;FD4AFFFF;0|FPD;DPDMA;FD4C0000;FD4CFFFF;0|FPD;DDR_XMPU5_CFG;FD05000
      catch {common::send_gid_msg -ssname BD::TCL -id 2096 -severity "ERROR" "Unable to referenced block <$block_name>. Please add the files for ${block_name}'s definition into the project."}
      return 1
    }
-  
+    set_property CONFIG.ADDR_BASE {0xB0002000} $nco_update_regs_2
+
+
   # Create instance: nco_update_regs_3, and set properties
   set block_name nco_update_regs
   set block_cell_name nco_update_regs_3
@@ -1422,7 +1492,9 @@ Port;FD4A0000;FD4AFFFF;0|FPD;DPDMA;FD4C0000;FD4CFFFF;0|FPD;DDR_XMPU5_CFG;FD05000
      catch {common::send_gid_msg -ssname BD::TCL -id 2096 -severity "ERROR" "Unable to referenced block <$block_name>. Please add the files for ${block_name}'s definition into the project."}
      return 1
    }
-  
+    set_property CONFIG.ADDR_BASE {0xB0003000} $nco_update_regs_3
+
+
   # Create instance: nco_update_regs_4, and set properties
   set block_name nco_update_regs
   set block_cell_name nco_update_regs_4
@@ -1433,7 +1505,9 @@ Port;FD4A0000;FD4AFFFF;0|FPD;DPDMA;FD4C0000;FD4CFFFF;0|FPD;DDR_XMPU5_CFG;FD05000
      catch {common::send_gid_msg -ssname BD::TCL -id 2096 -severity "ERROR" "Unable to referenced block <$block_name>. Please add the files for ${block_name}'s definition into the project."}
      return 1
    }
-  
+    set_property CONFIG.ADDR_BASE {0xB0004000} $nco_update_regs_4
+
+
   # Create instance: smartconnect_1, and set properties
   set smartconnect_1 [ create_bd_cell -type ip -vlnv xilinx.com:ip:smartconnect:1.0 smartconnect_1 ]
   set_property -dict [list \
@@ -1452,7 +1526,9 @@ Port;FD4A0000;FD4AFFFF;0|FPD;DPDMA;FD4C0000;FD4CFFFF;0|FPD;DDR_XMPU5_CFG;FD05000
      catch {common::send_gid_msg -ssname BD::TCL -id 2096 -severity "ERROR" "Unable to referenced block <$block_name>. Please add the files for ${block_name}'s definition into the project."}
      return 1
    }
-  
+    set_property CONFIG.ADDR_BASE {0xA0020000} $ex_regs_0
+
+
   # Create instance: ex_regs_1, and set properties
   set block_name ex_regs
   set block_cell_name ex_regs_1
@@ -1463,7 +1539,9 @@ Port;FD4A0000;FD4AFFFF;0|FPD;DPDMA;FD4C0000;FD4CFFFF;0|FPD;DDR_XMPU5_CFG;FD05000
      catch {common::send_gid_msg -ssname BD::TCL -id 2096 -severity "ERROR" "Unable to referenced block <$block_name>. Please add the files for ${block_name}'s definition into the project."}
      return 1
    }
-  
+    set_property CONFIG.ADDR_BASE {0xA0021000} $ex_regs_1
+
+
   # Create interface connections
   connect_bd_intf_net -intf_net adc1_clk_0_1 [get_bd_intf_ports adc1_clk_0] [get_bd_intf_pins usp_rf_data_converter_0/adc1_clk]
   connect_bd_intf_net -intf_net adc1_nco_0_1 [get_bd_intf_ports adc1_nco_0] [get_bd_intf_pins usp_rf_data_converter_0/adc1_nco]
@@ -1689,21 +1767,23 @@ Port;FD4A0000;FD4AFFFF;0|FPD;DPDMA;FD4C0000;FD4CFFFF;0|FPD;DDR_XMPU5_CFG;FD05000
   connect_bd_net -net proc_sys_reset_0_peripheral_aresetn  [get_bd_pins proc_sys_reset_0/peripheral_aresetn] \
   [get_bd_pins smartconnect_0/aresetn] \
   [get_bd_pins usp_rf_data_converter_0/s_axi_aresetn] \
-  [get_bd_pins nco_update_regs_4/s_axi_aresetn] \
-  [get_bd_pins nco_update_regs_3/s_axi_aresetn] \
-  [get_bd_pins nco_update_regs_2/s_axi_aresetn] \
-  [get_bd_pins nco_update_regs_1/s_axi_aresetn] \
-  [get_bd_pins nco_update_regs_0/s_axi_aresetn] \
   [get_bd_ports o_pl_rst_n] \
-  [get_bd_pins smartconnect_1/aresetn]
+  [get_bd_pins smartconnect_1/aresetn] \
+  [get_bd_pins nco_update_regs_0/s_axi_aresetn] \
+  [get_bd_pins nco_update_regs_1/s_axi_aresetn] \
+  [get_bd_pins nco_update_regs_2/s_axi_aresetn] \
+  [get_bd_pins nco_update_regs_3/s_axi_aresetn] \
+  [get_bd_pins nco_update_regs_4/s_axi_aresetn]
   connect_bd_net -net proc_sys_reset_1_peripheral_aresetn  [get_bd_pins proc_sys_reset_1/peripheral_aresetn] \
   [get_bd_pins usp_rf_data_converter_0/m1_axis_aresetn] \
   [get_bd_pins usp_rf_data_converter_0/s0_axis_aresetn] \
   [get_bd_pins usp_rf_data_converter_0/s1_axis_aresetn] \
   [get_bd_pins usp_rf_data_converter_0/s2_axis_aresetn] \
+  [get_bd_ports dcrfli_rst_n] \
+  [get_bd_pins li_axi_write_0/s_axi_aresetn] \
+  [get_bd_pins li_axi_write_1/s_axi_aresetn] \
+  [get_bd_pins usp_rf_data_converter_0/s3_axis_aresetn] \
   [get_bd_pins dc_regs_0/s_axi_aresetn] \
-  [get_bd_pins dc_regs_1/s_axi_aresetn] \
-  [get_bd_pins dc_regs_2/s_axi_aresetn] \
   [get_bd_pins dc_regs_10/s_axi_aresetn] \
   [get_bd_pins dc_regs_11/s_axi_aresetn] \
   [get_bd_pins dc_regs_12/s_axi_aresetn] \
@@ -1714,10 +1794,12 @@ Port;FD4A0000;FD4AFFFF;0|FPD;DPDMA;FD4C0000;FD4CFFFF;0|FPD;DDR_XMPU5_CFG;FD05000
   [get_bd_pins dc_regs_17/s_axi_aresetn] \
   [get_bd_pins dc_regs_18/s_axi_aresetn] \
   [get_bd_pins dc_regs_19/s_axi_aresetn] \
+  [get_bd_pins dc_regs_1/s_axi_aresetn] \
   [get_bd_pins dc_regs_20/s_axi_aresetn] \
   [get_bd_pins dc_regs_21/s_axi_aresetn] \
   [get_bd_pins dc_regs_22/s_axi_aresetn] \
   [get_bd_pins dc_regs_23/s_axi_aresetn] \
+  [get_bd_pins dc_regs_2/s_axi_aresetn] \
   [get_bd_pins dc_regs_3/s_axi_aresetn] \
   [get_bd_pins dc_regs_4/s_axi_aresetn] \
   [get_bd_pins dc_regs_5/s_axi_aresetn] \
@@ -1726,20 +1808,16 @@ Port;FD4A0000;FD4AFFFF;0|FPD;DPDMA;FD4C0000;FD4CFFFF;0|FPD;DDR_XMPU5_CFG;FD05000
   [get_bd_pins dc_regs_8/s_axi_aresetn] \
   [get_bd_pins dc_regs_9/s_axi_aresetn] \
   [get_bd_pins launch_regs_0/s_axi_aresetn] \
-  [get_bd_ports dcrfli_rst_n] \
-  [get_bd_pins li_axi_write_0/s_axi_aresetn] \
-  [get_bd_pins li_axi_write_1/s_axi_aresetn] \
-  [get_bd_pins usp_rf_data_converter_0/s3_axis_aresetn] \
   [get_bd_pins rf_regs_0/s_axi_aresetn] \
-  [get_bd_pins li_regs_0/s_axi_aresetn] \
-  [get_bd_pins li_regs_1/s_axi_aresetn] \
   [get_bd_pins rf_regs_1/s_axi_aresetn] \
   [get_bd_pins rf_regs_2/s_axi_aresetn] \
   [get_bd_pins rf_regs_3/s_axi_aresetn] \
   [get_bd_pins rf_regs_4/s_axi_aresetn] \
   [get_bd_pins rf_regs_5/s_axi_aresetn] \
   [get_bd_pins ex_regs_0/s_axi_aresetn] \
-  [get_bd_pins ex_regs_1/s_axi_aresetn]
+  [get_bd_pins ex_regs_1/s_axi_aresetn] \
+  [get_bd_pins li_regs_0/s_axi_aresetn] \
+  [get_bd_pins li_regs_1/s_axi_aresetn]
   connect_bd_net -net rf_regs_0_o_ctrl_regs  [get_bd_pins rf_regs_0/o_ctrl_regs] \
   [get_bd_ports o_rf_ctrl_regs0]
   connect_bd_net -net rf_regs_0_o_seq_regs  [get_bd_pins rf_regs_0/o_seq_regs] \
@@ -1775,9 +1853,10 @@ Port;FD4A0000;FD4AFFFF;0|FPD;DPDMA;FD4C0000;FD4CFFFF;0|FPD;DDR_XMPU5_CFG;FD05000
   [get_bd_pins usp_rf_data_converter_0/s2_axis_aclk] \
   [get_bd_pins zynq_ultra_ps_e_0/saxihp1_fpd_aclk] \
   [get_bd_pins zynq_ultra_ps_e_0/saxihp0_fpd_aclk] \
+  [get_bd_pins li_axi_write_0/s_axi_aclk] \
+  [get_bd_pins li_axi_write_1/s_axi_aclk] \
+  [get_bd_pins usp_rf_data_converter_0/s3_axis_aclk] \
   [get_bd_pins dc_regs_0/s_axi_aclk] \
-  [get_bd_pins dc_regs_1/s_axi_aclk] \
-  [get_bd_pins dc_regs_2/s_axi_aclk] \
   [get_bd_pins dc_regs_10/s_axi_aclk] \
   [get_bd_pins dc_regs_11/s_axi_aclk] \
   [get_bd_pins dc_regs_12/s_axi_aclk] \
@@ -1788,10 +1867,12 @@ Port;FD4A0000;FD4AFFFF;0|FPD;DPDMA;FD4C0000;FD4CFFFF;0|FPD;DDR_XMPU5_CFG;FD05000
   [get_bd_pins dc_regs_17/s_axi_aclk] \
   [get_bd_pins dc_regs_18/s_axi_aclk] \
   [get_bd_pins dc_regs_19/s_axi_aclk] \
+  [get_bd_pins dc_regs_1/s_axi_aclk] \
   [get_bd_pins dc_regs_20/s_axi_aclk] \
   [get_bd_pins dc_regs_21/s_axi_aclk] \
   [get_bd_pins dc_regs_22/s_axi_aclk] \
   [get_bd_pins dc_regs_23/s_axi_aclk] \
+  [get_bd_pins dc_regs_2/s_axi_aclk] \
   [get_bd_pins dc_regs_3/s_axi_aclk] \
   [get_bd_pins dc_regs_4/s_axi_aclk] \
   [get_bd_pins dc_regs_5/s_axi_aclk] \
@@ -1800,32 +1881,29 @@ Port;FD4A0000;FD4AFFFF;0|FPD;DPDMA;FD4C0000;FD4CFFFF;0|FPD;DDR_XMPU5_CFG;FD05000
   [get_bd_pins dc_regs_8/s_axi_aclk] \
   [get_bd_pins dc_regs_9/s_axi_aclk] \
   [get_bd_pins launch_regs_0/s_axi_aclk] \
-  [get_bd_pins li_axi_write_0/s_axi_aclk] \
-  [get_bd_pins li_axi_write_1/s_axi_aclk] \
-  [get_bd_pins usp_rf_data_converter_0/s3_axis_aclk] \
   [get_bd_pins rf_regs_0/s_axi_aclk] \
-  [get_bd_pins li_regs_0/s_axi_aclk] \
-  [get_bd_pins li_regs_1/s_axi_aclk] \
   [get_bd_pins rf_regs_1/s_axi_aclk] \
   [get_bd_pins rf_regs_2/s_axi_aclk] \
   [get_bd_pins rf_regs_3/s_axi_aclk] \
   [get_bd_pins rf_regs_4/s_axi_aclk] \
   [get_bd_pins rf_regs_5/s_axi_aclk] \
   [get_bd_pins ex_regs_0/s_axi_aclk] \
-  [get_bd_pins ex_regs_1/s_axi_aclk]
+  [get_bd_pins ex_regs_1/s_axi_aclk] \
+  [get_bd_pins li_regs_0/s_axi_aclk] \
+  [get_bd_pins li_regs_1/s_axi_aclk]
   connect_bd_net -net zynq_ultra_ps_e_0_pl_clk0  [get_bd_pins zynq_ultra_ps_e_0/pl_clk0] \
   [get_bd_pins smartconnect_0/aclk1] \
   [get_bd_pins proc_sys_reset_0/slowest_sync_clk] \
   [get_bd_pins zynq_ultra_ps_e_0/maxihpm0_fpd_aclk] \
   [get_bd_pins usp_rf_data_converter_0/s_axi_aclk] \
   [get_bd_pins smartconnect_1/aclk] \
+  [get_bd_ports o_pl_clk] \
+  [get_bd_pins zynq_ultra_ps_e_0/maxihpm1_fpd_aclk] \
   [get_bd_pins nco_update_regs_0/s_axi_aclk] \
   [get_bd_pins nco_update_regs_1/s_axi_aclk] \
   [get_bd_pins nco_update_regs_2/s_axi_aclk] \
   [get_bd_pins nco_update_regs_3/s_axi_aclk] \
-  [get_bd_pins nco_update_regs_4/s_axi_aclk] \
-  [get_bd_ports o_pl_clk] \
-  [get_bd_pins zynq_ultra_ps_e_0/maxihpm1_fpd_aclk]
+  [get_bd_pins nco_update_regs_4/s_axi_aclk]
   connect_bd_net -net zynq_ultra_ps_e_0_pl_resetn0  [get_bd_pins zynq_ultra_ps_e_0/pl_resetn0] \
   [get_bd_pins proc_sys_reset_0/ext_reset_in] \
   [get_bd_pins proc_sys_reset_1/ext_reset_in]

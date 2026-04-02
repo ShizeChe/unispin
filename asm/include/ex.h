@@ -4,6 +4,8 @@
 #include <stdint.h>
 #include <math.h>
 
+#define EX_CHANNELS 2
+
 #define EX_DEPTH 16
 
 #define EX_REAL_BITS 14
@@ -18,6 +20,8 @@
 #define EX_VMIN -1
 
 #define EX_MAX_SAMPLES ((1u << EX_SAMPLE_BITS) - 1u)
+
+static const int ex_uio_map[EX_CHANNELS] = {28, 29};
 
 typedef struct {
     uint32_t arm;
@@ -52,6 +56,7 @@ typedef struct {
 int ex_parse_insn(char *line, ex_insn_t *insn);
 void ex_assemble(ex_program_t *prog);
 int ex_load_insns(int ex_channel, ex_program_t *ex_program);
+int ex_read_regs(int ex_channel, uint32_t *seq_regs);
 int ex_write_regs(int ex_channel, ex_program_t *ex_program, int uartfd);
 
 #endif

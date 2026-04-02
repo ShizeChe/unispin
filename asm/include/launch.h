@@ -5,6 +5,7 @@
 #include "common.h"
 
 #define LAUNCH_TOTAL_REGS 5
+#define LAUNCH_UIO 30
 
 typedef struct {
     uint32_t dc_chmask;
@@ -15,5 +16,6 @@ typedef struct {
 
 int launch_parse(char *line, launch_t *launch);
 int launch_load(launch_t *launch);
+int launch_read_regs(uint32_t *regs);
 
 #endif

@@ -3,7 +3,7 @@
 
 #include <stdint.h>
 
-#define NUM_DC_CHANNEL 24
+#define DC_CHANNELS 24
 #define INSN_PER_DC_CHANNEL 10
 #define REG_PER_DC_CHANNEL 32
 
@@ -24,6 +24,11 @@
 #define DC_DEPTH 10
 #define DC_SEQ_REGS ((DC_DEPTH * DC_REG_PER_INSN) + 2)
 #define DC_CTRL_REGS 4
+
+static const int dc_uio_map[DC_CHANNELS] = {
+    4, 5, 16, 21, 22, 23, 24, 25, 26, 27, 6, 7, 
+    8, 9, 10, 11, 12, 13, 14, 15, 17, 18, 19, 20
+}; 
 
 typedef struct {
     uint32_t iters;
@@ -105,6 +110,7 @@ typedef struct {
 int dc_parse_insn(char *line, dc_insn_t *insn);
 void dc_assemble(dc_program_t *prog);
 int dc_load_insns(int dc_channel, dc_program_t *dc_program);
+int dc_read_regs(int dc_channel, uint32_t *seq_regs, uint32_t *ctrl_regs);
 int dc_write_regs(int dc_channel, dc_program_t *dc_program, int uartfd);
 
 #endif

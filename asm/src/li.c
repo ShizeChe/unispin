@@ -171,10 +171,10 @@ void li_assemble(li_program_t *prog) {
 
 int li_load_insns(int li_channel, li_program_t *li_program) {
 
-    assert(0 <= li_channel && li_channel <= LAUNCH_UIO - LI_UIO_BASE - 1);
+    assert(0 <= li_channel && li_channel <= LI_CHANNELS - 1);
 
     char uio_path[32];
-    snprintf(uio_path, sizeof(uio_path), "/dev/uio%d", LI_UIO_BASE + li_channel);
+    snprintf(uio_path, sizeof(uio_path), "/dev/uio%d", li_uio_map[li_channel]);
 
     int li_fd = open(uio_path, O_RDWR);
     if (li_fd < 0) {
@@ -204,7 +204,44 @@ int li_load_insns(int li_channel, li_program_t *li_program) {
     __asm__ __volatile__("dsb oshst" ::: "memory");
 #endif
 
+    munmap(li_va, 0x1000);
+    close(li_fd);
     return 0;
+}
+
+int li_read_regs(int li_channel, uint32_t *seq_regs, uint32_t *ctrl_regs) {
+
+    assert(0 <= li_channel && li_channel <= LI_CHANNELS - 1);
+
+    char uio_path[32];
+    snprintf(uio_path, sizeof(uio_path), "/dev/uio%d", li_uio_map[li_channel]);
+
+    int li_fd = open(uio_path, O_RDWR);
+    if (li_fd < 0) {
+        fprintf(stderr, "open(\"%s\") failed: %s\n", uio_path, strerror(errno));
+        return 1;
+    }
+
+    void *li_va = mmap(NULL, 0x1000, PROT_READ | PROT_WRITE, MAP_SHARED, li_fd, 0);
+    if (li_va == MAP_FAILED) {
+        fprintf(stderr, "mmap() %s failed: %s\n", uio_path, strerror(errno));
+        close(li_fd);
+        return 1;
+    }
+
+    volatile uint32_t *li_base = (volatile uint32_t *)((char *)li_va);
+
+    for (int i = 0; i < LI_SEQ_REGS; i++) {
+        seq_regs[i] = *(li_base + i);
+    }
+    for (int i = 0; i < LI_CTRL_REGS; i++) {
+        ctrl_regs[i] = *(li_base + LI_SEQ_REGS + i);
+    }
+
+    munmap(li_va, 0x1000);
+    close(li_fd);
+    return 0;
+
 }
 
 int li_write_regs(int li_channel, li_program_t *li_program, int uartfd) {

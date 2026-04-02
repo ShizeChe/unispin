@@ -82,8 +82,7 @@ static int assemble(FILE *fp,
                 } else if (sscanf(line, ".program rf%u ", &channel)) {
 
                     rf_programs[channel] = (rf_program_t *)calloc(1, sizeof(rf_program_t));
-                    rf_programs[channel]->ctrl.nco_freq = -1;
-                    rf_programs[channel]->ctrl.nco_phase = -1;
+                    rf_programs[channel]->nco_freq = -1;
                     rf_programs[channel]->ctrl.default_I = -1;
                     rf_programs[channel]->ctrl.default_Q = -1;
 
@@ -215,9 +214,6 @@ static int assemble(FILE *fp,
                 uint64_t rf_nco_freq_hex;
                 long double rf_nco_freq;
 
-                uint32_t rf_nco_phase_hex;
-                double rf_nco_phase;
-
                 uint32_t rf_default_I_hex;
                 double rf_default_I;
 
@@ -228,33 +224,14 @@ static int assemble(FILE *fp,
 
                     if (sscanf(rf_ctrl_tok, "0x%lx", &rf_nco_freq_hex)) {
 
-                        rf_programs[channel]->ctrl.nco_freq = (int64_t)rf_nco_freq_hex;
+                        rf_programs[channel]->nco_freq = (int64_t)rf_nco_freq_hex;
 
                         success = fgets(line, sizeof(line), fp);
 
                     } else if (parse_freq(rf_ctrl_tok, &rf_nco_freq) == 0) {
 
-                        rf_programs[channel]->ctrl.nco_freq = real2twos(RF_FNCO_MIN, 
+                        rf_programs[channel]->nco_freq = real2twos(RF_FNCO_MIN, 
                             RF_FNCO_MAX, RF_FNCO_BITS, rf_nco_freq, 1);
-
-                        success = fgets(line, sizeof(line), fp);
-
-                    } else {
-                        return -1;
-                    }
-
-                } else if (sscanf(line, ".pnco %31s ", rf_ctrl_tok)) {
-
-                    if (sscanf(rf_ctrl_tok, "0x%x", &rf_nco_phase_hex)) {
-
-                        rf_programs[channel]->ctrl.nco_phase = (int32_t)rf_nco_phase_hex;
-
-                        success = fgets(line, sizeof(line), fp);
-
-                    } else if (sscanf(rf_ctrl_tok, "%lf", &rf_nco_phase)) {
-
-                        rf_programs[channel]->ctrl.nco_phase = real2twos(RF_PNCO_MIN, 
-                            RF_PNCO_MAX, RF_PNCO_BITS, rf_nco_phase, 1);
 
                         success = fgets(line, sizeof(line), fp);
 
@@ -326,12 +303,12 @@ static int assemble(FILE *fp,
 
             case RF_INSN:
 
-                assert(rf_programs[channel]->ctrl.nco_freq != -1);
+                assert(rf_programs[channel]->nco_freq != -1);
 
                 rf_insn_t rf_insn;
                 i = 0;
                 long double rf_fnco_hz = twos2real(RF_FNCO_MIN, RF_FNCO_MAX,
-                    RF_FNCO_BITS, rf_programs[channel]->ctrl.nco_freq);
+                    RF_FNCO_BITS, rf_programs[channel]->nco_freq);
 
                 while (success != NULL) {
 
@@ -1213,6 +1190,97 @@ static int parse_u32_optarg(const char *s, uint32_t *out)
     return 1;
 }
 
+static void inspect_regs() {
+
+    uint32_t dc_seq_regs[DC_SEQ_REGS];
+    uint32_t dc_ctrl_regs[DC_CTRL_REGS];
+
+    uint32_t rf_seq_regs[RF_SEQ_REGS];
+    uint32_t rf_ctrl_regs[RF_CTRL_REGS];
+
+    uint32_t li_seq_regs[LI_SEQ_REGS];
+    uint32_t li_ctrl_regs[LI_CTRL_REGS];
+
+    uint32_t ex_seq_regs[EX_SEQ_REGS];
+    uint32_t launch_regs[LAUNCH_TOTAL_REGS];
+
+    for (int ch = 0; ch < DC_CHANNELS; ch++) {
+
+        dc_read_regs(ch, dc_seq_regs, dc_ctrl_regs);
+        printf("dc%d\n", ch);
+
+        printf("\tseq regs:\n");
+        for (int i = 0; i < DC_SEQ_REGS; i++) {
+            printf("\t\t%08" PRIX32 "\n", dc_seq_regs[i]);
+        }
+
+        printf("\tctrl regs:\n");
+        for (int i = 0; i < DC_CTRL_REGS; i++) {
+            printf("\t\t%08" PRIX32 "\n", dc_ctrl_regs[i]);
+        }
+        printf("\n");
+
+    }
+
+    for (int ch = 0; ch < RF_CHANNELS; ch++) {
+
+        rf_read_regs(ch, rf_seq_regs, rf_ctrl_regs);
+        printf("rf%d\n", ch);
+
+        printf("\tseq regs:\n");
+        for (int i = 0; i < RF_SEQ_REGS; i++) {
+            printf("\t\t%08" PRIX32 "\n", rf_seq_regs[i]);
+        }
+
+        printf("\tctrl regs:\n");
+        for (int i = 0; i < RF_CTRL_REGS; i++) {
+            printf("\t\t%08" PRIX32 "\n", rf_ctrl_regs[i]);
+        }
+        printf("\n");
+
+    }
+
+    for (int ch = 0; ch < LI_CHANNELS; ch++) {
+
+        li_read_regs(ch, li_seq_regs, li_ctrl_regs);
+        printf("li%d\n", ch);
+
+        printf("\tseq regs:\n");
+        for (int i = 0; i < LI_SEQ_REGS; i++) {
+            printf("\t\t%08" PRIX32 "\n", li_seq_regs[i]);
+        }
+
+        printf("\tctrl regs:\n");
+        for (int i = 0; i < LI_CTRL_REGS; i++) {
+            printf("\t\t%08" PRIX32 "\n", li_ctrl_regs[i]);
+        }
+        printf("\n");
+
+    }
+
+    for (int ch = 0; ch < EX_CHANNELS; ch++) {
+
+        ex_read_regs(ch, ex_seq_regs);
+        printf("ex%d\n", ch);
+
+        printf("\tseq regs:\n");
+        for (int i = 0; i < EX_SEQ_REGS; i++) {
+            printf("\t\t%08" PRIX32 "\n", ex_seq_regs[i]);
+        }
+        printf("\n");
+
+    }
+
+    launch_read_regs(launch_regs);
+    printf("launch\n");
+    printf("\tregs:\n");
+    for (int i = 0; i < LAUNCH_TOTAL_REGS; i++) {
+        printf("\t\t%08" PRIX32 "\n", launch_regs[i]);
+    }
+    printf("\n");
+    
+}
+
 int main(int argc, char *argv[]) {
 
     int opt;
@@ -1385,17 +1453,21 @@ int main(int argc, char *argv[]) {
     }
 
     if (read) {
-        rfd = open(rdev, O_RDWR | O_NOCTTY | O_SYNC);
-        if (rfd < 0) {
-            fprintf(stderr, "open(%s) failed: %s\n", rdev, strerror(errno));
-            return 1;
-        }
-        if (setup_uart(rfd, B921600) != 0) {
+        if (uart) {
+            rfd = open(rdev, O_RDWR | O_NOCTTY | O_SYNC);
+            if (rfd < 0) {
+                fprintf(stderr, "open(%s) failed: %s\n", rdev, strerror(errno));
+                return 1;
+            }
+            if (setup_uart(rfd, B921600) != 0) {
+                close(rfd);
+                return 1;
+            }
+            read_uart_regs(rfd);
             close(rfd);
-            return 1;
+        } else {
+            inspect_regs();
         }
-        read_uart_regs(rfd);
-        close(rfd);
     }
 
     for (int i = 0; i < DC_CHANNELS; i++) {

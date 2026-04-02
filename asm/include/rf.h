@@ -14,6 +14,8 @@ static inline int clog2_u32(uint32_t n) {
     return r;
 }
 
+#define RF_CHANNELS 6
+
 #define RF_DEPTH 16
 
 #define RF_KBC_BITS 36
@@ -41,7 +43,9 @@ static inline int clog2_u32(uint32_t n) {
 #define RF_DEPTH 16
 #define RF_REG_PER_INSN 4
 #define RF_SEQ_REGS ((RF_DEPTH * RF_REG_PER_INSN) + 2)
-#define RF_CTRL_REGS 6
+#define RF_CTRL_REGS 2
+
+static const int rf_uio_map[RF_CHANNELS] = {38, 39, 40, 41, 42, 43};
 
 typedef struct {
     uint32_t arm;
@@ -53,14 +57,13 @@ typedef struct {
 } rf_insn_t;
 
 typedef struct {
-    int64_t nco_freq;
-    int32_t nco_phase;
     int32_t default_I;
     int32_t default_Q;
 } rf_ctrl_t;
 
 typedef struct {
     rf_ctrl_t ctrl;
+    int64_t nco_freq;
     uint32_t repeat;
     uint32_t len;
     rf_insn_t insns[RF_DEPTH];
@@ -102,6 +105,7 @@ typedef struct {
 int rf_parse_insn(char *line, rf_insn_t *insn, long double fnco_hz);
 void rf_assemble(rf_program_t *prog);
 int rf_load_insns(int rf_channel, rf_program_t *rf_program);
+int rf_read_regs(int rf_channel, uint32_t *seq_regs, uint32_t *ctrl_regs);
 int rf_write_regs(int rf_channel, rf_program_t *rf_program, int uartfd);
 
 #endif

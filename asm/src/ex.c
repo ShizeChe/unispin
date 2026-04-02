@@ -171,10 +171,10 @@ void ex_assemble(ex_program_t *prog) {
 
 int ex_load_insns(int ex_channel, ex_program_t *ex_program) {
 
-    assert(0 <= ex_channel && ex_channel <= LAUNCH_UIO - EX_UIO_BASE - 1);
+    assert(0 <= ex_channel && ex_channel <= EX_CHANNELS - 1);
 
     char uio_path[32];
-    snprintf(uio_path, sizeof(uio_path), "/dev/uio%d", EX_UIO_BASE + ex_channel);
+    snprintf(uio_path, sizeof(uio_path), "/dev/uio%d", ex_uio_map[ex_channel]);
 
     int ex_fd = open(uio_path, O_RDWR);
     if (ex_fd < 0) {
@@ -199,7 +199,41 @@ int ex_load_insns(int ex_channel, ex_program_t *ex_program) {
     __asm__ __volatile__("dsb oshst" ::: "memory");
 #endif
 
+    munmap(ex_va, 0x1000);
+    close(ex_fd);
     return 0;
+}
+
+int ex_read_regs(int ex_channel, uint32_t *seq_regs) {
+
+    assert(0 <= ex_channel && ex_channel <= EX_CHANNELS - 1);
+
+    char uio_path[32];
+    snprintf(uio_path, sizeof(uio_path), "/dev/uio%d", ex_uio_map[ex_channel]);
+
+    int ex_fd = open(uio_path, O_RDWR);
+    if (ex_fd < 0) {
+        fprintf(stderr, "open(\"%s\") failed: %s\n", uio_path, strerror(errno));
+        return 1;
+    }
+
+    void *ex_va = mmap(NULL, 0x1000, PROT_READ | PROT_WRITE, MAP_SHARED, ex_fd, 0);
+    if (ex_va == MAP_FAILED) {
+        fprintf(stderr, "mmap() %s failed: %s\n", uio_path, strerror(errno));
+        close(ex_fd);
+        return 1;
+    }
+
+    volatile uint32_t *ex_base = (volatile uint32_t *)((char *)ex_va);
+
+    for (int i = 0; i < EX_SEQ_REGS; i++) {
+        seq_regs[i] = *(ex_base + i);
+    }
+
+    munmap(ex_va, 0x1000);
+    close(ex_fd);
+    return 0;
+
 }
 
 int ex_write_regs(int ex_channel, ex_program_t *ex_program, int uartfd) {

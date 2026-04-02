@@ -296,24 +296,20 @@ void rf_assemble(rf_program_t *prog) {
     prog->seq_regs[RF_SEQ_REGS-2] = prog->repeat;
     prog->seq_regs[RF_SEQ_REGS-1] = 1;
 
-    prog->ctrl_regs[0] = (prog->ctrl.nco_freq >> 32);
-    prog->ctrl_regs[1] = prog->ctrl.nco_freq;
-    prog->ctrl_regs[2] = prog->ctrl.nco_phase;
-    prog->ctrl_regs[3] = prog->ctrl.default_I;
-    prog->ctrl_regs[4] = prog->ctrl.default_Q;
+    prog->ctrl_regs[0] = (((uint32_t)prog->ctrl.default_Q) << 18) |
+                         ((((uint32_t)prog->ctrl.default_I) & 0x3fff) << 2);
 
-    prog->ctrl_regs[RF_CTRL_REGS-1] = (prog->ctrl_regs[0] != -1) ||
-        (prog->ctrl_regs[1] != -1) || (prog->ctrl_regs[2] != -1) ||
-        (prog->ctrl_regs[3] != -1) || (prog->ctrl_regs[4] != -1);
+    prog->ctrl_regs[RF_CTRL_REGS-1] = (prog->ctrl.default_I != -1) ||
+        (prog->ctrl.default_Q != -1);
 
 }
 
 int rf_load_insns(int rf_channel, rf_program_t *rf_program) {
 
-    assert(0 <= rf_channel && rf_channel <= LI_UIO_BASE - RF_UIO_BASE - 1);
+    assert(0 <= rf_channel && rf_channel <= RF_CHANNELS - 1);
 
     char uio_path[32];
-    snprintf(uio_path, sizeof(uio_path), "/dev/uio%d", RF_UIO_BASE + rf_channel);
+    snprintf(uio_path, sizeof(uio_path), "/dev/uio%d", rf_uio_map[rf_channel]);
 
     int rf_fd = open(uio_path, O_RDWR);
     if (rf_fd < 0) {
@@ -343,7 +339,45 @@ int rf_load_insns(int rf_channel, rf_program_t *rf_program) {
     __asm__ __volatile__("dsb oshst" ::: "memory");
 #endif
 
+    munmap(rf_va, 0x1000);
+    close(rf_fd);
     return 0;
+
+}
+
+int rf_read_regs(int rf_channel, uint32_t *seq_regs, uint32_t *ctrl_regs) {
+
+    assert(0 <= rf_channel && rf_channel <= RF_CHANNELS - 1);
+
+    char uio_path[32];
+    snprintf(uio_path, sizeof(uio_path), "/dev/uio%d", rf_uio_map[rf_channel]);
+
+    int rf_fd = open(uio_path, O_RDWR);
+    if (rf_fd < 0) {
+        fprintf(stderr, "open(\"%s\") failed: %s\n", uio_path, strerror(errno));
+        return 1;
+    }
+
+    void *rf_va = mmap(NULL, 0x1000, PROT_READ | PROT_WRITE, MAP_SHARED, rf_fd, 0);
+    if (rf_va == MAP_FAILED) {
+        fprintf(stderr, "mmap() %s failed: %s\n", uio_path, strerror(errno));
+        close(rf_fd);
+        return 1;
+    }
+
+    volatile uint32_t *rf_base = (volatile uint32_t *)((char *)rf_va);
+
+    for (int i = 0; i < RF_SEQ_REGS; i++) {
+        seq_regs[i] = *(rf_base + i);
+    }
+    for (int i = 0; i < RF_CTRL_REGS; i++) {
+        ctrl_regs[i] = *(rf_base + RF_SEQ_REGS + i);
+    }
+
+    munmap(rf_va, 0x1000);
+    close(rf_fd);
+    return 0;
+
 }
 
 int rf_write_regs(int rf_channel, rf_program_t *rf_program, int uartfd) {

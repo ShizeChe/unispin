@@ -527,10 +527,10 @@ void dc_assemble(dc_program_t *prog) {
 
 int dc_load_insns(int dc_channel, dc_program_t *dc_program) {
 
-    assert(0 <= dc_channel && dc_channel <= RF_UIO_BASE - DC_UIO_BASE - 1);
+    assert(0 <= dc_channel && dc_channel <= DC_CHANNELS - 1);
 
     char uio_path[32];
-    snprintf(uio_path, sizeof(uio_path), "/dev/uio%d", DC_UIO_BASE + dc_channel);
+    snprintf(uio_path, sizeof(uio_path), "/dev/uio%d", dc_uio_map[dc_channel]);
 
     int dc_fd = open(uio_path, O_RDWR);
     if (dc_fd < 0) {
@@ -560,7 +560,45 @@ int dc_load_insns(int dc_channel, dc_program_t *dc_program) {
     __asm__ __volatile__("dsb oshst" ::: "memory");
 #endif
 
+    munmap(dc_va, 0x1000);
+    close(dc_fd);
     return 0;
+
+}
+
+int dc_read_regs(int dc_channel, uint32_t *seq_regs, uint32_t *ctrl_regs) {
+
+    assert(0 <= dc_channel && dc_channel <= DC_CHANNELS - 1);
+
+    char uio_path[32];
+    snprintf(uio_path, sizeof(uio_path), "/dev/uio%d", dc_uio_map[dc_channel]);
+
+    int dc_fd = open(uio_path, O_RDWR);
+    if (dc_fd < 0) {
+        fprintf(stderr, "open(\"%s\") failed: %s\n", uio_path, strerror(errno));
+        return 1;
+    }
+
+    void *dc_va = mmap(NULL, 0x1000, PROT_READ | PROT_WRITE, MAP_SHARED, dc_fd, 0);
+    if (dc_va == MAP_FAILED) {
+        fprintf(stderr, "mmap() %s failed: %s\n", uio_path, strerror(errno));
+        close(dc_fd);
+        return 1;
+    }
+
+    volatile uint32_t *dc_base = (volatile uint32_t *)((char *)dc_va);
+
+    for (int i = 0; i < DC_SEQ_REGS; i++) {
+        seq_regs[i] = *(dc_base + i);
+    }
+    for (int i = 0; i < DC_CTRL_REGS; i++) {
+        ctrl_regs[i] = *(dc_base + DC_SEQ_REGS + i);
+    }
+
+    munmap(dc_va, 0x1000);
+    close(dc_fd);
+    return 0;
+
 }
 
 int dc_write_regs(int dc_channel, dc_program_t *dc_program, int uartfd) {

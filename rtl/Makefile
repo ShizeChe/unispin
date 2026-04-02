@@ -1,6 +1,6 @@
 # Top-level variables
 SIM := vcs
-# SRC := $(wildcard src/dc*) $(wildcard src/rf*) $(wildcard src/li*) $(wildcard src/ex*) $(wildcard src/launch*) src/sequencer.sv src/uart_regs.sv sim/cmd_dpi.c lib/axil_slave_regs.sv lib/debouncer.sv lib/button_detector.sv lib/ad5791.sv lib/zcu216_dac.sv lib/fifo.sv lib/baudx16_generator.sv lib/transmitter.sv lib/receiver.sv lib/uart.sv lib/zcu216_adc.sv lib/zcu216_real_dac.sv lib/bram.sv lib/bram_fifo.sv lib/phase_observe.sv
+SRC := $(wildcard src/dc*) $(wildcard src/rf*) $(wildcard src/li*) $(wildcard src/ex*) $(wildcard src/launch*) src/sequencer.sv src/uart_regs.sv sim/cmd_dpi.c lib/axil_slave_regs.sv lib/debouncer.sv lib/button_detector.sv lib/ad5791.sv lib/zcu216_dac.sv lib/fifo.sv lib/baudx16_generator.sv lib/transmitter.sv lib/receiver.sv lib/uart.sv lib/zcu216_adc.sv lib/zcu216_real_dac.sv lib/bram.sv lib/bram_fifo.sv lib/phase_observe.sv
 # SRC := src/dc_decode.sv src/dc_spi_master.sv src/dc_core.sv src/sequencer.sv src/dc_ctrl.sv src/dc.sv lib/ad5791.sv
 # SRC := src/rf_decode.sv src/rf_phasor.sv src/rf_cordic.sv src/rf_core.sv src/sequencer.sv src/rf_nco_update.sv src/rf_ctrl.sv src/rf_format.sv src/rf.sv lib/zcu216_dac.sv
 # SRC :=  src/li.sv src/sequencer.sv src/li_core.sv src/li_ctrl.sv src/li_decode.sv src/li_sample.sv
@@ -8,11 +8,11 @@ SIM := vcs
 # SRC := src/rf_phasor.sv
 # SRC := src/rf_cordic.sv
 # SRC := src/sequencer.sv src/ex_core.sv src/ex.sv lib/axil_slave_regs.sv
-SRC := src/bram_sequencer.sv lib/bram.sv lib/edge_detector.sv
+# SRC := src/bram_sequencer.sv lib/bram.sv lib/edge_detector.sv
 
-TB ?= bram_sequencer_tb
-# TB_SRC := sim/$(TB).sv
-TB_SRC := tb/$(TB).sv
+TB ?= simulator
+TB_SRC := sim/$(TB).sv
+# TB_SRC := tb/$(TB).sv
 TARGET := $(TB)
 CORES := $(shell getconf _NPROCESSORS_ONLN)
 

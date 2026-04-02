@@ -2,7 +2,8 @@
 
 module axil_slave_regs
    #(parameter NUM_REGS=32,
-     parameter ADDR_WIDTH=$clog2(NUM_REGS*4))
+     parameter ADDR_WIDTH=$clog2(NUM_REGS*4),
+     parameter logic [31:0] ADDR_BASE=32'hA0000000)
     (input  logic i_aclk,
      input  logic i_aresetn,
      
@@ -85,6 +86,11 @@ module axil_slave_regs
     always_ff @(posedge i_aclk) begin
         if (!i_aresetn) begin
             o_bresp <= 2'b00;
+
+            // reset discipline for ps side verification
+            for (int i = 0; i < NUM_REGS; i++) begin
+                r_regs[i] <= ADDR_BASE + 4 * i;
+            end
         end
         else begin 
             if (i_awvalid && o_awready && i_wvalid && o_wready) begin

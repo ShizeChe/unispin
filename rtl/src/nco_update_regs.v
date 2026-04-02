@@ -4,7 +4,8 @@
 module nco_update_regs
    #(parameter NUM_NCO=2,
      parameter NUM_NCO_UPDATE_REGS=3*NUM_NCO+1,
-     parameter ADDR_WIDTH=$clog2(NUM_NCO_UPDATE_REGS)+2)
+     parameter ADDR_WIDTH=$clog2(NUM_NCO_UPDATE_REGS)+2,
+     parameter [31:0] ADDR_BASE=32'hA0000000)
     (input  wire s_axi_aclk,
      input  wire s_axi_aresetn,
      

@@ -1,5 +1,9 @@
 #include "common.h"
 #include "launch.h"
+#include "dc.h"
+#include "rf.h"
+#include "li.h"
+#include "ex.h"
 #include <stdint.h>
 #include <stdio.h>
 #include <errno.h>
@@ -114,6 +118,38 @@ int launch_load(launch_t *launch) {
     __asm__ __volatile__("dsb oshst" ::: "memory");
 #endif
 
+    munmap(launch_va, 0x1000);
+    close(launch_fd);
     return 0;
+}
+
+int launch_read_regs(uint32_t *regs) {
+
+    char uio_path[32];
+    snprintf(uio_path, sizeof(uio_path), "/dev/uio%d", LAUNCH_UIO);
+
+    int launch_fd = open(uio_path, O_RDWR);
+    if (launch_fd < 0) {
+        fprintf(stderr, "open(\"%s\") failed: %s\n", uio_path, strerror(errno));
+        return 1;
+    }
+
+    void *launch_va = mmap(NULL, 0x1000, PROT_READ | PROT_WRITE, MAP_SHARED, launch_fd, 0);
+    if (launch_va == MAP_FAILED) {
+        fprintf(stderr, "mmap() %s failed: %s\n", uio_path, strerror(errno));
+        close(launch_fd);
+        return 1;
+    }
+
+    volatile uint32_t *launch_base = (volatile uint32_t *)((char *)launch_va);
+
+    for (int i = 0; i < LAUNCH_TOTAL_REGS; i++) {
+        regs[i] = *(launch_base + i);
+    }
+
+    munmap(launch_va, 0x1000);
+    close(launch_fd);
+    return 0;
+
 }
 

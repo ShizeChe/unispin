@@ -4,6 +4,7 @@
 #include <stdint.h>
 #include <math.h>
 
+#define LI_CHANNELS 2
 #define LI_DEPTH 16
 
 #define LI_SAMPLE_BITS 20
@@ -27,6 +28,8 @@
 #define LI_REG_PER_INSN 2
 #define LI_SEQ_REGS ((LI_DEPTH * LI_REG_PER_INSN) + 2)
 #define LI_CTRL_REGS 4
+
+static const int li_uio_map[LI_CHANNELS] = {31, 32};
 
 typedef struct {
     uint32_t arm;
@@ -69,6 +72,7 @@ typedef struct {
 int li_parse_insn(char *line, li_insn_t *insn);
 void li_assemble(li_program_t *prog);
 int li_load_insns(int li_channel, li_program_t *li_program);
+int li_read_regs(int li_channel, uint32_t *seq_regs, uint32_t *ctrl_regs);
 int li_write_regs(int li_channel, li_program_t *li_program, int uartfd);
 
 #endif
