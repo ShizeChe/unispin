@@ -1,16 +1,18 @@
 // `default_nettype none
 `timescale 1ns / 1ps
-`include "launch.vh"
+`include "launch.svh"
 
 module launch
    #(parameter NUM_DC_CHANNEL=24,
      parameter NUM_RF_CHANNEL=6,
      parameter NUM_LI_CHANNEL=2,
-     parameter NUM_EX_CHANNEL=2)
+     parameter NUM_EX_CHANNEL=2,
+     parameter CTRL_REGS=LCH_CTRL_REGS,
+     parameter STATUS_REGS=LCH_STATUS_REGS)
     (input  logic i_clk, i_rst,
 
-     input  logic [0:LCH_TOTAL_REGS-1][31:0] i_regs,
-     input  logic [0:LCH_TOTAL_REGS-1][31:0] i_uregs,
+     input  logic [0:LCH_CTRL_REGS-1][31:0] i_ctrl_regs,
+     output logic [0:LCH_STATUS_REGS-1][31:0] o_status_regs,
 
      input  logic [NUM_DC_CHANNEL-1:0] i_dc_armed,
      input  logic [NUM_RF_CHANNEL-1:0] i_rf_armed,
@@ -24,34 +26,21 @@ module launch
      output logic [NUM_LI_CHANNEL-1:0] o_li_start,
      output logic [NUM_EX_CHANNEL-1:0] o_ex_start);
 
-    logic w_last0, w_last0_ff1, w_last0_ff2;
+    logic w_new_ctrl;
 
-    assign w_last0 = (i_regs[LCH_TOTAL_REGS-1] == 'h0);
-
-    always_ff @(posedge i_clk) begin
-        w_last0_ff1 <= w_last0;
-        w_last0_ff2 <= w_last0_ff1;
-    end
-
-    logic w_new_stream;
-    assign w_new_stream = (w_last0_ff2 && !w_last0_ff1);
-
-    logic w_ulast0, w_ulast0_ff1, w_ulast0_ff2;
-
-    assign w_ulast0 = (i_uregs[LCH_TOTAL_REGS-1] == 'h0);
-
-    always_ff @(posedge i_clk) begin
-        w_ulast0_ff1 <= w_ulast0;
-        w_ulast0_ff2 <= w_ulast0_ff1;
-    end
-
-    logic w_new_ustream;
-    assign w_new_ustream = (w_ulast0_ff2 && !w_ulast0_ff1);
+    edge_detector CTRLWR (
+        .i_clk(i_clk),
+        .i_rst(i_rst),
+        .i_signal(i_ctrl_regs[LCH_CTRL_REGS-1][0]),
+        .o_posedge(w_new_ctrl),
+        .o_negedge()
+    );
 
     logic [NUM_DC_CHANNEL-1:0] r_dc_active_mask;
     logic [NUM_RF_CHANNEL-1:0] r_rf_active_mask;
     logic [NUM_LI_CHANNEL-1:0] r_li_active_mask;
     logic [NUM_EX_CHANNEL-1:0] r_ex_active_mask;
+    logic r_wait_trigger;
 
     always_ff @(posedge i_clk) begin
         if (i_rst) begin
@@ -59,18 +48,14 @@ module launch
             r_rf_active_mask <= 'h0;
             r_li_active_mask <= 'h0;
             r_ex_active_mask <= 'h0;
+            r_wait_trigger <= 1'b1;
         end
-        else if (w_new_ustream) begin
-            r_dc_active_mask <= i_uregs[0][NUM_DC_CHANNEL-1:0];
-            r_rf_active_mask <= i_uregs[1][NUM_RF_CHANNEL-1:0];
-            r_li_active_mask <= i_uregs[2][NUM_LI_CHANNEL-1:0];
-            r_ex_active_mask <= i_uregs[3][NUM_EX_CHANNEL-1:0];
-        end
-        else if (w_new_stream) begin
-            r_dc_active_mask <= i_regs[0][NUM_DC_CHANNEL-1:0];
-            r_rf_active_mask <= i_regs[1][NUM_RF_CHANNEL-1:0];
-            r_li_active_mask <= i_regs[2][NUM_LI_CHANNEL-1:0];
-            r_ex_active_mask <= i_regs[3][NUM_EX_CHANNEL-1:0];
+        else if (w_new_ctrl) begin
+            r_dc_active_mask <= i_ctrl_regs[0][NUM_DC_CHANNEL-1:0];
+            r_rf_active_mask <= i_ctrl_regs[1][NUM_RF_CHANNEL-1:0];
+            r_li_active_mask <= i_ctrl_regs[2][NUM_LI_CHANNEL-1:0];
+            r_ex_active_mask <= i_ctrl_regs[3][NUM_EX_CHANNEL-1:0];
+            r_wait_trigger <= i_ctrl_regs[4][0];
         end
     end
 
@@ -107,7 +92,9 @@ module launch
     end
 
     logic w_all_ready;
-    assign w_all_ready = r_state == LAUNCH && w_dc_ready && w_rf_ready && w_li_ready && w_ex_ready && i_trigger;
+    assign w_all_ready = r_state == LAUNCH && 
+        w_dc_ready && w_rf_ready && w_li_ready && w_ex_ready && 
+        (!r_wait_trigger || i_trigger);
 
     logic w_start;
     always_ff @(posedge i_clk) begin
@@ -137,7 +124,7 @@ module launch
 
         case (r_state)
             IDLE: begin
-                w_next_state = (w_new_stream || w_new_ustream) ? LAUNCH : IDLE;
+                w_next_state = w_new_ctrl ? LAUNCH : IDLE;
             end
             default: begin
                 w_next_state = w_all_ready ? IDLE : LAUNCH;
@@ -145,6 +132,15 @@ module launch
             end
         endcase
 
+    end
+
+    always_ff @(posedge i_clk) begin
+        if (i_rst) begin
+            o_status_regs[0] <= 'b0;
+        end
+        else begin
+            o_status_regs[0] <= {31'h0, r_state == LAUNCH};
+        end
     end
 
 endmodule

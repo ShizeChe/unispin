@@ -1,8 +1,10 @@
+// `default_nettype none
 `timescale 1ns / 1ps
+`include "li.svh"
 
 module li_save
    #(parameter ADC_WIDTH=LI_ADC_WIDTH,
-     parameter FIFO_ADDR_WIDTH=8)
+     parameter FIFO_ADDR_WIDTH=LI_AXIBUF_ADDR_WIDTH)
     (input  logic i_clk, i_rst,
 
      // interface with li core
@@ -11,6 +13,10 @@ module li_save
      input  logic [ADC_WIDTH*8-1:0] i_QIx4,
 
      input li_ctrl_t i_ctrl,
+
+     // status
+     output logic [31:0] o_samples_lost,
+     output logic [FIFO_ADDR_WIDTH-1:0] o_samples_inbuf,
 
      // aw
      output logic o_awvalid,
@@ -71,21 +77,24 @@ module li_save
     logic w_full, w_empty;
     logic w_discard;
 
-    logic [31:0] r_num_lost;
-    logic [FIFO_ADDR_WIDTH:0] w_num_inbuf;
+    logic [31:0] r_samples_lost;
+    logic [FIFO_ADDR_WIDTH:0] w_samples_inbuf;
 
+    assign o_samples_lost = r_samples_lost;
+    assign o_samples_inbuf = w_samples_inbuf;
+    
     assign w_enq = !w_full && ((i_validx4 == 4'b1111) || i_last);
     assign w_discard = w_full && ((i_validx4 == 4'b1111) || i_last);
 
     always_ff @(posedge i_clk) begin
         if (i_rst) begin
-            r_num_lost <= 'd0;
+            r_samples_lost <= 'd0;
         end
         else if (i_ctrl.w_clear_lost) begin
-            r_num_lost <= 'd0;
+            r_samples_lost <= 'd0;
         end
         else if (w_discard) begin
-            r_num_lost <= r_num_lost + 'd1;
+            r_samples_lost <= r_samples_lost + 'd1;
         end
     end
 
@@ -103,7 +112,7 @@ module li_save
         .o_data(w_axi_data),
         .o_full(w_full),
         .o_empty(w_empty),
-        .o_num_data(w_num_inbuf)
+        .o_num_data(w_samples_inbuf)
     );
 
     /********************
@@ -151,7 +160,7 @@ module li_save
         else if (i_last && !w_propagate_aw) begin
             d.r_flush_buf <= 1'b1;
         end
-        else if (d.r_flush_buf && (w_num_inbuf == 'd1) && w_deq && !w_enq) begin
+        else if (d.r_flush_buf && (w_samples_inbuf == 'd1) && w_deq && !w_enq) begin
             d.r_flush_buf <= 1'b0;
         end
 

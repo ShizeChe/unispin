@@ -4,9 +4,9 @@
 `include "rf.svh"
 `include "li.svh"
 `include "ex.svh"
-`include "launch.vh"
+`include "launch.svh"
 
-module dcrfli_uart_btn
+module processor
    #(parameter NUM_DC_CHANNEL=24,
      parameter NUM_RF_CHANNEL=6,
      parameter NUM_LI_CHANNEL=2,
@@ -17,10 +17,7 @@ module dcrfli_uart_btn
      // dc mmio registers
      input  logic [0:NUM_DC_CHANNEL-1][0:DC_SEQ_REGS-1][31:0] i_dc_seq_regs,
      input  logic [0:NUM_DC_CHANNEL-1][0:DC_CTRL_REGS-1][31:0] i_dc_ctrl_regs,
-
-     // dc uart registers
-     input  logic [0:DC_SEQ_REGS-1][31:0] i_dc_seq_uregs,
-     input  logic [0:DC_CTRL_REGS-1][31:0] i_dc_ctrl_uregs,
+     output logic [0:NUM_DC_CHANNEL-1][0:DC_STATUS_REGS-1][31:0] o_dc_status_regs,
 
      // dc spi buses
      output logic [0:NUM_DC_CHANNEL-1] o_dc_sclk_bus,
@@ -41,10 +38,7 @@ module dcrfli_uart_btn
      // rf mmio registers
      input  logic [0:NUM_RF_CHANNEL-1][0:RF_SEQ_REGS-1][31:0] i_rf_seq_regs,
      input  logic [0:NUM_RF_CHANNEL-1][0:RF_CTRL_REGS-1][31:0] i_rf_ctrl_regs,
-
-     // rf uart registers
-     input  logic [0:RF_SEQ_REGS-1][31:0] i_rf_seq_uregs,
-     input  logic [0:RF_CTRL_REGS-1][31:0] i_rf_ctrl_uregs,
+     output logic [0:NUM_RF_CHANNEL-1][0:RF_STATUS_REGS-1][31:0] o_rf_status_regs,
 
      // rf IQ stream to RFDC IP
      output logic [0:NUM_RF_CHANNEL-1][RF_DAC_WIDTH*16-1:0] o_rf_QIx8_bus,
@@ -61,10 +55,7 @@ module dcrfli_uart_btn
      // li mmio registers
      input  logic [0:NUM_LI_CHANNEL-1][0:LI_SEQ_REGS-1][31:0] i_li_seq_regs,
      input  logic [0:NUM_LI_CHANNEL-1][0:LI_CTRL_REGS-1][31:0] i_li_ctrl_regs,
-
-     // li uart registers
-     input  logic [0:LI_SEQ_REGS-1][31:0] i_li_seq_uregs,
-     input  logic [0:LI_CTRL_REGS-1][31:0] i_li_ctrl_uregs,
+     output logic [0:NUM_LI_CHANNEL-1][0:LI_STATUS_REGS-1][31:0] o_li_status_regs,
 
      // li IQ stream from RFDC IP
      input  logic [0:NUM_LI_CHANNEL-1][LI_ADC_WIDTH*8-1:0] i_li_QIx4_bus,
@@ -89,11 +80,15 @@ module dcrfli_uart_btn
      // li eop bus
      output li_eop_t [0:NUM_LI_CHANNEL-1] o_li_eop_bus,
 
+     // li samples lost bus
+     input  logic [0:NUM_LI_CHANNEL-1][31:0] i_li_samples_lost_bus,
+
+     // li samples inbuf bus
+     input  logic [0:NUM_LI_CHANNEL-1][LI_AXIBUF_ADDR_WIDTH-1:0] i_li_samples_inbuf_bus,
+
      // ex mmio registers
      input  logic [0:NUM_EX_CHANNEL-1][0:EX_SEQ_REGS-1][31:0] i_ex_seq_regs,
-
-     // ex uart registers
-     input  logic [0:EX_SEQ_REGS-1][31:0] i_ex_seq_uregs,
+     output logic [0:NUM_EX_CHANNEL-1][0:EX_STATUS_REGS-1][31:0] o_ex_status_regs,
 
      // ex real stream to RFDC IP
      output logic [0:NUM_EX_CHANNEL-1][EX_DAC_WIDTH*16-1:0] o_ex_realx16_bus,
@@ -108,11 +103,8 @@ module dcrfli_uart_btn
      output ex_eop_t [0:NUM_EX_CHANNEL-1] o_ex_eop_bus,
 
      // launch mmio registers
-     input  logic [0:LCH_TOTAL_REGS-1][31:0] i_lch_regs,
-
-     // launch uart registers
-     input  logic [0:LCH_TOTAL_REGS-1][31:0] i_lch_uregs,
-
+     input  logic [0:LCH_CTRL_REGS-1][31:0] i_lch_ctrl_regs,
+     output logic [0:LCH_STATUS_REGS-1][31:0] o_lch_status_regs,
 
      // user button press
      input  logic i_btn);
@@ -132,11 +124,7 @@ module dcrfli_uart_btn
 
             .i_seq_regs(i_dc_seq_regs[i]),
             .i_ctrl_regs(i_dc_ctrl_regs[i]),
-
-            .i_seq_uregs({i_dc_seq_uregs[0:DC_SEQ_REGS-2], 31'h0,
-                          i_dc_seq_uregs[DC_SEQ_REGS-1][i]}),
-            .i_ctrl_uregs({i_dc_ctrl_uregs[0:DC_CTRL_REGS-2], 31'h0,
-                           i_dc_ctrl_uregs[DC_CTRL_REGS-1][i]}),
+            .o_status_regs(o_dc_status_regs[i]),
 
             .o_sclk(o_dc_sclk_bus[i]),
             .o_mosi(o_dc_mosi_bus[i]),
@@ -169,11 +157,7 @@ module dcrfli_uart_btn
 
             .i_seq_regs(i_rf_seq_regs[i]),
             .i_ctrl_regs(i_rf_ctrl_regs[i]),
-
-            .i_seq_uregs({i_rf_seq_uregs[0:RF_SEQ_REGS-2], 31'h0,
-                          i_rf_seq_uregs[RF_SEQ_REGS-1][i]}),
-            .i_ctrl_uregs({i_rf_ctrl_uregs[0:RF_CTRL_REGS-2], 31'h0,
-                           i_rf_ctrl_uregs[RF_CTRL_REGS-1][i]}),
+            .o_status_regs(o_rf_status_regs[i]),
 
             .o_QIx8(o_rf_QIx8_bus[i]),
 
@@ -202,11 +186,7 @@ module dcrfli_uart_btn
 
             .i_seq_regs(i_li_seq_regs[i]),
             .i_ctrl_regs(i_li_ctrl_regs[i]),
-
-            .i_seq_uregs({i_li_seq_uregs[0:LI_SEQ_REGS-2], 31'h0,
-                          i_li_seq_uregs[LI_SEQ_REGS-1][i]}),
-            .i_ctrl_uregs({i_li_ctrl_uregs[0:LI_CTRL_REGS-2], 31'h0,
-                           i_li_ctrl_uregs[LI_CTRL_REGS-1][i]}),
+            .o_status_regs(o_li_status_regs[i]),
 
             .i_QIx4(i_li_QIx4_bus[i]),
 
@@ -223,7 +203,10 @@ module dcrfli_uart_btn
 
             .o_ctrl(o_li_ctrl_bus[i]),
 
-            .o_eop(o_li_eop_bus[i])
+            .o_eop(o_li_eop_bus[i]),
+
+            .i_samples_lost(i_li_samples_lost_bus[i]),
+            .i_samples_inbuf(i_li_samples_inbuf_bus[i])
         );
 
     end
@@ -242,9 +225,7 @@ module dcrfli_uart_btn
             .i_rst(i_rst),
 
             .i_seq_regs(i_ex_seq_regs[i]),
-
-            .i_seq_uregs({i_ex_seq_uregs[0:EX_SEQ_REGS-2], 31'h0,
-                          i_ex_seq_uregs[EX_SEQ_REGS-1][i]}),
+            .o_status_regs(o_ex_status_regs[i]),
 
             .o_realx16(o_ex_realx16_bus[i]),
 
@@ -273,8 +254,8 @@ module dcrfli_uart_btn
         .i_clk(i_clk),
         .i_rst(i_rst),
 
-        .i_regs(i_lch_regs),
-        .i_uregs(i_lch_uregs),
+        .i_ctrl_regs(i_lch_ctrl_regs),
+        .o_status_regs(o_lch_status_regs),
 
         .i_dc_armed(w_dc_armed_bus),
         .i_rf_armed(w_rf_armed_bus),

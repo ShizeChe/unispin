@@ -3,11 +3,12 @@
 
 module nco_update
    #(parameter NUM_NCO=2,
-     parameter NUM_REGS=3*NUM_NCO+1)
+     parameter NUM_CTRL_REGS=3*NUM_NCO+1,
+     parameter NUM_STATUS_REGS=1)
     (input  logic i_clk, i_rst,
 
-     input  logic [0:NUM_REGS-1][31:0] i_regs,
-     input  logic [0:NUM_REGS-1][31:0] i_uregs,
+     input  logic [0:NUM_CTRL_REGS-1][31:0] i_ctrl_regs,
+     output logic [0:NUM_STATUS_REGS-1][31:0] o_status_regs,
 
      output logic [0:NUM_NCO-1][47:0] o_freq,
      output logic [0:NUM_NCO-1][17:0] o_phase,
@@ -16,49 +17,37 @@ module nco_update
      output logic o_req,
      input  logic i_busy);
 
-    logic w_last0, w_last0_ff1, w_last0_ff2;
-
-    assign w_last0 = (i_regs[NUM_REGS-1] == 'h0);
-
-    always_ff @(posedge i_clk) begin
-        w_last0_ff1 <= w_last0;
-        w_last0_ff2 <= w_last0_ff1;
-    end
-
     logic w_new_param;
-    assign w_new_param = (w_last0_ff2 && !w_last0_ff1);
 
-    logic w_ulast0, w_ulast0_ff1, w_ulast0_ff2;
-
-    assign w_ulast0 = (i_uregs[NUM_REGS-1] == 'h0);
-
-    always_ff @(posedge i_clk) begin
-        w_ulast0_ff1 <= w_ulast0;
-        w_ulast0_ff2 <= w_ulast0_ff1;
-    end
-
-    logic w_new_uparam;
-    assign w_new_uparam = (w_ulast0_ff2 && !w_ulast0_ff1);
+    edge_detector NCOWR (
+        .i_clk(i_clk),
+        .i_rst(i_rst),
+        .i_signal(i_ctrl_regs[NUM_CTRL_REGS-1][0]),
+        .o_posedge(w_new_param),
+        .o_negedge()
+    );
 
     for (genvar i = 0; i < NUM_NCO; i++) begin : NCO_PARAM_GEN
         always_ff @(posedge i_clk) begin
             if (i_rst) begin
                 {o_freq[i], o_phase[i], o_phase_rst[i], o_en[i]} <= 'h0;
             end
-            else if (w_new_uparam) begin
-                {o_freq[i], o_phase[i], o_phase_rst[i], o_en[i]} <= {
-                    i_uregs[3 * i][8:0],
-                    i_uregs[3 * i + 1],
-                    i_uregs[3 * i + 2]
-                };
-            end
             else if (w_new_param) begin
                 {o_freq[i], o_phase[i], o_phase_rst[i], o_en[i]} <= {
-                    i_regs[3 * i][8:0],
-                    i_regs[3 * i + 1],
-                    i_regs[3 * i + 2]
+                    i_ctrl_regs[3 * i][8:0],
+                    i_ctrl_regs[3 * i + 1],
+                    i_ctrl_regs[3 * i + 2]
                 };
             end
+        end
+    end
+
+    always_ff @(posedge i_clk) begin
+        if (i_rst) begin
+            o_status_regs <= 'h0;
+        end
+        else begin
+            o_status_regs <= {31'h0, i_busy};
         end
     end
     
@@ -94,10 +83,10 @@ module nco_update
 
         case (r_state)
             IDLE: begin
-                w_next_state = (w_new_param || w_new_uparam) ? REQ : IDLE;
+                w_next_state = w_new_param ? REQ : IDLE;
             end
             REQ: begin
-                w_next_state = REQ;
+                w_next_state = HOLD;
                 w_set_req = 1'b1;
             end
             HOLD: begin

@@ -4,7 +4,8 @@
 module rf_regs
    #(parameter NUM_SEQ_REGS=66,
      parameter NUM_CTRL_REGS=2,
-     parameter ADDR_WIDTH=$clog2(NUM_SEQ_REGS+NUM_CTRL_REGS)+2,
+     parameter NUM_STATUS_REGS=1,
+     parameter ADDR_WIDTH=$clog2(NUM_SEQ_REGS+NUM_CTRL_REGS+NUM_STATUS_REGS)+2,
      parameter [31:0] ADDR_BASE=32'hA0000000)
     (input  wire s_axi_aclk,
      input  wire s_axi_aresetn,
@@ -37,10 +38,12 @@ module rf_regs
      output wire [1:0] s_axi_rresp,
 
      output wire [0:NUM_SEQ_REGS-1][31:0] o_seq_regs,
-     output wire [0:NUM_CTRL_REGS-1][31:0] o_ctrl_regs);
+     output wire [0:NUM_CTRL_REGS-1][31:0] o_ctrl_regs,
+     input  wire [0:NUM_STATUS_REGS-1][31:0] i_status_regs);
 
      axil_slave_regs #(
-         .NUM_REGS(NUM_SEQ_REGS+NUM_CTRL_REGS),
+         .NUM_WRITE_REGS(NUM_SEQ_REGS+NUM_CTRL_REGS),
+         .NUM_READ_REGS(NUM_STATUS_REGS),
          .ADDR_BASE(ADDR_BASE)
      ) AXIL_REGS (
 
@@ -69,7 +72,8 @@ module rf_regs
         .o_rdata(s_axi_rdata),
         .o_rresp(s_axi_rresp),
 
-        .o_regs({o_seq_regs, o_ctrl_regs})
+        .o_regs({o_seq_regs, o_ctrl_regs}),
+        .i_regs(i_status_regs)
      );
 
 endmodule

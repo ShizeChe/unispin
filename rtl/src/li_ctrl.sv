@@ -9,33 +9,18 @@ module li_ctrl
     (input  logic i_clk, i_rst,
 
      input  logic [0:CTRL_REGS-1][31:0] i_regs,
-     input  logic [0:CTRL_REGS-1][31:0] i_uregs,
 
      output li_ctrl_t o_ctrl);
 
-    logic w_last0, w_last0_ff1, w_last0_ff2;
-
-    assign w_last0 = (i_regs[CTRL_REGS-1] == 'h0);
-
-    always_ff @(posedge i_clk) begin
-        w_last0_ff1 <= w_last0;
-        w_last0_ff2 <= w_last0_ff1;
-    end
-
     logic w_new_ctrl;
-    assign w_new_ctrl = (w_last0_ff2 && !w_last0_ff1);
 
-    logic w_ulast0, w_ulast0_ff1, w_ulast0_ff2;
-
-    assign w_ulast0 = (i_uregs[CTRL_REGS-1] == 'h0);
-
-    always_ff @(posedge i_clk) begin
-        w_ulast0_ff1 <= w_ulast0;
-        w_ulast0_ff2 <= w_ulast0_ff1;
-    end
-
-    logic w_new_uctrl;
-    assign w_new_uctrl = (w_ulast0_ff2 && !w_ulast0_ff1);
+    edge_detector CTRLWR (
+        .i_clk(i_clk),
+        .i_rst(i_rst),
+        .i_signal(i_regs[CTRL_REGS-1][0]),
+        .o_posedge(w_new_ctrl),
+        .o_negedge()
+    );
 
     logic [IQ_WIDTH-1:0] r_default_I, r_default_Q;
     logic [7:0] r_max_burst;
@@ -48,11 +33,6 @@ module li_ctrl
             r_max_burst <= 'd15;
             r_base_addr <= 'h0;
         end
-        else if (w_new_uctrl) begin
-            r_default_I <= i_uregs[0][IQ_WIDTH+1:2];
-            r_default_Q <= i_uregs[0][IQ_WIDTH+17:18];
-            {r_max_burst, r_base_addr} <= {i_uregs[1], i_uregs[2]}[56:0];
-        end
         else if (w_new_ctrl) begin
             r_default_I <= i_regs[0][IQ_WIDTH+1:2];
             r_default_Q <= i_regs[0][IQ_WIDTH+17:18];
@@ -64,6 +44,6 @@ module li_ctrl
     assign o_ctrl.w_default_Q = r_default_Q;
     assign o_ctrl.w_max_burst = r_max_burst;
     assign o_ctrl.w_base_addr = r_base_addr;
-    assign o_ctrl.w_clear_lost = w_new_uctrl || w_new_ctrl;
+    assign o_ctrl.w_clear_lost = w_new_ctrl;
 
 endmodule

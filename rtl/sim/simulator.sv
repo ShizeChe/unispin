@@ -18,15 +18,18 @@ module simulator;
     localparam NUM_EX_CHANNEL=2;
     localparam NUM_DEBOUNCE_CYCLES=25;
 
-    /********************
-    * signal declaration
-    ********************/
+    /*****************
+    * clk/rst signals
+    *****************/
 
-    // clocks and reset
-    logic w_dcrfli_clk, w_rf_dac_clk, w_li_adc_clk, w_ex_dac_clk, w_dcrfli_rst_n;
+    logic w_processor_clk, w_rf_dac_clk, w_li_adc_clk, w_ex_dac_clk, w_processor_rst_n;
+
+    /************
+    * dc signals
+    ************/
 
     // dc axi bus
-    localparam DC_TOTAL_REGS = DC_SEQ_REGS + DC_CTRL_REGS;
+    localparam DC_TOTAL_REGS = DC_SEQ_REGS + DC_CTRL_REGS + DC_STATUS_REGS;
 
     logic [0:NUM_DC_CHANNEL-1] w_dc_awvalid_bus;
     logic [0:NUM_DC_CHANNEL-1] w_dc_awready_bus;
@@ -43,6 +46,7 @@ module simulator;
 
     logic [0:NUM_DC_CHANNEL-1][0:DC_SEQ_REGS-1][31:0] w_dc_seq_regs;
     logic [0:NUM_DC_CHANNEL-1][0:DC_CTRL_REGS-1][31:0] w_dc_ctrl_regs;
+    logic [0:NUM_DC_CHANNEL-1][0:DC_STATUS_REGS-1][31:0] w_dc_status_regs;
 
     // dc spi bus
     logic [0:NUM_DC_CHANNEL-1] w_dc_sclk_bus;
@@ -57,12 +61,19 @@ module simulator;
     // dc empty bus
     logic [0:NUM_DC_CHANNEL-1] w_dc_empty_bus;
 
+    // dc eop bus
+    dc_eop_t [0:NUM_DC_CHANNEL-1] w_dc_eop_bus;
+
     // dc voltage output
     logic [DC_DAC_WIDTH-1:0] vdc_digital [NUM_DC_CHANNEL];
     real vdc [NUM_DC_CHANNEL];
 
+    /************
+    * rf signals
+    ************/
+
     // rf axi bus
-    localparam RF_TOTAL_REGS = RF_SEQ_REGS + RF_CTRL_REGS;
+    localparam RF_TOTAL_REGS = RF_SEQ_REGS + RF_CTRL_REGS + RF_STATUS_REGS;
 
     logic [0:NUM_RF_CHANNEL-1] w_rf_awvalid_bus;
     logic [0:NUM_RF_CHANNEL-1] w_rf_awready_bus;
@@ -79,6 +90,7 @@ module simulator;
 
     logic [0:NUM_RF_CHANNEL-1][0:RF_SEQ_REGS-1][31:0] w_rf_seq_regs;
     logic [0:NUM_RF_CHANNEL-1][0:RF_CTRL_REGS-1][31:0] w_rf_ctrl_regs;
+    logic [0:NUM_RF_CHANNEL-1][0:RF_STATUS_REGS-1][31:0] w_rf_status_regs;
 
     // rf QIx8 bus
     logic [0:NUM_RF_CHANNEL-1][RF_DAC_WIDTH*16-1:0] w_rf_QIx8_bus;
@@ -89,13 +101,20 @@ module simulator;
     // rf empty bus
     logic [0:NUM_RF_CHANNEL-1] w_rf_empty_bus;
 
+    // rf eop bus
+    logic [0:NUM_RF_CHANNEL-1] w_rf_eop_bus;
+
     // rf voltage output
     logic [RF_IQ_WIDTH-1:0] vrf_Q [NUM_RF_CHANNEL];
     logic [RF_IQ_WIDTH-1:0] vrf_I [NUM_RF_CHANNEL];
     real vrf [NUM_RF_CHANNEL];
 
+    /************
+    * li signals
+    ************/
+
     // li axi bus
-    localparam LI_TOTAL_REGS = LI_SEQ_REGS + LI_CTRL_REGS;
+    localparam LI_TOTAL_REGS = LI_SEQ_REGS + LI_CTRL_REGS + LI_STATUS_REGS;
 
     logic [0:NUM_LI_CHANNEL-1] w_li_awvalid_bus;
     logic [0:NUM_LI_CHANNEL-1] w_li_awready_bus;
@@ -112,6 +131,7 @@ module simulator;
 
     logic [0:NUM_LI_CHANNEL-1][0:LI_SEQ_REGS-1][31:0] w_li_seq_regs;
     logic [0:NUM_LI_CHANNEL-1][0:LI_CTRL_REGS-1][31:0] w_li_ctrl_regs;
+    logic [0:NUM_LI_CHANNEL-1][0:LI_STATUS_REGS-1][31:0] w_li_status_regs;
 
     // li QIx4 bus
     logic [0:NUM_LI_CHANNEL-1][LI_ADC_WIDTH*8-1:0] w_li_QIx4_bus;
@@ -121,6 +141,12 @@ module simulator;
 
     // li empty bus
     logic [0:NUM_LI_CHANNEL-1] w_li_empty_bus;
+
+    // li samples lost bus
+    logic [0:NUM_LI_CHANNEL-1][31:0] w_li_samples_lost_bus;
+
+    // li samples inbuf bus
+    logic [0:NUM_LI_CHANNEL-1][LI_AXIBUF_ADDR_WIDTH-1:0] w_li_samples_inbuf_bus;
 
     // li sample mask/spike bus
     logic [0:NUM_LI_CHANNEL-1][3:0] w_li_sample_mask_bus;
@@ -132,8 +158,12 @@ module simulator;
     logic [0:NUM_LI_CHANNEL-1] w_li_last_bus;
     li_ctrl_t [0:NUM_LI_CHANNEL-1] w_li_ctrl_bus;
 
+    /************
+    * ex signals
+    ************/
+
     // ex axi bus
-    localparam EX_TOTAL_REGS = EX_SEQ_REGS;
+    localparam EX_TOTAL_REGS = EX_SEQ_REGS + EX_STATUS_REGS;
 
     logic [0:NUM_EX_CHANNEL-1] w_ex_awvalid_bus;
     logic [0:NUM_EX_CHANNEL-1] w_ex_awready_bus;
@@ -149,6 +179,7 @@ module simulator;
     logic [0:NUM_EX_CHANNEL-1][1:0] w_ex_bresp_bus;
 
     logic [0:NUM_EX_CHANNEL-1][0:EX_SEQ_REGS-1][31:0] w_ex_seq_regs;
+    logic [0:NUM_EX_CHANNEL-1][0:EX_STATUS_REGS-1][31:0] w_ex_status_regs;
 
     logic [0:NUM_EX_CHANNEL-1][EX_DAC_WIDTH*16-1:0] w_ex_realx16_bus;
 
@@ -157,10 +188,19 @@ module simulator;
     // ex empty bus
     logic [0:NUM_EX_CHANNEL-1] w_ex_empty_bus;
 
+    // ex eop bus
+    ex_eop_t [0:NUM_EX_CHANNEL-1] w_ex_eop_bus;
+
     // ex voltage output
     logic [0:NUM_EX_CHANNEL-1][EX_REAL_WIDTH-1:0] vex;
 
+    /****************
+    * launch signals
+    ****************/
+
     // launch axi bus
+    localparam LCH_TOTAL_REGS = LCH_CTRL_REGS + LCH_STATUS_REGS;
+
     logic w_lch_awvalid;
     logic w_lch_awready;
     logic [$clog2(LCH_TOTAL_REGS*4)-1:0] w_lch_awaddr;
@@ -174,83 +214,30 @@ module simulator;
     logic w_lch_bready;
     logic [1:0] w_lch_bresp;
 
-    logic [0:LCH_TOTAL_REGS-1][31:0] w_lch_regs;
+    logic [0:LCH_CTRL_REGS-1][31:0] w_lch_ctrl_regs;
+    logic [0:LCH_STATUS_REGS-1][31:0] w_lch_status_regs;
 
     logic w_trigger;
-    
-    // uart regs
-    localparam TOTAL_UREGS=DC_SEQ_REGS+DC_CTRL_REGS+
-                           RF_SEQ_REGS+RF_CTRL_REGS+
-                           LI_SEQ_REGS+LI_CTRL_REGS+
-                           EX_SEQ_REGS+LCH_TOTAL_REGS;
-
-    localparam U_DC_SEQ_START = 0;
-    localparam U_DC_SEQ_END = U_DC_SEQ_START + DC_SEQ_REGS - 1;
-
-    localparam U_DC_CTRL_START = U_DC_SEQ_END + 1;
-    localparam U_DC_CTRL_END = U_DC_CTRL_START + DC_CTRL_REGS - 1;
-
-    localparam U_RF_SEQ_START = U_DC_CTRL_END + 1;
-    localparam U_RF_SEQ_END = U_RF_SEQ_START + RF_SEQ_REGS - 1;
-
-    localparam U_RF_CTRL_START = U_RF_SEQ_END + 1;
-    localparam U_RF_CTRL_END = U_RF_CTRL_START + RF_CTRL_REGS - 1;
-
-    localparam U_LI_SEQ_START = U_RF_CTRL_END + 1;
-    localparam U_LI_SEQ_END = U_LI_SEQ_START + LI_SEQ_REGS - 1;
-
-    localparam U_LI_CTRL_START = U_LI_SEQ_END + 1;
-    localparam U_LI_CTRL_END = U_LI_CTRL_START + LI_CTRL_REGS - 1;
-
-    localparam U_EX_SEQ_START = U_LI_CTRL_END + 1;
-    localparam U_EX_SEQ_END = U_EX_SEQ_START + EX_SEQ_REGS - 1;
-
-    localparam U_LCH_START = U_EX_SEQ_END + 1;
-    localparam U_LCH_END = U_LCH_START + LCH_TOTAL_REGS - 1;
-
-    logic [0:TOTAL_UREGS-1][31:0] w_uregs;
-
-    logic w_rx, w_tx;
 
     /********************************
     * top-level module instantiation
     ********************************/
 
-    uart_regs #(
-        .DATA_WIDTH(8),
-        .RX_FIFO_DEPTH(8),
-        .RX_FIFO_AF_DEPTH(6),
-        .RX_FIFO_AE_DEPTH(2),
-        .TX_FIFO_DEPTH(8),
-        .TX_FIFO_AF_DEPTH(6),
-        .TX_FIFO_AE_DEPTH(2),
-        .NUM_REGS(TOTAL_UREGS)
-    ) UREGS (
-        .i_clk(w_dcrfli_clk),
-        .i_rst(!w_dcrfli_rst_n),
-        .i_rx(w_rx),
-        .o_tx(w_tx),
-        .i_dvsr(11'd16),
-        .o_regs(w_uregs)
-    );
-
     logic i_btn_w;
 
-    dcrfli_uart_btn #(
+    processor #(
         .NUM_DC_CHANNEL(NUM_DC_CHANNEL),
         .NUM_RF_CHANNEL(NUM_RF_CHANNEL),
         .NUM_LI_CHANNEL(NUM_LI_CHANNEL),
         .NUM_DEBOUNCE_CYCLES(NUM_DEBOUNCE_CYCLES)
-    ) DCRFLI (
-        .i_clk(w_dcrfli_clk),
-        .i_rst(!w_dcrfli_rst_n),
+    ) PROCESSOR (
+        .i_clk(w_processor_clk),
+        .i_rst(!w_processor_rst_n),
 
         // dc
         .i_dc_seq_regs(w_dc_seq_regs),
         .i_dc_ctrl_regs(w_dc_ctrl_regs),
-
-        .i_dc_seq_uregs(w_uregs[U_DC_SEQ_START:U_DC_SEQ_END]),
-        .i_dc_ctrl_uregs(w_uregs[U_DC_CTRL_START:U_DC_CTRL_END]),
+        .o_dc_status_regs(w_dc_status_regs),
 
         .o_dc_sclk_bus(w_dc_sclk_bus),
         .o_dc_mosi_bus(w_dc_mosi_bus),
@@ -267,9 +254,7 @@ module simulator;
         // rf
         .i_rf_seq_regs(w_rf_seq_regs),
         .i_rf_ctrl_regs(w_rf_ctrl_regs),
-
-        .i_rf_seq_uregs(w_uregs[U_RF_SEQ_START:U_RF_SEQ_END]),
-        .i_rf_ctrl_uregs(w_uregs[U_RF_CTRL_START:U_RF_CTRL_END]),
+        .o_rf_status_regs(w_rf_status_regs),
 
         .o_rf_QIx8_bus(w_rf_QIx8_bus),
 
@@ -282,9 +267,7 @@ module simulator;
         // li
         .i_li_seq_regs(w_li_seq_regs),
         .i_li_ctrl_regs(w_li_ctrl_regs),
-
-        .i_li_seq_uregs(w_uregs[U_LI_SEQ_START:U_LI_SEQ_END]),
-        .i_li_ctrl_uregs(w_uregs[U_LI_CTRL_START:U_LI_CTRL_END]),
+        .o_li_status_regs(w_li_status_regs),
 
         .i_li_QIx4_bus(w_li_QIx4_bus),
 
@@ -302,74 +285,28 @@ module simulator;
 
         .o_li_eop_bus(),
 
+        .i_li_samples_lost_bus(w_li_samples_lost_bus),
+        .i_li_samples_inbuf_bus(w_li_samples_inbuf_bus),
+
         // ex
         .i_ex_seq_regs(w_ex_seq_regs),
-
-        .i_ex_seq_uregs(w_uregs[U_EX_SEQ_START:U_EX_SEQ_END]),
+        .o_ex_status_regs(w_ex_status_regs),
 
         .o_ex_realx16_bus(w_ex_realx16_bus),
 
         .o_ex_armed_bus(w_ex_armed_bus),
 
-        .o_ex_empty_bus(),
+        .o_ex_empty_bus(w_ex_empty_bus),
 
         .o_ex_eop_bus(),
 
         // launch
-        .i_lch_regs(w_lch_regs),
-
-        .i_lch_uregs(w_uregs[U_LCH_START:U_LCH_END]),
+        .i_lch_ctrl_regs(w_lch_ctrl_regs),
+        .o_lch_status_regs(w_lch_status_regs),
         
         // button
         .i_btn(i_btn_w)
     );
-
-    /************
-    * uart tasks
-    *************/
-
-    localparam bit_duration = 1085.069;
-    task pc_tsmt(input logic [7:0] data);
-        // start bit = 0
-        w_rx = 1'b0;
-        #bit_duration;
-
-        // data bits
-        for (int i = 0; i < 8; i++) begin
-            w_rx = data[i];
-            #bit_duration;
-        end
-
-        // end bit = 1
-        w_rx = 1'b1;
-        #bit_duration;
-    endtask
-
-    logic [7:0] pc_received [$];
-    logic [7:0] rx_data;
-
-    task pc_recv;
-
-        // start bit == 0
-        @(negedge w_tx);
-        #(bit_duration / 2);
-        assert (w_tx == 1'b0)
-        else $fatal(1, "At %0.3f ns: o_tx didn't hold start bit as 0", $realtime);
-
-        // data bits
-        for (int i = 0; i < 8; i++) begin
-            #bit_duration;
-            rx_data[i] = w_tx;
-        end
-
-        // stop bit == 1
-        #bit_duration;
-        assert (w_tx == 1'b1)
-        else $fatal(1, "At %0.3f ns: o_tx didn't hold stop bit as 1", $realtime);
-
-        pc_received.push_back(rx_data);
-
-    endtask
 
     /*********************************
     * axil regs and dac instantiation
@@ -381,10 +318,11 @@ module simulator;
         dc_regs #(
             .NUM_SEQ_REGS(DC_SEQ_REGS),
             .NUM_CTRL_REGS(DC_CTRL_REGS),
+            .NUM_STATUS_REGS(DC_STATUS_REGS),
             .ADDR_BASE(32'hA0000000 + i * 32'h1000)
         ) REGS (
-            .s_axi_aclk(w_dcrfli_clk),
-            .s_axi_aresetn(w_dcrfli_rst_n),
+            .s_axi_aclk(w_processor_clk),
+            .s_axi_aresetn(w_processor_rst_n),
 
             .s_axi_awvalid(w_dc_awvalid_bus[i]), 
             .s_axi_awready(w_dc_awready_bus[i]),
@@ -410,7 +348,8 @@ module simulator;
             .s_axi_rresp(),
 
             .o_seq_regs(w_dc_seq_regs[i]),
-            .o_ctrl_regs(w_dc_ctrl_regs[i])
+            .o_ctrl_regs(w_dc_ctrl_regs[i]),
+            .i_status_regs(w_dc_status_regs[i])
         );
 
         ad5791 DAC (
@@ -436,10 +375,11 @@ module simulator;
         rf_regs #(
             .NUM_SEQ_REGS(RF_SEQ_REGS),
             .NUM_CTRL_REGS(RF_CTRL_REGS),
+            .NUM_STATUS_REGS(RF_STATUS_REGS),
             .ADDR_BASE(32'hA0000000 + (NUM_DC_CHANNEL + i) * 32'h1000)
         ) REGS (
-            .s_axi_aclk(w_dcrfli_clk),
-            .s_axi_aresetn(w_dcrfli_rst_n),
+            .s_axi_aclk(w_processor_clk),
+            .s_axi_aresetn(w_processor_rst_n),
 
             .s_axi_awvalid(w_rf_awvalid_bus[i]), 
             .s_axi_awready(w_rf_awready_bus[i]),
@@ -465,11 +405,12 @@ module simulator;
             .s_axi_rresp(),
 
             .o_seq_regs(w_rf_seq_regs[i]),
-            .o_ctrl_regs(w_rf_ctrl_regs[i])
+            .o_ctrl_regs(w_rf_ctrl_regs[i]),
+            .i_status_regs(w_rf_status_regs[i])
         );
 
         zcu216_dac DAC (
-            .i_clk(w_dcrfli_clk),
+            .i_clk(w_processor_clk),
             .i_dac_clk(w_rf_dac_clk),
             .i_QIx8(w_rf_QIx8_bus[i]),
             .o_I(vrf_I[i]),
@@ -491,10 +432,11 @@ module simulator;
         li_regs #(
             .NUM_SEQ_REGS(LI_SEQ_REGS),
             .NUM_CTRL_REGS(LI_CTRL_REGS),
+            .NUM_STATUS_REGS(LI_STATUS_REGS),
             .ADDR_BASE(32'hA0000000 + (NUM_DC_CHANNEL + NUM_RF_CHANNEL + i) * 32'h1000)
         ) REGS (
-            .s_axi_aclk(w_dcrfli_clk),
-            .s_axi_aresetn(w_dcrfli_rst_n),
+            .s_axi_aclk(w_processor_clk),
+            .s_axi_aresetn(w_processor_rst_n),
 
             .s_axi_awvalid(w_li_awvalid_bus[i]), 
             .s_axi_awready(w_li_awready_bus[i]),
@@ -520,11 +462,12 @@ module simulator;
             .s_axi_rresp(),
 
             .o_seq_regs(w_li_seq_regs[i]),
-            .o_ctrl_regs(w_li_ctrl_regs[i])
+            .o_ctrl_regs(w_li_ctrl_regs[i]),
+            .i_status_regs(w_li_status_regs[i])
         );
 
         zcu216_adc ADC (
-            .i_clk(w_dcrfli_clk),
+            .i_clk(w_processor_clk),
             .i_adc_clk(w_li_adc_clk),
             .i_vli(0.0),
             .o_QIx4(w_li_QIx4_bus[i]), 
@@ -539,10 +482,11 @@ module simulator;
 
         ex_regs #(
             .NUM_SEQ_REGS(EX_SEQ_REGS),
+            .NUM_STATUS_REGS(EX_STATUS_REGS),
             .ADDR_BASE(32'hA0000000 + (NUM_DC_CHANNEL + NUM_RF_CHANNEL + NUM_LI_CHANNEL + i) * 32'h1000)
         ) REGS (
-            .s_axi_aclk(w_dcrfli_clk),
-            .s_axi_aresetn(w_dcrfli_rst_n),
+            .s_axi_aclk(w_processor_clk),
+            .s_axi_aresetn(w_processor_rst_n),
 
             .s_axi_awvalid(w_ex_awvalid_bus[i]), 
             .s_axi_awready(w_ex_awready_bus[i]),
@@ -567,11 +511,12 @@ module simulator;
             .s_axi_rdata(),
             .s_axi_rresp(),
 
-            .o_seq_regs(w_ex_seq_regs[i])
+            .o_seq_regs(w_ex_seq_regs[i]),
+            .i_status_regs(w_ex_status_regs[i])
         );
 
         zcu216_real_dac DAC (
-            .i_clk(w_dcrfli_clk),
+            .i_clk(w_processor_clk),
             .i_dac_clk(w_ex_dac_clk),
             .i_realx16(w_ex_realx16_bus[i]), 
             .o_vex(vex[i])
@@ -581,11 +526,12 @@ module simulator;
 
     // launch axil regs instantiation
     launch_regs #(
-        .NUM_REGS(LCH_TOTAL_REGS),
+        .NUM_CTRL_REGS(LCH_CTRL_REGS),
+        .NUM_STATUS_REGS(LCH_STATUS_REGS),
         .ADDR_BASE(32'hA0000000 + (NUM_DC_CHANNEL + NUM_RF_CHANNEL + NUM_LI_CHANNEL + NUM_EX_CHANNEL) * 32'h1000)
     ) LCH_REGS (
-        .s_axi_aclk(w_dcrfli_clk),
-        .s_axi_aresetn(w_dcrfli_rst_n),
+        .s_axi_aclk(w_processor_clk),
+        .s_axi_aresetn(w_processor_rst_n),
 
         .s_axi_awvalid(w_lch_awvalid), 
         .s_axi_awready(w_lch_awready),
@@ -610,7 +556,8 @@ module simulator;
         .s_axi_rdata(),
         .s_axi_rresp(),
 
-        .o_regs(w_lch_regs)
+        .o_ctrl_regs(w_lch_ctrl_regs),
+        .i_status_regs(w_lch_status_regs)
     );
 
     /*********************************
@@ -623,7 +570,7 @@ module simulator;
 
         $display("dc_axil_write channel%0d", ch);
 
-        @(negedge w_dcrfli_clk);
+        @(negedge w_processor_clk);
 
         w_dc_awvalid_bus[ch] = 1'b1;
         w_dc_wvalid_bus[ch] = 1'b1;
@@ -636,22 +583,22 @@ module simulator;
             begin: AWREADY
                 forever begin
                     if (w_dc_awvalid_bus[ch] && w_dc_awready_bus[ch]) begin
-                        @(negedge w_dcrfli_clk);
+                        @(negedge w_processor_clk);
                         w_dc_awvalid_bus[ch] = 1'b0;
                         break;
                     end
-                    else @(negedge w_dcrfli_clk);
+                    else @(negedge w_processor_clk);
                 end
             end
             
             begin: WREADY
                 forever begin
                     if (w_dc_wvalid_bus[ch] && w_dc_wready_bus[ch]) begin
-                        @(negedge w_dcrfli_clk);
+                        @(negedge w_processor_clk);
                         w_dc_wvalid_bus[ch] = 1'b0;
                         break;
                     end
-                    else @(negedge w_dcrfli_clk);
+                    else @(negedge w_processor_clk);
                 end
             end
 
@@ -662,13 +609,13 @@ module simulator;
 
         forever begin
             if (w_dc_bvalid_bus[ch] && w_dc_bready_bus[ch]) begin
-                @(negedge w_dcrfli_clk);
+                @(negedge w_processor_clk);
                 w_dc_bready_bus[ch] = 1'b0;
                 assert (w_dc_bresp_bus[ch] == 2'b00)
                 else $fatal(1, "Bad bresp: %0b", w_dc_bresp_bus[ch]);
                 break;
             end
-            else @(negedge w_dcrfli_clk);
+            else @(negedge w_processor_clk);
         end
 
     endtask
@@ -677,7 +624,7 @@ module simulator;
 
         $display("rf_axil_write channel%0d", ch);
 
-        @(negedge w_dcrfli_clk);
+        @(negedge w_processor_clk);
 
         w_rf_awvalid_bus[ch] = 1'b1;
         w_rf_wvalid_bus[ch] = 1'b1;
@@ -690,22 +637,22 @@ module simulator;
             begin: AWREADY
                 forever begin
                     if (w_rf_awvalid_bus[ch] && w_rf_awready_bus[ch]) begin
-                        @(negedge w_dcrfli_clk);
+                        @(negedge w_processor_clk);
                         w_rf_awvalid_bus[ch] = 1'b0;
                         break;
                     end
-                    else @(negedge w_dcrfli_clk);
+                    else @(negedge w_processor_clk);
                 end
             end
             
             begin: WREADY
                 forever begin
                     if (w_rf_wvalid_bus[ch] && w_rf_wready_bus[ch]) begin
-                        @(negedge w_dcrfli_clk);
+                        @(negedge w_processor_clk);
                         w_rf_wvalid_bus[ch] = 1'b0;
                         break;
                     end
-                    else @(negedge w_dcrfli_clk);
+                    else @(negedge w_processor_clk);
                 end
             end
 
@@ -716,13 +663,13 @@ module simulator;
 
         forever begin
             if (w_rf_bvalid_bus[ch] && w_rf_bready_bus[ch]) begin
-                @(negedge w_dcrfli_clk);
+                @(negedge w_processor_clk);
                 w_rf_bready_bus[ch] = 1'b0;
                 assert (w_rf_bresp_bus[ch] == 2'b00)
                 else $fatal(1, "Bad bresp: %0b", w_rf_bresp_bus[ch]);
                 break;
             end
-            else @(negedge w_dcrfli_clk);
+            else @(negedge w_processor_clk);
         end
 
     endtask
@@ -731,7 +678,7 @@ module simulator;
 
         $display("li_axil_write channel%0d", ch);
 
-        @(negedge w_dcrfli_clk);
+        @(negedge w_processor_clk);
 
         w_li_awvalid_bus[ch] = 1'b1;
         w_li_wvalid_bus[ch] = 1'b1;
@@ -744,22 +691,22 @@ module simulator;
             begin: AWREADY
                 forever begin
                     if (w_li_awvalid_bus[ch] && w_li_awready_bus[ch]) begin
-                        @(negedge w_dcrfli_clk);
+                        @(negedge w_processor_clk);
                         w_li_awvalid_bus[ch] = 1'b0;
                         break;
                     end
-                    else @(negedge w_dcrfli_clk);
+                    else @(negedge w_processor_clk);
                 end
             end
             
             begin: WREADY
                 forever begin
                     if (w_li_wvalid_bus[ch] && w_li_wready_bus[ch]) begin
-                        @(negedge w_dcrfli_clk);
+                        @(negedge w_processor_clk);
                         w_li_wvalid_bus[ch] = 1'b0;
                         break;
                     end
-                    else @(negedge w_dcrfli_clk);
+                    else @(negedge w_processor_clk);
                 end
             end
 
@@ -770,13 +717,13 @@ module simulator;
 
         forever begin
             if (w_li_bvalid_bus[ch] && w_li_bready_bus[ch]) begin
-                @(negedge w_dcrfli_clk);
+                @(negedge w_processor_clk);
                 w_li_bready_bus[ch] = 1'b0;
                 assert (w_li_bresp_bus[ch] == 2'b00)
                 else $fatal(1, "Bad bresp: %0b", w_li_bresp_bus[ch]);
                 break;
             end
-            else @(negedge w_dcrfli_clk);
+            else @(negedge w_processor_clk);
         end
 
     endtask
@@ -785,7 +732,7 @@ module simulator;
 
         $display("ex_axil_write channel%0d", ch);
 
-        @(negedge w_dcrfli_clk);
+        @(negedge w_processor_clk);
 
         w_ex_awvalid_bus[ch] = 1'b1;
         w_ex_wvalid_bus[ch] = 1'b1;
@@ -798,22 +745,22 @@ module simulator;
             begin: AWREADY
                 forever begin
                     if (w_ex_awvalid_bus[ch] && w_ex_awready_bus[ch]) begin
-                        @(negedge w_dcrfli_clk);
+                        @(negedge w_processor_clk);
                         w_ex_awvalid_bus[ch] = 1'b0;
                         break;
                     end
-                    else @(negedge w_dcrfli_clk);
+                    else @(negedge w_processor_clk);
                 end
             end
             
             begin: WREADY
                 forever begin
                     if (w_ex_wvalid_bus[ch] && w_ex_wready_bus[ch]) begin
-                        @(negedge w_dcrfli_clk);
+                        @(negedge w_processor_clk);
                         w_ex_wvalid_bus[ch] = 1'b0;
                         break;
                     end
-                    else @(negedge w_dcrfli_clk);
+                    else @(negedge w_processor_clk);
                 end
             end
 
@@ -824,13 +771,13 @@ module simulator;
 
         forever begin
             if (w_ex_bvalid_bus[ch] && w_ex_bready_bus[ch]) begin
-                @(negedge w_dcrfli_clk);
+                @(negedge w_processor_clk);
                 w_ex_bready_bus[ch] = 1'b0;
                 assert (w_ex_bresp_bus[ch] == 2'b00)
                 else $fatal(1, "Bad bresp: %0b", w_ex_bresp_bus[ch]);
                 break;
             end
-            else @(negedge w_dcrfli_clk);
+            else @(negedge w_processor_clk);
         end
 
     endtask
@@ -839,7 +786,7 @@ module simulator;
 
         $display("lch_axil_write");
 
-        @(negedge w_dcrfli_clk);
+        @(negedge w_processor_clk);
 
         w_lch_awvalid = 1'b1;
         w_lch_wvalid = 1'b1;
@@ -852,22 +799,22 @@ module simulator;
             begin: AWREADY
                 forever begin
                     if (w_lch_awvalid && w_lch_awready) begin
-                        @(negedge w_dcrfli_clk);
+                        @(negedge w_processor_clk);
                         w_lch_awvalid = 1'b0;
                         break;
                     end
-                    else @(negedge w_dcrfli_clk);
+                    else @(negedge w_processor_clk);
                 end
             end
             
             begin: WREADY
                 forever begin
                     if (w_lch_wvalid && w_lch_wready) begin
-                        @(negedge w_dcrfli_clk);
+                        @(negedge w_processor_clk);
                         w_lch_wvalid = 1'b0;
                         break;
                     end
-                    else @(negedge w_dcrfli_clk);
+                    else @(negedge w_processor_clk);
                 end
             end
 
@@ -878,13 +825,13 @@ module simulator;
 
         forever begin
             if (w_lch_bvalid && w_lch_bready) begin
-                @(negedge w_dcrfli_clk);
+                @(negedge w_processor_clk);
                 w_lch_bready = 1'b0;
                 assert (w_lch_bresp == 2'b00)
                 else $fatal(1, "Bad bresp: %0b", w_lch_bresp);
                 break;
             end
-            else @(negedge w_dcrfli_clk);
+            else @(negedge w_processor_clk);
         end
 
     endtask
@@ -964,8 +911,8 @@ module simulator;
 
     // clocks
     initial begin
-        w_dcrfli_clk = 1'b0;
-        forever #2 w_dcrfli_clk = !w_dcrfli_clk;
+        w_processor_clk = 1'b0;
+        forever #2 w_processor_clk = !w_processor_clk;
     end
 
     initial begin
@@ -1004,9 +951,9 @@ module simulator;
 
         i_btn_w = 1'b0;
 
-        w_dcrfli_rst_n = 1'b0;
-        @(negedge w_dcrfli_clk);
-        w_dcrfli_rst_n = 1'b1;
+        w_processor_rst_n = 1'b0;
+        @(negedge w_processor_clk);
+        w_processor_rst_n = 1'b1;
 
     end
 
@@ -1028,7 +975,7 @@ module simulator;
 
         forever begin
 
-            @(negedge w_dcrfli_clk);
+            @(negedge w_processor_clk);
 
             for (int i = 0; i < NUM_DC_CHANNEL; i++) begin
 
@@ -1074,7 +1021,7 @@ module simulator;
 
             end
 
-            if (DCRFLI.LCH.w_all_ready) begin
+            if (PROCESSOR.LCH.w_all_ready) begin
                 $display("At %0.3f: LAUNCH sees all ready", $realtime);
             end
 
@@ -1098,7 +1045,7 @@ module simulator;
 
     logic [7:0] tx_data;
     logic [31:0] addr, data;
-    longint unsigned t;
+    int unsigned t;
     int rc;
     localparam LINE_MAX = 512;
     byte unsigned line_buf[LINE_MAX];
@@ -1139,23 +1086,20 @@ module simulator;
                 if ($sscanf(line, "0x%8h 0x%8h", addr, data) == 2) begin
                     axil_bus_write(addr, data);
                 end
-                else if ($sscanf(line, "0x%4h", tx_data) == 1) begin
-                    pc_tsmt(tx_data);
-                end
                 else if ($sscanf(line, "launch %d", t) == 1) begin
-                    wait(DCRFLI.LCH.r_state == DCRFLI.LCH.LAUNCH);
-                    @(negedge w_dcrfli_clk);
-                    wait(DCRFLI.LCH.w_dc_ready && 
-                         DCRFLI.LCH.w_rf_ready &&
-                         DCRFLI.LCH.w_li_ready);
-                    @(negedge w_dcrfli_clk);
+                    wait(PROCESSOR.LCH.r_state == PROCESSOR.LCH.LAUNCH);
+                    @(negedge w_processor_clk);
+                    wait(PROCESSOR.LCH.w_dc_ready && 
+                         PROCESSOR.LCH.w_rf_ready &&
+                         PROCESSOR.LCH.w_li_ready);
+                    @(negedge w_processor_clk);
                     i_btn_w = 1'b1;
-                    repeat(30) @(negedge w_dcrfli_clk);
+                    repeat(30) @(negedge w_processor_clk);
                     i_btn_w = 1'b0;
-                    repeat (t/4) @(negedge w_dcrfli_clk);
+                    repeat (t/4) @(negedge w_processor_clk);
                 end
                 else if ($sscanf(line, "run %d", t) == 1) begin
-                    repeat (t/4) @(negedge w_dcrfli_clk);
+                    repeat (t/4) @(negedge w_processor_clk);
                 end
                 else begin
                     $display("Unknown command: %s", line);

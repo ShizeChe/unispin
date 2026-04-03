@@ -11,33 +11,18 @@ module dc_ctrl
     (input  logic i_clk, i_rst,
 
      input  logic [0:CTRL_REGS-1][31:0] i_regs,
-     input  logic [0:CTRL_REGS-1][31:0] i_uregs,
 
      output dc_ctrl_t o_ctrl);
 
-    logic w_last0, w_last0_ff1, w_last0_ff2;
-
-    assign w_last0 = (i_regs[CTRL_REGS-1] == 'h0);
-
-    always_ff @(posedge i_clk) begin
-        w_last0_ff1 <= w_last0;
-        w_last0_ff2 <= w_last0_ff1;
-    end
-
     logic w_new_ctrl;
-    assign w_new_ctrl = (w_last0_ff2 && !w_last0_ff1);
 
-    logic w_ulast0, w_ulast0_ff1, w_ulast0_ff2;
-
-    assign w_ulast0 = (i_uregs[CTRL_REGS-1] == 'h0);
-
-    always_ff @(posedge i_clk) begin
-        w_ulast0_ff1 <= w_ulast0;
-        w_ulast0_ff2 <= w_ulast0_ff1;
-    end
-
-    logic w_new_uctrl;
-    assign w_new_uctrl = (w_ulast0_ff2 && !w_ulast0_ff1);
+    edge_detector SEQWR (
+        .i_clk(i_clk),
+        .i_rst(i_rst),
+        .i_signal(i_regs[CTRL_REGS-1][0]),
+        .o_posedge(w_new_ctrl),
+        .o_negedge()
+    );
 
     logic [SPI_DVSR_WIDTH-1:0] r_dvsr;
     logic [SPI_DELAY_WIDTH-1:0] r_delay_cycles;
@@ -50,12 +35,6 @@ module dc_ctrl
             r_delay_cycles <= 'd3;
             r_cs_up_cycles <= 'd3;
             r_ldac_cycles <= 'd2;
-        end
-        else if (w_new_uctrl) begin
-            r_dvsr <= i_uregs[0][SPI_DVSR_WIDTH-1:0];
-            r_delay_cycles <= i_uregs[1][SPI_DELAY_WIDTH-1:0];
-            r_cs_up_cycles <= i_uregs[2][SPI_CS_UP_WIDTH-1:0];
-            r_ldac_cycles <= i_uregs[3][SPI_LDAC_WIDTH-1:0];
         end
         else if (w_new_ctrl) begin
             r_dvsr <= i_regs[0][SPI_DVSR_WIDTH-1:0];

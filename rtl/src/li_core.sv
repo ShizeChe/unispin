@@ -8,7 +8,8 @@ module li_core
      parameter DEPTH=LI_DEPTH,
      parameter ADC_WIDTH=LI_ADC_WIDTH,
      parameter SEQ_REGS=LI_SEQ_REGS,
-     parameter CTRL_REGS=LI_CTRL_REGS)
+     parameter CTRL_REGS=LI_CTRL_REGS,
+     parameter STATUS_REGS=LI_STATUS_REGS)
     (input  logic i_clk, i_rst,
 
      // sequencer interface
@@ -294,5 +295,5 @@ module li_core
         w_validx4: o.r_validx4,
         w_last: o.r_last
     };
-     
+
 endmodule

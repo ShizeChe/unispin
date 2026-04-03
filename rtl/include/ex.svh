@@ -11,6 +11,7 @@ parameter EX_ITER_WIDTH=20;
 parameter EX_DEPTH=16;
 parameter EX_REG_PER_INSN=(EX_INSN_WIDTH+31)/32;
 parameter EX_SEQ_REGS=EX_DEPTH*EX_REG_PER_INSN+2;
+parameter EX_STATUS_REGS=1;
 
 typedef struct packed {
     logic w_arm;

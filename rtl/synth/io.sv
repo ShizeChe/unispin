@@ -6,7 +6,7 @@
 module io
    #(parameter NUM_DC_CHANNEL=24,
      parameter NUM_RF_CHANNEL=6,
-     parameter NUM_LI_CHANNEL=1)
+     parameter NUM_LI_CHANNEL=2)
     (input  logic [0:NUM_DC_CHANNEL-1] i_dc_sclk_bus,
      input  logic [0:NUM_DC_CHANNEL-1] i_dc_mosi_bus,
      output logic [0:NUM_DC_CHANNEL-1] o_dc_miso_bus,
@@ -19,7 +19,8 @@ module io
      input  logic [NUM_RF_CHANNEL-1:0] i_rf_armed_bus,
      input  logic [0:NUM_RF_CHANNEL-1] i_rf_ready_bus,
 
-     input  logic [0:1] i_li_valid_bus,
+     input  logic [0:NUM_LI_CHANNEL-1] i_li_valid_bus,
+     input  logic [0:NUM_LI_CHANNEL-1][3:0] i_li_sample_mask_bus,
 
      // J2
      output logic o_la01_p, o_la06_p, o_la01_n,
@@ -376,8 +377,8 @@ module io
     assign o_adcio05 = w_sclk7; // 15
     assign o_adcio06 = i_dc_rst; // 1
     assign o_adcio07 = w_ldac7; // 3
-    assign o_adcio08 = 1'b1; // 4
-    assign o_adcio09 = 1'b1; // 6
+    assign o_adcio08 = |(w_li_sample_mask_bus[0]); // 4
+    assign o_adcio09 = |(w_li_sample_mask_bus[1]); // 6
     assign w_miso20 = i_adcio10; // 10
     assign o_adcio11 = w_ldac8; // 12
     assign o_adcio12 = w_mosi19; // 16

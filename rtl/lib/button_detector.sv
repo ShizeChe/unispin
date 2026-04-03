@@ -21,7 +21,6 @@ module button_detector
             .o_steady(w_btn_steady[i])
         );
 
-
         always_ff @(posedge i_clk) begin
             if (i_rst) begin
                 r_ff1[i] <= 1'b0;

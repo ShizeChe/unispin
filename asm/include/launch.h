@@ -4,7 +4,7 @@
 #include <stdint.h>
 #include "common.h"
 
-#define LAUNCH_TOTAL_REGS 5
+#define LAUNCH_TOTAL_REGS 6
 #define LAUNCH_UIO 30
 
 typedef struct {

@@ -16,6 +16,7 @@ parameter DC_INSN_WIDTH=DC_CORE_ITER_WIDTH+DC_SPI_DATA_WIDTH+DC_DAC_WIDTH+DC_CYC
 parameter DC_REG_PER_INSN=(DC_INSN_WIDTH+31)/32;
 parameter DC_SEQ_REGS=DC_DEPTH*DC_REG_PER_INSN+2;
 parameter DC_CTRL_REGS=4+1;
+parameter DC_STATUS_REGS=1;
 
 typedef struct packed {
     logic [DC_SPI_DVSR_WIDTH-1:0] w_dvsr; // inclusive countdown

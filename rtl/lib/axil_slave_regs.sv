@@ -1,8 +1,9 @@
 `timescale 1ns / 1ps
 
 module axil_slave_regs
-   #(parameter NUM_REGS=32,
-     parameter ADDR_WIDTH=$clog2(NUM_REGS*4),
+   #(parameter NUM_WRITE_REGS=32,
+     parameter NUM_READ_REGS=2,
+     parameter ADDR_WIDTH=$clog2(NUM_WRITE_REGS+NUM_READ_REGS)+2,
      parameter logic [31:0] ADDR_BASE=32'hA0000000)
     (input  logic i_aclk,
      input  logic i_aresetn,
@@ -34,9 +35,12 @@ module axil_slave_regs
      output logic [31:0] o_rdata,
      output logic [1:0] o_rresp,
 
-     output logic [0:NUM_REGS-1][31:0] o_regs);
+     output logic [0:NUM_WRITE_REGS-1][31:0] o_regs,
+     input  logic [0:NUM_READ_REGS-1][31:0] i_regs);
 
-    logic [31:0] r_regs [NUM_REGS];
+    localparam TOTAL_REGS = NUM_WRITE_REGS + NUM_READ_REGS;
+
+    logic [31:0] r_regs [TOTAL_REGS];
 
     // write logic
     always_ff @(posedge i_aclk) begin
@@ -76,7 +80,7 @@ module axil_slave_regs
     logic [31:0] w_wdatastrb;
 
     always_comb begin
-        w_wdatastrb = w_awireg < NUM_REGS ? r_regs[w_awireg] : 'h0;
+        w_wdatastrb = w_awireg < NUM_WRITE_REGS ? r_regs[w_awireg] : 'h0;
         if (i_wstrb[3]) w_wdatastrb[31:24] = i_wdata[31:24];
         if (i_wstrb[2]) w_wdatastrb[23:16] = i_wdata[23:16];
         if (i_wstrb[1]) w_wdatastrb[15:8] = i_wdata[15:8];
@@ -88,13 +92,13 @@ module axil_slave_regs
             o_bresp <= 2'b00;
 
             // reset discipline for ps side verification
-            for (int i = 0; i < NUM_REGS; i++) begin
+            for (int i = 0; i < TOTAL_REGS; i++) begin
                 r_regs[i] <= ADDR_BASE + 4 * i;
             end
         end
         else begin 
             if (i_awvalid && o_awready && i_wvalid && o_wready) begin
-                if (w_awireg < NUM_REGS && w_awls2b == 2'b00) begin
+                if (w_awireg < NUM_WRITE_REGS && w_awls2b == 2'b00) begin
                     r_regs[w_awireg] <= w_wdatastrb;
                     o_bresp <= 2'b00;
                 end
@@ -104,6 +108,10 @@ module axil_slave_regs
             end
             if (o_bvalid && i_bready) begin
                 o_bresp <= 2'b00;
+            end
+
+            for (int i = 0; i < NUM_READ_REGS; i++) begin
+                r_regs[NUM_WRITE_REGS + i] <= i_regs[i];
             end
         end
     end
@@ -145,7 +153,7 @@ module axil_slave_regs
         end
         else begin
             if (i_arvalid && o_arready) begin
-                if (w_arireg < NUM_REGS && w_arls2b == 2'b00) begin
+                if (w_arireg < TOTAL_REGS && w_arls2b == 2'b00) begin
                     o_rdata <= r_regs[w_arireg];
                     o_rresp <= 2'b00;
                 end
@@ -162,7 +170,7 @@ module axil_slave_regs
     end
 
     always_comb begin
-        for (int i = 0; i < NUM_REGS; i++)
+        for (int i = 0; i < NUM_WRITE_REGS; i++)
             o_regs[i] = r_regs[i];
     end
 

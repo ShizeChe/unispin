@@ -10,7 +10,6 @@ module sequencer
     (input  logic i_clk, i_rst,
 
      input  logic [0:SEQ_REGS-1][31:0] i_regs,
-     input  logic [0:SEQ_REGS-1][31:0] i_uregs,
 
      output logic [$clog2(DEPTH)-1:0] o_addr,
      output logic [INSN_WIDTH-1:0] o_insn,
@@ -18,29 +17,15 @@ module sequencer
      output logic o_empty,
      input  logic [INSN_WIDTH-1:0] i_insn_modified);
 
-    logic w_last0, w_last0_ff1, w_last0_ff2;
+    logic w_new_seq;
 
-    assign w_last0 = (i_regs[SEQ_REGS-1] == 'h0);
-
-    always_ff @(posedge i_clk) begin
-        w_last0_ff1 <= w_last0;
-        w_last0_ff2 <= w_last0_ff1;
-    end
-
-    logic w_new_sequence;
-    assign w_new_sequence = (w_last0_ff2 && !w_last0_ff1);
-
-    logic w_ulast0, w_ulast0_ff1, w_ulast0_ff2;
-
-    assign w_ulast0 = (i_uregs[SEQ_REGS-1] == 'h0);
-
-    always_ff @(posedge i_clk) begin
-        w_ulast0_ff1 <= w_ulast0;
-        w_ulast0_ff2 <= w_ulast0_ff1;
-    end
-
-    logic w_new_usequence;
-    assign w_new_usequence = (w_ulast0_ff2 && !w_ulast0_ff1);
+    edge_detector SEQWR (
+        .i_clk(i_clk),
+        .i_rst(i_rst),
+        .i_signal(i_regs[SEQ_REGS-1][0]),
+        .o_posedge(w_new_seq),
+        .o_negedge()
+    );
 
     logic [INSN_WIDTH-1:0] r_sequence [0:DEPTH-1];
 
@@ -50,9 +35,7 @@ module sequencer
         always_ff @(posedge i_clk) begin
             if (i_rst)
                 r_sequence[i] <= 'h0;
-            else if (w_new_usequence)
-                r_sequence[i] <= {i_uregs[i*REG_PER_INSN:(i+1)*REG_PER_INSN-1]}[INSN_WIDTH-1:0];
-            else if (w_new_sequence)
+            else if (w_new_seq)
                 r_sequence[i] <= {i_regs[i*REG_PER_INSN:(i+1)*REG_PER_INSN-1]}[INSN_WIDTH-1:0];
             else if (!o_empty && i_next && r_iptr_modify == i)
                 r_sequence[i] <= i_insn_modified;
@@ -76,16 +59,14 @@ module sequencer
     always_ff @(posedge i_clk) begin
         if (i_rst)
             r_iters <= 'd0;
-        else if (w_new_usequence)
-            r_iters <= i_uregs[SEQ_REGS-2][ITER_WIDTH-1:0];
-        else if (w_new_sequence)
+        else if (w_new_seq)
             r_iters <= i_regs[SEQ_REGS-2][ITER_WIDTH-1:0];
         else if (w_propagate && w_next_null)
             r_iters <= (r_iters == 'd0) ? 'd0 : r_iters - 'd1;
     end
 
     always_ff @(posedge i_clk) begin
-        if (i_rst || w_new_usequence || w_new_sequence) r_iptr <= 'd0;
+        if (i_rst || w_new_seq) r_iptr <= 'd0;
         else if (w_propagate) begin
             r_iptr <= w_next_null ? 'd0 : w_iptr_plus1;
         end

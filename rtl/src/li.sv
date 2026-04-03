@@ -9,16 +9,16 @@ module li
      parameter INSN_WIDTH=LI_INSN_WIDTH,
      parameter DEPTH=LI_DEPTH,
      parameter ADC_WIDTH=LI_ADC_WIDTH,
+     parameter AXIBUF_ADDR_WIDTH=LI_AXIBUF_ADDR_WIDTH,
      parameter IQ_WIDTH=LI_IQ_WIDTH,
      parameter SEQ_REGS=LI_SEQ_REGS,
-     parameter CTRL_REGS=LI_CTRL_REGS)
+     parameter CTRL_REGS=LI_CTRL_REGS,
+     parameter STATUS_REGS=LI_STATUS_REGS)
     (input  logic i_clk, i_rst,
 
      input  logic [0:SEQ_REGS-1][31:0] i_seq_regs,
      input  logic [0:CTRL_REGS-1][31:0] i_ctrl_regs,
-
-     input  logic [0:SEQ_REGS-1][31:0] i_seq_uregs,
-     input  logic [0:CTRL_REGS-1][31:0] i_ctrl_uregs,
+     output logic [0:STATUS_REGS-1][31:0] o_status_regs,
 
      input  logic [ADC_WIDTH*8-1:0] i_QIx4,
 
@@ -36,7 +36,11 @@ module li
      output li_ctrl_t o_ctrl,
 
      // eop for verification
-     output li_eop_t o_eop);
+     output li_eop_t o_eop,
+
+     // from li_save for status report
+     input [31:0] i_samples_lost,
+     input [AXIBUF_ADDR_WIDTH-1:0] i_samples_inbuf);
 
     logic w_next, w_empty;
     logic [$clog2(DEPTH)-1:0] w_addr;
@@ -51,7 +55,6 @@ module li
         .i_rst(i_rst),
 
         .i_regs(i_seq_regs),
-        .i_uregs(i_seq_uregs),
 
         .o_addr(w_addr),
         .o_insn(w_insn),
@@ -102,9 +105,29 @@ module li
         .i_rst(i_rst),
 
         .i_regs(i_ctrl_regs),
-        .i_uregs(i_ctrl_uregs),
 
         .o_ctrl(o_ctrl)
     );
+
+    always_ff @(posedge i_clk) begin
+        if (i_rst) begin
+            {o_status_regs[0:3]} <= 128'h0;
+            o_status_regs[4] <= 'b11;
+            o_status_regs[5] <= 'b0;
+            o_status_regs[6] <= 'b0;
+        end
+        else begin
+            {o_status_regs[0:3]} <= i_QIx4;
+            o_status_regs[4] <= {
+                {(32-3){1'b0}}, 
+                o_armed, w_empty, o_empty
+            };
+            o_status_regs[5] <= i_samples_lost;
+            o_status_regs[6] <= {
+                {(32-AXIBUF_ADDR_WIDTH){1'b0}},
+                i_samples_inbuf
+            };
+        end
+    end
 
 endmodule
