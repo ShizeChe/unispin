@@ -3,7 +3,7 @@
 
 module dc_regs
    #(parameter NUM_SEQ_REGS=32,
-     parameter NUM_CTRL_REGS=4,
+     parameter NUM_CTRL_REGS=5,
      parameter NUM_STATUS_REGS=1,
      parameter ADDR_WIDTH=$clog2(NUM_SEQ_REGS+NUM_CTRL_REGS+NUM_STATUS_REGS)+2,
      parameter [31:0] ADDR_BASE=32'hA0000000)

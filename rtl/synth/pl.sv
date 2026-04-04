@@ -330,11 +330,11 @@ module pl
         .o_nco_ctrl_regs3(w_dac_nco_ctrl_regs[3]),
         .o_nco_ctrl_regs4(w_adc_nco_ctrl_regs[0]),
 
-        .o_nco_status_regs0(w_dac_nco_status_regs[0]),
-        .o_nco_status_regs1(w_dac_nco_status_regs[1]),
-        .o_nco_status_regs2(w_dac_nco_status_regs[2]),
-        .o_nco_status_regs3(w_dac_nco_status_regs[3]),
-        .o_nco_status_regs4(w_adc_nco_status_regs[0]),
+        .i_nco_status_regs0(w_dac_nco_status_regs[0]),
+        .i_nco_status_regs1(w_dac_nco_status_regs[1]),
+        .i_nco_status_regs2(w_dac_nco_status_regs[2]),
+        .i_nco_status_regs3(w_dac_nco_status_regs[3]),
+        .i_nco_status_regs4(w_adc_nco_status_regs[0]),
 
         // rf dac tile 228-0/1
         .s00_axis_0_tdata(w_rf_QIx8_bus[0]),
@@ -455,6 +455,7 @@ module pl
         // li x 2
         .o_li_seq_regs0(w_li_seq_regs[0]),
         .o_li_ctrl_regs0(w_li_ctrl_regs[0]),
+        .i_li_status_regs0(w_li_status_regs[0]),
         .i_li_QIx4_0(w_li_QIx4_save_bus[0]),
         .i_li_validx4_0(w_li_validx4_bus[0]),
         .i_li_last_0(w_li_last_bus[0]),
@@ -464,6 +465,7 @@ module pl
 
         .o_li_seq_regs1(w_li_seq_regs[1]),
         .o_li_ctrl_regs1(w_li_ctrl_regs[1]),
+        .i_li_status_regs1(w_li_status_regs[1]),
         .i_li_QIx4_1(w_li_QIx4_save_bus[1]),
         .i_li_validx4_1(w_li_validx4_bus[1]),
         .i_li_last_1(w_li_last_bus[1]),
@@ -502,7 +504,7 @@ module pl
 
         // launch x 1
         .o_lch_ctrl_regs(w_lch_ctrl_regs),
-        .o_lch_status_regs(w_lch_status_regs)
+        .i_lch_status_regs(w_lch_status_regs)
 
     );
 

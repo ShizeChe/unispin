@@ -377,8 +377,8 @@ module io
     assign o_adcio05 = w_sclk7; // 15
     assign o_adcio06 = i_dc_rst; // 1
     assign o_adcio07 = w_ldac7; // 3
-    assign o_adcio08 = |(w_li_sample_mask_bus[0]); // 4
-    assign o_adcio09 = |(w_li_sample_mask_bus[1]); // 6
+    assign o_adcio08 = |(i_li_sample_mask_bus[0]); // 4
+    assign o_adcio09 = |(i_li_sample_mask_bus[1]); // 6
     assign w_miso20 = i_adcio10; // 10
     assign o_adcio11 = w_ldac8; // 12
     assign o_adcio12 = w_mosi19; // 16

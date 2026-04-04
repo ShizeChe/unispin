@@ -15,7 +15,8 @@ module dc
      parameter REG_PER_INSN=DC_REG_PER_INSN,
      parameter SEQ_REGS=DC_SEQ_REGS,
      parameter CTRL_REGS=DC_CTRL_REGS,
-     parameter STATUS_REGS=DC_STATUS_REGS)
+     parameter STATUS_REGS=DC_STATUS_REGS,
+     parameter STATUS_FFS=5)
     (input  logic i_clk, i_rst,
      
      input  logic [0:SEQ_REGS-1][31:0] i_seq_regs,
@@ -103,17 +104,32 @@ module dc
         .o_ctrl(w_ctrl)
     );
 
+    logic [DC_SPI_DATA_WIDTH+2:0] r_status_ffs [STATUS_FFS];
+
     always_ff @(posedge i_clk) begin
         if (i_rst) begin
-            o_status_regs[0] <= 'b11;
+            r_status_ffs[0] <= 'h0;
         end
         else begin
-            o_status_regs[0] <= {
+            r_status_ffs[0] <= {
                 {(32-DC_SPI_DATA_WIDTH-3){1'b0}}, 
                 o_eop.w_spi_dout, 
                 o_armed, w_empty, o_empty
             };
         end
     end
+
+    for (genvar i = 1; i < STATUS_FFS; i++) begin : STATUS_FF_GEN
+        always_ff @(posedge i_clk) begin
+            if (i_rst) begin
+                r_status_ffs[i] <= 'h0;
+            end
+            else begin
+                r_status_ffs[i] <= r_status_ffs[i - 1];
+            end
+        end
+    end
+
+    assign o_status_regs[0] = {{(32-DC_SPI_DATA_WIDTH-3){1'b0}}, r_status_ffs[STATUS_FFS-1]};
 
 endmodule
