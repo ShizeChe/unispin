@@ -8,11 +8,15 @@ module bram_sequencer
      parameter REG_PER_INSN=(INSN_WIDTH+31)/32,
      parameter ITER_WIDTH=16,
      parameter DEPTH_WIDTH=PC_ADDR_WIDTH,
-     parameter SEQ_REGS=REG_PER_INSN+9)
+     parameter SEQ_REGS=REG_PER_INSN+11)
     (input  logic i_clk, i_rst,
 
      input  logic [0:SEQ_REGS-1][31:0] i_regs,
      output logic o_active,
+     output logic [ITER_WIDTH-1:0] o_iters,
+     output logic [DEPTH_WIDTH-1:0] o_pcmem_depth,
+     output logic [PC_WIDTH-1:0] o_pc_rd,
+     output logic [INSN_WIDTH-1:0] o_insn_rd,
 
      output logic [PC_ADDR_WIDTH-1:0] o_pc_addr,
      output logic [PC_WIDTH-1:0] o_pc,
@@ -31,11 +35,11 @@ module bram_sequencer
     localparam PCST_REG = PCST_ADDR_REG + 1;
     localparam PCST_STRB_REG = PCST_REG + 1;
 
-    logic [PC_ADDR_WIDTH-1:0] w_pcst_addr;
+    logic [PC_ADDR_WIDTH-1:0] w_pcldst_addr;
     logic [PC_WIDTH-1:0] w_pcst;
     logic w_pcst_strb, w_pcst_wr;
 
-    assign w_pcst_addr = i_regs[PCST_ADDR_REG][PC_ADDR_WIDTH-1:0];
+    assign w_pcldst_addr = i_regs[PCST_ADDR_REG][PC_ADDR_WIDTH-1:0];
     assign w_pcst = i_regs[PCST_REG][PC_WIDTH-1:0];
     assign w_pcst_strb = i_regs[PCST_STRB_REG][0];
 
@@ -56,11 +60,11 @@ module bram_sequencer
     localparam IST_REG_HI = IST_REG_LO + REG_PER_INSN - 1;
     localparam IST_STRB_REG = IST_REG_HI + 1;
 
-    logic [PC_WIDTH-1:0] w_ist_addr;
+    logic [PC_WIDTH-1:0] w_ildst_addr;
     logic [INSN_WIDTH-1:0] w_ist;
     logic w_ist_strb, w_ist_wr;
 
-    assign w_ist_addr = i_regs[IST_ADDR_REG][PC_WIDTH-1:0];
+    assign w_ildst_addr = i_regs[IST_ADDR_REG][PC_WIDTH-1:0];
     assign w_ist = {i_regs[IST_REG_LO:IST_REG_HI]}[INSN_WIDTH-1:0];
     assign w_ist_strb = i_regs[IST_STRB_REG][0];
 
@@ -76,20 +80,25 @@ module bram_sequencer
     * pc stage
     **********/
 
-    localparam ITERS_REG = IST_STRB_REG + 1;
-    localparam DEPTH_REG = ITERS_REG + 1;
+    localparam ITERS_REG      = IST_STRB_REG + 1;
+    localparam DEPTH_REG      = ITERS_REG + 1;
     localparam START_STRB_REG = DEPTH_REG + 1;
-    localparam HALT_STRB_REG = START_STRB_REG + 1;
+    localparam HALT_STRB_REG  = START_STRB_REG + 1;
+    localparam PCLD_STRB_REG  = HALT_STRB_REG + 1;
+    localparam ILD_STRB_REG   = PCLD_STRB_REG + 1;
 
     logic [ITER_WIDTH-1:0] w_iters;
     logic [DEPTH_WIDTH-1:0] w_depth;
-    logic w_start_strb;
-    logic w_halt_strb;
+    logic w_start_strb, w_halt_strb;
+    logic w_pcld_strb, w_pcld_rd;
+    logic w_ild_strb, w_ild_rd;
 
-    assign w_iters = i_regs[ITERS_REG][ITER_WIDTH-1:0];
-    assign w_depth = i_regs[DEPTH_REG][DEPTH_WIDTH-1:0];
+    assign w_iters      = i_regs[ITERS_REG][ITER_WIDTH-1:0];
+    assign w_depth      = i_regs[DEPTH_REG][DEPTH_WIDTH-1:0];
     assign w_start_strb = i_regs[START_STRB_REG][0];
-    assign w_halt_strb = i_regs[HALT_STRB_REG][0];
+    assign w_halt_strb  = i_regs[HALT_STRB_REG][0];
+    assign w_pcld_strb  = i_regs[PCLD_STRB_REG][0];
+    assign w_ild_strb   = i_regs[ILD_STRB_REG][0];
 
     typedef struct {
         logic [PC_ADDR_WIDTH-1:0] r_pc_addr;
@@ -118,6 +127,22 @@ module bram_sequencer
         .o_negedge()
     );
 
+    edge_detector PCRD (
+        .i_clk(i_clk),
+        .i_rst(i_rst),
+        .i_signal(w_pcld_strb),
+        .o_posedge(w_pcld_rd),
+        .o_negedge()
+    );
+
+    edge_detector IRD (
+        .i_clk(i_clk),
+        .i_rst(i_rst),
+        .i_signal(w_ild_strb),
+        .o_posedge(w_ild_rd),
+        .o_negedge()
+    );
+
     always_ff @(posedge i_clk) begin
         if (i_rst) begin
             p.r_pc_addr <= 'b0;
@@ -142,11 +167,13 @@ module bram_sequencer
                 p.r_iters <= (p.r_pc_addr < p.r_depth) ? p.r_iters : p.r_iters - 'd1;
                 p.r_active <= !(p.r_iters == 'd1 && !(p.r_pc_addr < p.r_depth));
             end
-            
+
         end
     end
 
-    assign o_active = p.r_active;
+    assign o_active      = p.r_active;
+    assign o_iters       = p.r_iters;
+    assign o_pcmem_depth = p.r_depth;
 
     /************
     * insn stage
@@ -166,6 +193,9 @@ module bram_sequencer
     logic w_pcmem_wr;
     logic [PC_ADDR_WIDTH-1:0] w_pcmem_wr_addr;
     logic [PC_WIDTH-1:0] w_pcmem_wr_data;
+    logic [PC_ADDR_WIDTH-1:0] w_pcmem_rd_addr;
+
+    assign w_pcmem_rd_addr = p.r_active ? p.r_pc_addr : w_pcldst_addr;
 
     bram #(
         .DATA_WIDTH(PC_WIDTH),
@@ -179,7 +209,7 @@ module bram_sequencer
 
         .i_clk_b(i_clk),
         .i_wr_b(1'b0),
-        .i_addr_b(p.r_pc_addr),
+        .i_addr_b(w_pcmem_rd_addr),
         .i_din_b({PC_WIDTH{1'b0}}),
         .o_dout_b(i.w_pc)
     );
@@ -226,6 +256,9 @@ module bram_sequencer
     logic w_imem_wr;
     logic [PC_WIDTH-1:0] w_imem_wr_addr;
     logic [INSN_WIDTH-1:0] w_imem_wr_data;
+    logic [PC_WIDTH-1:0] w_imem_rd_addr;
+
+    assign w_imem_rd_addr = p.r_active ? i.w_pc2use : w_ildst_addr;
 
     bram #(
         .DATA_WIDTH(INSN_WIDTH),
@@ -239,7 +272,7 @@ module bram_sequencer
 
         .i_clk_b(i_clk),
         .i_wr_b(1'b0),
-        .i_addr_b(i.w_pc2use),
+        .i_addr_b(w_imem_rd_addr),
         .i_din_b(),
         .o_dout_b(o.w_insn)
     );
@@ -276,11 +309,11 @@ module bram_sequencer
     always_comb begin
         if (!p.r_active) begin
             w_pcmem_wr = w_pcst_wr;
-            w_pcmem_wr_addr = w_pcst_addr;
+            w_pcmem_wr_addr = w_pcldst_addr;
             w_pcmem_wr_data = w_pcst;
 
             w_imem_wr = w_ist_wr;
-            w_imem_wr_addr = w_ist_addr;
+            w_imem_wr_addr = w_ildst_addr;
             w_imem_wr_data = w_ist;
         end
         else begin
@@ -308,5 +341,19 @@ module bram_sequencer
     assign o_pc = o.r_pc;
     assign o_insn = o.w_insn2use;
     assign o_empty = !o.r_insn_valid;
+
+    always_ff @(posedge i_clk) begin
+        if (i_rst)
+            o_pc_rd <= 'h0;
+        else if (w_pcld_rd)
+            o_pc_rd <= i.w_pc;
+    end
+
+    always_ff @(posedge i_clk) begin
+        if (i_rst)
+            o_insn_rd <= 'h0;
+        else if (w_ild_rd)
+            o_insn_rd <= o.w_insn;
+    end
 
 endmodule

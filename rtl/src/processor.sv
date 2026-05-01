@@ -108,7 +108,7 @@ module processor
 
      // user button press
      input  logic i_btn);
-     
+
     /****************
     * dc connections
     ****************/
@@ -148,7 +148,7 @@ module processor
 
     logic [NUM_RF_CHANNEL-1:0] w_rf_armed_bus;
     logic [NUM_RF_CHANNEL-1:0] w_rf_start_bus;
-    
+
     for (genvar i = 0; i < NUM_RF_CHANNEL; i++) begin : RF_GEN
 
         rf RF (
@@ -217,7 +217,7 @@ module processor
 
     logic [NUM_EX_CHANNEL-1:0] w_ex_armed_bus;
     logic [NUM_EX_CHANNEL-1:0] w_ex_start_bus;
-    
+
     for (genvar i = 0; i < NUM_EX_CHANNEL; i++) begin : EX_GEN
 
         ex EX (

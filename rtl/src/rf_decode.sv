@@ -13,7 +13,8 @@ module rf_decode
 
         d.w_addr = i_addr;
         d.w_samples = i_insn.w_samples;
-        d.w_arm = i_insn.w_arm;
+        d.w_arm = i_insn.w_arm || i_insn.w_sticky_arm;
+        d.w_marker = i_insn.w_marker;
 
         case (i_insn.w_kbc_mode)
             RF_KB: begin

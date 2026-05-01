@@ -8,26 +8,33 @@ module dc
      parameter SEQ_ITER_WIDTH=DC_SEQ_ITER_WIDTH,
      parameter CORE_ITER_WIDTH=DC_CORE_ITER_WIDTH,
      parameter SPI_DVSR_WIDTH=DC_SPI_DVSR_WIDTH,
+     parameter SPI_DELAY_WIDTH=DC_SPI_DELAY_WIDTH,
      parameter SPI_CS_UP_WIDTH=DC_SPI_CS_UP_WIDTH,
      parameter SPI_LDAC_WIDTH=DC_SPI_LDAC_WIDTH,
      parameter DEPTH=DC_DEPTH,
      parameter INSN_WIDTH=DC_INSN_WIDTH,
      parameter REG_PER_INSN=DC_REG_PER_INSN,
+     parameter PC_ADDR_WIDTH=DC_PC_ADDR_WIDTH,
      parameter SEQ_REGS=DC_SEQ_REGS,
-     parameter CTRL_REGS=DC_CTRL_REGS,
-     parameter STATUS_REGS=DC_STATUS_REGS,
-     parameter STATUS_FFS=5)
+     parameter CTRL_REGS=DC_CTRL_REGS)
     (input  logic i_clk, i_rst,
-     
+
      input  logic [0:SEQ_REGS-1][31:0] i_seq_regs,
      input  logic [0:CTRL_REGS-1][31:0] i_ctrl_regs,
-     output logic [0:STATUS_REGS-1][31:0] o_status_regs,
+
+     output logic [INSN_WIDTH-1:0] o_insn_rd,
+
+     output logic [SEQ_ITER_WIDTH-1:0] o_iters,
+     output logic [PC_ADDR_WIDTH-1:0] o_pcmem_depth,
+     output logic [$clog2(DEPTH)-1:0] o_pc_rd,
 
      output logic o_sclk,
      output logic o_mosi,
      input  logic i_miso,
      output logic o_cs_n,
      output logic o_ldac_n,
+
+     output logic o_marker,
 
      input  logic i_start,
      output logic o_armed,
@@ -41,17 +48,24 @@ module dc
     logic [$clog2(DEPTH)-1:0] w_addr;
     dc_insn_t w_insn, w_insn_modified;
 
-    sequencer #(
+    bram_sequencer #(
+        .PC_ADDR_WIDTH(PC_ADDR_WIDTH),
+        .PC_WIDTH($clog2(DEPTH)),
         .INSN_WIDTH(INSN_WIDTH),
-        .ITER_WIDTH(SEQ_ITER_WIDTH),
-        .DEPTH(DEPTH)
+        .ITER_WIDTH(SEQ_ITER_WIDTH)
     ) SEQ (
         .i_clk(i_clk),
         .i_rst(i_rst),
 
         .i_regs(i_seq_regs),
+        .o_active(),
+        .o_iters(o_iters),
+        .o_pcmem_depth(o_pcmem_depth),
+        .o_pc_rd(o_pc_rd),
+        .o_insn_rd(o_insn_rd),
 
-        .o_addr(w_addr),
+        .o_pc_addr(),
+        .o_pc(w_addr),
         .o_insn(w_insn),
         .i_next(w_next),
         .o_empty(w_empty),
@@ -82,6 +96,8 @@ module dc
         .o_cs_n(o_cs_n),
         .o_ldac_n(o_ldac_n),
 
+        .o_marker(o_marker),
+
         .i_start(i_start),
         .o_armed(o_armed),
 
@@ -93,6 +109,7 @@ module dc
     dc_ctrl #(
         .CTRL_REGS(CTRL_REGS),
         .SPI_DVSR_WIDTH(SPI_DVSR_WIDTH),
+        .SPI_DELAY_WIDTH(SPI_DELAY_WIDTH),
         .SPI_CS_UP_WIDTH(SPI_CS_UP_WIDTH),
         .SPI_LDAC_WIDTH(SPI_LDAC_WIDTH)
     ) CTRL (
@@ -103,33 +120,5 @@ module dc
 
         .o_ctrl(w_ctrl)
     );
-
-    logic [DC_SPI_DATA_WIDTH+2:0] r_status_ffs [STATUS_FFS];
-
-    always_ff @(posedge i_clk) begin
-        if (i_rst) begin
-            r_status_ffs[0] <= 'h0;
-        end
-        else begin
-            r_status_ffs[0] <= {
-                {(32-DC_SPI_DATA_WIDTH-3){1'b0}}, 
-                o_eop.w_spi_dout, 
-                o_armed, w_empty, o_empty
-            };
-        end
-    end
-
-    for (genvar i = 1; i < STATUS_FFS; i++) begin : STATUS_FF_GEN
-        always_ff @(posedge i_clk) begin
-            if (i_rst) begin
-                r_status_ffs[i] <= 'h0;
-            end
-            else begin
-                r_status_ffs[i] <= r_status_ffs[i - 1];
-            end
-        end
-    end
-
-    assign o_status_regs[0] = {{(32-DC_SPI_DATA_WIDTH-3){1'b0}}, r_status_ffs[STATUS_FFS-1]};
 
 endmodule

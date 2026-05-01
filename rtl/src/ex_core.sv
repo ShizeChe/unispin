@@ -27,6 +27,9 @@ module ex_core
      // pipeline empty flag
      output logic o_empty,
 
+     // marker bit
+     output logic o_marker,
+
      // eop for verification
      output ex_eop_t o_eop);
 
@@ -40,15 +43,18 @@ module ex_core
 
     assign d = '{
         w_addr: i_addr,
-        w_arm: i_insn.w_arm,
+        w_arm: i_insn.w_arm || i_insn.w_sticky_arm,
+        w_marker: i_insn.w_marker,
         w_real: i_insn.w_real,
         w_samples: i_insn.w_samples
     };
 
     assign o_insn_modified.w_arm = 1'b0;
+    assign o_insn_modified.w_sticky_arm = i_insn.w_sticky_arm;
     assign o_insn_modified.w_real = i_insn.w_real;
     assign o_insn_modified.w_samples = i_insn.w_samples + i_insn.w_dsamples;
     assign o_insn_modified.w_dsamples = i_insn.w_dsamples;
+    assign o_insn_modified.w_marker = i_insn.w_marker;
 
     /*************
     * count stage
@@ -60,6 +66,7 @@ module ex_core
         if (i_rst) begin
             c.r_addr <= 'bx;
             c.r_arm <= 1'b0;
+            c.r_marker <= 1'b0;
             c.r_real <= 'h0;
             c.r_samples <= 'bx;
             c.r_samples_left <= 'd0;
@@ -73,12 +80,14 @@ module ex_core
             else if (!i_empty) begin
                 c.r_addr <= d.w_addr;
                 c.r_arm <= d.w_arm;
+                c.r_marker <= d.w_marker;
                 c.r_real <= d.w_real;
                 c.r_samples <= d.w_samples;
                 c.r_samples_left <= d.w_samples;
             end
             else begin
                 c.r_arm <= 1'b0;
+                c.r_marker <= 1'b0;
                 c.r_samples_left <= 'd0;
             end
 
@@ -127,10 +136,12 @@ module ex_core
         if (i_rst) begin
             o.r_addr <= 'bx;
             o.r_realx16 <= 'h0;
+            o.r_marker <= 1'b0;
         end
         else if (!w_stall) begin
             o.r_addr <= c.r_addr;
             o.r_realx16 <= c.w_realx16;
+            o.r_marker <= c.r_marker;
         end
     end
 
@@ -145,9 +156,11 @@ module ex_core
     assign o_empty = i_empty && (c.r_samples_left == 'd0);
 
     assign o_realx16 = o.r_realx16;
+    assign o_marker = o.r_marker;
     assign o_eop = '{
         w_addr: o.r_addr,
-        w_realx16: o.r_realx16
+        w_realx16: o.r_realx16,
+        w_marker: o.r_marker
     };
 
 endmodule

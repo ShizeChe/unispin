@@ -34,6 +34,9 @@ module rf_core
      // pipeline empty flag
      output logic o_empty,
 
+     // marker bit
+     output logic o_marker,
+
      // eop for verification
      output rf_eop_t o_eop);
 
@@ -84,6 +87,7 @@ module rf_core
             p.r_samples_left <= 'd0;
             p.r_arm <= 1'b0;
             p.r_idle <= 1'b0;
+            p.r_marker <= 1'b0;
         end
         else if (!w_stall) begin
 
@@ -97,10 +101,12 @@ module rf_core
                 p.r_samples_left <= d.w_samples;
                 p.r_arm <= d.w_arm;
                 p.r_idle <= d.w_idle;
+                p.r_marker <= d.w_marker;
             end
             else begin
                 p.r_arm <= 1'b0;
                 p.r_samples_left <= 'd0;
+                p.r_marker <= 1'b0;
             end
 
         end
@@ -163,12 +169,15 @@ module rf_core
             o.r_sample_start <= 'bx;
             o.r_sample_end <= 'bx;
             o.r_QIx8 <= 'h0;
+            o.r_marker <= 1'b0;
         end
         else if (!w_stall) begin
             o.r_addr <= w_addr;
             o.r_sample_start <= w_sample_start;
             o.r_sample_end <= w_sample_end;
             o.r_QIx8 <= w_QIx8;
+            o.r_marker <= |{r[0].r_marker, r[1].r_marker, r[2].r_marker, r[3].r_marker,
+                            r[4].r_marker, r[5].r_marker, r[6].r_marker, r[7].r_marker};
         end
     end
 
@@ -184,6 +193,8 @@ module rf_core
 
     assign o_QIx8 = o.r_QIx8;
 
+    assign o_marker = o.r_marker;
+
     assign o_armed = |{r[0].r_arm, r[1].r_arm, r[2].r_arm, r[3].r_arm,
                        r[4].r_arm, r[5].r_arm, r[6].r_arm, r[7].r_arm};
 
@@ -194,7 +205,8 @@ module rf_core
     assign o_eop = '{
         w_addr: o.r_addr,
         w_sample_start: o.r_sample_start,
-        w_sample_end: o.r_sample_end
+        w_sample_end: o.r_sample_end,
+        w_marker: o.r_marker
     };
 
 endmodule

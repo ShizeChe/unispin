@@ -8,6 +8,7 @@ module li
      parameter STRIDE_WIDTH=LI_STRIDE_WIDTH,
      parameter INSN_WIDTH=LI_INSN_WIDTH,
      parameter DEPTH=LI_DEPTH,
+     parameter PC_ADDR_WIDTH=LI_PC_ADDR_WIDTH,
      parameter ADC_WIDTH=LI_ADC_WIDTH,
      parameter AXIBUF_ADDR_WIDTH=LI_AXIBUF_ADDR_WIDTH,
      parameter IQ_WIDTH=LI_IQ_WIDTH,
@@ -19,6 +20,11 @@ module li
      input  logic [0:SEQ_REGS-1][31:0] i_seq_regs,
      input  logic [0:CTRL_REGS-1][31:0] i_ctrl_regs,
      output logic [0:STATUS_REGS-1][31:0] o_status_regs,
+
+     output logic [INSN_WIDTH-1:0] o_insn_rd,
+     output logic [ITER_WIDTH-1:0] o_iters,
+     output logic [PC_ADDR_WIDTH-1:0] o_pcmem_depth,
+     output logic [$clog2(DEPTH)-1:0] o_pc_rd,
 
      input  logic [ADC_WIDTH*8-1:0] i_QIx4,
 
@@ -33,6 +39,8 @@ module li
      
      output logic o_empty,
 
+     output logic o_marker,
+
      output li_ctrl_t o_ctrl,
 
      // eop for verification
@@ -46,17 +54,24 @@ module li
     logic [$clog2(DEPTH)-1:0] w_addr;
     li_insn_t w_insn, w_insn_modified;
 
-    sequencer #(
+    bram_sequencer #(
+        .PC_ADDR_WIDTH(PC_ADDR_WIDTH),
+        .PC_WIDTH($clog2(DEPTH)),
         .INSN_WIDTH(INSN_WIDTH),
-        .ITER_WIDTH(ITER_WIDTH),
-        .DEPTH(DEPTH)
+        .ITER_WIDTH(ITER_WIDTH)
     ) SEQ (
         .i_clk(i_clk),
         .i_rst(i_rst),
 
         .i_regs(i_seq_regs),
+        .o_active(),
+        .o_iters(o_iters),
+        .o_pcmem_depth(o_pcmem_depth),
+        .o_pc_rd(o_pc_rd),
+        .o_insn_rd(o_insn_rd),
 
-        .o_addr(w_addr),
+        .o_pc_addr(),
+        .o_pc(w_addr),
         .o_insn(w_insn),
         .i_next(w_next),
         .o_empty(w_empty),
@@ -92,6 +107,8 @@ module li
         .o_last(o_last),
 
         .o_empty(o_empty),
+
+        .o_marker(o_marker),
 
         .o_eop(o_eop)
     );

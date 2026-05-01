@@ -28,6 +28,9 @@ module dc_core
      output logic o_cs_n,
      output logic o_ldac_n,
 
+     // marker bit
+     output logic o_marker,
+
      // launcher interface
      input  logic i_start,
      output logic o_armed,
@@ -73,6 +76,7 @@ module dc_core
                 r_hold_cycles: 'd0,
                 r_arm: 1'b0,
                 r_idle: 1'b0,
+                r_marker: 1'b0,
                 r_bubble: 1'b1
             };
         end
@@ -91,6 +95,7 @@ module dc_core
                         r_hold_cycles: d.w_hold_cycles,
                         r_arm: d.w_arm,
                         r_idle: d.w_idle,
+                        r_marker: d.w_marker,
                         r_bubble: 1'b0
                     };
                 end
@@ -133,6 +138,7 @@ module dc_core
                 r_strb_ldac: 1'b0,
                 r_hold_cycles: 'd0,
                 r_arm: 1'b0,
+                r_marker: 1'b0,
                 r_delay_cycles: 'd0,
                 r_cs_up_cycles: 'd0,
                 r_cs_n: 1'b1,
@@ -152,6 +158,7 @@ module dc_core
                 r_strb_ldac: i.r_bubble ? 1'b0 : i.r_strb_ldac,
                 r_hold_cycles: i.r_bubble ? 'd0 : i.r_hold_cycles,
                 r_arm: i.r_bubble ? 1'b0 : i.r_arm,
+                r_marker: i.r_bubble ? 1'b0 : i.r_marker,
                 r_delay_cycles: i.r_bubble ? 'd0 : i_ctrl.w_delay_cycles,
                 r_cs_up_cycles: i.r_bubble ? 'd0 : i_ctrl.w_cs_up_cycles,
                 r_cs_n: 1'b1,
@@ -212,7 +219,8 @@ module dc_core
                 r_addr: 'bx,
                 r_iter: 'bx,
                 r_hold_cycles: 'd0,
-                r_arm: 1'b0
+                r_arm: 1'b0,
+                r_marker: 1'b0
             };
         end
         else if (w_propagate_i2s && i.r_idle) begin
@@ -226,7 +234,8 @@ module dc_core
                     r_addr: i.r_addr,
                     r_iter: i.r_iters,
                     r_hold_cycles: i.r_hold_cycles,
-                    r_arm: i.r_arm
+                    r_arm: i.r_arm,
+                    r_marker: i.r_marker
                 };
             end
 
@@ -253,6 +262,7 @@ module dc_core
                 r_ldac_cycles: 'd0,
                 r_ldac_n: 1'b1,
                 r_cycles_left: 'd0,
+                r_marker: 1'b0,
                 r_done: 1'b1
             };
         end
@@ -266,6 +276,7 @@ module dc_core
                 r_ldac_cycles: 1'b0, 
                 r_ldac_n: 1'b1,
                 r_cycles_left: s.r_ibuf.r_hold_cycles,
+                r_marker: s.r_ibuf.r_marker,
                 r_done: 1'b0
             } : s.r_sbuf.r_valid ? '{
                 r_addr: s.r_sbuf.r_addr,
@@ -276,6 +287,7 @@ module dc_core
                 r_ldac_cycles: s.r_sbuf.r_strb_ldac ? i_ctrl.w_ldac_cycles : 'd0, 
                 r_ldac_n: !s.r_sbuf.r_strb_ldac,
                 r_cycles_left: s.r_sbuf.r_hold_cycles,
+                r_marker: s.r_sbuf.r_marker,
                 r_done: !s.r_sbuf.r_strb_ldac && (s.r_sbuf.r_hold_cycles == 'd0)
             } : {
                 r_addr: 'bx,
@@ -286,6 +298,7 @@ module dc_core
                 r_ldac_cycles: 'd0,
                 r_ldac_n: 1'b1,
                 r_cycles_left: 'd0,
+                r_marker: 1'b0,
                 r_done: 1'b1
             };
         end
@@ -338,6 +351,8 @@ module dc_core
     assign o_cs_n = s.r_sbuf.r_cs_n;
     assign o_ldac_n = h.r_ldac_n;
 
+    assign o_marker = h.r_marker;
+
     always_ff @(posedge i_clk) begin
         if (i_rst) begin
             o_armed <= 1'b0;
@@ -368,7 +383,8 @@ module dc_core
         w_spi_rd: h.r_spi_rd,
         w_spi_dout: h.r_spi_dout,
         w_ldac_cycles: h.r_ldac_cycles,
-        w_cycles_left: h.r_cycles_left
+        w_cycles_left: h.r_cycles_left,
+        w_marker: h.r_marker
     };
 
 endmodule

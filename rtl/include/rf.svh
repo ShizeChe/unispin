@@ -3,7 +3,7 @@
 
 parameter RF_KBC_WIDTH=36;
 parameter RF_NUM_SAMPLE_WIDTH=20;
-parameter RF_INSN_WIDTH=RF_KBC_WIDTH*2+RF_NUM_SAMPLE_WIDTH*2+3;
+parameter RF_INSN_WIDTH=RF_KBC_WIDTH*2+RF_NUM_SAMPLE_WIDTH*2+5;
 parameter RF_IQ_WIDTH=14;
 parameter RF_DAC_WIDTH=16;
 parameter RF_PHASE_WIDTH=18;
@@ -12,8 +12,9 @@ parameter RF_CORDIC_PAD_ZEROS=8;
 
 parameter RF_ITER_WIDTH=20;
 parameter RF_DEPTH=16;
+parameter RF_PC_ADDR_WIDTH=4;
 parameter RF_REG_PER_INSN=(RF_INSN_WIDTH+31)/32;
-parameter RF_SEQ_REGS=RF_DEPTH*RF_REG_PER_INSN+2;
+parameter RF_SEQ_REGS=RF_REG_PER_INSN+11;
 parameter RF_CTRL_REGS=2;
 parameter RF_STATUS_REGS=1;
 
@@ -34,11 +35,13 @@ typedef enum logic [1:0] {
 
 typedef struct packed {
     logic w_arm;
+    logic w_sticky_arm;
     rf_kbc_mode_t w_kbc_mode;
     logic [RF_KBC_WIDTH-1:0] w_kbc1;
     logic [RF_KBC_WIDTH-1:0] w_kbc2;
     logic [RF_NUM_SAMPLE_WIDTH-1:0] w_samples;
     logic [RF_NUM_SAMPLE_WIDTH-1:0] w_dsamples;
+    logic w_marker;
 } rf_insn_t;
 
 typedef struct {
@@ -50,6 +53,7 @@ typedef struct {
     logic w_arm;
     logic w_idle;
     logic w_set_phasor;
+    logic w_marker;
 } rf_decode_stg_t;
 
 typedef struct {
@@ -58,6 +62,7 @@ typedef struct {
     logic [RF_NUM_SAMPLE_WIDTH-1:0] r_samples_left;
     logic r_arm;
     logic r_idle;
+    logic r_marker;
     logic [7:0] w_zerox8;
     logic [7:0][RF_PHASE_WIDTH-1:0] w_phasex8;
 } rf_phase_stg_t;
@@ -71,6 +76,7 @@ typedef struct {
     logic r_bubble;
     logic r_zero;
     logic r_arm;
+    logic r_marker;
 } rf_cordic_stg_t;
 
 typedef struct {
@@ -80,6 +86,7 @@ typedef struct {
     logic [RF_IQ_WIDTH-1:0] r_I;
     logic r_bubble;
     logic r_arm;
+    logic r_marker;
 } rf_result_stg_t;
 
 typedef struct {
@@ -87,6 +94,7 @@ typedef struct {
     logic [RF_NUM_SAMPLE_WIDTH-1:0] r_sample_start;
     logic [RF_NUM_SAMPLE_WIDTH-1:0] r_sample_end;
     logic [RF_DAC_WIDTH*16-1:0] r_QIx8;
+    logic r_marker;
 } rf_output_stg_t;
 
 // eop = end of pipeline
@@ -94,6 +102,7 @@ typedef struct packed {
     logic [$clog2(RF_DEPTH)-1:0] w_addr;
     logic [RF_NUM_SAMPLE_WIDTH-1:0] w_sample_start;
     logic [RF_NUM_SAMPLE_WIDTH-1:0] w_sample_end;
+    logic w_marker;
 } rf_eop_t;
 
 parameter logic [RF_DAC_WIDTH-RF_IQ_WIDTH-1:0] PAD = 'b0;

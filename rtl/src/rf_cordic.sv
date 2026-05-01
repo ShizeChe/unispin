@@ -47,7 +47,8 @@ module rf_cordic
                 r_y: 'bx,
                 r_bubble: 1'b1,
                 r_zero: 1'b1,
-                r_arm: 1'b0
+                r_arm: 1'b0,
+                r_marker: 1'b0
             };
         end
         else if (!i_stall) begin
@@ -57,6 +58,7 @@ module rf_cordic
             c[0].r_bubble <= (p.r_samples_left == 'd0) || (p.r_samples_left <= INDEX);
             c[0].r_zero <= p.w_zerox8[INDEX];
             c[0].r_arm <= p.r_arm;
+            c[0].r_marker <= p.r_marker;
 
             case (w_phase[PHASE_WIDTH-1:PHASE_WIDTH-3])
                 3'b000: begin // 0..45
@@ -146,7 +148,8 @@ module rf_cordic
                     r_y: 'bx,
                     r_bubble: 1'b1,
                     r_zero: 1'b1,
-                    r_arm: 1'b0
+                    r_arm: 1'b0,
+                    r_marker: 1'b0
                 };
             end
             else if (!i_stall) begin
@@ -156,6 +159,7 @@ module rf_cordic
                 c[i + 1].r_bubble <= c[i].r_bubble;
                 c[i + 1].r_zero <= c[i].r_zero;
                 c[i + 1].r_arm <= c[i].r_arm;
+                c[i + 1].r_marker <= c[i].r_marker;
 
                 if (c[i].r_phase_left[PHASE_WIDTH-1]) begin
                     // phase left is negative 
@@ -195,7 +199,8 @@ module rf_cordic
                 r_Q: 'h0,
                 r_I: 'h0,
                 r_bubble: 1'b1,
-                r_arm: 1'b0
+                r_arm: 1'b0,
+                r_marker: 1'b0
             };
         end
         else if (!i_stall) begin
@@ -205,7 +210,8 @@ module rf_cordic
                 r_Q: c[NUM_STAGES].r_zero ? 'h0 : w_y_round[IQ_WIDTH+PAD_ZEROS-1:PAD_ZEROS],
                 r_I: c[NUM_STAGES].r_zero ? 'h0 : w_x_round[IQ_WIDTH+PAD_ZEROS-1:PAD_ZEROS],
                 r_bubble: c[NUM_STAGES].r_bubble,
-                r_arm: c[NUM_STAGES].r_arm
+                r_arm: c[NUM_STAGES].r_arm,
+                r_marker: c[NUM_STAGES].r_marker
             };
         end
     end

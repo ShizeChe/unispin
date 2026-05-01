@@ -14,12 +14,15 @@ module li_decode
         d.w_addr = i_addr;
         d.w_samples = i_insn.w_samples;
         d.w_dsamples = i_insn.w_dsamples;
-        d.w_arm = i_insn.w_arm;
+        d.w_arm = i_insn.w_arm || i_insn.w_sticky_arm;
         d.w_idle = i_insn.w_idle;
+        d.w_marker = i_insn.w_marker;
         d.w_stride = i_insn.w_stride;
 
         o_insn_modified = i_insn;
         o_insn_modified.w_arm = 1'b0;
+        o_insn_modified.w_sticky_arm = i_insn.w_sticky_arm;
+        o_insn_modified.w_marker = i_insn.w_marker;
         o_insn_modified.w_samples = i_insn.w_samples + i_insn.w_dsamples;
 
     end

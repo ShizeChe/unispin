@@ -13,8 +13,6 @@ module rf_phasor
      output logic [7:0][OW-1:0] o_p,
      input  logic i_stall);
 
-    // logic [7:0][IW-1:0] w_v_start;
-    // logic [7:0][IW-1:0] w_p_start;
     logic [7:0][IW-1:0] w_v_start;
     logic [15:0][IW-1:0] w_p_start;
     logic [7:0][IW-1:0] r_v;
@@ -37,14 +35,6 @@ module rf_phasor
     assign w_p_start[14] = 91*i_k + 14*i_b + i_c;
     assign w_p_start[15] = 105*i_k + 15*i_b + i_c;
 
-    // assign w_v_start[0] = 28 * i_k + (i_b << 3);
-    // assign w_v_start[1] = 36 * i_k + (i_b << 3);
-    // assign w_v_start[2] = 44 * i_k + (i_b << 3);
-    // assign w_v_start[3] = 52 * i_k + (i_b << 3);
-    // assign w_v_start[4] = 60 * i_k + (i_b << 3);
-    // assign w_v_start[5] = 68 * i_k + (i_b << 3);
-    // assign w_v_start[6] = 76 * i_k + (i_b << 3);
-    // assign w_v_start[7] = 84 * i_k + (i_b << 3);
     assign w_v_start[0] = 92 * i_k + (i_b << 3);
     assign w_v_start[1] = 100 * i_k + (i_b << 3);
     assign w_v_start[2] = 108 * i_k + (i_b << 3);

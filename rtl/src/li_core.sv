@@ -36,6 +36,9 @@ module li_core
      // pipeline empty flag
      output logic o_empty,
 
+     // marker bit
+     output logic o_marker,
+
      // eop for verification
      output li_eop_t o_eop);
 
@@ -87,6 +90,7 @@ module li_core
             s.r_stride <= 'd1;
             s.r_stride_left <= 'd0;
             s.r_idle <= 1'b0;
+            s.r_marker <= 1'b0;
             s.r_done <= 1'b1;
         end
         else if (!w_stall) begin
@@ -98,6 +102,7 @@ module li_core
                 s.r_stride <= d.w_stride;
                 s.r_stride_left <= 'd0;
                 s.r_idle <= d.w_idle;
+                s.r_marker <= d.w_marker;
                 s.r_done <= 1'b0;
             end
             else begin
@@ -105,6 +110,8 @@ module li_core
                 s.r_stride_left <= s.w_stride_next;
                 if (!s.r_done)
                     s.r_done <= s.w_done;
+                if (s.w_done)
+                    s.r_marker <= 1'b0;
             end
             
         end
@@ -285,6 +292,8 @@ module li_core
     assign o_last = o.r_last;
 
     assign o_armed = !i_empty && d.w_arm;
+
+    assign o_marker = s.r_marker;
 
     assign o_empty = i_empty && (s.w_done || s.r_done) && !s.w_last && 
         !p.r_last && !a.r_last && !b.r_last && !o.r_last;

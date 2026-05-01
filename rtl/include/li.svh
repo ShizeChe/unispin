@@ -3,15 +3,16 @@
 
 parameter LI_NUM_SAMPLE_WIDTH=20;
 parameter LI_STRIDE_WIDTH=18;
-parameter LI_INSN_WIDTH=LI_NUM_SAMPLE_WIDTH*2+LI_STRIDE_WIDTH+2;
+parameter LI_INSN_WIDTH=LI_NUM_SAMPLE_WIDTH*2+LI_STRIDE_WIDTH+4;
 parameter LI_ITER_WIDTH=20;
 parameter LI_DEPTH=16;
+parameter LI_PC_ADDR_WIDTH=4;
 parameter LI_ADC_WIDTH=16;
 
 parameter LI_IQ_WIDTH=14;
 
 parameter LI_REG_PER_INSN=(LI_INSN_WIDTH+31)/32;
-parameter LI_SEQ_REGS=LI_DEPTH*LI_REG_PER_INSN+2;
+parameter LI_SEQ_REGS=LI_REG_PER_INSN+11;
 parameter LI_CTRL_REGS=4;
 parameter LI_STATUS_REGS=7;
 
@@ -27,7 +28,9 @@ typedef struct packed {
 
 typedef struct packed {
     logic w_arm;
+    logic w_sticky_arm;
     logic w_idle;
+    logic w_marker;
     logic [LI_NUM_SAMPLE_WIDTH-1:0] w_samples;
     logic [LI_NUM_SAMPLE_WIDTH-1:0] w_dsamples;
     logic [LI_STRIDE_WIDTH-1:0] w_stride;
@@ -37,6 +40,7 @@ typedef struct {
     logic [$clog2(LI_DEPTH)-1:0] w_addr;
     logic w_arm;
     logic w_idle;
+    logic w_marker;
     logic [LI_NUM_SAMPLE_WIDTH-1:0] w_samples;
     logic [LI_NUM_SAMPLE_WIDTH-1:0] w_dsamples;
     logic [LI_STRIDE_WIDTH-1:0] w_stride;
@@ -54,6 +58,7 @@ typedef struct {
     logic w_done;
     logic r_done;
     logic r_idle;
+    logic r_marker;
     logic [LI_ADC_WIDTH*8-1:0] w_QIx4;
     logic w_last;
 } li_sample_stg_t;
