@@ -15,14 +15,11 @@ module rf
      parameter DEPTH=RF_DEPTH,
      parameter PC_ADDR_WIDTH=RF_PC_ADDR_WIDTH,
      parameter SEQ_REGS=RF_SEQ_REGS,
-     parameter CTRL_REGS=RF_CTRL_REGS,
-     parameter STATUS_REGS=RF_STATUS_REGS,
-     parameter STATUS_FFS=5)
+     parameter CTRL_REGS=RF_CTRL_REGS)
     (input  logic i_clk, i_rst,
 
      input  logic [0:SEQ_REGS-1][31:0] i_seq_regs,
      input  logic [0:CTRL_REGS-1][31:0] i_ctrl_regs,
-     output logic [0:STATUS_REGS-1][31:0] o_status_regs,
 
      output logic [INSN_WIDTH-1:0] o_insn_rd,
      output logic [ITER_WIDTH-1:0] o_iters,
@@ -116,44 +113,5 @@ module rf
 
         .o_ctrl(w_ctrl)
     );
-
-    always_ff @(posedge i_clk) begin
-        if (i_rst) begin
-            o_status_regs[0] <= 'b11;
-        end
-        else begin
-            o_status_regs[0] <= {
-                {(32-3){1'b0}}, 
-                o_armed, w_empty, o_empty
-            };
-        end
-    end
-
-    logic [2:0] r_status_ffs [STATUS_FFS];
-
-    always_ff @(posedge i_clk) begin
-        if (i_rst) begin
-            r_status_ffs[0] <= 'h0;
-        end
-        else begin
-            r_status_ffs[0] <= {
-                {(32-3){1'b0}}, 
-                o_armed, w_empty, o_empty
-            };
-        end
-    end
-
-    for (genvar i = 1; i < STATUS_FFS; i++) begin : STATUS_FF_GEN
-        always_ff @(posedge i_clk) begin
-            if (i_rst) begin
-                r_status_ffs[i] <= 'h0;
-            end
-            else begin
-                r_status_ffs[i] <= r_status_ffs[i - 1];
-            end
-        end
-    end
-
-    assign o_status_regs[0] = {{(32-3){1'b0}}, r_status_ffs[STATUS_FFS-1]};
 
 endmodule

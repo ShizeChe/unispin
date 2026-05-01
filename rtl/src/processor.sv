@@ -29,6 +29,9 @@ module processor
      // dc armed bus for LED
      output logic [NUM_DC_CHANNEL-1:0] o_dc_armed_bus,
 
+     // dc marker bus
+     output logic [NUM_DC_CHANNEL-1:0] o_dc_marker_bus,
+
      // dc empty bus for simulation
      output logic [0:NUM_DC_CHANNEL-1] o_dc_empty_bus,
 
@@ -46,6 +49,9 @@ module processor
      // rf armed bus for LED
      output logic [NUM_RF_CHANNEL-1:0] o_rf_armed_bus,
 
+     // rf marker bus
+     output logic [NUM_RF_CHANNEL-1:0] o_rf_marker_bus,
+
      // rf empty bus for simulation
      output logic [0:NUM_RF_CHANNEL-1] o_rf_empty_bus,
 
@@ -62,6 +68,9 @@ module processor
 
      // li armed bus for LED
      output logic [NUM_LI_CHANNEL-1:0] o_li_armed_bus,
+
+     // li marker bus
+     output logic [NUM_LI_CHANNEL-1:0] o_li_marker_bus,
 
      // li empty bus for simulation
      output logic [0:NUM_LI_CHANNEL-1] o_li_empty_bus,
@@ -96,6 +105,9 @@ module processor
      // ex armed bus for LED
      output logic [NUM_EX_CHANNEL-1:0] o_ex_armed_bus,
 
+     // ex marker bus
+     output logic [NUM_EX_CHANNEL-1:0] o_ex_marker_bus,
+
      // ex empty bus for simulation
      output logic [0:NUM_EX_CHANNEL-1] o_ex_empty_bus,
 
@@ -108,6 +120,64 @@ module processor
 
      // user button press
      input  logic i_btn);
+
+    /****************************
+    * status reg index localparams
+    ****************************/
+
+    localparam DC_INSN_RD_REG     = 0;
+    localparam DC_PC_RD_REG       = DC_REG_PER_INSN;
+    localparam DC_ITERS_REG       = DC_REG_PER_INSN+1;
+    localparam DC_PCMEM_DEPTH_REG = DC_REG_PER_INSN+2;
+    localparam DC_FLAGS_REG       = DC_REG_PER_INSN+3;
+
+    localparam RF_INSN_RD_REG     = 0;
+    localparam RF_PC_RD_REG       = RF_REG_PER_INSN;
+    localparam RF_ITERS_REG       = RF_REG_PER_INSN+1;
+    localparam RF_PCMEM_DEPTH_REG = RF_REG_PER_INSN+2;
+    localparam RF_FLAGS_REG       = RF_REG_PER_INSN+3;
+
+    localparam LI_INSN_RD_REG       = 0;
+    localparam LI_PC_RD_REG         = LI_REG_PER_INSN;
+    localparam LI_ITERS_REG         = LI_REG_PER_INSN+1;
+    localparam LI_PCMEM_DEPTH_REG   = LI_REG_PER_INSN+2;
+    localparam LI_FLAGS_REG         = LI_REG_PER_INSN+3;
+    localparam LI_SAMPLES_LOST_REG  = LI_REG_PER_INSN+4;
+    localparam LI_SAMPLES_INBUF_REG = LI_REG_PER_INSN+5;
+
+    localparam EX_INSN_RD_REG     = 0;
+    localparam EX_PC_RD_REG       = EX_REG_PER_INSN;
+    localparam EX_ITERS_REG       = EX_REG_PER_INSN+1;
+    localparam EX_PCMEM_DEPTH_REG = EX_REG_PER_INSN+2;
+    localparam EX_FLAGS_REG       = EX_REG_PER_INSN+3;
+
+    /****************************
+    * channel output signal buses
+    ****************************/
+
+    logic [NUM_DC_CHANNEL-1:0][DC_INSN_WIDTH-1:0]     w_dc_insn_rd_bus;
+    logic [NUM_DC_CHANNEL-1:0][DC_SEQ_ITER_WIDTH-1:0] w_dc_iters_bus;
+    logic [NUM_DC_CHANNEL-1:0][DC_PC_ADDR_WIDTH-1:0]  w_dc_pcmem_depth_bus;
+    logic [NUM_DC_CHANNEL-1:0][$clog2(DC_DEPTH)-1:0]  w_dc_pc_rd_bus;
+    logic [NUM_DC_CHANNEL-1:0]                         w_dc_marker_bus;
+
+    logic [NUM_RF_CHANNEL-1:0][RF_INSN_WIDTH-1:0]     w_rf_insn_rd_bus;
+    logic [NUM_RF_CHANNEL-1:0][RF_ITER_WIDTH-1:0]     w_rf_iters_bus;
+    logic [NUM_RF_CHANNEL-1:0][RF_PC_ADDR_WIDTH-1:0]  w_rf_pcmem_depth_bus;
+    logic [NUM_RF_CHANNEL-1:0][$clog2(RF_DEPTH)-1:0]  w_rf_pc_rd_bus;
+    logic [NUM_RF_CHANNEL-1:0]                         w_rf_marker_bus;
+
+    logic [NUM_LI_CHANNEL-1:0][LI_INSN_WIDTH-1:0]     w_li_insn_rd_bus;
+    logic [NUM_LI_CHANNEL-1:0][LI_ITER_WIDTH-1:0]     w_li_iters_bus;
+    logic [NUM_LI_CHANNEL-1:0][LI_PC_ADDR_WIDTH-1:0]  w_li_pcmem_depth_bus;
+    logic [NUM_LI_CHANNEL-1:0][$clog2(LI_DEPTH)-1:0]  w_li_pc_rd_bus;
+    logic [NUM_LI_CHANNEL-1:0]                         w_li_marker_bus;
+
+    logic [NUM_EX_CHANNEL-1:0][EX_INSN_WIDTH-1:0]     w_ex_insn_rd_bus;
+    logic [NUM_EX_CHANNEL-1:0][EX_ITER_WIDTH-1:0]     w_ex_iters_bus;
+    logic [NUM_EX_CHANNEL-1:0][EX_PC_ADDR_WIDTH-1:0]  w_ex_pcmem_depth_bus;
+    logic [NUM_EX_CHANNEL-1:0][$clog2(EX_DEPTH)-1:0]  w_ex_pc_rd_bus;
+    logic [NUM_EX_CHANNEL-1:0]                         w_ex_marker_bus;
 
     /****************
     * dc connections
@@ -124,13 +194,19 @@ module processor
 
             .i_seq_regs(i_dc_seq_regs[i]),
             .i_ctrl_regs(i_dc_ctrl_regs[i]),
-            .o_status_regs(o_dc_status_regs[i]),
+
+            .o_insn_rd(w_dc_insn_rd_bus[i]),
+            .o_iters(w_dc_iters_bus[i]),
+            .o_pcmem_depth(w_dc_pcmem_depth_bus[i]),
+            .o_pc_rd(w_dc_pc_rd_bus[i]),
 
             .o_sclk(o_dc_sclk_bus[i]),
             .o_mosi(o_dc_mosi_bus[i]),
             .i_miso(i_dc_miso_bus[i]),
             .o_cs_n(o_dc_cs_n_bus[i]),
             .o_ldac_n(o_dc_ldac_n_bus[i]),
+
+            .o_marker(w_dc_marker_bus[i]),
 
             .i_start(w_dc_start_bus[i]),
             .o_armed(w_dc_armed_bus[i]),
@@ -157,9 +233,15 @@ module processor
 
             .i_seq_regs(i_rf_seq_regs[i]),
             .i_ctrl_regs(i_rf_ctrl_regs[i]),
-            .o_status_regs(o_rf_status_regs[i]),
+
+            .o_insn_rd(w_rf_insn_rd_bus[i]),
+            .o_iters(w_rf_iters_bus[i]),
+            .o_pcmem_depth(w_rf_pcmem_depth_bus[i]),
+            .o_pc_rd(w_rf_pc_rd_bus[i]),
 
             .o_QIx8(o_rf_QIx8_bus[i]),
+
+            .o_marker(w_rf_marker_bus[i]),
 
             .i_start(w_rf_start_bus[i]),
             .o_armed(w_rf_armed_bus[i]),
@@ -186,7 +268,11 @@ module processor
 
             .i_seq_regs(i_li_seq_regs[i]),
             .i_ctrl_regs(i_li_ctrl_regs[i]),
-            .o_status_regs(o_li_status_regs[i]),
+
+            .o_insn_rd(w_li_insn_rd_bus[i]),
+            .o_iters(w_li_iters_bus[i]),
+            .o_pcmem_depth(w_li_pcmem_depth_bus[i]),
+            .o_pc_rd(w_li_pc_rd_bus[i]),
 
             .i_QIx4(i_li_QIx4_bus[i]),
 
@@ -195,6 +281,8 @@ module processor
             .o_QIx4(o_li_QIx4_bus[i]),
             .o_validx4(o_li_validx4_bus[i]),
             .o_last(o_li_last_bus[i]),
+
+            .o_marker(w_li_marker_bus[i]),
 
             .i_start(w_li_start_bus[i]),
             .o_armed(w_li_armed_bus[i]),
@@ -225,9 +313,15 @@ module processor
             .i_rst(i_rst),
 
             .i_seq_regs(i_ex_seq_regs[i]),
-            .o_status_regs(o_ex_status_regs[i]),
+
+            .o_insn_rd(w_ex_insn_rd_bus[i]),
+            .o_iters(w_ex_iters_bus[i]),
+            .o_pcmem_depth(w_ex_pcmem_depth_bus[i]),
+            .o_pc_rd(w_ex_pc_rd_bus[i]),
 
             .o_realx16(o_ex_realx16_bus[i]),
+
+            .o_marker(w_ex_marker_bus[i]),
 
             .i_start(w_ex_start_bus[i]),
             .o_armed(w_ex_armed_bus[i]),
@@ -274,6 +368,77 @@ module processor
     assign o_rf_armed_bus = w_rf_armed_bus;
     assign o_li_armed_bus = w_li_armed_bus;
     assign o_ex_armed_bus = w_ex_armed_bus;
+
+    assign o_dc_marker_bus = w_dc_marker_bus;
+    assign o_rf_marker_bus = w_rf_marker_bus;
+    assign o_li_marker_bus = w_li_marker_bus;
+    assign o_ex_marker_bus = w_ex_marker_bus;
+
+    /**********************
+    * status reg packaging
+    **********************/
+
+    for (genvar i = 0; i < NUM_DC_CHANNEL; i++) begin : DC_STATUS_GEN
+        always_ff @(posedge i_clk) begin
+            if (i_rst) begin
+                o_dc_status_regs[i] <= '0;
+            end else begin
+                o_dc_status_regs[i][DC_INSN_RD_REG +: DC_REG_PER_INSN] <=
+                    {{(DC_REG_PER_INSN*32-DC_INSN_WIDTH){1'b0}}, w_dc_insn_rd_bus[i]};
+                o_dc_status_regs[i][DC_PC_RD_REG]      <= 32'(w_dc_pc_rd_bus[i]);
+                o_dc_status_regs[i][DC_ITERS_REG]       <= 32'(w_dc_iters_bus[i]);
+                o_dc_status_regs[i][DC_PCMEM_DEPTH_REG] <= 32'(w_dc_pcmem_depth_bus[i]);
+                o_dc_status_regs[i][DC_FLAGS_REG]       <= {30'b0, w_dc_armed_bus[i], o_dc_empty_bus[i]};
+            end
+        end
+    end
+
+    for (genvar i = 0; i < NUM_RF_CHANNEL; i++) begin : RF_STATUS_GEN
+        always_ff @(posedge i_clk) begin
+            if (i_rst) begin
+                o_rf_status_regs[i] <= '0;
+            end else begin
+                o_rf_status_regs[i][RF_INSN_RD_REG +: RF_REG_PER_INSN] <=
+                    {{(RF_REG_PER_INSN*32-RF_INSN_WIDTH){1'b0}}, w_rf_insn_rd_bus[i]};
+                o_rf_status_regs[i][RF_PC_RD_REG]      <= 32'(w_rf_pc_rd_bus[i]);
+                o_rf_status_regs[i][RF_ITERS_REG]       <= 32'(w_rf_iters_bus[i]);
+                o_rf_status_regs[i][RF_PCMEM_DEPTH_REG] <= 32'(w_rf_pcmem_depth_bus[i]);
+                o_rf_status_regs[i][RF_FLAGS_REG]       <= {30'b0, w_rf_armed_bus[i], o_rf_empty_bus[i]};
+            end
+        end
+    end
+
+    for (genvar i = 0; i < NUM_LI_CHANNEL; i++) begin : LI_STATUS_GEN
+        always_ff @(posedge i_clk) begin
+            if (i_rst) begin
+                o_li_status_regs[i] <= '0;
+            end else begin
+                o_li_status_regs[i][LI_INSN_RD_REG +: LI_REG_PER_INSN] <=
+                    {{(LI_REG_PER_INSN*32-LI_INSN_WIDTH){1'b0}}, w_li_insn_rd_bus[i]};
+                o_li_status_regs[i][LI_PC_RD_REG]       <= 32'(w_li_pc_rd_bus[i]);
+                o_li_status_regs[i][LI_ITERS_REG]        <= 32'(w_li_iters_bus[i]);
+                o_li_status_regs[i][LI_PCMEM_DEPTH_REG]  <= 32'(w_li_pcmem_depth_bus[i]);
+                o_li_status_regs[i][LI_FLAGS_REG]        <= {30'b0, w_li_armed_bus[i], o_li_empty_bus[i]};
+                o_li_status_regs[i][LI_SAMPLES_LOST_REG] <= i_li_samples_lost_bus[i];
+                o_li_status_regs[i][LI_SAMPLES_INBUF_REG] <= 32'(i_li_samples_inbuf_bus[i]);
+            end
+        end
+    end
+
+    for (genvar i = 0; i < NUM_EX_CHANNEL; i++) begin : EX_STATUS_GEN
+        always_ff @(posedge i_clk) begin
+            if (i_rst) begin
+                o_ex_status_regs[i] <= '0;
+            end else begin
+                o_ex_status_regs[i][EX_INSN_RD_REG +: EX_REG_PER_INSN] <=
+                    {{(EX_REG_PER_INSN*32-EX_INSN_WIDTH){1'b0}}, w_ex_insn_rd_bus[i]};
+                o_ex_status_regs[i][EX_PC_RD_REG]      <= 32'(w_ex_pc_rd_bus[i]);
+                o_ex_status_regs[i][EX_ITERS_REG]       <= 32'(w_ex_iters_bus[i]);
+                o_ex_status_regs[i][EX_PCMEM_DEPTH_REG] <= 32'(w_ex_pcmem_depth_bus[i]);
+                o_ex_status_regs[i][EX_FLAGS_REG]       <= {30'b0, w_ex_armed_bus[i], o_ex_empty_bus[i]};
+            end
+        end
+    end
 
     /********************
     * button for trigger

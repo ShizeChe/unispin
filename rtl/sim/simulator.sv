@@ -4,6 +4,7 @@
 `include "include/rf.svh"
 `include "include/li.svh"
 `include "include/ex.svh"
+`include "include/launch.svh"
 
 import "DPI-C" function int cmd_open(input string path);
 import "DPI-C" function int cmd_accept_poll(input int timeout_ms);
@@ -55,8 +56,9 @@ module simulator;
     logic [0:NUM_DC_CHANNEL-1] w_dc_cs_n_bus;
     logic [0:NUM_DC_CHANNEL-1] w_dc_ldac_n_bus;
 
-    // dc armed bus
+    // dc armed/marker bus
     logic [NUM_DC_CHANNEL-1:0] w_dc_armed_bus;
+    logic [NUM_DC_CHANNEL-1:0] w_dc_marker_bus;
 
     // dc empty bus
     logic [0:NUM_DC_CHANNEL-1] w_dc_empty_bus;
@@ -95,8 +97,9 @@ module simulator;
     // rf QIx8 bus
     logic [0:NUM_RF_CHANNEL-1][RF_DAC_WIDTH*16-1:0] w_rf_QIx8_bus;
 
-    // rf armed bus
+    // rf armed/marker bus
     logic [NUM_RF_CHANNEL-1:0] w_rf_armed_bus;
+    logic [NUM_RF_CHANNEL-1:0] w_rf_marker_bus;
 
     // rf empty bus
     logic [0:NUM_RF_CHANNEL-1] w_rf_empty_bus;
@@ -136,8 +139,9 @@ module simulator;
     // li QIx4 bus
     logic [0:NUM_LI_CHANNEL-1][LI_ADC_WIDTH*8-1:0] w_li_QIx4_bus;
 
-    // li armed bus
+    // li armed/marker bus
     logic [NUM_LI_CHANNEL-1:0] w_li_armed_bus;
+    logic [NUM_LI_CHANNEL-1:0] w_li_marker_bus;
 
     // li empty bus
     logic [0:NUM_LI_CHANNEL-1] w_li_empty_bus;
@@ -184,6 +188,7 @@ module simulator;
     logic [0:NUM_EX_CHANNEL-1][EX_DAC_WIDTH*16-1:0] w_ex_realx16_bus;
 
     logic [NUM_EX_CHANNEL-1:0] w_ex_armed_bus;
+    logic [NUM_EX_CHANNEL-1:0] w_ex_marker_bus;
 
     // ex empty bus
     logic [0:NUM_EX_CHANNEL-1] w_ex_empty_bus;
@@ -229,6 +234,7 @@ module simulator;
         .NUM_DC_CHANNEL(NUM_DC_CHANNEL),
         .NUM_RF_CHANNEL(NUM_RF_CHANNEL),
         .NUM_LI_CHANNEL(NUM_LI_CHANNEL),
+        .NUM_EX_CHANNEL(NUM_EX_CHANNEL),
         .NUM_DEBOUNCE_CYCLES(NUM_DEBOUNCE_CYCLES)
     ) PROCESSOR (
         .i_clk(w_processor_clk),
@@ -246,6 +252,7 @@ module simulator;
         .o_dc_ldac_n_bus(w_dc_ldac_n_bus),
 
         .o_dc_armed_bus(w_dc_armed_bus),
+        .o_dc_marker_bus(w_dc_marker_bus),
 
         .o_dc_empty_bus(w_dc_empty_bus),
 
@@ -259,6 +266,7 @@ module simulator;
         .o_rf_QIx8_bus(w_rf_QIx8_bus),
 
         .o_rf_armed_bus(w_rf_armed_bus),
+        .o_rf_marker_bus(w_rf_marker_bus),
 
         .o_rf_empty_bus(w_rf_empty_bus),
 
@@ -272,6 +280,7 @@ module simulator;
         .i_li_QIx4_bus(w_li_QIx4_bus),
 
         .o_li_armed_bus(w_li_armed_bus),
+        .o_li_marker_bus(w_li_marker_bus),
 
         .o_li_empty_bus(w_li_empty_bus),
 
@@ -295,6 +304,7 @@ module simulator;
         .o_ex_realx16_bus(w_ex_realx16_bus),
 
         .o_ex_armed_bus(w_ex_armed_bus),
+        .o_ex_marker_bus(w_ex_marker_bus),
 
         .o_ex_empty_bus(w_ex_empty_bus),
 
@@ -303,7 +313,7 @@ module simulator;
         // launch
         .i_lch_ctrl_regs(w_lch_ctrl_regs),
         .o_lch_status_regs(w_lch_status_regs),
-        
+
         // button
         .i_btn(i_btn_w)
     );
@@ -945,6 +955,10 @@ module simulator;
         w_li_wvalid_bus = 'h0;
         w_li_bready_bus = 'h0;
 
+        w_ex_awvalid_bus = 'h0;
+        w_ex_wvalid_bus = 'h0;
+        w_ex_bready_bus = 'h0;
+
         w_lch_awvalid = 'h0;
         w_lch_wvalid = 'h0;
         w_lch_bready = 'h0;
@@ -973,6 +987,7 @@ module simulator;
         ex_armed = 'h0;
         all_empty = 1;
 
+
         forever begin
 
             @(negedge w_processor_clk);
@@ -986,6 +1001,9 @@ module simulator;
 
                 dc_armed[i] = w_dc_armed_bus[i];
 
+                if (w_dc_marker_bus[i])
+                    $display("At %0.3f: DC %0d marker", $realtime, i);
+
             end
 
             for (int i = 0; i < NUM_RF_CHANNEL; i++) begin
@@ -996,6 +1014,9 @@ module simulator;
                     $display("At %0.3f: RF %0d started", $realtime, i);
 
                 rf_armed[i] = w_rf_armed_bus[i];
+
+                if (w_rf_marker_bus[i])
+                    $display("At %0.3f: RF %0d marker", $realtime, i);
 
             end
 
@@ -1008,6 +1029,9 @@ module simulator;
 
                 li_armed[i] = w_li_armed_bus[i];
 
+                if (w_li_marker_bus[i])
+                    $display("At %0.3f: LI %0d marker", $realtime, i);
+
             end
 
             for (int i = 0; i < NUM_EX_CHANNEL; i++) begin
@@ -1018,6 +1042,9 @@ module simulator;
                     $display("At %0.3f: EX %0d started", $realtime, i);
 
                 ex_armed[i] = w_ex_armed_bus[i];
+
+                if (w_ex_marker_bus[i])
+                    $display("At %0.3f: EX %0d marker", $realtime, i);
 
             end
 

@@ -12,7 +12,7 @@ parameter EX_DEPTH=16;
 parameter EX_PC_ADDR_WIDTH=4;
 parameter EX_REG_PER_INSN=(EX_INSN_WIDTH+31)/32;
 parameter EX_SEQ_REGS=EX_REG_PER_INSN+11;
-parameter EX_STATUS_REGS=1;
+parameter EX_STATUS_REGS=EX_REG_PER_INSN+4;
 
 typedef struct packed {
     logic w_arm;

@@ -13,13 +13,11 @@ module li
      parameter AXIBUF_ADDR_WIDTH=LI_AXIBUF_ADDR_WIDTH,
      parameter IQ_WIDTH=LI_IQ_WIDTH,
      parameter SEQ_REGS=LI_SEQ_REGS,
-     parameter CTRL_REGS=LI_CTRL_REGS,
-     parameter STATUS_REGS=LI_STATUS_REGS)
+     parameter CTRL_REGS=LI_CTRL_REGS)
     (input  logic i_clk, i_rst,
 
      input  logic [0:SEQ_REGS-1][31:0] i_seq_regs,
      input  logic [0:CTRL_REGS-1][31:0] i_ctrl_regs,
-     output logic [0:STATUS_REGS-1][31:0] o_status_regs,
 
      output logic [INSN_WIDTH-1:0] o_insn_rd,
      output logic [ITER_WIDTH-1:0] o_iters,
@@ -125,26 +123,5 @@ module li
 
         .o_ctrl(o_ctrl)
     );
-
-    always_ff @(posedge i_clk) begin
-        if (i_rst) begin
-            {o_status_regs[0:3]} <= 128'h0;
-            o_status_regs[4] <= 'b11;
-            o_status_regs[5] <= 'b0;
-            o_status_regs[6] <= 'b0;
-        end
-        else begin
-            {o_status_regs[0:3]} <= i_QIx4;
-            o_status_regs[4] <= {
-                {(32-3){1'b0}}, 
-                o_armed, w_empty, o_empty
-            };
-            o_status_regs[5] <= i_samples_lost;
-            o_status_regs[6] <= {
-                {(32-AXIBUF_ADDR_WIDTH){1'b0}},
-                i_samples_inbuf
-            };
-        end
-    end
 
 endmodule

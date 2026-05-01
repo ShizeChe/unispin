@@ -14,7 +14,7 @@ parameter LI_IQ_WIDTH=14;
 parameter LI_REG_PER_INSN=(LI_INSN_WIDTH+31)/32;
 parameter LI_SEQ_REGS=LI_REG_PER_INSN+11;
 parameter LI_CTRL_REGS=4;
-parameter LI_STATUS_REGS=7;
+parameter LI_STATUS_REGS=LI_REG_PER_INSN+6;
 
 parameter LI_AXIBUF_ADDR_WIDTH=8;
 

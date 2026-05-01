@@ -6,7 +6,8 @@
 module io
    #(parameter NUM_DC_CHANNEL=24,
      parameter NUM_RF_CHANNEL=6,
-     parameter NUM_LI_CHANNEL=2)
+     parameter NUM_LI_CHANNEL=2,
+     parameter NUM_EX_CHANNEL=2)
     (input  logic [0:NUM_DC_CHANNEL-1] i_dc_sclk_bus,
      input  logic [0:NUM_DC_CHANNEL-1] i_dc_mosi_bus,
      output logic [0:NUM_DC_CHANNEL-1] o_dc_miso_bus,
@@ -15,12 +16,17 @@ module io
      input  logic i_dc_clr, i_dc_rst,
 
      input  logic [NUM_DC_CHANNEL-1:0] i_dc_armed_bus,
+     input  logic [NUM_DC_CHANNEL-1:0] i_dc_marker_bus,
 
      input  logic [NUM_RF_CHANNEL-1:0] i_rf_armed_bus,
+     input  logic [NUM_RF_CHANNEL-1:0] i_rf_marker_bus,
      input  logic [0:NUM_RF_CHANNEL-1] i_rf_ready_bus,
 
+     input  logic [NUM_LI_CHANNEL-1:0] i_li_marker_bus,
      input  logic [0:NUM_LI_CHANNEL-1] i_li_valid_bus,
      input  logic [0:NUM_LI_CHANNEL-1][3:0] i_li_sample_mask_bus,
+
+     input  logic [NUM_EX_CHANNEL-1:0] i_ex_marker_bus,
 
      // J2
      output logic o_la01_p, o_la06_p, o_la01_n,

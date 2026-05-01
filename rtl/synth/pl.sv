@@ -136,6 +136,7 @@ module pl
     logic w_dc_clr, w_dc_rst;
 
     logic [NUM_DC_CHANNEL-1:0] w_dc_armed_bus;
+    logic [NUM_DC_CHANNEL-1:0] w_dc_marker_bus;
 
     // rf signals
     logic [0:NUM_RF_CHANNEL-1][0:RF_SEQ_REGS-1][31:0] w_rf_seq_regs;
@@ -145,6 +146,7 @@ module pl
     logic [0:NUM_RF_CHANNEL-1][RF_DAC_WIDTH*16-1:0] w_rf_QIx8_bus;
 
     logic [NUM_RF_CHANNEL-1:0] w_rf_armed_bus;
+    logic [NUM_RF_CHANNEL-1:0] w_rf_marker_bus;
 
     logic [0:NUM_RF_CHANNEL-1] w_rf_ready_bus;
 
@@ -165,6 +167,7 @@ module pl
     li_ctrl_t [0:NUM_LI_CHANNEL-1] w_li_ctrl_bus;
 
     logic [NUM_LI_CHANNEL-1:0] w_li_armed_bus;
+    logic [NUM_LI_CHANNEL-1:0] w_li_marker_bus;
 
     logic [0:NUM_LI_CHANNEL-1][31:0] w_li_samples_lost_bus;
     logic [0:NUM_LI_CHANNEL-1][LI_AXIBUF_ADDR_WIDTH-1:0] w_li_samples_inbuf_bus;
@@ -176,6 +179,7 @@ module pl
     logic [0:NUM_EX_CHANNEL-1][EX_DAC_WIDTH*16-1:0] w_ex_realx16_bus;
 
     logic [NUM_EX_CHANNEL-1:0] w_ex_armed_bus;
+    logic [NUM_EX_CHANNEL-1:0] w_ex_marker_bus;
 
     // launch signals
     logic [0:LCH_CTRL_REGS-1][31:0] w_lch_ctrl_regs;
@@ -512,6 +516,7 @@ module pl
         .NUM_DC_CHANNEL(NUM_DC_CHANNEL),
         .NUM_RF_CHANNEL(NUM_RF_CHANNEL),
         .NUM_LI_CHANNEL(NUM_LI_CHANNEL),
+        .NUM_EX_CHANNEL(NUM_EX_CHANNEL),
         .NUM_DEBOUNCE_CYCLES(NUM_DEBOUNCE_CYCLES)
     ) PROCESSOR (
         .i_clk(w_processor_clk),
@@ -529,6 +534,7 @@ module pl
         .o_dc_ldac_n_bus(w_dc_ldac_n_bus),
 
         .o_dc_armed_bus(w_dc_armed_bus),
+        .o_dc_marker_bus(w_dc_marker_bus),
 
         .o_dc_empty_bus(),
 
@@ -542,6 +548,7 @@ module pl
         .o_rf_QIx8_bus(w_rf_QIx8_bus),
 
         .o_rf_armed_bus(w_rf_armed_bus),
+        .o_rf_marker_bus(w_rf_marker_bus),
 
         .o_rf_empty_bus(),
 
@@ -555,6 +562,7 @@ module pl
         .i_li_QIx4_bus(w_li_QIx4_bus),
 
         .o_li_armed_bus(w_li_armed_bus),
+        .o_li_marker_bus(w_li_marker_bus),
 
         .o_li_empty_bus(),
 
@@ -578,6 +586,7 @@ module pl
         .o_ex_realx16_bus(w_ex_realx16_bus),
 
         .o_ex_armed_bus(w_ex_armed_bus),
+        .o_ex_marker_bus(w_ex_marker_bus),
 
         .o_ex_empty_bus(),
 
@@ -653,7 +662,8 @@ module pl
     io #(
         .NUM_DC_CHANNEL(NUM_DC_CHANNEL),
         .NUM_RF_CHANNEL(NUM_RF_CHANNEL),
-        .NUM_LI_CHANNEL(NUM_LI_CHANNEL)
+        .NUM_LI_CHANNEL(NUM_LI_CHANNEL),
+        .NUM_EX_CHANNEL(NUM_EX_CHANNEL)
     ) IO (
         // dc
         .i_dc_sclk_bus(w_dc_sclk_bus),
@@ -664,14 +674,20 @@ module pl
         .i_dc_clr(w_dc_clr),
         .i_dc_rst(w_dc_rst),
         .i_dc_armed_bus(w_dc_armed_bus),
+        .i_dc_marker_bus(w_dc_marker_bus),
 
         // rf
         .i_rf_armed_bus(w_rf_armed_bus),
+        .i_rf_marker_bus(w_rf_marker_bus),
         .i_rf_ready_bus(w_rf_ready_bus),
 
         // li
+        .i_li_marker_bus(w_li_marker_bus),
         .i_li_valid_bus(w_li_valid_bus),
         .i_li_sample_mask_bus(w_li_sample_mask_bus),
+
+        // ex
+        .i_ex_marker_bus(w_ex_marker_bus),
 
         // fpga pins
         .*

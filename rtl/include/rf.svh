@@ -16,7 +16,7 @@ parameter RF_PC_ADDR_WIDTH=4;
 parameter RF_REG_PER_INSN=(RF_INSN_WIDTH+31)/32;
 parameter RF_SEQ_REGS=RF_REG_PER_INSN+11;
 parameter RF_CTRL_REGS=2;
-parameter RF_STATUS_REGS=1;
+parameter RF_STATUS_REGS=RF_REG_PER_INSN+4;
 
 parameter RF_NCO_FREQ_WIDTH=48;
 parameter RF_NCO_PHASE_WIDTH=18;

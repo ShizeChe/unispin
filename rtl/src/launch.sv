@@ -36,26 +36,44 @@ module launch
         .o_negedge()
     );
 
+    logic w_clear;
+
+    edge_detector CLR (
+        .i_clk(i_clk),
+        .i_rst(i_rst),
+        .i_signal(i_ctrl_regs[LCH_CTRL_REGS-2][0]),
+        .o_posedge(w_clear),
+        .o_negedge()
+    );
+
     logic [NUM_DC_CHANNEL-1:0] r_dc_active_mask;
     logic [NUM_RF_CHANNEL-1:0] r_rf_active_mask;
     logic [NUM_LI_CHANNEL-1:0] r_li_active_mask;
     logic [NUM_EX_CHANNEL-1:0] r_ex_active_mask;
-    logic r_wait_trigger;
+    logic r_use_trigger;
+    logic [LCH_ITER_WIDTH-1:0] r_iters;
+
+    logic w_all_ready;
 
     always_ff @(posedge i_clk) begin
-        if (i_rst) begin
+        if (i_rst || w_clear) begin
             r_dc_active_mask <= 'h0;
             r_rf_active_mask <= 'h0;
             r_li_active_mask <= 'h0;
             r_ex_active_mask <= 'h0;
-            r_wait_trigger <= 1'b1;
+            r_use_trigger    <= 1'b0;
+            r_iters          <= 'h0;
         end
         else if (w_new_ctrl) begin
             r_dc_active_mask <= i_ctrl_regs[0][NUM_DC_CHANNEL-1:0];
             r_rf_active_mask <= i_ctrl_regs[1][NUM_RF_CHANNEL-1:0];
             r_li_active_mask <= i_ctrl_regs[2][NUM_LI_CHANNEL-1:0];
             r_ex_active_mask <= i_ctrl_regs[3][NUM_EX_CHANNEL-1:0];
-            r_wait_trigger <= i_ctrl_regs[4][0];
+            r_use_trigger    <= i_ctrl_regs[4][0];
+            r_iters          <= i_ctrl_regs[5][LCH_ITER_WIDTH-1:0];
+        end
+        else if (w_all_ready) begin
+            r_iters <= (r_iters > 'd0) ? (r_iters - 'd1) : r_iters;
         end
     end
 
@@ -85,16 +103,15 @@ module launch
     assign w_li_ready = ((r_li_active_mask ^ r_li_armed) == 'h0);
     assign w_ex_ready = ((r_ex_active_mask ^ r_ex_armed) == 'h0);
 
-    enum {IDLE, LAUNCH} r_state, w_next_state;
+    enum {IDLE, ARM, LAUNCH, DELAY1, DELAY2} r_state, w_next_state;
 
     always_ff @(posedge i_clk) begin
-        r_state <= i_rst ? IDLE : w_next_state;
+        r_state <= (i_rst || w_clear) ? IDLE : w_next_state;
     end
 
-    logic w_all_ready;
-    assign w_all_ready = r_state == LAUNCH && 
-        w_dc_ready && w_rf_ready && w_li_ready && w_ex_ready && 
-        (!r_wait_trigger || i_trigger);
+    assign w_all_ready = (r_state == ARM) &&
+        w_dc_ready && w_rf_ready && w_li_ready && w_ex_ready &&
+        (!r_use_trigger || i_trigger);
 
     logic w_start;
     always_ff @(posedge i_clk) begin
@@ -124,11 +141,23 @@ module launch
 
         case (r_state)
             IDLE: begin
-                w_next_state = w_new_ctrl ? LAUNCH : IDLE;
+                w_next_state = (r_iters > 'd0) ? ARM : IDLE;
+            end
+            ARM: begin
+                w_next_state = w_all_ready ? LAUNCH : ARM;
+                w_start = w_all_ready;
+            end
+            LAUNCH: begin
+                w_next_state = DELAY1;
+            end
+            DELAY1: begin
+                w_next_state = DELAY2;
+            end
+            DELAY2: begin
+                w_next_state = IDLE;
             end
             default: begin
-                w_next_state = w_all_ready ? IDLE : LAUNCH;
-                w_start = w_all_ready;
+                w_next_state = IDLE;
             end
         endcase
 
@@ -137,9 +166,11 @@ module launch
     always_ff @(posedge i_clk) begin
         if (i_rst) begin
             o_status_regs[0] <= 'b0;
+            o_status_regs[1] <= 'b0;
         end
         else begin
-            o_status_regs[0] <= {31'h0, r_state == LAUNCH};
+            o_status_regs[0] <= {31'h0, r_state != IDLE};
+            o_status_regs[1] <= {{(32-LCH_ITER_WIDTH){1'b0}}, r_iters};
         end
     end
 

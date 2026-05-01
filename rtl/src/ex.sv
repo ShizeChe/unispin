@@ -10,12 +10,10 @@ module ex
      parameter DAC_WIDTH=EX_DAC_WIDTH,
      parameter DEPTH=EX_DEPTH,
      parameter PC_ADDR_WIDTH=EX_PC_ADDR_WIDTH,
-     parameter SEQ_REGS=EX_SEQ_REGS,
-     parameter STATUS_REGS=EX_STATUS_REGS)
+     parameter SEQ_REGS=EX_SEQ_REGS)
     (input  logic i_clk, i_rst,
 
      input  logic [0:SEQ_REGS-1][31:0] i_seq_regs,
-     output logic [0:STATUS_REGS-1][31:0] o_status_regs,
 
      output logic [INSN_WIDTH-1:0] o_insn_rd,
      output logic [ITER_WIDTH-1:0] o_iters,
@@ -89,17 +87,5 @@ module ex
 
         .o_eop(o_eop)
     );
-
-    always_ff @(posedge i_clk) begin
-        if (i_rst) begin
-            o_status_regs[0] <= 'b11;
-        end
-        else begin
-            o_status_regs[0] <= {
-                {(32-3){1'b0}}, 
-                o_armed, w_empty, o_empty
-            };
-        end
-    end
 
 endmodule
