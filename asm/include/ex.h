@@ -3,6 +3,7 @@
 
 #include <stdint.h>
 #include <math.h>
+#include "common.h"
 
 #define EX_CHANNELS 2
 
@@ -12,7 +13,8 @@
 #define EX_SAMPLE_BITS 20
 
 #define EX_REG_PER_INSN 2
-#define EX_SEQ_REGS ((EX_DEPTH * EX_REG_PER_INSN) + 2)
+#define EX_SEQ_REGS (EX_DEPTH * EX_REG_PER_INSN)
+#define EX_BRAM_SEQ_REGS BRAM_SEQ_TOTAL(EX_REG_PER_INSN)
 
 #define EX_NS_PER_SAMPLE 0.25
 
@@ -25,9 +27,11 @@ static const int ex_uio_map[EX_CHANNELS] = {28, 29};
 
 typedef struct {
     uint32_t arm;
+    uint32_t sticky_arm;
     uint32_t real;
     uint32_t samples;
     uint32_t dsamples;
+    uint32_t marker;
 } ex_insn_t;
 
 typedef struct {

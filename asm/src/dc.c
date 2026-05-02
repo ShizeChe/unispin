@@ -38,7 +38,9 @@ static void dc_swp2insn(dc_swp_t *swp, dc_insn_t *insn) {
     insn->hold_cycles = cycles;
     insn->modify = 0;
     insn->arm = swp->opt.arm;
+    insn->sticky_arm = swp->opt.sticky_arm;
     insn->idle = 0;
+    insn->marker = swp->opt.marker;
 
 }
 
@@ -56,7 +58,9 @@ static void dc_lvl2insn(dc_lvl_t *lvl, dc_insn_t *insn) {
     insn->hold_cycles = dc_t2cycles(lvl->t_ns);
     insn->modify = lvl->opt.has_vplus;
     insn->arm = lvl->opt.arm;
+    insn->sticky_arm = lvl->opt.sticky_arm;
     insn->idle = 0;
+    insn->marker = lvl->opt.marker;
 
 }
 
@@ -72,7 +76,9 @@ static void dc_set2insn(dc_set_t *set, dc_insn_t *insn) {
     insn->hold_cycles = 0;
     insn->modify = set->opt.has_vplus;
     insn->arm = set->opt.arm;
+    insn->sticky_arm = set->opt.sticky_arm;
     insn->idle = 0;
+    insn->marker = set->opt.marker;
 
 }
 
@@ -88,7 +94,9 @@ static void dc_get2insn(dc_get_t *get, dc_insn_t *insn) {
     insn->hold_cycles = 0;
     insn->modify = get->opt.has_vplus;
     insn->arm = get->opt.arm;
+    insn->sticky_arm = get->opt.sticky_arm;
     insn->idle = 0;
+    insn->marker = get->opt.marker;
 
 }
 
@@ -102,7 +110,9 @@ static void dc_nop2insn(dc_nop_t *nop, dc_insn_t *insn) {
     insn->hold_cycles = 0;
     insn->modify = nop->opt.has_vplus;
     insn->arm = nop->opt.arm;
+    insn->sticky_arm = nop->opt.sticky_arm;
     insn->idle = 0;
+    insn->marker = nop->opt.marker;
 
 }
 
@@ -116,7 +126,9 @@ static void dc_idl2insn(dc_idl_t *idl, dc_insn_t *insn) {
     insn->hold_cycles = dc_t2cycles(idl->t_ns);
     insn->modify = idl->opt.has_vplus;
     insn->arm = idl->opt.arm;
+    insn->sticky_arm = idl->opt.sticky_arm;
     insn->idle = 1;
+    insn->marker = idl->opt.marker;
 
 }
 
@@ -130,7 +142,9 @@ static void dc_ful2insn(dc_ful_t *ful, dc_insn_t *insn) {
     insn->hold_cycles = 0;
     insn->modify = ful->opt.has_vplus;
     insn->arm = ful->opt.arm;
+    insn->sticky_arm = ful->opt.sticky_arm;
     insn->idle = 1;
+    insn->marker = ful->opt.marker;
 
 }
 
@@ -140,6 +154,8 @@ static int dc_parse_opt(char *paren, dc_opt_t *opt) {
     opt->rd = 0;
     opt->vplus = 0;
     opt->ldc = 0;
+    opt->sticky_arm = 0;
+    opt->marker = 0;
 
     char tmp[256];
     snprintf(tmp, sizeof(tmp), "%s", paren);
@@ -152,6 +168,14 @@ static int dc_parse_opt(char *paren, dc_opt_t *opt) {
         if (strcmp(tok, "arm") == 0) {
 
             opt->arm = 1;
+
+        } else if (strcmp(tok, "sticky_arm") == 0) {
+
+            opt->sticky_arm = 1;
+
+        } else if (strcmp(tok, "marker") == 0) {
+
+            opt->marker = 1;
 
         } else if (strcmp(tok, "rd") == 0) {
 
@@ -193,6 +217,8 @@ static int dc_parse_opt(char *paren, dc_opt_t *opt) {
 static int dc_parse_swp(char *line, dc_swp_t *swp) {
 
     swp->opt.arm = 0;
+    swp->opt.sticky_arm = 0;
+    swp->opt.marker = 0;
     swp->opt.rd = 0;
     swp->opt.has_vplus = 0;
     swp->opt.vplus = 0;
@@ -234,6 +260,8 @@ static int dc_parse_swp(char *line, dc_swp_t *swp) {
 static int dc_parse_lvl(char *line, dc_lvl_t *lvl) {
 
     lvl->opt.arm = 0;
+    lvl->opt.sticky_arm = 0;
+    lvl->opt.marker = 0;
     lvl->opt.rd = 0;
     lvl->opt.has_vplus = 0;
     lvl->opt.vplus = 0;
@@ -270,6 +298,8 @@ static int dc_parse_lvl(char *line, dc_lvl_t *lvl) {
 static int dc_parse_set(char *line, dc_set_t *set) {
 
     set->opt.arm = 0;
+    set->opt.sticky_arm = 0;
+    set->opt.marker = 0;
     set->opt.rd = 0;
     set->opt.has_vplus = 0;
     set->opt.vplus = 0;
@@ -314,6 +344,8 @@ static int dc_parse_set(char *line, dc_set_t *set) {
 static int dc_parse_get(char *line, dc_get_t *get) {
 
     get->opt.arm = 0;
+    get->opt.sticky_arm = 0;
+    get->opt.marker = 0;
     get->opt.rd = 0;
     get->opt.has_vplus = 0;
     get->opt.vplus = 0;
@@ -353,6 +385,8 @@ static int dc_parse_get(char *line, dc_get_t *get) {
 static int dc_parse_nop(char *line, dc_nop_t *nop) {
 
     nop->opt.arm = 0;
+    nop->opt.sticky_arm = 0;
+    nop->opt.marker = 0;
     nop->opt.rd = 0;
     nop->opt.has_vplus = 0;
     nop->opt.vplus = 0;
@@ -375,6 +409,8 @@ static int dc_parse_nop(char *line, dc_nop_t *nop) {
 static int dc_parse_idl(char *line, dc_idl_t *idl) {
 
     idl->opt.arm = 0;
+    idl->opt.sticky_arm = 0;
+    idl->opt.marker = 0;
     idl->opt.rd = 0;
     idl->opt.has_vplus = 0;
     idl->opt.vplus = 0;
@@ -403,6 +439,8 @@ static int dc_parse_idl(char *line, dc_idl_t *idl) {
 static int dc_parse_ful(char *line, dc_ful_t *ful) {
 
     ful->opt.arm = 0;
+    ful->opt.sticky_arm = 0;
+    ful->opt.marker = 0;
     ful->opt.rd = 0;
     ful->opt.has_vplus = 0;
     ful->opt.vplus = 0;
@@ -502,17 +540,17 @@ void dc_assemble(dc_program_t *prog) {
         dc_insn_t *insn = &(prog->insns[i]);
         uint32_t *reg = &(prog->seq_regs[i * DC_REG_PER_INSN]);
 
-        reg[0] = (insn->iters << 15) | (insn->spi_din >> 9);
-        reg[1] = (insn->spi_din << 23) | (insn->dspi_din << 3) | 
-                 (insn->spi_rd << 2) | (insn->strb_ldac << 1) |
-                 (insn->hold_cycles >> 29);
-        reg[2] = (insn->hold_cycles << 3) | (insn->modify << 2) | 
-                 (insn->arm << 1) | (insn->idle);
+        // Pack 91-bit dc_insn_t into 3 x 32-bit registers (MSB-first in concat)
+        // insn[90:64] → reg[0][26:0], insn[63:32] → reg[1], insn[31:0] → reg[2]
+        reg[0] = (insn->iters << 17) | (insn->spi_din >> 7);
+        reg[1] = ((insn->spi_din & 0x7f) << 25) | (insn->dspi_din << 5) |
+                 (insn->spi_rd << 4) | (insn->strb_ldac << 3) |
+                 (insn->hold_cycles >> 27);
+        reg[2] = ((insn->hold_cycles & 0x7FFFFFFu) << 5) | (insn->modify << 4) |
+                 (insn->arm << 3) | (insn->sticky_arm << 2) |
+                 (insn->idle << 1) | insn->marker;
 
     }
-
-    prog->seq_regs[DC_SEQ_REGS-2] = prog->repeat;
-    prog->seq_regs[DC_SEQ_REGS-1] = 1;
 
     prog->ctrl_regs[0] = prog->ctrl.dvsr;
     prog->ctrl_regs[1] = prog->ctrl.delay_cycles;
@@ -546,14 +584,36 @@ int dc_load_insns(int dc_channel, dc_program_t *dc_program) {
     }
 
     volatile uint32_t *dc_base = (volatile uint32_t *)((char *)dc_va);
-    *(dc_base + DC_SEQ_REGS - 1) = 0;
-    for (int i = 0; i < DC_SEQ_REGS; i++) {
-        *(dc_base + i) = dc_program->seq_regs[i];
+    unsigned int n = dc_program->len;
+
+    // Write IMEM: for each instruction, set address, data, then strobe 0→1
+    for (unsigned int i = 0; i < n; i++) {
+        dc_base[BRAM_IST_ADDR] = i;
+        for (unsigned int k = 0; k < DC_REG_PER_INSN; k++)
+            dc_base[BRAM_IST_LO + k] = dc_program->seq_regs[i * DC_REG_PER_INSN + k];
+        dc_base[BRAM_IST_STRB(DC_REG_PER_INSN)] = 0;
+        dc_base[BRAM_IST_STRB(DC_REG_PER_INSN)] = 1;
     }
-    *(dc_base + DC_SEQ_REGS + DC_CTRL_REGS - 1) = 0;
+
+    // Write PCMEM: sequential mapping pcmem[j] = j
+    for (unsigned int j = 0; j < n; j++) {
+        dc_base[BRAM_PCST_ADDR] = j;
+        dc_base[BRAM_PCST]      = j;
+        dc_base[BRAM_PCST_STRB] = 0;
+        dc_base[BRAM_PCST_STRB] = 1;
+    }
+
+    // Write iteration count, depth, then start strobe
+    dc_base[BRAM_ITERS(DC_REG_PER_INSN)] = dc_program->repeat;
+    dc_base[BRAM_DEPTH(DC_REG_PER_INSN)] = n - 1;
+    dc_base[BRAM_START(DC_REG_PER_INSN)] = 0;
+    dc_base[BRAM_START(DC_REG_PER_INSN)] = 1;
+
+    // Write ctrl regs (follow seq regs in AXI address space)
+    *(dc_base + DC_BRAM_SEQ_REGS + DC_CTRL_REGS - 1) = 0;
     for (int i = 0; i < DC_CTRL_REGS; i++) {
         if (dc_program->ctrl_regs[i] != -1)
-            *(dc_base + DC_SEQ_REGS + i) = dc_program->ctrl_regs[i];
+            *(dc_base + DC_BRAM_SEQ_REGS + i) = dc_program->ctrl_regs[i];
     }
 
 #if EXE
@@ -588,11 +648,11 @@ int dc_read_regs(int dc_channel, uint32_t *seq_regs, uint32_t *ctrl_regs) {
 
     volatile uint32_t *dc_base = (volatile uint32_t *)((char *)dc_va);
 
-    for (int i = 0; i < DC_SEQ_REGS; i++) {
+    for (int i = 0; i < DC_BRAM_SEQ_REGS; i++) {
         seq_regs[i] = *(dc_base + i);
     }
     for (int i = 0; i < DC_CTRL_REGS; i++) {
-        ctrl_regs[i] = *(dc_base + DC_SEQ_REGS + i);
+        ctrl_regs[i] = *(dc_base + DC_BRAM_SEQ_REGS + i);
     }
 
     munmap(dc_va, 0x1000);

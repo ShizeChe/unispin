@@ -108,6 +108,7 @@ static int assemble(FILE *fp,
                 } else if (strncmp(line, ".launch", 7) == 0) {
 
                     *launch = (launch_t *)calloc(1, sizeof(launch_t));
+                    (*launch)->iters = 1;
 
                     state = LAUNCH;
 
@@ -654,19 +655,34 @@ static int write_sim(dc_program_t *dc_programs[],
         if (dc_programs[i] != NULL) {
 
             uint32_t base = i * page_size;
+            unsigned int n = dc_programs[i]->len;
 
-            sim_sendf("0x%08X 0x%08X\n", base + (DC_SEQ_REGS - 1) * 4, 0);
-            
-            for (unsigned int j = 0; j < DC_SEQ_REGS; j++) {
-                sim_sendf("0x%08X 0x%08X\n", base + j * 4, (dc_programs[i]->seq_regs)[j]);
+            for (unsigned int k = 0; k < n; k++) {
+                sim_sendf("0x%08X 0x%08X\n", base + BRAM_IST_ADDR * 4, k);
+                for (unsigned int r = 0; r < DC_REG_PER_INSN; r++)
+                    sim_sendf("0x%08X 0x%08X\n", base + (BRAM_IST_LO + r) * 4,
+                              dc_programs[i]->seq_regs[k * DC_REG_PER_INSN + r]);
+                sim_sendf("0x%08X 0x%08X\n", base + BRAM_IST_STRB(DC_REG_PER_INSN) * 4, 0);
+                sim_sendf("0x%08X 0x%08X\n", base + BRAM_IST_STRB(DC_REG_PER_INSN) * 4, 1);
             }
 
-            sim_sendf("0x%08X 0x%08X\n", base + (DC_SEQ_REGS + DC_CTRL_REGS - 1) * 4, 0);
-            
+            for (unsigned int j = 0; j < n; j++) {
+                sim_sendf("0x%08X 0x%08X\n", base + BRAM_PCST_ADDR * 4, j);
+                sim_sendf("0x%08X 0x%08X\n", base + BRAM_PCST * 4, j);
+                sim_sendf("0x%08X 0x%08X\n", base + BRAM_PCST_STRB * 4, 0);
+                sim_sendf("0x%08X 0x%08X\n", base + BRAM_PCST_STRB * 4, 1);
+            }
+
+            sim_sendf("0x%08X 0x%08X\n", base + BRAM_ITERS(DC_REG_PER_INSN) * 4, dc_programs[i]->repeat);
+            sim_sendf("0x%08X 0x%08X\n", base + BRAM_DEPTH(DC_REG_PER_INSN) * 4, n - 1);
+            sim_sendf("0x%08X 0x%08X\n", base + BRAM_START(DC_REG_PER_INSN) * 4, 0);
+            sim_sendf("0x%08X 0x%08X\n", base + BRAM_START(DC_REG_PER_INSN) * 4, 1);
+
+            sim_sendf("0x%08X 0x%08X\n", base + (DC_BRAM_SEQ_REGS + DC_CTRL_REGS - 1) * 4, 0);
             for (unsigned int j = 0; j < DC_CTRL_REGS; j++) {
                 if (dc_programs[i]->ctrl_regs[j] != -1)
-                    sim_sendf("0x%08X 0x%08X\n", base + (DC_SEQ_REGS + j) * 4, 
-                        (dc_programs[i]->ctrl_regs)[j]);
+                    sim_sendf("0x%08X 0x%08X\n", base + (DC_BRAM_SEQ_REGS + j) * 4,
+                              dc_programs[i]->ctrl_regs[j]);
             }
 
         }
@@ -678,19 +694,34 @@ static int write_sim(dc_program_t *dc_programs[],
         if (rf_programs[i] != NULL) {
 
             uint32_t base = (DC_CHANNELS + i) * page_size;
+            unsigned int n = rf_programs[i]->len;
 
-            sim_sendf("0x%08X 0x%08X\n", base + (RF_SEQ_REGS - 1) * 4, 0);
-            
-            for (unsigned int j = 0; j < RF_SEQ_REGS; j++) {
-                sim_sendf("0x%08X 0x%08X\n", base + j * 4, (rf_programs[i]->seq_regs)[j]);
+            for (unsigned int k = 0; k < n; k++) {
+                sim_sendf("0x%08X 0x%08X\n", base + BRAM_IST_ADDR * 4, k);
+                for (unsigned int r = 0; r < RF_REG_PER_INSN; r++)
+                    sim_sendf("0x%08X 0x%08X\n", base + (BRAM_IST_LO + r) * 4,
+                              rf_programs[i]->seq_regs[k * RF_REG_PER_INSN + r]);
+                sim_sendf("0x%08X 0x%08X\n", base + BRAM_IST_STRB(RF_REG_PER_INSN) * 4, 0);
+                sim_sendf("0x%08X 0x%08X\n", base + BRAM_IST_STRB(RF_REG_PER_INSN) * 4, 1);
             }
 
-            sim_sendf("0x%08X 0x%08X\n", base + (RF_SEQ_REGS + RF_CTRL_REGS - 1) * 4, 0);
-            
+            for (unsigned int j = 0; j < n; j++) {
+                sim_sendf("0x%08X 0x%08X\n", base + BRAM_PCST_ADDR * 4, j);
+                sim_sendf("0x%08X 0x%08X\n", base + BRAM_PCST * 4, j);
+                sim_sendf("0x%08X 0x%08X\n", base + BRAM_PCST_STRB * 4, 0);
+                sim_sendf("0x%08X 0x%08X\n", base + BRAM_PCST_STRB * 4, 1);
+            }
+
+            sim_sendf("0x%08X 0x%08X\n", base + BRAM_ITERS(RF_REG_PER_INSN) * 4, rf_programs[i]->repeat);
+            sim_sendf("0x%08X 0x%08X\n", base + BRAM_DEPTH(RF_REG_PER_INSN) * 4, n - 1);
+            sim_sendf("0x%08X 0x%08X\n", base + BRAM_START(RF_REG_PER_INSN) * 4, 0);
+            sim_sendf("0x%08X 0x%08X\n", base + BRAM_START(RF_REG_PER_INSN) * 4, 1);
+
+            sim_sendf("0x%08X 0x%08X\n", base + (RF_BRAM_SEQ_REGS + RF_CTRL_REGS - 1) * 4, 0);
             for (unsigned int j = 0; j < RF_CTRL_REGS; j++) {
                 if (rf_programs[i]->ctrl_regs[j] != -1)
-                    sim_sendf("0x%08X 0x%08X\n", base + (RF_SEQ_REGS + j) * 4, 
-                        (rf_programs[i]->ctrl_regs)[j]);
+                    sim_sendf("0x%08X 0x%08X\n", base + (RF_BRAM_SEQ_REGS + j) * 4,
+                              rf_programs[i]->ctrl_regs[j]);
             }
 
         }
@@ -702,19 +733,34 @@ static int write_sim(dc_program_t *dc_programs[],
         if (li_programs[i] != NULL) {
 
             uint32_t base = (DC_CHANNELS + RF_CHANNELS + i) * page_size;
+            unsigned int n = li_programs[i]->len;
 
-            sim_sendf("0x%08X 0x%08X\n", base + (LI_SEQ_REGS - 1) * 4, 0);
-            
-            for (unsigned int j = 0; j < LI_SEQ_REGS; j++) {
-                sim_sendf("0x%08X 0x%08X\n", base + j * 4, (li_programs[i]->seq_regs)[j]);
+            for (unsigned int k = 0; k < n; k++) {
+                sim_sendf("0x%08X 0x%08X\n", base + BRAM_IST_ADDR * 4, k);
+                for (unsigned int r = 0; r < LI_REG_PER_INSN; r++)
+                    sim_sendf("0x%08X 0x%08X\n", base + (BRAM_IST_LO + r) * 4,
+                              li_programs[i]->seq_regs[k * LI_REG_PER_INSN + r]);
+                sim_sendf("0x%08X 0x%08X\n", base + BRAM_IST_STRB(LI_REG_PER_INSN) * 4, 0);
+                sim_sendf("0x%08X 0x%08X\n", base + BRAM_IST_STRB(LI_REG_PER_INSN) * 4, 1);
             }
 
-            sim_sendf("0x%08X 0x%08X\n", base + (LI_SEQ_REGS + LI_CTRL_REGS - 1) * 4, 0);
-            
+            for (unsigned int j = 0; j < n; j++) {
+                sim_sendf("0x%08X 0x%08X\n", base + BRAM_PCST_ADDR * 4, j);
+                sim_sendf("0x%08X 0x%08X\n", base + BRAM_PCST * 4, j);
+                sim_sendf("0x%08X 0x%08X\n", base + BRAM_PCST_STRB * 4, 0);
+                sim_sendf("0x%08X 0x%08X\n", base + BRAM_PCST_STRB * 4, 1);
+            }
+
+            sim_sendf("0x%08X 0x%08X\n", base + BRAM_ITERS(LI_REG_PER_INSN) * 4, li_programs[i]->repeat);
+            sim_sendf("0x%08X 0x%08X\n", base + BRAM_DEPTH(LI_REG_PER_INSN) * 4, n - 1);
+            sim_sendf("0x%08X 0x%08X\n", base + BRAM_START(LI_REG_PER_INSN) * 4, 0);
+            sim_sendf("0x%08X 0x%08X\n", base + BRAM_START(LI_REG_PER_INSN) * 4, 1);
+
+            sim_sendf("0x%08X 0x%08X\n", base + (LI_BRAM_SEQ_REGS + LI_CTRL_REGS - 1) * 4, 0);
             for (unsigned int j = 0; j < LI_CTRL_REGS; j++) {
                 if (li_programs[i]->ctrl_regs[j] != -1)
-                    sim_sendf("0x%08X 0x%08X\n", base + (LI_SEQ_REGS + j) * 4, 
-                        (li_programs[i]->ctrl_regs)[j]);
+                    sim_sendf("0x%08X 0x%08X\n", base + (LI_BRAM_SEQ_REGS + j) * 4,
+                              li_programs[i]->ctrl_regs[j]);
             }
 
         }
@@ -726,12 +772,28 @@ static int write_sim(dc_program_t *dc_programs[],
         if (ex_programs[i] != NULL) {
 
             uint32_t base = (DC_CHANNELS + RF_CHANNELS + LI_CHANNELS + i) * page_size;
+            unsigned int n = ex_programs[i]->len;
 
-            sim_sendf("0x%08X 0x%08X\n", base + (EX_SEQ_REGS - 1) * 4, 0);
-            
-            for (unsigned int j = 0; j < EX_SEQ_REGS; j++) {
-                sim_sendf("0x%08X 0x%08X\n", base + j * 4, (ex_programs[i]->seq_regs)[j]);
+            for (unsigned int k = 0; k < n; k++) {
+                sim_sendf("0x%08X 0x%08X\n", base + BRAM_IST_ADDR * 4, k);
+                for (unsigned int r = 0; r < EX_REG_PER_INSN; r++)
+                    sim_sendf("0x%08X 0x%08X\n", base + (BRAM_IST_LO + r) * 4,
+                              ex_programs[i]->seq_regs[k * EX_REG_PER_INSN + r]);
+                sim_sendf("0x%08X 0x%08X\n", base + BRAM_IST_STRB(EX_REG_PER_INSN) * 4, 0);
+                sim_sendf("0x%08X 0x%08X\n", base + BRAM_IST_STRB(EX_REG_PER_INSN) * 4, 1);
             }
+
+            for (unsigned int j = 0; j < n; j++) {
+                sim_sendf("0x%08X 0x%08X\n", base + BRAM_PCST_ADDR * 4, j);
+                sim_sendf("0x%08X 0x%08X\n", base + BRAM_PCST * 4, j);
+                sim_sendf("0x%08X 0x%08X\n", base + BRAM_PCST_STRB * 4, 0);
+                sim_sendf("0x%08X 0x%08X\n", base + BRAM_PCST_STRB * 4, 1);
+            }
+
+            sim_sendf("0x%08X 0x%08X\n", base + BRAM_ITERS(EX_REG_PER_INSN) * 4, ex_programs[i]->repeat);
+            sim_sendf("0x%08X 0x%08X\n", base + BRAM_DEPTH(EX_REG_PER_INSN) * 4, n - 1);
+            sim_sendf("0x%08X 0x%08X\n", base + BRAM_START(EX_REG_PER_INSN) * 4, 0);
+            sim_sendf("0x%08X 0x%08X\n", base + BRAM_START(EX_REG_PER_INSN) * 4, 1);
 
         }
 
@@ -742,11 +804,13 @@ static int write_sim(dc_program_t *dc_programs[],
         uint32_t base = (DC_CHANNELS + RF_CHANNELS + LI_CHANNELS + EX_CHANNELS) * page_size;
 
         sim_sendf("0x%08X 0x%08X\n", base + (LAUNCH_TOTAL_REGS - 1) * 4, 0);
-        
-        sim_sendf("0x%08X 0x%08X\n", base, launch->dc_chmask);
-        sim_sendf("0x%08X 0x%08X\n", base + 4, launch->rf_chmask);
-        sim_sendf("0x%08X 0x%08X\n", base + 8, launch->li_chmask);
+
+        sim_sendf("0x%08X 0x%08X\n", base,      launch->dc_chmask);
+        sim_sendf("0x%08X 0x%08X\n", base +  4, launch->rf_chmask);
+        sim_sendf("0x%08X 0x%08X\n", base +  8, launch->li_chmask);
         sim_sendf("0x%08X 0x%08X\n", base + 12, launch->ex_chmask);
+        sim_sendf("0x%08X 0x%08X\n", base + 16, launch->use_trigger);
+        sim_sendf("0x%08X 0x%08X\n", base + 20, launch->iters);
         sim_sendf("0x%08X 0x%08X\n", base + (LAUNCH_TOTAL_REGS - 1) * 4, 1);
 
     }
@@ -884,11 +948,13 @@ static int write_sim_uart(dc_program_t *dc_programs[],
                         LI_SEQ_REGS + LI_CTRL_REGS;
 
         write_reg_sim(base + LAUNCH_TOTAL_REGS - 1, 0);
-        
-        write_reg_sim(base, launch->dc_chmask);
+
+        write_reg_sim(base,     launch->dc_chmask);
         write_reg_sim(base + 1, launch->rf_chmask);
         write_reg_sim(base + 2, launch->li_chmask);
-        write_reg_sim(base + 2, launch->ex_chmask);
+        write_reg_sim(base + 3, launch->ex_chmask);
+        write_reg_sim(base + 4, launch->use_trigger);
+        write_reg_sim(base + 5, launch->iters);
         write_reg_sim(base + LAUNCH_TOTAL_REGS - 1, 1);
 
     }
@@ -986,6 +1052,8 @@ static void write_bin(dc_program_t *dc_programs[],
         fprintf(op, "0x%08X\n", launch->rf_chmask);
         fprintf(op, "0x%08X\n", launch->li_chmask);
         fprintf(op, "0x%08X\n", launch->ex_chmask);
+        fprintf(op, "0x%08X\n", launch->use_trigger);
+        fprintf(op, "0x%08X\n", launch->iters);
         fprintf(op, "0x%08X\n", 1);
 
         fprintf(op, "\n");
@@ -1192,16 +1260,16 @@ static int parse_u32_optarg(const char *s, uint32_t *out)
 
 static void inspect_regs() {
 
-    uint32_t dc_seq_regs[DC_SEQ_REGS];
+    uint32_t dc_seq_regs[DC_BRAM_SEQ_REGS];
     uint32_t dc_ctrl_regs[DC_CTRL_REGS];
 
-    uint32_t rf_seq_regs[RF_SEQ_REGS];
+    uint32_t rf_seq_regs[RF_BRAM_SEQ_REGS];
     uint32_t rf_ctrl_regs[RF_CTRL_REGS];
 
-    uint32_t li_seq_regs[LI_SEQ_REGS];
+    uint32_t li_seq_regs[LI_BRAM_SEQ_REGS];
     uint32_t li_ctrl_regs[LI_CTRL_REGS];
 
-    uint32_t ex_seq_regs[EX_SEQ_REGS];
+    uint32_t ex_seq_regs[EX_BRAM_SEQ_REGS];
     uint32_t launch_regs[LAUNCH_TOTAL_REGS];
 
     for (int ch = 0; ch < DC_CHANNELS; ch++) {
@@ -1210,7 +1278,7 @@ static void inspect_regs() {
         printf("dc%d\n", ch);
 
         printf("\tseq regs:\n");
-        for (int i = 0; i < DC_SEQ_REGS; i++) {
+        for (int i = 0; i < DC_BRAM_SEQ_REGS; i++) {
             printf("\t\t%08" PRIX32 "\n", dc_seq_regs[i]);
         }
 
@@ -1228,7 +1296,7 @@ static void inspect_regs() {
         printf("rf%d\n", ch);
 
         printf("\tseq regs:\n");
-        for (int i = 0; i < RF_SEQ_REGS; i++) {
+        for (int i = 0; i < RF_BRAM_SEQ_REGS; i++) {
             printf("\t\t%08" PRIX32 "\n", rf_seq_regs[i]);
         }
 
@@ -1246,7 +1314,7 @@ static void inspect_regs() {
         printf("li%d\n", ch);
 
         printf("\tseq regs:\n");
-        for (int i = 0; i < LI_SEQ_REGS; i++) {
+        for (int i = 0; i < LI_BRAM_SEQ_REGS; i++) {
             printf("\t\t%08" PRIX32 "\n", li_seq_regs[i]);
         }
 
@@ -1264,7 +1332,7 @@ static void inspect_regs() {
         printf("ex%d\n", ch);
 
         printf("\tseq regs:\n");
-        for (int i = 0; i < EX_SEQ_REGS; i++) {
+        for (int i = 0; i < EX_BRAM_SEQ_REGS; i++) {
             printf("\t\t%08" PRIX32 "\n", ex_seq_regs[i]);
         }
         printf("\n");

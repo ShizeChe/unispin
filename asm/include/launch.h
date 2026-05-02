@@ -4,7 +4,7 @@
 #include <stdint.h>
 #include "common.h"
 
-#define LAUNCH_TOTAL_REGS 6
+#define LAUNCH_TOTAL_REGS 8
 #define LAUNCH_UIO 30
 
 typedef struct {
@@ -12,6 +12,8 @@ typedef struct {
     uint32_t rf_chmask;
     uint32_t li_chmask;
     uint32_t ex_chmask;
+    uint32_t use_trigger;
+    uint32_t iters;
 } launch_t;
 
 int launch_parse(char *line, launch_t *launch);

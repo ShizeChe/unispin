@@ -3,6 +3,7 @@
 
 #include <stdint.h>
 #include <math.h>
+#include "common.h"
 
 static inline int clog2_u32(uint32_t n) {
     int r = 0;
@@ -42,18 +43,21 @@ static inline int clog2_u32(uint32_t n) {
 
 #define RF_DEPTH 16
 #define RF_REG_PER_INSN 4
-#define RF_SEQ_REGS ((RF_DEPTH * RF_REG_PER_INSN) + 2)
+#define RF_SEQ_REGS (RF_DEPTH * RF_REG_PER_INSN)
+#define RF_BRAM_SEQ_REGS BRAM_SEQ_TOTAL(RF_REG_PER_INSN)
 #define RF_CTRL_REGS 2
 
 static const int rf_uio_map[RF_CHANNELS] = {38, 39, 40, 41, 42, 43};
 
 typedef struct {
     uint32_t arm;
+    uint32_t sticky_arm;
     uint32_t kbc_mode;
     uint64_t kbc1;
     uint64_t kbc2;
     uint32_t samples;
     uint32_t dsamples;
+    uint32_t marker;
 } rf_insn_t;
 
 typedef struct {

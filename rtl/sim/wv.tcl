@@ -84,7 +84,7 @@ wvAddSignal -win $nw "/simulator/PROCESSOR/LCH/i_clk" \
                      "/simulator/PROCESSOR/LCH/r_rf_active_mask" \
                      "/simulator/PROCESSOR/LCH/r_li_active_mask" \
                      "/simulator/PROCESSOR/LCH/r_ex_active_mask" \
-                     "/simulator/PROCESSOR/LCH/r_wait_trigger"
+                     "/simulator/PROCESSOR/LCH/r_use_trigger"
 
 wvSetPosition -win $nw {("launch/LCH/armed" 0)}
 wvAddSignal -win $nw "/simulator/PROCESSOR/LCH/i_trigger" \
@@ -188,25 +188,26 @@ for {set ch 23} {$ch >= 0} {incr ch -1} {
     wvAddSignal -win $nw "/simulator/PROCESSOR/DC_GEN\[$ch\]/DC/SEQ/i_clk" \
                          "/simulator/PROCESSOR/DC_GEN\[$ch\]/DC/SEQ/i_rst" \
                          "/simulator/PROCESSOR/DC_GEN\[$ch\]/DC/SEQ/i_regs" \
-                         "/simulator/PROCESSOR/DC_GEN\[$ch\]/DC/SEQ/w_new_seq" \
+                         "/simulator/PROCESSOR/DC_GEN\[$ch\]/DC/SEQ/o_active" \
                          "/simulator/PROCESSOR/DC_GEN\[$ch\]/DC/SEQ/w_propagate"
 
     wvSetPosition -win $nw [format {("dc/ch%d/SEQ/fetch" 0)} $ch]
-    wvAddSignal -win $nw "/simulator/PROCESSOR/DC_GEN\[$ch\]/DC/SEQ/r_sequence" \
-                         "/simulator/PROCESSOR/DC_GEN\[$ch\]/DC/SEQ/r_iters" \
-                         "/simulator/PROCESSOR/DC_GEN\[$ch\]/DC/SEQ/r_iptr" \
-                         "/simulator/PROCESSOR/DC_GEN\[$ch\]/DC/SEQ/w_insn_fetch" \
-                         "/simulator/PROCESSOR/DC_GEN\[$ch\]/DC/SEQ/w_insn_bubble" \
-                         "/simulator/PROCESSOR/DC_GEN\[$ch\]/DC/SEQ/w_iptr_plus1" \
-                         "/simulator/PROCESSOR/DC_GEN\[$ch\]/DC/SEQ/w_next_null"
+    wvAddSignal -win $nw "/simulator/PROCESSOR/DC_GEN\[$ch\]/DC/SEQ/p.r_iters" \
+                         "/simulator/PROCESSOR/DC_GEN\[$ch\]/DC/SEQ/p.r_pc_addr" \
+                         "/simulator/PROCESSOR/DC_GEN\[$ch\]/DC/SEQ/p.r_depth" \
+                         "/simulator/PROCESSOR/DC_GEN\[$ch\]/DC/SEQ/p.r_active" \
+                         "/simulator/PROCESSOR/DC_GEN\[$ch\]/DC/SEQ/o_iters" \
+                         "/simulator/PROCESSOR/DC_GEN\[$ch\]/DC/SEQ/o_pcmem_depth"
 
     wvSetPosition -win $nw [format {("dc/ch%d/SEQ/out" 0)} $ch]
     wvAddSignal -win $nw "/simulator/PROCESSOR/DC_GEN\[$ch\]/DC/SEQ/o_empty" \
                          "/simulator/PROCESSOR/DC_GEN\[$ch\]/DC/SEQ/i_next" \
-                         "/simulator/PROCESSOR/DC_GEN\[$ch\]/DC/SEQ/o_addr" \
+                         "/simulator/PROCESSOR/DC_GEN\[$ch\]/DC/SEQ/o_pc_addr" \
+                         "/simulator/PROCESSOR/DC_GEN\[$ch\]/DC/SEQ/o_pc" \
                          "/simulator/PROCESSOR/DC_GEN\[$ch\]/DC/SEQ/o_insn" \
-                         "/simulator/PROCESSOR/DC_GEN\[$ch\]/DC/SEQ/r_iptr_modify" \
-                         "/simulator/PROCESSOR/DC_GEN\[$ch\]/DC/SEQ/i_insn_modified"
+                         "/simulator/PROCESSOR/DC_GEN\[$ch\]/DC/SEQ/i_insn_modified" \
+                         "/simulator/PROCESSOR/DC_GEN\[$ch\]/DC/SEQ/o_pc_rd" \
+                         "/simulator/PROCESSOR/DC_GEN\[$ch\]/DC/SEQ/o_insn_rd"
 
     # CORE
     wvSelectGroup -win $nw "dc/ch$ch/CORE"
@@ -239,7 +240,8 @@ for {set ch 23} {$ch >= 0} {incr ch -1} {
                          "/simulator/PROCESSOR/DC_GEN\[$ch\]/DC/CORE/w_spi_dout" \
                          "/simulator/PROCESSOR/DC_GEN\[$ch\]/DC/CORE/w_spi_done" \
                          "/simulator/PROCESSOR/DC_GEN\[$ch\]/DC/CORE/o_armed" \
-                         "/simulator/PROCESSOR/DC_GEN\[$ch\]/DC/CORE/i_start"
+                         "/simulator/PROCESSOR/DC_GEN\[$ch\]/DC/CORE/i_start" \
+                         "/simulator/PROCESSOR/DC_GEN\[$ch\]/DC/CORE/o_marker"
 
     wvSelectGroup -win $nw "dc/ch$ch/CORE/spi"
     wvAddSubGroup -win $nw "wires"
@@ -408,25 +410,26 @@ for {set ch 5} {$ch >= 0} {incr ch -1} {
     wvAddSignal -win $nw "/simulator/PROCESSOR/RF_GEN\[$ch\]/RF/SEQ/i_clk" \
                          "/simulator/PROCESSOR/RF_GEN\[$ch\]/RF/SEQ/i_rst" \
                          "/simulator/PROCESSOR/RF_GEN\[$ch\]/RF/SEQ/i_regs" \
-                         "/simulator/PROCESSOR/RF_GEN\[$ch\]/RF/SEQ/w_new_seq" \
+                         "/simulator/PROCESSOR/RF_GEN\[$ch\]/RF/SEQ/o_active" \
                          "/simulator/PROCESSOR/RF_GEN\[$ch\]/RF/SEQ/w_propagate"
 
     wvSetPosition -win $nw [format {("rf/ch%d/SEQ/fetch" 0)} $ch]
-    wvAddSignal -win $nw "/simulator/PROCESSOR/RF_GEN\[$ch\]/RF/SEQ/r_sequence" \
-                         "/simulator/PROCESSOR/RF_GEN\[$ch\]/RF/SEQ/r_iters" \
-                         "/simulator/PROCESSOR/RF_GEN\[$ch\]/RF/SEQ/r_iptr" \
-                         "/simulator/PROCESSOR/RF_GEN\[$ch\]/RF/SEQ/w_insn_fetch" \
-                         "/simulator/PROCESSOR/RF_GEN\[$ch\]/RF/SEQ/w_insn_bubble" \
-                         "/simulator/PROCESSOR/RF_GEN\[$ch\]/RF/SEQ/w_iptr_plus1" \
-                         "/simulator/PROCESSOR/RF_GEN\[$ch\]/RF/SEQ/w_next_null"
+    wvAddSignal -win $nw "/simulator/PROCESSOR/RF_GEN\[$ch\]/RF/SEQ/p.r_iters" \
+                         "/simulator/PROCESSOR/RF_GEN\[$ch\]/RF/SEQ/p.r_pc_addr" \
+                         "/simulator/PROCESSOR/RF_GEN\[$ch\]/RF/SEQ/p.r_depth" \
+                         "/simulator/PROCESSOR/RF_GEN\[$ch\]/RF/SEQ/p.r_active" \
+                         "/simulator/PROCESSOR/RF_GEN\[$ch\]/RF/SEQ/o_iters" \
+                         "/simulator/PROCESSOR/RF_GEN\[$ch\]/RF/SEQ/o_pcmem_depth"
 
     wvSetPosition -win $nw [format {("rf/ch%d/SEQ/out" 0)} $ch]
     wvAddSignal -win $nw "/simulator/PROCESSOR/RF_GEN\[$ch\]/RF/SEQ/o_empty" \
                          "/simulator/PROCESSOR/RF_GEN\[$ch\]/RF/SEQ/i_next" \
-                         "/simulator/PROCESSOR/RF_GEN\[$ch\]/RF/SEQ/o_addr" \
+                         "/simulator/PROCESSOR/RF_GEN\[$ch\]/RF/SEQ/o_pc_addr" \
+                         "/simulator/PROCESSOR/RF_GEN\[$ch\]/RF/SEQ/o_pc" \
                          "/simulator/PROCESSOR/RF_GEN\[$ch\]/RF/SEQ/o_insn" \
-                         "/simulator/PROCESSOR/RF_GEN\[$ch\]/RF/SEQ/r_iptr_modify" \
-                         "/simulator/PROCESSOR/RF_GEN\[$ch\]/RF/SEQ/i_insn_modified"
+                         "/simulator/PROCESSOR/RF_GEN\[$ch\]/RF/SEQ/i_insn_modified" \
+                         "/simulator/PROCESSOR/RF_GEN\[$ch\]/RF/SEQ/o_pc_rd" \
+                         "/simulator/PROCESSOR/RF_GEN\[$ch\]/RF/SEQ/o_insn_rd"
 
     # CORE
     wvSelectGroup -win $nw "rf/ch$ch/CORE"
@@ -477,7 +480,8 @@ for {set ch 5} {$ch >= 0} {incr ch -1} {
                          "/simulator/PROCESSOR/RF_GEN\[$ch\]/RF/CORE/w_sample_end" \
                          "/simulator/PROCESSOR/RF_GEN\[$ch\]/RF/CORE/w_QIx8" \
                          "/simulator/PROCESSOR/RF_GEN\[$ch\]/RF/CORE/o_armed" \
-                         "/simulator/PROCESSOR/RF_GEN\[$ch\]/RF/CORE/i_start"
+                         "/simulator/PROCESSOR/RF_GEN\[$ch\]/RF/CORE/i_start" \
+                         "/simulator/PROCESSOR/RF_GEN\[$ch\]/RF/CORE/o_marker"
 
     wvSetPosition -win $nw [format {("rf/ch%d/CORE/out" 0)} $ch]
     wvAddSignal -win $nw "/simulator/PROCESSOR/RF_GEN\[$ch\]/RF/CORE/o" \
@@ -646,25 +650,26 @@ for {set ch 1} {$ch >= 0} {incr ch -1} {
     wvAddSignal -win $nw "/simulator/PROCESSOR/LI_GEN\[$ch\]/LI/SEQ/i_clk" \
                          "/simulator/PROCESSOR/LI_GEN\[$ch\]/LI/SEQ/i_rst" \
                          "/simulator/PROCESSOR/LI_GEN\[$ch\]/LI/SEQ/i_regs" \
-                         "/simulator/PROCESSOR/LI_GEN\[$ch\]/LI/SEQ/w_new_seq" \
+                         "/simulator/PROCESSOR/LI_GEN\[$ch\]/LI/SEQ/o_active" \
                          "/simulator/PROCESSOR/LI_GEN\[$ch\]/LI/SEQ/w_propagate"
 
     wvSetPosition -win $nw [format {("li/ch%d/SEQ/fetch" 0)} $ch]
-    wvAddSignal -win $nw "/simulator/PROCESSOR/LI_GEN\[$ch\]/LI/SEQ/r_sequence" \
-                         "/simulator/PROCESSOR/LI_GEN\[$ch\]/LI/SEQ/r_iters" \
-                         "/simulator/PROCESSOR/LI_GEN\[$ch\]/LI/SEQ/r_iptr" \
-                         "/simulator/PROCESSOR/LI_GEN\[$ch\]/LI/SEQ/w_insn_fetch" \
-                         "/simulator/PROCESSOR/LI_GEN\[$ch\]/LI/SEQ/w_insn_bubble" \
-                         "/simulator/PROCESSOR/LI_GEN\[$ch\]/LI/SEQ/w_iptr_plus1" \
-                         "/simulator/PROCESSOR/LI_GEN\[$ch\]/LI/SEQ/w_next_null"
+    wvAddSignal -win $nw "/simulator/PROCESSOR/LI_GEN\[$ch\]/LI/SEQ/p.r_iters" \
+                         "/simulator/PROCESSOR/LI_GEN\[$ch\]/LI/SEQ/p.r_pc_addr" \
+                         "/simulator/PROCESSOR/LI_GEN\[$ch\]/LI/SEQ/p.r_depth" \
+                         "/simulator/PROCESSOR/LI_GEN\[$ch\]/LI/SEQ/p.r_active" \
+                         "/simulator/PROCESSOR/LI_GEN\[$ch\]/LI/SEQ/o_iters" \
+                         "/simulator/PROCESSOR/LI_GEN\[$ch\]/LI/SEQ/o_pcmem_depth"
 
     wvSetPosition -win $nw [format {("li/ch%d/SEQ/out" 0)} $ch]
     wvAddSignal -win $nw "/simulator/PROCESSOR/LI_GEN\[$ch\]/LI/SEQ/o_empty" \
                          "/simulator/PROCESSOR/LI_GEN\[$ch\]/LI/SEQ/i_next" \
-                         "/simulator/PROCESSOR/LI_GEN\[$ch\]/LI/SEQ/o_addr" \
+                         "/simulator/PROCESSOR/LI_GEN\[$ch\]/LI/SEQ/o_pc_addr" \
+                         "/simulator/PROCESSOR/LI_GEN\[$ch\]/LI/SEQ/o_pc" \
                          "/simulator/PROCESSOR/LI_GEN\[$ch\]/LI/SEQ/o_insn" \
-                         "/simulator/PROCESSOR/LI_GEN\[$ch\]/LI/SEQ/r_iptr_modify" \
-                         "/simulator/PROCESSOR/LI_GEN\[$ch\]/LI/SEQ/i_insn_modified"
+                         "/simulator/PROCESSOR/LI_GEN\[$ch\]/LI/SEQ/i_insn_modified" \
+                         "/simulator/PROCESSOR/LI_GEN\[$ch\]/LI/SEQ/o_pc_rd" \
+                         "/simulator/PROCESSOR/LI_GEN\[$ch\]/LI/SEQ/o_insn_rd"
 
     # CORE
     wvSelectGroup -win $nw "li/ch$ch/CORE"
@@ -689,7 +694,8 @@ for {set ch 1} {$ch >= 0} {incr ch -1} {
                          "/simulator/PROCESSOR/LI_GEN\[$ch\]/LI/CORE/i_insn" \
                          "/simulator/PROCESSOR/LI_GEN\[$ch\]/LI/CORE/o_insn_modified" \
                          "/simulator/PROCESSOR/LI_GEN\[$ch\]/LI/CORE/o_armed" \
-                         "/simulator/PROCESSOR/LI_GEN\[$ch\]/LI/CORE/i_start"
+                         "/simulator/PROCESSOR/LI_GEN\[$ch\]/LI/CORE/i_start" \
+                         "/simulator/PROCESSOR/LI_GEN\[$ch\]/LI/CORE/o_marker"
 
     wvSetPosition -win $nw [format {("li/ch%d/CORE/sample" 0)} $ch]
     wvAddSignal -win $nw "/simulator/PROCESSOR/LI_GEN\[$ch\]/LI/CORE/s" \
@@ -839,25 +845,26 @@ for {set ch 1} {$ch >= 0} {incr ch -1} {
     wvAddSignal -win $nw "/simulator/PROCESSOR/EX_GEN\[$ch\]/EX/SEQ/i_clk" \
                          "/simulator/PROCESSOR/EX_GEN\[$ch\]/EX/SEQ/i_rst" \
                          "/simulator/PROCESSOR/EX_GEN\[$ch\]/EX/SEQ/i_regs" \
-                         "/simulator/PROCESSOR/EX_GEN\[$ch\]/EX/SEQ/w_new_seq" \
+                         "/simulator/PROCESSOR/EX_GEN\[$ch\]/EX/SEQ/o_active" \
                          "/simulator/PROCESSOR/EX_GEN\[$ch\]/EX/SEQ/w_propagate"
 
     wvSetPosition -win $nw [format {("ex/ch%d/SEQ/fetch" 0)} $ch]
-    wvAddSignal -win $nw "/simulator/PROCESSOR/EX_GEN\[$ch\]/EX/SEQ/r_sequence" \
-                         "/simulator/PROCESSOR/EX_GEN\[$ch\]/EX/SEQ/r_iters" \
-                         "/simulator/PROCESSOR/EX_GEN\[$ch\]/EX/SEQ/r_iptr" \
-                         "/simulator/PROCESSOR/EX_GEN\[$ch\]/EX/SEQ/w_insn_fetch" \
-                         "/simulator/PROCESSOR/EX_GEN\[$ch\]/EX/SEQ/w_insn_bubble" \
-                         "/simulator/PROCESSOR/EX_GEN\[$ch\]/EX/SEQ/w_iptr_plus1" \
-                         "/simulator/PROCESSOR/EX_GEN\[$ch\]/EX/SEQ/w_next_null"
+    wvAddSignal -win $nw "/simulator/PROCESSOR/EX_GEN\[$ch\]/EX/SEQ/p.r_iters" \
+                         "/simulator/PROCESSOR/EX_GEN\[$ch\]/EX/SEQ/p.r_pc_addr" \
+                         "/simulator/PROCESSOR/EX_GEN\[$ch\]/EX/SEQ/p.r_depth" \
+                         "/simulator/PROCESSOR/EX_GEN\[$ch\]/EX/SEQ/p.r_active" \
+                         "/simulator/PROCESSOR/EX_GEN\[$ch\]/EX/SEQ/o_iters" \
+                         "/simulator/PROCESSOR/EX_GEN\[$ch\]/EX/SEQ/o_pcmem_depth"
 
     wvSetPosition -win $nw [format {("ex/ch%d/SEQ/out" 0)} $ch]
     wvAddSignal -win $nw "/simulator/PROCESSOR/EX_GEN\[$ch\]/EX/SEQ/o_empty" \
                          "/simulator/PROCESSOR/EX_GEN\[$ch\]/EX/SEQ/i_next" \
-                         "/simulator/PROCESSOR/EX_GEN\[$ch\]/EX/SEQ/o_addr" \
+                         "/simulator/PROCESSOR/EX_GEN\[$ch\]/EX/SEQ/o_pc_addr" \
+                         "/simulator/PROCESSOR/EX_GEN\[$ch\]/EX/SEQ/o_pc" \
                          "/simulator/PROCESSOR/EX_GEN\[$ch\]/EX/SEQ/o_insn" \
-                         "/simulator/PROCESSOR/EX_GEN\[$ch\]/EX/SEQ/r_iptr_modify" \
-                         "/simulator/PROCESSOR/EX_GEN\[$ch\]/EX/SEQ/i_insn_modified"
+                         "/simulator/PROCESSOR/EX_GEN\[$ch\]/EX/SEQ/i_insn_modified" \
+                         "/simulator/PROCESSOR/EX_GEN\[$ch\]/EX/SEQ/o_pc_rd" \
+                         "/simulator/PROCESSOR/EX_GEN\[$ch\]/EX/SEQ/o_insn_rd"
 
     # CORE
     wvSelectGroup -win $nw "ex/ch$ch/CORE"
@@ -886,6 +893,8 @@ for {set ch 1} {$ch >= 0} {incr ch -1} {
     wvSetPosition -win $nw [format {("ex/ch%d/CORE/out" 0)} $ch]
     wvAddSignal -win $nw "/simulator/PROCESSOR/EX_GEN\[$ch\]/EX/CORE/o" \
                          "/simulator/PROCESSOR/EX_GEN\[$ch\]/EX/CORE/o_realx16" \
+                         "/simulator/PROCESSOR/EX_GEN\[$ch\]/EX/CORE/o_armed" \
+                         "/simulator/PROCESSOR/EX_GEN\[$ch\]/EX/CORE/o_marker" \
                          "/simulator/PROCESSOR/EX_GEN\[$ch\]/EX/CORE/o_eop"
 
     # DAC

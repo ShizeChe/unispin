@@ -2,6 +2,7 @@
 #define DC_H
 
 #include <stdint.h>
+#include "common.h"
 
 #define DC_CHANNELS 24
 #define INSN_PER_DC_CHANNEL 10
@@ -22,8 +23,9 @@
 #define MAX_DT (NS_PER_CYCLE * DC_MAX_HOLD_CYCLES)
 
 #define DC_DEPTH 10
-#define DC_SEQ_REGS ((DC_DEPTH * DC_REG_PER_INSN) + 2)
-#define DC_CTRL_REGS 4
+#define DC_SEQ_REGS (DC_DEPTH * DC_REG_PER_INSN)
+#define DC_BRAM_SEQ_REGS BRAM_SEQ_TOTAL(DC_REG_PER_INSN)
+#define DC_CTRL_REGS 5
 
 static const int dc_uio_map[DC_CHANNELS] = {
     4, 5, 16, 21, 22, 23, 24, 25, 26, 27, 6, 7, 
@@ -39,7 +41,9 @@ typedef struct {
     uint32_t hold_cycles;
     uint32_t modify;
     uint32_t arm;
+    uint32_t sticky_arm;
     uint32_t idle;
+    uint32_t marker;
 } dc_insn_t;
 
 typedef struct {
@@ -60,6 +64,8 @@ typedef struct {
 
 typedef struct {
     uint32_t arm;
+    uint32_t sticky_arm;
+    uint32_t marker;
     uint32_t rd;
     uint32_t has_vplus;
     uint32_t vplus;

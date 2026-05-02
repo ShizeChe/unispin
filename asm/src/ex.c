@@ -23,16 +23,20 @@ static void ex_lvl2insn(ex_lvl_t *lvl, ex_insn_t *insn) {
     uint32_t v_code = (uint32_t)real2twos(EX_VMIN, EX_VMAX, EX_REAL_BITS, lvl->v, 0);
 
     insn->arm = lvl->opt.arm;
+    insn->sticky_arm = 0;
     insn->real = v_code;
     insn->samples = ex_t2samples(lvl->t_ns);
     insn->dsamples = ex_t2samples(lvl->opt.tplus_ns);
+    insn->marker = 0;
 }
 
 static void ex_idl2insn(ex_idl_t *idl, ex_insn_t *insn) {
     insn->arm = idl->opt.arm;
+    insn->sticky_arm = 0;
     insn->real = 0;
     insn->samples = ex_t2samples(idl->t_ns);
     insn->dsamples = ex_t2samples(idl->opt.tplus_ns);
+    insn->marker = 0;
 }
 
 static int ex_parse_opt(char *paren, ex_opt_t *opt) {
@@ -158,14 +162,11 @@ void ex_assemble(ex_program_t *prog) {
         ex_insn_t *insn = &(prog->insns[i]);
         uint32_t *reg = &(prog->seq_regs[i * EX_REG_PER_INSN]);
 
-        reg[0] = (insn->arm << 22) | ((insn->real & 0x3fff) << 8) | 
-                 (insn->samples >> 12); 
-        reg[1] = (insn->samples << 20) | (insn->dsamples);
+        reg[0] = (insn->arm << 24) | (insn->sticky_arm << 23) |
+                 ((insn->real & 0x3FFF) << 9) | (insn->samples >> 11);
+        reg[1] = ((insn->samples & 0x7FF) << 21) | (insn->dsamples << 1) | insn->marker;
 
     }
-
-    prog->seq_regs[EX_SEQ_REGS-2] = prog->repeat;
-    prog->seq_regs[EX_SEQ_REGS-1] = 1;
 
 }
 
@@ -190,10 +191,27 @@ int ex_load_insns(int ex_channel, ex_program_t *ex_program) {
     }
 
     volatile uint32_t *ex_base = (volatile uint32_t *)((char *)ex_va);
-    *(ex_base + EX_SEQ_REGS - 1) = 0;
-    for (int i = 0; i < EX_SEQ_REGS; i++) {
-        *(ex_base + i) = ex_program->seq_regs[i];
+    unsigned int n = ex_program->len;
+
+    for (unsigned int i = 0; i < n; i++) {
+        ex_base[BRAM_IST_ADDR] = i;
+        for (unsigned int k = 0; k < EX_REG_PER_INSN; k++)
+            ex_base[BRAM_IST_LO + k] = ex_program->seq_regs[i * EX_REG_PER_INSN + k];
+        ex_base[BRAM_IST_STRB(EX_REG_PER_INSN)] = 0;
+        ex_base[BRAM_IST_STRB(EX_REG_PER_INSN)] = 1;
     }
+
+    for (unsigned int j = 0; j < n; j++) {
+        ex_base[BRAM_PCST_ADDR] = j;
+        ex_base[BRAM_PCST]      = j;
+        ex_base[BRAM_PCST_STRB] = 0;
+        ex_base[BRAM_PCST_STRB] = 1;
+    }
+
+    ex_base[BRAM_ITERS(EX_REG_PER_INSN)] = ex_program->repeat;
+    ex_base[BRAM_DEPTH(EX_REG_PER_INSN)] = n - 1;
+    ex_base[BRAM_START(EX_REG_PER_INSN)] = 0;
+    ex_base[BRAM_START(EX_REG_PER_INSN)] = 1;
 
 #if EXE
     __asm__ __volatile__("dsb oshst" ::: "memory");
@@ -226,7 +244,7 @@ int ex_read_regs(int ex_channel, uint32_t *seq_regs) {
 
     volatile uint32_t *ex_base = (volatile uint32_t *)((char *)ex_va);
 
-    for (int i = 0; i < EX_SEQ_REGS; i++) {
+    for (int i = 0; i < EX_BRAM_SEQ_REGS; i++) {
         seq_regs[i] = *(ex_base + i);
     }
 

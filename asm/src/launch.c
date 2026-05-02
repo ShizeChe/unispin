@@ -112,6 +112,8 @@ int launch_load(launch_t *launch) {
     *(launch_base + 1) = launch->rf_chmask;
     *(launch_base + 2) = launch->li_chmask;
     *(launch_base + 3) = launch->ex_chmask;
+    *(launch_base + 4) = launch->use_trigger;
+    *(launch_base + 5) = launch->iters;
     *(launch_base + LAUNCH_TOTAL_REGS - 1) = 1;
 
 #if EXE

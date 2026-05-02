@@ -25,39 +25,47 @@ static void rf_chp2insn(rf_chp_t *chp, rf_insn_t *insn, long double fnco_hz) {
     uint64_t b = real2twos(-180, 180 - ldexpl(1.0L, -RF_KBC_BITS), RF_KBC_BITS, b_deg, 1);
 
     insn->arm = chp->opt.arm;
+    insn->sticky_arm = 0;
     insn->kbc_mode = 1;
     insn->kbc1 = k;
     insn->kbc2 = b;
     insn->samples = rf_t2samples(chp->t_ns);
     insn->dsamples = rf_t2samples(chp->opt.tplus_ns);
+    insn->marker = 0;
 
 }
 
 static void rf_ply2insn(rf_ply_t *ply, rf_insn_t *insn) {
     insn->arm = ply->opt.arm;
+    insn->sticky_arm = 0;
     insn->kbc_mode = 2;
     insn->kbc1 = 0;
     insn->kbc2 = real2twos(-180, 180 - ldexpl(1.0L, -RF_KBC_BITS), RF_KBC_BITS, ply->phs, 1);
     insn->samples = rf_t2samples(ply->t_ns);
     insn->dsamples = rf_t2samples(ply->opt.tplus_ns);
+    insn->marker = 0;
 }
 
 static void rf_idl2insn(rf_idl_t *idl, rf_insn_t *insn) {
     insn->arm = idl->opt.arm;
+    insn->sticky_arm = 0;
     insn->kbc_mode = 3;
     insn->kbc1 = 0;
     insn->kbc2 = 0;
     insn->samples = rf_t2samples(idl->t_ns);
     insn->dsamples = rf_t2samples(idl->opt.tplus_ns);
+    insn->marker = 0;
 }
 
 static void rf_ful2insn(rf_ful_t *ful, rf_insn_t *insn) {
     insn->arm = ful->opt.arm;
+    insn->sticky_arm = 0;
     insn->kbc_mode = ful->kbc_mode;
     insn->kbc1 = ful->kbc1;
     insn->kbc2 = ful->kbc2;
     insn->samples = rf_t2samples(ful->t_ns);
     insn->dsamples = rf_t2samples(ful->opt.tplus_ns);
+    insn->marker = 0;
 }
 
 static int rf_parse_opt(char *paren, rf_opt_t *opt) {
@@ -285,19 +293,20 @@ void rf_assemble(rf_program_t *prog) {
         rf_insn_t *insn = &(prog->insns[i]);
         uint32_t *reg = &(prog->seq_regs[i * RF_REG_PER_INSN]);
 
-        reg[0] = (insn->arm << 18) | (insn->kbc_mode << 16) | 
-                 ((uint32_t)(insn->kbc1 >> 20) & 0xffff);
-        reg[1] = ((uint32_t)(insn->kbc1 << 12)) | ((uint32_t)(insn->kbc2 >> 24) & 0xfff);
-        reg[2] = ((uint32_t)(insn->kbc2 << 8)) | (insn->samples >> 12);
-        reg[3] = (insn->samples << 20) | (insn->dsamples);
+        // Pack 117-bit rf_insn_t into 4 x 32-bit registers (MSB-first in concat)
+        // insn[116:96] → reg[0][20:0], insn[95:64] → reg[1], insn[63:32] → reg[2],
+        // insn[31:0] → reg[3]
+        reg[0] = (insn->arm << 20) | (insn->sticky_arm << 19) |
+                 (insn->kbc_mode << 17) | (uint32_t)(insn->kbc1 >> 19);
+        reg[1] = (uint32_t)((insn->kbc1 & 0x7FFFF) << 13) | (uint32_t)(insn->kbc2 >> 23);
+        reg[2] = (uint32_t)((insn->kbc2 & 0x7FFFFF) << 9) | (insn->samples >> 11);
+        reg[3] = ((insn->samples & 0x7FF) << 21) | (insn->dsamples << 1) | insn->marker;
 
     }
 
-    prog->seq_regs[RF_SEQ_REGS-2] = prog->repeat;
-    prog->seq_regs[RF_SEQ_REGS-1] = 1;
-
-    prog->ctrl_regs[0] = (((uint32_t)prog->ctrl.default_Q) << 18) |
-                         ((((uint32_t)prog->ctrl.default_I) & 0x3fff) << 2);
+    // Pack rf_ctrl_t: {w_default_I[27:14], w_default_Q[13:0]}
+    prog->ctrl_regs[0] = (((uint32_t)prog->ctrl.default_I & 0x3fff) << 14) |
+                         ((uint32_t)prog->ctrl.default_Q & 0x3fff);
 
     prog->ctrl_regs[RF_CTRL_REGS-1] = (prog->ctrl.default_I != -1) ||
         (prog->ctrl.default_Q != -1);
@@ -325,14 +334,32 @@ int rf_load_insns(int rf_channel, rf_program_t *rf_program) {
     }
 
     volatile uint32_t *rf_base = (volatile uint32_t *)((char *)rf_va);
-    *(rf_base + RF_SEQ_REGS - 1) = 0;
-    for (int i = 0; i < RF_SEQ_REGS; i++) {
-        *(rf_base + i) = rf_program->seq_regs[i];
+    unsigned int n = rf_program->len;
+
+    for (unsigned int i = 0; i < n; i++) {
+        rf_base[BRAM_IST_ADDR] = i;
+        for (unsigned int k = 0; k < RF_REG_PER_INSN; k++)
+            rf_base[BRAM_IST_LO + k] = rf_program->seq_regs[i * RF_REG_PER_INSN + k];
+        rf_base[BRAM_IST_STRB(RF_REG_PER_INSN)] = 0;
+        rf_base[BRAM_IST_STRB(RF_REG_PER_INSN)] = 1;
     }
-    *(rf_base + RF_SEQ_REGS + RF_CTRL_REGS - 1) = 0;
+
+    for (unsigned int j = 0; j < n; j++) {
+        rf_base[BRAM_PCST_ADDR] = j;
+        rf_base[BRAM_PCST]      = j;
+        rf_base[BRAM_PCST_STRB] = 0;
+        rf_base[BRAM_PCST_STRB] = 1;
+    }
+
+    rf_base[BRAM_ITERS(RF_REG_PER_INSN)] = rf_program->repeat;
+    rf_base[BRAM_DEPTH(RF_REG_PER_INSN)] = n - 1;
+    rf_base[BRAM_START(RF_REG_PER_INSN)] = 0;
+    rf_base[BRAM_START(RF_REG_PER_INSN)] = 1;
+
+    *(rf_base + RF_BRAM_SEQ_REGS + RF_CTRL_REGS - 1) = 0;
     for (int i = 0; i < RF_CTRL_REGS; i++) {
         if (rf_program->ctrl_regs[i] != -1)
-            *(rf_base + RF_SEQ_REGS + i) = rf_program->ctrl_regs[i];
+            *(rf_base + RF_BRAM_SEQ_REGS + i) = rf_program->ctrl_regs[i];
     }
 
 #if EXE
@@ -367,11 +394,11 @@ int rf_read_regs(int rf_channel, uint32_t *seq_regs, uint32_t *ctrl_regs) {
 
     volatile uint32_t *rf_base = (volatile uint32_t *)((char *)rf_va);
 
-    for (int i = 0; i < RF_SEQ_REGS; i++) {
+    for (int i = 0; i < RF_BRAM_SEQ_REGS; i++) {
         seq_regs[i] = *(rf_base + i);
     }
     for (int i = 0; i < RF_CTRL_REGS; i++) {
-        ctrl_regs[i] = *(rf_base + RF_SEQ_REGS + i);
+        ctrl_regs[i] = *(rf_base + RF_BRAM_SEQ_REGS + i);
     }
 
     munmap(rf_va, 0x1000);

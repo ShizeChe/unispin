@@ -3,6 +3,7 @@
 
 #include <stdint.h>
 #include <math.h>
+#include "common.h"
 
 #define LI_CHANNELS 2
 #define LI_DEPTH 16
@@ -26,14 +27,17 @@
 
 #define LI_DEPTH 16
 #define LI_REG_PER_INSN 2
-#define LI_SEQ_REGS ((LI_DEPTH * LI_REG_PER_INSN) + 2)
+#define LI_SEQ_REGS (LI_DEPTH * LI_REG_PER_INSN)
+#define LI_BRAM_SEQ_REGS BRAM_SEQ_TOTAL(LI_REG_PER_INSN)
 #define LI_CTRL_REGS 4
 
 static const int li_uio_map[LI_CHANNELS] = {31, 32};
 
 typedef struct {
     uint32_t arm;
+    uint32_t sticky_arm;
     uint32_t idle;
+    uint32_t marker;
     uint32_t samples;
     uint32_t dsamples;
     uint32_t stride;

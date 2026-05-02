@@ -19,17 +19,21 @@ static uint32_t li_t2samples(double t_ns) {
 
 static void li_sam2insn(li_sam_t *sam, li_insn_t *insn) {
     insn->arm = sam->opt.arm;
+    insn->sticky_arm = 0;
     insn->idle = 0;
+    insn->marker = 0;
     insn->samples = sam->samples;
     uint32_t tsamples = li_t2samples(sam->t_ns);
-    insn->stride = (tsamples % sam->samples == 0) ? 
+    insn->stride = (tsamples % sam->samples == 0) ?
         (tsamples / sam->samples) : (tsamples / sam->samples + 1);
     insn->dsamples = li_t2samples(sam->opt.tplus_ns);
 }
 
 static void li_idl2insn(li_idl_t *idl, li_insn_t *insn) {
     insn->arm = idl->opt.arm;
+    insn->sticky_arm = 0;
     insn->idle = 1;
+    insn->marker = 0;
     insn->samples = li_t2samples(idl->t_ns);
     insn->dsamples = li_t2samples(idl->opt.tplus_ns);
     insn->stride = 1;
@@ -158,14 +162,14 @@ void li_assemble(li_program_t *prog) {
         li_insn_t *insn = &(prog->insns[i]);
         uint32_t *reg = &(prog->seq_regs[i * LI_REG_PER_INSN]);
 
-        reg[0] = (insn->arm << 27) | (insn->idle << 26) | (insn->samples << 6) | 
-                 (insn->dsamples >> 14); 
-        reg[1] = (insn->dsamples << 18) | (insn->stride);
+        // Pack 62-bit li_insn_t into 2 x 32-bit registers
+        // insn[61:32] → reg[0][29:0], insn[31:0] → reg[1]
+        reg[0] = (insn->arm << 29) | (insn->sticky_arm << 28) |
+                 (insn->idle << 27) | (insn->marker << 26) |
+                 (insn->samples << 6) | (insn->dsamples >> 14);
+        reg[1] = ((insn->dsamples & 0x3FFF) << 18) | insn->stride;
 
     }
-
-    prog->seq_regs[LI_SEQ_REGS-2] = prog->repeat;
-    prog->seq_regs[LI_SEQ_REGS-1] = 1;
 
 }
 
@@ -190,14 +194,32 @@ int li_load_insns(int li_channel, li_program_t *li_program) {
     }
 
     volatile uint32_t *li_base = (volatile uint32_t *)((char *)li_va);
-    *(li_base + LI_SEQ_REGS - 1) = 0;
-    for (int i = 0; i < LI_SEQ_REGS; i++) {
-        *(li_base + i) = li_program->seq_regs[i];
+    unsigned int n = li_program->len;
+
+    for (unsigned int i = 0; i < n; i++) {
+        li_base[BRAM_IST_ADDR] = i;
+        for (unsigned int k = 0; k < LI_REG_PER_INSN; k++)
+            li_base[BRAM_IST_LO + k] = li_program->seq_regs[i * LI_REG_PER_INSN + k];
+        li_base[BRAM_IST_STRB(LI_REG_PER_INSN)] = 0;
+        li_base[BRAM_IST_STRB(LI_REG_PER_INSN)] = 1;
     }
-    *(li_base + LI_SEQ_REGS + LI_CTRL_REGS - 1) = 0;
+
+    for (unsigned int j = 0; j < n; j++) {
+        li_base[BRAM_PCST_ADDR] = j;
+        li_base[BRAM_PCST]      = j;
+        li_base[BRAM_PCST_STRB] = 0;
+        li_base[BRAM_PCST_STRB] = 1;
+    }
+
+    li_base[BRAM_ITERS(LI_REG_PER_INSN)] = li_program->repeat;
+    li_base[BRAM_DEPTH(LI_REG_PER_INSN)] = n - 1;
+    li_base[BRAM_START(LI_REG_PER_INSN)] = 0;
+    li_base[BRAM_START(LI_REG_PER_INSN)] = 1;
+
+    *(li_base + LI_BRAM_SEQ_REGS + LI_CTRL_REGS - 1) = 0;
     for (int i = 0; i < LI_CTRL_REGS; i++) {
         if (li_program->ctrl_regs[i] != -1)
-            *(li_base + LI_SEQ_REGS + i) = li_program->ctrl_regs[i];
+            *(li_base + LI_BRAM_SEQ_REGS + i) = li_program->ctrl_regs[i];
     }
 
 #if EXE
@@ -231,11 +253,11 @@ int li_read_regs(int li_channel, uint32_t *seq_regs, uint32_t *ctrl_regs) {
 
     volatile uint32_t *li_base = (volatile uint32_t *)((char *)li_va);
 
-    for (int i = 0; i < LI_SEQ_REGS; i++) {
+    for (int i = 0; i < LI_BRAM_SEQ_REGS; i++) {
         seq_regs[i] = *(li_base + i);
     }
     for (int i = 0; i < LI_CTRL_REGS; i++) {
-        ctrl_regs[i] = *(li_base + LI_SEQ_REGS + i);
+        ctrl_regs[i] = *(li_base + LI_BRAM_SEQ_REGS + i);
     }
 
     munmap(li_va, 0x1000);
