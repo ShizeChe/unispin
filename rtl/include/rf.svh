@@ -11,8 +11,8 @@ parameter RF_CORDIC_STAGES=15;
 parameter RF_CORDIC_PAD_ZEROS=8;
 
 parameter RF_ITER_WIDTH=20;
-parameter RF_DEPTH=16;
-parameter RF_PC_ADDR_WIDTH=4;
+parameter RF_DEPTH=512;
+parameter RF_PC_ADDR_WIDTH=12;
 parameter RF_REG_PER_INSN=(RF_INSN_WIDTH+31)/32;
 parameter RF_SEQ_REGS=RF_REG_PER_INSN+11;
 parameter RF_CTRL_REGS=2;

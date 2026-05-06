@@ -5,8 +5,8 @@ parameter LI_NUM_SAMPLE_WIDTH=20;
 parameter LI_STRIDE_WIDTH=18;
 parameter LI_INSN_WIDTH=LI_NUM_SAMPLE_WIDTH*2+LI_STRIDE_WIDTH+4;
 parameter LI_ITER_WIDTH=20;
-parameter LI_DEPTH=16;
-parameter LI_PC_ADDR_WIDTH=4;
+parameter LI_DEPTH=512;
+parameter LI_PC_ADDR_WIDTH=12;
 parameter LI_ADC_WIDTH=16;
 
 parameter LI_IQ_WIDTH=14;
