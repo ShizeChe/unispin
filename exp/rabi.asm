@@ -7,12 +7,12 @@
 
 .program dc0                   # program for DC channel 0
 .repeat 100                    # this program repeats 100 times
-    lvl v=1.5 t=2us (arm)        # output 0V for 2us
-    lvl v=1.6 t=15us             # output 1V for 15us
-    lvl v=1.7 t=2us              # output 2V for 2us
+    lvl v=0 t=2us (arm)        # output 0V for 2us
+    lvl v=1 t=15us             # output 1V for 15us
+    lvl v=2 t=2us              # output 2V for 2us
     idl t=8ns (t+8ns)         # idle for 12ns, and increment the duration by 8ns every iteration
-    lvl v=1.6 t=10us             # output 1V for 10us
-    lvl v=1.5 t=2us              # output 0V for 2us
+    lvl v=1 t=10us             # output 1V for 10us
+    lvl v=0.5 t=2us              # output 0V for 2us
 
 .program li0                   # program for LI (lockin-in) channel 0
 .repeat 100                    # this program repeats 100 times

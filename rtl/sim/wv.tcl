@@ -120,7 +120,7 @@ wvCollapseGroup -win $nw "launch/LCH/start"
 wvCollapseGroup -win $nw "launch/LCH"
 wvCollapseGroup -win $nw "launch"
 
-for {set ch 23} {$ch >= 0} {incr ch -1} {
+for {set ch 0} {$ch >= 0} {incr ch -1} {
 
     wvSelectGroup -win $nw {dc}
     wvAddSubGroup -win $nw "ch$ch"
@@ -309,7 +309,7 @@ for {set ch 23} {$ch >= 0} {incr ch -1} {
 
 }
 
-for {set ch 23} {$ch >= 0} {incr ch -1} {
+for {set ch 0} {$ch >= 0} {incr ch -1} {
 
     wvCollapseGroup -win $nw "dc/ch$ch/AXIL_REGS/aw"
     wvCollapseGroup -win $nw "dc/ch$ch/AXIL_REGS/w"
@@ -342,7 +342,7 @@ for {set ch 23} {$ch >= 0} {incr ch -1} {
 
 wvCollapseGroup -win $nw "dc"
 
-for {set ch 5} {$ch >= 0} {incr ch -1} {
+for {set ch 0} {$ch >= 0} {incr ch -1} {
 
     wvSelectGroup -win $nw {rf}
     wvAddSubGroup -win $nw "ch$ch"
@@ -452,6 +452,15 @@ for {set ch 5} {$ch >= 0} {incr ch -1} {
 
     wvSelectGroup -win $nw "rf/ch$ch/CORE"
     wvAddSubGroup -win $nw "phase"
+
+    for {set i 1} {$i >= 0} {incr i -1} {
+        wvSelectGroup -win $nw "rf/ch$ch/CORE"
+        wvAddSubGroup -win $nw "buffer$i"
+        wvSetPosition -win $nw [format {("rf/ch%d/CORE/buffer%d" 0)} $ch $i]
+        wvAddSignal -win $nw "/simulator/PROCESSOR/RF_GEN\[$ch\]/RF/CORE/b\[$i\]" \
+    }
+
+    wvSelectGroup -win $nw "rf/ch$ch/CORE"
     wvAddSubGroup -win $nw "decode"
 
     wvSetPosition -win $nw [format {("rf/ch%d/CORE" 0)} $ch]
@@ -463,6 +472,14 @@ for {set ch 5} {$ch >= 0} {incr ch -1} {
 
     wvSetPosition -win $nw [format {("rf/ch%d/CORE/decode" 0)} $ch]
     wvAddSignal -win $nw "/simulator/PROCESSOR/RF_GEN\[$ch\]/RF/CORE/d" \
+                         "/simulator/PROCESSOR/RF_GEN\[$ch\]/RF/CORE/i_empty" \
+                         "/simulator/PROCESSOR/RF_GEN\[$ch\]/RF/CORE/o_next" \
+                         "/simulator/PROCESSOR/RF_GEN\[$ch\]/RF/CORE/i_addr" \
+                         "/simulator/PROCESSOR/RF_GEN\[$ch\]/RF/CORE/i_insn" \
+                         "/simulator/PROCESSOR/RF_GEN\[$ch\]/RF/CORE/o_insn_modified"
+
+    wvSetPosition -win $nw [format {("rf/ch%d/CORE/buffer" 0)} $ch]
+    wvAddSignal -win $nw "/simulator/PROCESSOR/RF_GEN\[$ch\]/RF/CORE/b" \
                          "/simulator/PROCESSOR/RF_GEN\[$ch\]/RF/CORE/i_empty" \
                          "/simulator/PROCESSOR/RF_GEN\[$ch\]/RF/CORE/o_next" \
                          "/simulator/PROCESSOR/RF_GEN\[$ch\]/RF/CORE/i_addr" \
@@ -546,7 +563,7 @@ for {set ch 5} {$ch >= 0} {incr ch -1} {
 
 }
 
-for {set ch 5} {$ch >= 0} {incr ch -1} {
+for {set ch 0} {$ch >= 0} {incr ch -1} {
 
     wvCollapseGroup -win $nw "rf/ch$ch/AXIL_REGS/aw"
     wvCollapseGroup -win $nw "rf/ch$ch/AXIL_REGS/w"
@@ -560,6 +577,9 @@ for {set ch 5} {$ch >= 0} {incr ch -1} {
     wvCollapseGroup -win $nw "rf/ch$ch/SEQ"
 
     wvCollapseGroup -win $nw "rf/ch$ch/CORE/decode"
+    for {set i 0} {$i <= 1} {incr i 1} {
+        wvCollapseGroup -win $nw "rf/ch$ch/CORE/buffer$i"
+    }
     wvCollapseGroup -win $nw "rf/ch$ch/CORE/phase"
     for {set i 0} {$i <= 15} {incr i 1} {
         wvCollapseGroup -win $nw "rf/ch$ch/CORE/cordic$i"
@@ -582,7 +602,7 @@ for {set ch 5} {$ch >= 0} {incr ch -1} {
 wvCollapseGroup -win $nw "rf"
 
 # li
-for {set ch 1} {$ch >= 0} {incr ch -1} {
+for {set ch 0} {$ch >= 0} {incr ch -1} {
 
     wvSelectGroup -win $nw {li}
     wvAddSubGroup -win $nw "ch$ch"
@@ -746,7 +766,7 @@ for {set ch 1} {$ch >= 0} {incr ch -1} {
 
 }
 
-for {set ch 1} {$ch >= 0} {incr ch -1} {
+for {set ch 0} {$ch >= 0} {incr ch -1} {
 
     wvCollapseGroup -win $nw "li/ch$ch/AXIL_REGS/aw"
     wvCollapseGroup -win $nw "li/ch$ch/AXIL_REGS/w"
@@ -910,7 +930,7 @@ for {set ch 1} {$ch >= 0} {incr ch -1} {
 
 }
 
-for {set ch 1} {$ch >= 0} {incr ch -1} {
+for {set ch 0} {$ch >= 0} {incr ch -1} {
 
     wvCollapseGroup -win $nw "ex/ch$ch/AXIL_REGS/aw"
     wvCollapseGroup -win $nw "ex/ch$ch/AXIL_REGS/w"

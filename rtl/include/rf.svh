@@ -17,6 +17,7 @@ parameter RF_REG_PER_INSN=(RF_INSN_WIDTH+31)/32;
 parameter RF_SEQ_REGS=RF_REG_PER_INSN+11;
 parameter RF_CTRL_REGS=2;
 parameter RF_STATUS_REGS=RF_REG_PER_INSN+4;
+parameter RF_BUFFER_STAGES=2;
 
 parameter RF_NCO_FREQ_WIDTH=48;
 parameter RF_NCO_PHASE_WIDTH=18;
@@ -55,6 +56,19 @@ typedef struct {
     logic w_set_phasor;
     logic w_marker;
 } rf_decode_stg_t;
+
+typedef struct {
+    logic [$clog2(RF_DEPTH)-1:0] r_addr;
+    logic r_valid;
+    logic [RF_KBC_WIDTH-1:0] r_k;
+    logic [RF_KBC_WIDTH-1:0] r_b;
+    logic [RF_KBC_WIDTH-1:0] r_c;
+    logic [RF_NUM_SAMPLE_WIDTH-1:0] r_samples;
+    logic r_arm;
+    logic r_idle;
+    logic r_set_phasor;
+    logic r_marker;
+} rf_buffer_stg_t;
 
 typedef struct {
     logic [$clog2(RF_DEPTH)-1:0] r_addr;
