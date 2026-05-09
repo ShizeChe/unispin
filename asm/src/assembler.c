@@ -16,6 +16,7 @@
 #include <fcntl.h>
 #include <termios.h>
 #include <inttypes.h>
+#include <sys/mman.h>
 
 static int line_empty(char *s) {
     while (isspace((unsigned char)*s))
@@ -1258,95 +1259,371 @@ static int parse_u32_optarg(const char *s, uint32_t *out)
     return 1;
 }
 
-static void inspect_regs() {
+// ---- disassembler helpers ----
 
-    uint32_t dc_seq_regs[DC_BRAM_SEQ_REGS];
-    uint32_t dc_ctrl_regs[DC_CTRL_REGS];
+static void fmt_ns(double ns, char *buf, size_t sz) {
+    if      (ns >= 1e9) snprintf(buf, sz, "%.3fs",  ns * 1e-9);
+    else if (ns >= 1e6) snprintf(buf, sz, "%.3fms", ns * 1e-6);
+    else if (ns >= 1e3) snprintf(buf, sz, "%.3fus", ns * 1e-3);
+    else                snprintf(buf, sz, "%.0fns", ns);
+}
 
-    uint32_t rf_seq_regs[RF_BRAM_SEQ_REGS];
-    uint32_t rf_ctrl_regs[RF_CTRL_REGS];
+// Build " (flag1 flag2 ... extra)" into buf, or "" if nothing to show.
+static void build_opts(char *buf, size_t sz,
+                       int arm, int sticky_arm, int marker, const char *extra) {
+    const char *flags[3];
+    int nf = 0;
+    if (arm)        flags[nf++] = "arm";
+    if (sticky_arm) flags[nf++] = "sticky_arm";
+    if (marker)     flags[nf++] = "marker";
+    if (nf == 0 && (!extra || !extra[0])) { buf[0] = '\0'; return; }
 
-    uint32_t li_seq_regs[LI_BRAM_SEQ_REGS];
-    uint32_t li_ctrl_regs[LI_CTRL_REGS];
+    snprintf(buf, sz, " (");
+    for (int i = 0; i < nf; i++) {
+        strncat(buf, flags[i], sz - strlen(buf) - 1);
+        if (i < nf - 1 || (extra && extra[0]))
+            strncat(buf, " ", sz - strlen(buf) - 1);
+    }
+    if (extra && extra[0])
+        strncat(buf, extra, sz - strlen(buf) - 1);
+    strncat(buf, ")", sz - strlen(buf) - 1);
+}
 
-    uint32_t ex_seq_regs[EX_BRAM_SEQ_REGS];
-    uint32_t launch_regs[LAUNCH_TOTAL_REGS];
+typedef void (*disasm_fn_t)(const uint32_t *w, char *buf, size_t sz);
 
-    for (int ch = 0; ch < DC_CHANNELS; ch++) {
+// DC: 3-word instruction
+// reg[0] = iters[9:0]<<17 | spi_din[23:7]
+// reg[1] = spi_din[6:0]<<25 | dspi_din<<5 | spi_rd<<4 | strb_ldac<<3 | hold_cycles[29:27]
+// reg[2] = hold_cycles[26:0]<<5 | modify<<4 | arm<<3 | sticky_arm<<2 | idle<<1 | marker
+static void disasm_dc(const uint32_t *r, char *buf, size_t sz) {
+    uint32_t iters       = r[0] >> 17;
+    uint32_t spi_din     = ((r[0] & 0x1FFFFu) << 7) | (r[1] >> 25);
+    uint32_t dspi_din    = (r[1] >> 5) & 0xFFFFFu;
+    uint32_t spi_rd      = (r[1] >> 4) & 1u;
+    uint32_t strb_ldac   = (r[1] >> 3) & 1u;
+    uint32_t hold_cycles = ((r[1] & 0x7u) << 27) | (r[2] >> 5);
+    uint32_t modify      = (r[2] >> 4) & 1u;
+    uint32_t arm         = (r[2] >> 3) & 1u;
+    uint32_t sticky_arm  = (r[2] >> 2) & 1u;
+    uint32_t idle        = (r[2] >> 1) & 1u;
+    uint32_t marker      = r[2] & 1u;
 
-        dc_read_regs(ch, dc_seq_regs, dc_ctrl_regs);
-        printf("dc%d\n", ch);
+    char tbuf[32];
+    fmt_ns((double)(hold_cycles + 1u) * 4.0, tbuf, sizeof(tbuf));
 
-        printf("\tseq regs:\n");
-        for (int i = 0; i < DC_BRAM_SEQ_REGS; i++) {
-            printf("\t\t%08" PRIX32 "\n", dc_seq_regs[i]);
+    char extra[32] = "";
+    if (modify) snprintf(extra, sizeof(extra), "modify");
+    char opts[96];
+    build_opts(opts, sizeof(opts), (int)arm, (int)sticky_arm, (int)marker, extra);
+
+    if (idle) {
+        snprintf(buf, sz, "%s t=%s%s",
+                 (strb_ldac || spi_rd) ? "ful" : "idl", tbuf, opts);
+    } else if (iters > 0 && strb_ldac) {
+        uint32_t v1_code = spi_din & 0xFFFFFu;
+        int32_t  dv      = (dspi_din & (1u << 19))
+                           ? (int32_t)(dspi_din | 0xFFF00000u) : (int32_t)dspi_din;
+        uint32_t v2_code = (uint32_t)((int32_t)v1_code + (int32_t)iters * dv) & 0xFFFFFu;
+        double v1 = (double)twos2real(VMIN, VMAX, DC_DAC_BITS, v1_code);
+        double v2 = (double)twos2real(VMIN, VMAX, DC_DAC_BITS, v2_code);
+        snprintf(buf, sz, "swp v1=%.4fV v2=%.4fV n=%u t=%s%s",
+                 v1, v2, iters + 1u, tbuf, opts);
+    } else if (strb_ldac && !((spi_din >> 23) & 1u)) {
+        double v = (double)twos2real(VMIN, VMAX, DC_DAC_BITS, spi_din & 0xFFFFFu);
+        snprintf(buf, sz, "lvl v=%.4fV t=%s%s", v, tbuf, opts);
+    } else if ((spi_din >> 23) & 1u) {
+        snprintf(buf, sz, "get r=%u t=%s%s", (spi_din >> 20) & 0x7u, tbuf, opts);
+    } else if (spi_din != 0) {
+        snprintf(buf, sz, "set r=%u din=0x%05X t=%s%s",
+                 (spi_din >> 20) & 0x7u, spi_din & 0xFFFFFu, tbuf, opts);
+    } else {
+        snprintf(buf, sz, "nop t=%s%s", tbuf, opts);
+    }
+}
+
+// RF: 4-word instruction
+// insn[116:96] in reg[0][20:0]: arm[20] sticky_arm[19] kbc_mode[18:17] kbc1[35:19][16:0]
+// reg[1]: kbc1[18:0][31:13] kbc2[35:23][12:0]
+// reg[2]: kbc2[22:0][31:9] samples[19:11][8:0]
+// reg[3]: samples[10:0][31:21] dsamples[20:1] marker[0]
+static void disasm_rf(const uint32_t *r, char *buf, size_t sz) {
+    uint32_t arm        = (r[0] >> 20) & 1u;
+    uint32_t sticky_arm = (r[0] >> 19) & 1u;
+    uint32_t kbc_mode   = (r[0] >> 17) & 3u;
+    uint64_t kbc1       = ((uint64_t)(r[0] & 0x1FFFFu) << 19) | ((uint64_t)r[1] >> 13);
+    uint64_t kbc2       = ((uint64_t)(r[1] & 0x1FFFu) << 23) | ((uint64_t)r[2] >> 9);
+    uint32_t samples    = ((r[2] & 0x1FFu) << 11) | (r[3] >> 21);
+    uint32_t dsamples   = (r[3] >> 1) & 0xFFFFFu;
+    uint32_t marker     = r[3] & 1u;
+
+    char tbuf[32];
+    fmt_ns((double)samples * RF_NS_PER_SAMPLE, tbuf, sizeof(tbuf));
+    char extra[48] = "";
+    if (dsamples) {
+        char dtbuf[32];
+        fmt_ns((double)dsamples * RF_NS_PER_SAMPLE, dtbuf, sizeof(dtbuf));
+        snprintf(extra, sizeof(extra), "t+%s", dtbuf);
+    }
+    char opts[96];
+    build_opts(opts, sizeof(opts), (int)arm, (int)sticky_arm, (int)marker, extra);
+
+    switch (kbc_mode) {
+        case 3:
+            snprintf(buf, sz, "idl t=%s%s", tbuf, opts);
+            break;
+        case 2: {
+            long double phs = twos2real(-180.0L,
+                                        180.0L - ldexpl(1.0L, -RF_KBC_BITS),
+                                        RF_KBC_BITS, kbc2);
+            snprintf(buf, sz, "ply phs=%.2f t=%s%s", (double)phs, tbuf, opts);
+            break;
         }
+        case 1:
+            snprintf(buf, sz, "chp t=%s kbc1=0x%09" PRIx64 " kbc2=0x%09" PRIx64 "%s",
+                     tbuf, kbc1, kbc2, opts);
+            break;
+        default:
+            snprintf(buf, sz, "??? kbc_mode=%u t=%s%s", kbc_mode, tbuf, opts);
+            break;
+    }
+}
 
-        printf("\tctrl regs:\n");
-        for (int i = 0; i < DC_CTRL_REGS; i++) {
-            printf("\t\t%08" PRIX32 "\n", dc_ctrl_regs[i]);
-        }
-        printf("\n");
+// LI: 2-word instruction
+// reg[0]: arm[29] sticky_arm[28] idle[27] marker[26] samples[25:6] dsamples[19:14][5:0]
+// reg[1]: dsamples[13:0][31:18] stride[17:0]
+static void disasm_li(const uint32_t *r, char *buf, size_t sz) {
+    uint32_t arm        = (r[0] >> 29) & 1u;
+    uint32_t sticky_arm = (r[0] >> 28) & 1u;
+    uint32_t idle       = (r[0] >> 27) & 1u;
+    uint32_t marker     = (r[0] >> 26) & 1u;
+    uint32_t samples    = (r[0] >> 6) & 0xFFFFFu;
+    uint32_t dsamples   = ((r[0] & 0x3Fu) << 14) | (r[1] >> 18);
+    uint32_t stride     = r[1] & 0x3FFFFu;
 
+    char extra[48] = "";
+    if (dsamples) {
+        char dtbuf[32];
+        fmt_ns((double)dsamples * LI_NS_PER_SAMPLE, dtbuf, sizeof(dtbuf));
+        snprintf(extra, sizeof(extra), "t+%s", dtbuf);
+    }
+    char opts[96];
+    build_opts(opts, sizeof(opts), (int)arm, (int)sticky_arm, (int)marker, extra);
+
+    if (idle) {
+        char tbuf[32];
+        fmt_ns((double)samples * LI_NS_PER_SAMPLE, tbuf, sizeof(tbuf));
+        snprintf(buf, sz, "idl t=%s%s", tbuf, opts);
+    } else {
+        char tbuf[32];
+        fmt_ns((double)samples * (double)stride * LI_NS_PER_SAMPLE, tbuf, sizeof(tbuf));
+        snprintf(buf, sz, "sam n=%u t=%s%s", samples, tbuf, opts);
+    }
+}
+
+// EX: 2-word instruction
+// reg[0]: arm[24] sticky_arm[23] real[22:9] samples[19:11][8:0]
+// reg[1]: samples[10:0][31:21] dsamples[20:1] marker[0]
+static void disasm_ex(const uint32_t *r, char *buf, size_t sz) {
+    uint32_t arm        = (r[0] >> 24) & 1u;
+    uint32_t sticky_arm = (r[0] >> 23) & 1u;
+    uint32_t real_u     = (r[0] >> 9) & 0x3FFFu;
+    uint32_t samples    = ((r[0] & 0x1FFu) << 11) | (r[1] >> 21);
+    uint32_t dsamples   = (r[1] >> 1) & 0xFFFFFu;
+    uint32_t marker     = r[1] & 1u;
+
+    char tbuf[32];
+    fmt_ns((double)samples * EX_NS_PER_SAMPLE, tbuf, sizeof(tbuf));
+    char extra[48] = "";
+    if (dsamples) {
+        char dtbuf[32];
+        fmt_ns((double)dsamples * EX_NS_PER_SAMPLE, dtbuf, sizeof(dtbuf));
+        snprintf(extra, sizeof(extra), "t+%s", dtbuf);
+    }
+    char opts[96];
+    build_opts(opts, sizeof(opts), (int)arm, (int)sticky_arm, (int)marker, extra);
+
+    double v = (double)twos2real((long double)EX_VMIN, (long double)EX_VMAX,
+                                 EX_REAL_BITS, real_u);
+    if (real_u == 0 && !arm && !sticky_arm && !marker && !dsamples)
+        snprintf(buf, sz, "idl t=%s", tbuf);
+    else
+        snprintf(buf, sz, "lvl v=%.4fV t=%s%s", v, tbuf, opts);
+}
+
+// ---- channel inspector ----
+
+// Read PCMEM and IMEM via strobe mechanism, disassemble and print program + status regs.
+// n        = REG_PER_INSN for the channel type
+// ctrl_cnt = number of ctrl regs (0 for EX)
+// stat_cnt = number of status regs (DC_STATUS_REGS etc.)
+// is_li    = 1 to print LI-specific samples_lost / samples_inbuf fields
+// disasm   = per-type disassembly function
+static int inspect_channel_uio(int uio_num, int n, int ctrl_cnt,
+                                int stat_cnt, const char *label, int is_li,
+                                disasm_fn_t disasm) {
+
+    char path[32];
+    snprintf(path, sizeof(path), "/dev/uio%d", uio_num);
+
+    int fd = open(path, O_RDWR);
+    if (fd < 0) {
+        fprintf(stderr, "open(%s): %s\n", path, strerror(errno));
+        return 1;
     }
 
-    for (int ch = 0; ch < RF_CHANNELS; ch++) {
-
-        rf_read_regs(ch, rf_seq_regs, rf_ctrl_regs);
-        printf("rf%d\n", ch);
-
-        printf("\tseq regs:\n");
-        for (int i = 0; i < RF_BRAM_SEQ_REGS; i++) {
-            printf("\t\t%08" PRIX32 "\n", rf_seq_regs[i]);
-        }
-
-        printf("\tctrl regs:\n");
-        for (int i = 0; i < RF_CTRL_REGS; i++) {
-            printf("\t\t%08" PRIX32 "\n", rf_ctrl_regs[i]);
-        }
-        printf("\n");
-
+    void *va = mmap(NULL, 0x1000, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
+    if (va == MAP_FAILED) {
+        fprintf(stderr, "mmap(%s): %s\n", path, strerror(errno));
+        close(fd);
+        return 1;
     }
 
-    for (int ch = 0; ch < LI_CHANNELS; ch++) {
+    volatile uint32_t *base   = (volatile uint32_t *)va;
+    int                sb     = BRAM_SEQ_TOTAL(n) + ctrl_cnt; // status base offset
+    volatile uint32_t *status = base + sb;
 
-        li_read_regs(ch, li_seq_regs, li_ctrl_regs);
-        printf("li%d\n", ch);
+    // Status reg layout (uniform across all types):
+    //   [0..n-1]  insn_rd
+    //   [n]       pc_rd
+    //   [n+1]     iters
+    //   [n+2]     pcmem_depth
+    //   [n+3]     flags  bit[1]=armed  bit[0]=empty
+    // LI additionally:
+    //   [n+4]     samples_lost
+    //   [n+5]     samples_inbuf
 
-        printf("\tseq regs:\n");
-        for (int i = 0; i < LI_BRAM_SEQ_REGS; i++) {
-            printf("\t\t%08" PRIX32 "\n", li_seq_regs[i]);
-        }
+    uint32_t depth  = base[BRAM_DEPTH(n)];
+    uint32_t nsteps = depth + 1;
+    if (nsteps > 4096) nsteps = 4096;
 
-        printf("\tctrl regs:\n");
-        for (int i = 0; i < LI_CTRL_REGS; i++) {
-            printf("\t\t%08" PRIX32 "\n", li_ctrl_regs[i]);
-        }
-        printf("\n");
+    uint32_t flags = status[n + 3];
+    uint32_t iters = status[n + 1];
 
+    printf("%s:\n", label);
+    printf("  depth:  %u (%u steps)\n", depth, nsteps);
+    printf("  iters:  %u\n",  iters);
+    printf("  armed:  %u\n",  (flags >> 1) & 1u);
+    printf("  empty:  %u\n",  flags & 1u);
+
+    uint32_t *pc_seq    = NULL;
+    uint32_t *insn_cache = NULL;
+    uint8_t  *fetched   = NULL;
+    int       ret       = 0;
+
+    pc_seq     = malloc(nsteps * sizeof(uint32_t));
+    insn_cache = calloc((size_t)512 * n, sizeof(uint32_t));
+    fetched    = calloc(512, 1);
+
+    if (!pc_seq || !insn_cache || !fetched) {
+        fprintf(stderr, "malloc failed\n");
+        ret = 1;
+        goto done;
     }
 
-    for (int ch = 0; ch < EX_CHANNELS; ch++) {
+    // Read PCMEM: for each sequential address, strobe PCLD and capture pc_rd
+    for (uint32_t addr = 0; addr < nsteps; addr++) {
+        base[BRAM_PCST_ADDR]    = addr;
+        base[BRAM_PCLD_STRB(n)] = 0;
+        base[BRAM_PCLD_STRB(n)] = 1;
+        pc_seq[addr] = (uint32_t)status[n];  // PC_RD is at index n
+    }
 
-        ex_read_regs(ch, ex_seq_regs);
-        printf("ex%d\n", ch);
-
-        printf("\tseq regs:\n");
-        for (int i = 0; i < EX_BRAM_SEQ_REGS; i++) {
-            printf("\t\t%08" PRIX32 "\n", ex_seq_regs[i]);
+    // Fetch each unique instruction from IMEM
+    for (uint32_t addr = 0; addr < nsteps; addr++) {
+        uint32_t pc = pc_seq[addr] & 0x1FF;  // 9 bits, max 512
+        if (!fetched[pc]) {
+            base[BRAM_IST_ADDR]    = pc;
+            base[BRAM_ILD_STRB(n)] = 0;
+            base[BRAM_ILD_STRB(n)] = 1;
+            for (int k = 0; k < n; k++)
+                insn_cache[pc * n + k] = (uint32_t)status[k];  // INSN_RD at [0..n-1]
+            fetched[pc] = 1;
         }
-        printf("\n");
-
     }
 
-    launch_read_regs(launch_regs);
-    printf("launch\n");
-    printf("\tregs:\n");
-    for (int i = 0; i < LAUNCH_TOTAL_REGS; i++) {
-        printf("\t\t%08" PRIX32 "\n", launch_regs[i]);
+    printf("  program:\n");
+    for (uint32_t addr = 0; addr < nsteps; addr++) {
+        uint32_t pc = pc_seq[addr] & 0x1FF;
+        char asm_buf[128] = "???";
+        disasm(&insn_cache[pc * n], asm_buf, sizeof(asm_buf));
+        printf("    [%u] pc=%u: %s\n", addr, pc, asm_buf);
     }
-    printf("\n");
-    
+
+    printf("  status:\n");
+    for (int k = 0; k < n; k++)
+        printf("    insn_rd[%d]:   %08" PRIX32 "\n", k, (uint32_t)status[k]);
+    printf("    pc_rd:        %08" PRIX32 "\n", (uint32_t)status[n]);
+    printf("    iters:        %08" PRIX32 "\n", (uint32_t)status[n + 1]);
+    printf("    pcmem_depth:  %08" PRIX32 "\n", (uint32_t)status[n + 2]);
+    printf("    flags:        %08" PRIX32 " (armed=%u empty=%u)\n",
+           (uint32_t)status[n + 3], (flags >> 1) & 1u, flags & 1u);
+    if (is_li && stat_cnt > n + 4) {
+        printf("    samples_lost:  %08" PRIX32 "\n", (uint32_t)status[n + 4]);
+        if (stat_cnt > n + 5)
+            printf("    samples_inbuf: %08" PRIX32 "\n", (uint32_t)status[n + 5]);
+    }
+
+done:
+    free(pc_seq);
+    free(insn_cache);
+    free(fetched);
+    munmap(va, 0x1000);
+    close(fd);
+    return ret;
+
+}
+
+static int inspect_named_channel(const char *name) {
+
+    if (strncmp(name, "dc", 2) == 0) {
+        int ch = atoi(name + 2);
+        if (ch < 0 || ch >= DC_CHANNELS) {
+            fprintf(stderr, "dc channel must be 0..%d\n", DC_CHANNELS - 1);
+            return 1;
+        }
+        char label[16];
+        snprintf(label, sizeof(label), "dc%d", ch);
+        return inspect_channel_uio(dc_uio_map[ch], DC_REG_PER_INSN,
+                                   DC_CTRL_REGS, DC_STATUS_REGS, label, 0, disasm_dc);
+
+    } else if (strncmp(name, "rf", 2) == 0) {
+        int ch = atoi(name + 2);
+        if (ch < 0 || ch >= RF_CHANNELS) {
+            fprintf(stderr, "rf channel must be 0..%d\n", RF_CHANNELS - 1);
+            return 1;
+        }
+        char label[16];
+        snprintf(label, sizeof(label), "rf%d", ch);
+        return inspect_channel_uio(rf_uio_map[ch], RF_REG_PER_INSN,
+                                   RF_CTRL_REGS, RF_STATUS_REGS, label, 0, disasm_rf);
+
+    } else if (strncmp(name, "li", 2) == 0) {
+        int ch = atoi(name + 2);
+        if (ch < 0 || ch >= LI_CHANNELS) {
+            fprintf(stderr, "li channel must be 0..%d\n", LI_CHANNELS - 1);
+            return 1;
+        }
+        char label[16];
+        snprintf(label, sizeof(label), "li%d", ch);
+        return inspect_channel_uio(li_uio_map[ch], LI_REG_PER_INSN,
+                                   LI_CTRL_REGS, LI_STATUS_REGS, label, 1, disasm_li);
+
+    } else if (strncmp(name, "ex", 2) == 0) {
+        int ch = atoi(name + 2);
+        if (ch < 0 || ch >= EX_CHANNELS) {
+            fprintf(stderr, "ex channel must be 0..%d\n", EX_CHANNELS - 1);
+            return 1;
+        }
+        char label[16];
+        snprintf(label, sizeof(label), "ex%d", ch);
+        return inspect_channel_uio(ex_uio_map[ch], EX_REG_PER_INSN,
+                                   0, EX_STATUS_REGS, label, 0, disasm_ex);
+
+    } else {
+        fprintf(stderr, "unknown channel '%s' (use dc<n>, rf<n>, li<n>, ex<n>)\n", name);
+        return 1;
+    }
+
 }
 
 int main(int argc, char *argv[]) {
@@ -1404,7 +1681,8 @@ int main(int argc, char *argv[]) {
                 }
                 break;
             default:
-                fprintf(stderr, "Usage: %s [-f file] [-o out] [-s] [-x] [-w wdev] [-r rdev] [-t addr]\n", argv[0]);
+                fprintf(stderr, "Usage: %s [-f file] [-o out] [-s] [-x] [-w wdev] [-r ch] [-t addr]\n"
+                            "  -r ch   read channel (e.g. rf3, dc0, li1, ex0); with -u reads via UART\n", argv[0]);
                 return 1;
         }
     }
@@ -1542,7 +1820,7 @@ int main(int argc, char *argv[]) {
             read_uart_regs(rfd);
             close(rfd);
         } else {
-            inspect_regs();
+            inspect_named_channel(rdev);
         }
     }
 

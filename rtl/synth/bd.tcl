@@ -522,7 +522,7 @@ proc create_root_design { parentCell } {
   set o_nco_ctrl_regs3 [ create_bd_port -dir O -from 223 -to 0 o_nco_ctrl_regs3 ]
   set o_nco_ctrl_regs4 [ create_bd_port -dir O -from 223 -to 0 o_nco_ctrl_regs4 ]
   set i_lch_status_regs [ create_bd_port -dir I -from 31 -to 0 i_lch_status_regs ]
-  set o_lch_ctrl_regs [ create_bd_port -dir O -from 191 -to 0 o_lch_ctrl_regs ]
+  set o_lch_ctrl_regs [ create_bd_port -dir O -from 255 -to 0 o_lch_ctrl_regs ]
   set o_li_samples_lost0 [ create_bd_port -dir O -from 31 -to 0 o_li_samples_lost0 ]
   set o_li_samples_inbuf0 [ create_bd_port -dir O -from 7 -to 0 o_li_samples_inbuf0 ]
   set o_li_samples_lost1 [ create_bd_port -dir O -from 31 -to 0 o_li_samples_lost1 ]
@@ -1583,7 +1583,11 @@ Port;FD4A0000;FD4AFFFF;0|FPD;DPDMA;FD4C0000;FD4CFFFF;0|FPD;DDR_XMPU5_CFG;FD05000
      catch {common::send_gid_msg -ssname BD::TCL -id 2096 -severity "ERROR" "Unable to referenced block <$block_name>. Please add the files for ${block_name}'s definition into the project."}
      return 1
    }
-    set_property CONFIG.ADDR_BASE {0xA0022000} $launch_regs_0
+    set_property -dict [list \
+    CONFIG.ADDR_BASE {0xA0022000} \
+    CONFIG.NUM_CTRL_REGS {8} \
+    CONFIG.NUM_STATUS_REGS {2} \
+  ] $launch_regs_0
 
 
   # Create interface connections
@@ -1915,7 +1919,6 @@ Port;FD4A0000;FD4AFFFF;0|FPD;DPDMA;FD4C0000;FD4CFFFF;0|FPD;DDR_XMPU5_CFG;FD05000
   [get_bd_pins usp_rf_data_converter_0/s3_axis_aresetn] \
   [get_bd_pins li_axi_write_0/s_axi_aresetn] \
   [get_bd_pins li_axi_write_1/s_axi_aresetn] \
-  [get_bd_pins dc_regs_0/s_axi_aresetn] \
   [get_bd_pins dc_regs_10/s_axi_aresetn] \
   [get_bd_pins dc_regs_11/s_axi_aresetn] \
   [get_bd_pins dc_regs_12/s_axi_aresetn] \
@@ -1926,7 +1929,6 @@ Port;FD4A0000;FD4AFFFF;0|FPD;DPDMA;FD4C0000;FD4CFFFF;0|FPD;DDR_XMPU5_CFG;FD05000
   [get_bd_pins dc_regs_17/s_axi_aresetn] \
   [get_bd_pins dc_regs_18/s_axi_aresetn] \
   [get_bd_pins dc_regs_19/s_axi_aresetn] \
-  [get_bd_pins dc_regs_1/s_axi_aresetn] \
   [get_bd_pins dc_regs_20/s_axi_aresetn] \
   [get_bd_pins dc_regs_21/s_axi_aresetn] \
   [get_bd_pins dc_regs_22/s_axi_aresetn] \
@@ -1949,6 +1951,8 @@ Port;FD4A0000;FD4AFFFF;0|FPD;DPDMA;FD4C0000;FD4CFFFF;0|FPD;DDR_XMPU5_CFG;FD05000
   [get_bd_pins li_regs_1/s_axi_aresetn] \
   [get_bd_pins ex_regs_0/s_axi_aresetn] \
   [get_bd_pins ex_regs_1/s_axi_aresetn] \
+  [get_bd_pins dc_regs_1/s_axi_aresetn] \
+  [get_bd_pins dc_regs_0/s_axi_aresetn] \
   [get_bd_pins launch_regs_0/s_axi_aresetn]
   connect_bd_net -net rf_regs_0_o_ctrl_regs  [get_bd_pins rf_regs_0/o_ctrl_regs] \
   [get_bd_ports o_rf_ctrl_regs0]
@@ -1988,7 +1992,6 @@ Port;FD4A0000;FD4AFFFF;0|FPD;DPDMA;FD4C0000;FD4CFFFF;0|FPD;DDR_XMPU5_CFG;FD05000
   [get_bd_pins usp_rf_data_converter_0/s3_axis_aclk] \
   [get_bd_pins li_axi_write_0/s_axi_aclk] \
   [get_bd_pins li_axi_write_1/s_axi_aclk] \
-  [get_bd_pins dc_regs_0/s_axi_aclk] \
   [get_bd_pins dc_regs_10/s_axi_aclk] \
   [get_bd_pins dc_regs_11/s_axi_aclk] \
   [get_bd_pins dc_regs_12/s_axi_aclk] \
@@ -1999,7 +2002,6 @@ Port;FD4A0000;FD4AFFFF;0|FPD;DPDMA;FD4C0000;FD4CFFFF;0|FPD;DDR_XMPU5_CFG;FD05000
   [get_bd_pins dc_regs_17/s_axi_aclk] \
   [get_bd_pins dc_regs_18/s_axi_aclk] \
   [get_bd_pins dc_regs_19/s_axi_aclk] \
-  [get_bd_pins dc_regs_1/s_axi_aclk] \
   [get_bd_pins dc_regs_20/s_axi_aclk] \
   [get_bd_pins dc_regs_21/s_axi_aclk] \
   [get_bd_pins dc_regs_22/s_axi_aclk] \
@@ -2022,6 +2024,8 @@ Port;FD4A0000;FD4AFFFF;0|FPD;DPDMA;FD4C0000;FD4CFFFF;0|FPD;DDR_XMPU5_CFG;FD05000
   [get_bd_pins li_regs_1/s_axi_aclk] \
   [get_bd_pins ex_regs_0/s_axi_aclk] \
   [get_bd_pins ex_regs_1/s_axi_aclk] \
+  [get_bd_pins dc_regs_1/s_axi_aclk] \
+  [get_bd_pins dc_regs_0/s_axi_aclk] \
   [get_bd_pins launch_regs_0/s_axi_aclk]
   connect_bd_net -net zynq_ultra_ps_e_0_pl_clk0  [get_bd_pins zynq_ultra_ps_e_0/pl_clk0] \
   [get_bd_pins smartconnect_0/aclk1] \

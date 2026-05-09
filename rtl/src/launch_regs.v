@@ -2,8 +2,8 @@
 `timescale 1ns / 1ps
 
 module launch_regs
-   #(parameter NUM_CTRL_REGS=6,
-     parameter NUM_STATUS_REGS=1,
+   #(parameter NUM_CTRL_REGS=8,
+     parameter NUM_STATUS_REGS=2,
      parameter ADDR_WIDTH=$clog2(NUM_CTRL_REGS+NUM_STATUS_REGS)+2,
      parameter [31:0] ADDR_BASE=32'hA0000000)
     (input  wire s_axi_aclk,

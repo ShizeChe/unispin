@@ -30,6 +30,7 @@
 #define LI_SEQ_REGS (LI_DEPTH * LI_REG_PER_INSN)
 #define LI_BRAM_SEQ_REGS BRAM_SEQ_TOTAL(LI_REG_PER_INSN)
 #define LI_CTRL_REGS 4
+#define LI_STATUS_REGS (LI_REG_PER_INSN + 6)
 
 static const int li_uio_map[LI_CHANNELS] = {31, 32};
 

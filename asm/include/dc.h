@@ -26,6 +26,7 @@
 #define DC_SEQ_REGS (DC_DEPTH * DC_REG_PER_INSN)
 #define DC_BRAM_SEQ_REGS BRAM_SEQ_TOTAL(DC_REG_PER_INSN)
 #define DC_CTRL_REGS 5
+#define DC_STATUS_REGS (DC_REG_PER_INSN + 4)
 
 static const int dc_uio_map[DC_CHANNELS] = {
     4, 5, 16, 21, 22, 23, 24, 25, 26, 27, 6, 7, 

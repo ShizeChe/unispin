@@ -101,12 +101,7 @@ module pl
      output logic o_gled4, o_gled5, o_gled6, o_gled7,
     
      output logic o_bled0, o_bled1, o_bled2, o_bled3,
-     output logic o_bled4, o_bled5, o_bled6, o_bled7,
-    
-     input  logic i_btn_w,
-     
-     input  logic i_rx,
-     output logic o_tx);
+     output logic o_bled4, o_bled5, o_bled6, o_bled7);
      
     localparam NUM_DC_CHANNEL=24;
     localparam NUM_RF_CHANNEL=6;
@@ -595,10 +590,7 @@ module pl
 
         // launch
         .i_lch_ctrl_regs(w_lch_ctrl_regs),
-        .o_lch_status_regs(w_lch_status_regs),
-        
-        // button
-        .i_btn(i_btn_w)
+        .o_lch_status_regs(w_lch_status_regs)
     );
 
     assign w_li_QIx8_bus[0] = {

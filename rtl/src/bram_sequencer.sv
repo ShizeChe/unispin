@@ -273,7 +273,7 @@ module bram_sequencer
         .i_clk_b(i_clk),
         .i_wr_b(1'b0),
         .i_addr_b(w_imem_rd_addr),
-        .i_din_b(),
+        .i_din_b('h0),
         .o_dout_b(o.w_insn)
     );
 

@@ -116,10 +116,7 @@ module processor
 
      // launch mmio registers
      input  logic [0:LCH_CTRL_REGS-1][31:0] i_lch_ctrl_regs,
-     output logic [0:LCH_STATUS_REGS-1][31:0] o_lch_status_regs,
-
-     // user button press
-     input  logic i_btn);
+     output logic [0:LCH_STATUS_REGS-1][31:0] o_lch_status_regs);
 
     /****************************
     * status reg index localparams
@@ -337,8 +334,6 @@ module processor
     * launch connections
     ********************/
 
-    logic w_trigger;
-
     launch #(
         .NUM_DC_CHANNEL(NUM_DC_CHANNEL),
         .NUM_RF_CHANNEL(NUM_RF_CHANNEL),
@@ -356,7 +351,7 @@ module processor
         .i_li_armed(w_li_armed_bus),
         .i_ex_armed(w_ex_armed_bus),
 
-        .i_trigger(w_trigger),
+        .i_trigger(1'b1),
 
         .o_dc_start(w_dc_start_bus),
         .o_rf_start(w_rf_start_bus),
@@ -439,19 +434,5 @@ module processor
             end
         end
     end
-
-    /********************
-    * button for trigger
-    ********************/
-
-    button_detector #(
-        .NUM_CYCLES(NUM_DEBOUNCE_CYCLES),
-        .NUM_BUTTONS(1)
-    ) BTN (
-        .i_clk(i_clk),
-        .i_rst(i_rst),
-        .i_btn(i_btn),
-        .o_pressed(w_trigger)
-    );
 
 endmodule

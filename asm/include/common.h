@@ -24,6 +24,8 @@
 #define BRAM_DEPTH(n)       (6 + (n))
 #define BRAM_START(n)       (7 + (n))
 #define BRAM_HALT(n)        (8 + (n))
+#define BRAM_PCLD_STRB(n)   (9 + (n))
+#define BRAM_ILD_STRB(n)    (10 + (n))
 #define BRAM_SEQ_TOTAL(n)   (11 + (n))
 
 void print_binary(FILE *f, uint32_t value);
