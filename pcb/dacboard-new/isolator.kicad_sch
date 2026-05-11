@@ -1,0 +1,176 @@
+(kicad_sch
+	(version 20250114)
+	(generator "eeschema")
+	(generator_version "9.0")
+	(uuid "af0b110a-081c-4221-9b9c-b357d19298d4")
+	(paper "A4")
+	(lib_symbols)
+	(sheet
+		(at 101.6 63.5)
+		(size 25.4 25.4)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(stroke
+			(width 0.1524)
+			(type solid)
+		)
+		(fill
+			(color 0 0 0 0.0000)
+		)
+		(uuid "00e7da0a-ab88-4f71-b526-2b6a13d48ae6")
+		(property "Sheetname" "isolator1-6"
+			(at 101.6 62.7884 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left bottom)
+			)
+		)
+		(property "Sheetfile" "isolator1-6.kicad_sch"
+			(at 101.6 89.4846 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+			)
+		)
+		(instances
+			(project "dacboard"
+				(path "/35cb74e4-0f64-454b-9b50-bfac13ed28a5/aa29c8cf-30d3-42fb-af9f-76a3f2cfb7cd"
+					(page "14")
+				)
+			)
+		)
+	)
+	(sheet
+		(at 101.6 96.52)
+		(size 25.4 25.4)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(stroke
+			(width 0.1524)
+			(type solid)
+		)
+		(fill
+			(color 0 0 0 0.0000)
+		)
+		(uuid "0e2fa09d-8c8f-45a8-9297-00db6f764e5f")
+		(property "Sheetname" "isolator7-12"
+			(at 101.6 95.8084 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left bottom)
+			)
+		)
+		(property "Sheetfile" "isolator7-12.kicad_sch"
+			(at 101.6 122.5046 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+			)
+		)
+		(instances
+			(project "dacboard"
+				(path "/35cb74e4-0f64-454b-9b50-bfac13ed28a5/aa29c8cf-30d3-42fb-af9f-76a3f2cfb7cd"
+					(page "15")
+				)
+			)
+		)
+	)
+	(sheet
+		(at 134.62 63.5)
+		(size 25.4 25.4)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(stroke
+			(width 0.1524)
+			(type solid)
+		)
+		(fill
+			(color 0 0 0 0.0000)
+		)
+		(uuid "927e4a45-4c7c-4594-96ca-93b437b33ec1")
+		(property "Sheetname" "isolator13-18"
+			(at 134.62 62.7884 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left bottom)
+			)
+		)
+		(property "Sheetfile" "isolator13-18.kicad_sch"
+			(at 134.62 89.4846 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+			)
+		)
+		(instances
+			(project "dacboard"
+				(path "/35cb74e4-0f64-454b-9b50-bfac13ed28a5/aa29c8cf-30d3-42fb-af9f-76a3f2cfb7cd"
+					(page "16")
+				)
+			)
+		)
+	)
+	(sheet
+		(at 134.62 96.52)
+		(size 25.4 25.4)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(stroke
+			(width 0.1524)
+			(type solid)
+		)
+		(fill
+			(color 0 0 0 0.0000)
+		)
+		(uuid "bbc9cb59-bcf7-4c15-be5a-67595b0f7df7")
+		(property "Sheetname" "isolator19-24"
+			(at 134.62 95.8084 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left bottom)
+			)
+		)
+		(property "Sheetfile" "isolator19-24.kicad_sch"
+			(at 134.62 122.5046 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+			)
+		)
+		(instances
+			(project "dacboard"
+				(path "/35cb74e4-0f64-454b-9b50-bfac13ed28a5/aa29c8cf-30d3-42fb-af9f-76a3f2cfb7cd"
+					(page "17")
+				)
+			)
+		)
+	)
+)
