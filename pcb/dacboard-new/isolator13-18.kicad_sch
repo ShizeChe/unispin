@@ -944,28 +944,6 @@
 			)
 		)
 	)
-	(global_label "DAC14_SDO"
-		(shape input)
-		(at 118.11 99.06 0)
-		(fields_autoplaced yes)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left)
-		)
-		(uuid "0513b10d-c79b-49e5-a1a3-75c06361339d")
-		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 131.9204 99.06 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-				(hide yes)
-			)
-		)
-	)
 	(global_label "LDAC_N_CH17"
 		(shape input)
 		(at 176.53 86.36 180)
@@ -1089,6 +1067,28 @@
 		(uuid "1984ed18-3f6e-4db1-8a79-db73f6766e94")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
 			(at 231.948 91.44 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+				(hide yes)
+			)
+		)
+	)
+	(global_label "DAC14_SDO"
+		(shape input)
+		(at 118.11 99.06 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "20026d50-2f2a-4f69-ac99-10bd7a9f20b2")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 131.9204 99.06 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1270,6 +1270,28 @@
 					(size 1.27 1.27)
 				)
 				(justify left)
+				(hide yes)
+			)
+		)
+	)
+	(global_label "MISO_CH13"
+		(shape output)
+		(at 77.47 58.42 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "39b8579b-7ee7-4cf4-bc52-ffbf9bae2dea")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 63.9015 58.42 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
 				(hide yes)
 			)
 		)
@@ -1736,6 +1758,28 @@
 			)
 		)
 	)
+	(global_label "DAC13_SDO"
+		(shape input)
+		(at 118.11 58.42 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "95b8b42f-d7b9-41d9-a414-8cf416b228cf")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 131.9204 58.42 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+				(hide yes)
+			)
+		)
+	)
 	(global_label "DAC16_SDIN"
 		(shape output)
 		(at 217.17 48.26 0)
@@ -1802,28 +1846,6 @@
 			)
 		)
 	)
-	(global_label "MISO_CH14"
-		(shape output)
-		(at 77.47 99.06 180)
-		(fields_autoplaced yes)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right)
-		)
-		(uuid "c11fdebd-e7bd-4f66-8c2b-56c28963e759")
-		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 63.9015 99.06 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify right)
-				(hide yes)
-			)
-		)
-	)
 	(global_label "DAC13_SYNC_N"
 		(shape output)
 		(at 118.11 53.34 0)
@@ -1864,28 +1886,6 @@
 					(size 1.27 1.27)
 				)
 				(justify left)
-				(hide yes)
-			)
-		)
-	)
-	(global_label "MISO_CH13"
-		(shape output)
-		(at 77.47 58.42 180)
-		(fields_autoplaced yes)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right)
-		)
-		(uuid "c733f0da-8e24-44b7-813e-dff13cf98a18")
-		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 63.9015 58.42 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify right)
 				(hide yes)
 			)
 		)
@@ -1952,6 +1952,28 @@
 					(size 1.27 1.27)
 				)
 				(justify left)
+				(hide yes)
+			)
+		)
+	)
+	(global_label "MISO_CH14"
+		(shape output)
+		(at 77.47 99.06 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "cdc95dcb-5309-4c7a-bfc8-8d01ef48070b")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 63.9015 99.06 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
 				(hide yes)
 			)
 		)
@@ -2150,28 +2172,6 @@
 					(size 1.27 1.27)
 				)
 				(justify right)
-				(hide yes)
-			)
-		)
-	)
-	(global_label "DAC13_SDO"
-		(shape input)
-		(at 118.11 58.42 0)
-		(fields_autoplaced yes)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left)
-		)
-		(uuid "f2ca3aef-9dd6-4a44-949d-437a6fed84d0")
-		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 131.9204 58.42 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
 				(hide yes)
 			)
 		)
