@@ -3579,6 +3579,118 @@
 			)
 			(embedded_fonts no)
 		)
+		(symbol "power:GNDD"
+			(power)
+			(pin_numbers
+				(hide yes)
+			)
+			(pin_names
+				(offset 0)
+				(hide yes)
+			)
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(property "Reference" "#PWR"
+				(at 0 -6.35 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Value" "GNDD"
+				(at 0 -3.175 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Footprint" ""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Datasheet" ""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Description" "Power symbol creates a global label with name \"GNDD\" , digital ground"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "ki_keywords" "global power"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(symbol "GNDD_0_1"
+				(rectangle
+					(start -1.27 -1.524)
+					(end 1.27 -2.032)
+					(stroke
+						(width 0.254)
+						(type default)
+					)
+					(fill
+						(type outline)
+					)
+				)
+				(polyline
+					(pts
+						(xy 0 0) (xy 0 -1.524)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+			)
+			(symbol "GNDD_1_1"
+				(pin power_in line
+					(at 0 0 270)
+					(length 0)
+					(name "~"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+			)
+			(embedded_fonts no)
+		)
 	)
 	(junction
 		(at 200.66 99.06)
@@ -4011,6 +4123,38 @@
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "fae66c5d-1e37-49b5-9502-02d5c1571f43")
+	)
+	(no_connect
+		(at 228.6 139.7)
+		(uuid "0140fddd-440a-4b4c-9cb6-241dcb3c1c7d")
+	)
+	(no_connect
+		(at 231.14 139.7)
+		(uuid "06b47c83-c641-4581-a726-48dffe70f14f")
+	)
+	(no_connect
+		(at 233.68 156.21)
+		(uuid "0ad005e9-2d63-4685-99ba-9f642c68897f")
+	)
+	(no_connect
+		(at 233.68 139.7)
+		(uuid "7de27988-5821-4ac2-96b5-21db02441c18")
+	)
+	(no_connect
+		(at 231.14 156.21)
+		(uuid "86dabd77-e112-47be-85a1-ecabc3840b28")
+	)
+	(no_connect
+		(at 228.6 156.21)
+		(uuid "ba3e6297-7ce4-4194-bb2a-2b42c7fb8b15")
+	)
+	(no_connect
+		(at 236.22 156.21)
+		(uuid "c3989516-2cad-4a47-9792-b7a960f793b9")
+	)
+	(no_connect
+		(at 236.22 139.7)
+		(uuid "ef9fd147-5568-41cb-9abf-fd68d8472e13")
 	)
 	(no_connect
 		(at 45.72 96.52)
@@ -6082,7 +6226,7 @@
 				)
 			)
 		)
-		(property "Footprint" "RFPC-SMA28-F:GRADCONN_RFPC-SMA28-F"
+		(property "Footprint" "dacboard-new:RFPC-SMA28-F"
 			(at 148.59 54.61 0)
 			(effects
 				(font
@@ -6245,73 +6389,6 @@
 		)
 	)
 	(symbol
-		(lib_id "power:GND")
-		(at 143.51 152.4 0)
-		(mirror y)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(uuid "03ea8952-fd1b-4f2f-8762-8fe4aaa4856e")
-		(property "Reference" "#PWR0553"
-			(at 143.51 158.75 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Value" "AGND"
-			(at 136.652 153.924 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify right)
-			)
-		)
-		(property "Footprint" ""
-			(at 143.51 152.4 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" ""
-			(at 143.51 152.4 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
-			(at 143.51 152.4 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "1"
-			(uuid "e0f0c2ea-749b-466c-8849-9330a4793bfd")
-		)
-		(instances
-			(project "dacboard"
-				(path "/35cb74e4-0f64-454b-9b50-bfac13ed28a5/7ae8c1dd-5c28-4985-bc49-d575e389aef0/4adb754a-2b3d-4d25-87ee-782eac5fb207"
-					(reference "#PWR0553")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
 		(lib_id "RFPC-SMA28-F:RFPC-SMA28-F")
 		(at 173.99 109.22 0)
 		(unit 1)
@@ -6337,7 +6414,7 @@
 				)
 			)
 		)
-		(property "Footprint" "RFPC-SMA28-F:GRADCONN_RFPC-SMA28-F"
+		(property "Footprint" "dacboard-new:RFPC-SMA28-F"
 			(at 173.99 109.22 0)
 			(effects
 				(font
@@ -6494,6 +6571,71 @@
 			(project "dacboard"
 				(path "/35cb74e4-0f64-454b-9b50-bfac13ed28a5/7ae8c1dd-5c28-4985-bc49-d575e389aef0/4adb754a-2b3d-4d25-87ee-782eac5fb207"
 					(reference "J19")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "power:GNDD")
+		(at 52.07 181.61 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "055aa233-178a-4042-a6db-0da6c4be85bf")
+		(property "Reference" "#PWR0547"
+			(at 52.07 187.96 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "DGND"
+			(at 52.07 185.42 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 52.07 181.61 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 52.07 181.61 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Power symbol creates a global label with name \"GNDD\" , digital ground"
+			(at 52.07 181.61 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "0a7b0045-ad85-4e08-a717-18a8392ef8d7")
+		)
+		(instances
+			(project "dacboard"
+				(path "/35cb74e4-0f64-454b-9b50-bfac13ed28a5/7ae8c1dd-5c28-4985-bc49-d575e389aef0/4adb754a-2b3d-4d25-87ee-782eac5fb207"
+					(reference "#PWR0547")
 					(unit 1)
 				)
 			)
@@ -6659,7 +6801,7 @@
 				)
 			)
 		)
-		(property "Footprint" "RFPC-SMA28-F:GRADCONN_RFPC-SMA28-F"
+		(property "Footprint" "dacboard-new:RFPC-SMA28-F"
 			(at 198.12 93.98 0)
 			(effects
 				(font
@@ -6822,73 +6964,6 @@
 		)
 	)
 	(symbol
-		(lib_id "power:GND")
-		(at 52.07 151.13 0)
-		(mirror y)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(uuid "0d0a4602-cb99-409d-adf6-b770935e7871")
-		(property "Reference" "#PWR0545"
-			(at 52.07 157.48 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Value" "AGND"
-			(at 45.212 152.654 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify right)
-			)
-		)
-		(property "Footprint" ""
-			(at 52.07 151.13 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" ""
-			(at 52.07 151.13 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
-			(at 52.07 151.13 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "1"
-			(uuid "f1d5644c-f75f-43c3-9ce2-41e3b2111bd7")
-		)
-		(instances
-			(project "dacboard"
-				(path "/35cb74e4-0f64-454b-9b50-bfac13ed28a5/7ae8c1dd-5c28-4985-bc49-d575e389aef0/4adb754a-2b3d-4d25-87ee-782eac5fb207"
-					(reference "#PWR0545")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
 		(lib_id "RFPC-SMA28-F:RFPC-SMA28-F")
 		(at 223.52 111.76 0)
 		(unit 1)
@@ -6914,7 +6989,7 @@
 				)
 			)
 		)
-		(property "Footprint" "RFPC-SMA28-F:GRADCONN_RFPC-SMA28-F"
+		(property "Footprint" "dacboard-new:RFPC-SMA28-F"
 			(at 223.52 111.76 0)
 			(effects
 				(font
@@ -7077,44 +7152,43 @@
 		)
 	)
 	(symbol
-		(lib_id "power:GND")
-		(at 52.07 181.61 0)
-		(mirror y)
+		(lib_id "RFPC-SMA28-F:RFPC-SMA28-F")
+		(at 226.06 151.13 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
-		(uuid "12ce32b8-8a8c-4782-9d9d-054095baf33e")
-		(property "Reference" "#PWR0547"
-			(at 52.07 187.96 0)
+		(fields_autoplaced yes)
+		(uuid "0ed235fb-d820-49da-8e07-12e83b8b00b1")
+		(property "Reference" "J71"
+			(at 229.5271 144.78 0)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
-				(hide yes)
 			)
 		)
-		(property "Value" "AGND"
-			(at 45.212 183.134 0)
+		(property "Value" "RFPC-SMA28-F"
+			(at 229.5271 147.32 0)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
-				(justify right)
 			)
 		)
-		(property "Footprint" ""
-			(at 52.07 181.61 0)
+		(property "Footprint" "dacboard-new:RFPC-SMA28-F"
+			(at 226.06 151.13 0)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
+				(justify bottom)
 				(hide yes)
 			)
 		)
 		(property "Datasheet" ""
-			(at 52.07 181.61 0)
+			(at 226.06 151.13 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7122,22 +7196,144 @@
 				(hide yes)
 			)
 		)
-		(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
-			(at 52.07 181.61 0)
+		(property "Description" ""
+			(at 226.06 151.13 0)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
 				(hide yes)
 			)
+		)
+		(property "DigiKey_Part_Number" "2073-RFPC-SMA28-F-ND"
+			(at 226.06 151.13 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify bottom)
+				(hide yes)
+			)
+		)
+		(property "SnapEDA_Link" "https://www.snapeda.com/parts/RFPC-SMA28-F/GradConn/view-part/?ref=snap"
+			(at 226.06 151.13 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify bottom)
+				(hide yes)
+			)
+		)
+		(property "MAXIMUM_PACKAGE_HEIGHT" "9.8mm"
+			(at 226.06 151.13 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify bottom)
+				(hide yes)
+			)
+		)
+		(property "Package" "None"
+			(at 226.06 151.13 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify bottom)
+				(hide yes)
+			)
+		)
+		(property "Check_prices" "https://www.snapeda.com/parts/RFPC-SMA28-F/GradConn/view-part/?ref=eda"
+			(at 226.06 151.13 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify bottom)
+				(hide yes)
+			)
+		)
+		(property "STANDARD" "Manufacturer Recommendations"
+			(at 226.06 151.13 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify bottom)
+				(hide yes)
+			)
+		)
+		(property "PARTREV" "1.0"
+			(at 226.06 151.13 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify bottom)
+				(hide yes)
+			)
+		)
+		(property "MF" "GradConn"
+			(at 226.06 151.13 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify bottom)
+				(hide yes)
+			)
+		)
+		(property "MP" "RFPC-SMA28-F"
+			(at 226.06 151.13 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify bottom)
+				(hide yes)
+			)
+		)
+		(property "Description_1" "SMA Connector Jack, Female Socket 50 Ohms Panel Mount, Through Hole Solder"
+			(at 226.06 151.13 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify bottom)
+				(hide yes)
+			)
+		)
+		(property "MANUFACTURER" "GradConn"
+			(at 226.06 151.13 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify bottom)
+				(hide yes)
+			)
+		)
+		(pin "G1"
+			(uuid "bbf3b9ef-4f58-4223-8baa-59d74b9654f1")
+		)
+		(pin "G3"
+			(uuid "92334327-1a8e-40a1-b342-9cc4350d49ea")
+		)
+		(pin "G4"
+			(uuid "b37b94c9-87e5-4efd-96a3-2664ac64231b")
 		)
 		(pin "1"
-			(uuid "1c7e3437-5327-4360-98cb-1adc03e3ff5c")
+			(uuid "3c497029-622d-40df-8ed0-69c5ff023a41")
+		)
+		(pin "G2"
+			(uuid "3a9feef0-ca84-4164-990e-56c25053e23e")
 		)
 		(instances
 			(project "dacboard"
 				(path "/35cb74e4-0f64-454b-9b50-bfac13ed28a5/7ae8c1dd-5c28-4985-bc49-d575e389aef0/4adb754a-2b3d-4d25-87ee-782eac5fb207"
-					(reference "#PWR0547")
+					(reference "J71")
 					(unit 1)
 				)
 			)
@@ -7303,7 +7499,7 @@
 				)
 			)
 		)
-		(property "Footprint" "RFPC-SMA28-F:GRADCONN_RFPC-SMA28-F"
+		(property "Footprint" "dacboard-new:RFPC-SMA28-F"
 			(at 198.12 111.76 0)
 			(effects
 				(font
@@ -7466,73 +7662,6 @@
 		)
 	)
 	(symbol
-		(lib_id "power:GND")
-		(at 96.52 168.91 0)
-		(mirror y)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(uuid "2b63d77c-c347-4df0-af49-eddcde788840")
-		(property "Reference" "#PWR0550"
-			(at 96.52 175.26 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Value" "AGND"
-			(at 89.662 170.434 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify right)
-			)
-		)
-		(property "Footprint" ""
-			(at 96.52 168.91 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" ""
-			(at 96.52 168.91 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
-			(at 96.52 168.91 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "1"
-			(uuid "19d0cd32-6f32-42f5-924e-69e78e8c25bd")
-		)
-		(instances
-			(project "dacboard"
-				(path "/35cb74e4-0f64-454b-9b50-bfac13ed28a5/7ae8c1dd-5c28-4985-bc49-d575e389aef0/4adb754a-2b3d-4d25-87ee-782eac5fb207"
-					(reference "#PWR0550")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
 		(lib_id "RFPC-SMA28-F:RFPC-SMA28-F")
 		(at 102.87 72.39 0)
 		(unit 1)
@@ -7558,7 +7687,7 @@
 				)
 			)
 		)
-		(property "Footprint" "RFPC-SMA28-F:GRADCONN_RFPC-SMA28-F"
+		(property "Footprint" "dacboard-new:RFPC-SMA28-F"
 			(at 102.87 72.39 0)
 			(effects
 				(font
@@ -7855,6 +7984,138 @@
 		)
 	)
 	(symbol
+		(lib_id "power:GND")
+		(at 228.6 151.13 90)
+		(mirror x)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "3c9d359f-2bb9-44a4-a732-7a2c6625f4c1")
+		(property "Reference" "#PWR0566"
+			(at 234.95 151.13 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "AGND"
+			(at 232.41 153.416 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(property "Footprint" ""
+			(at 228.6 151.13 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 228.6 151.13 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
+			(at 228.6 151.13 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "9c4c93da-59c6-46ac-adb9-badc12983604")
+		)
+		(instances
+			(project "dacboard"
+				(path "/35cb74e4-0f64-454b-9b50-bfac13ed28a5/7ae8c1dd-5c28-4985-bc49-d575e389aef0/4adb754a-2b3d-4d25-87ee-782eac5fb207"
+					(reference "#PWR0566")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "power:GNDD")
+		(at 143.51 182.88 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "3e5ae046-8f8c-465f-a2f0-7149eb614a83")
+		(property "Reference" "#PWR0555"
+			(at 143.51 189.23 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "DGND"
+			(at 143.51 186.69 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 143.51 182.88 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 143.51 182.88 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Power symbol creates a global label with name \"GNDD\" , digital ground"
+			(at 143.51 182.88 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "f6936a64-6719-4663-9ead-23b997258d54")
+		)
+		(instances
+			(project "dacboard"
+				(path "/35cb74e4-0f64-454b-9b50-bfac13ed28a5/7ae8c1dd-5c28-4985-bc49-d575e389aef0/4adb754a-2b3d-4d25-87ee-782eac5fb207"
+					(reference "#PWR0555")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
 		(lib_id "RFPC-SMA28-F:RFPC-SMA28-F")
 		(at 172.72 54.61 0)
 		(unit 1)
@@ -7880,7 +8141,7 @@
 				)
 			)
 		)
-		(property "Footprint" "RFPC-SMA28-F:GRADCONN_RFPC-SMA28-F"
+		(property "Footprint" "dacboard-new:RFPC-SMA28-F"
 			(at 172.72 54.61 0)
 			(effects
 				(font
@@ -8110,17 +8371,16 @@
 		)
 	)
 	(symbol
-		(lib_id "power:GND")
-		(at 143.51 168.91 0)
-		(mirror y)
+		(lib_id "power:GNDD")
+		(at 52.07 151.13 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
-		(uuid "540fdfb5-6dec-479c-be86-eff7afdd59dd")
-		(property "Reference" "#PWR0554"
-			(at 143.51 175.26 0)
+		(uuid "53897696-8cc0-4663-83bf-f51f8869375e")
+		(property "Reference" "#PWR0545"
+			(at 52.07 157.48 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -8128,17 +8388,16 @@
 				(hide yes)
 			)
 		)
-		(property "Value" "AGND"
-			(at 136.652 170.434 0)
+		(property "Value" "DGND"
+			(at 52.07 154.94 0)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
-				(justify right)
 			)
 		)
 		(property "Footprint" ""
-			(at 143.51 168.91 0)
+			(at 52.07 151.13 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -8147,7 +8406,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 143.51 168.91 0)
+			(at 52.07 151.13 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -8155,8 +8414,8 @@
 				(hide yes)
 			)
 		)
-		(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
-			(at 143.51 168.91 0)
+		(property "Description" "Power symbol creates a global label with name \"GNDD\" , digital ground"
+			(at 52.07 151.13 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -8165,12 +8424,142 @@
 			)
 		)
 		(pin "1"
-			(uuid "de39426e-d6c2-4e1c-8c5d-b8a967ee2990")
+			(uuid "a6b2b18a-7ecb-48db-bb6f-4f5829a78506")
 		)
 		(instances
 			(project "dacboard"
 				(path "/35cb74e4-0f64-454b-9b50-bfac13ed28a5/7ae8c1dd-5c28-4985-bc49-d575e389aef0/4adb754a-2b3d-4d25-87ee-782eac5fb207"
-					(reference "#PWR0554")
+					(reference "#PWR0545")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "power:GNDD")
+		(at 52.07 167.64 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "54451519-eadf-4e65-ac52-cd6b86b600a6")
+		(property "Reference" "#PWR0546"
+			(at 52.07 173.99 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "DGND"
+			(at 52.07 171.45 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 52.07 167.64 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 52.07 167.64 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Power symbol creates a global label with name \"GNDD\" , digital ground"
+			(at 52.07 167.64 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "b4983406-c5e8-4ec5-8832-06a1680649ef")
+		)
+		(instances
+			(project "dacboard"
+				(path "/35cb74e4-0f64-454b-9b50-bfac13ed28a5/7ae8c1dd-5c28-4985-bc49-d575e389aef0/4adb754a-2b3d-4d25-87ee-782eac5fb207"
+					(reference "#PWR0546")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "power:GNDD")
+		(at 96.52 182.88 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "56af098b-ceb5-4624-9520-787c8bd4c2d3")
+		(property "Reference" "#PWR0551"
+			(at 96.52 189.23 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "DGND"
+			(at 96.52 186.69 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 96.52 182.88 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 96.52 182.88 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Power symbol creates a global label with name \"GNDD\" , digital ground"
+			(at 96.52 182.88 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "4d7418ee-a66e-4918-824c-4cd480cbb44b")
+		)
+		(instances
+			(project "dacboard"
+				(path "/35cb74e4-0f64-454b-9b50-bfac13ed28a5/7ae8c1dd-5c28-4985-bc49-d575e389aef0/4adb754a-2b3d-4d25-87ee-782eac5fb207"
+					(reference "#PWR0551")
 					(unit 1)
 				)
 			)
@@ -8238,6 +8627,194 @@
 			(project "dacboard"
 				(path "/35cb74e4-0f64-454b-9b50-bfac13ed28a5/7ae8c1dd-5c28-4985-bc49-d575e389aef0/4adb754a-2b3d-4d25-87ee-782eac5fb207"
 					(reference "#PWR0499")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "RFPC-SMA28-F:RFPC-SMA28-F")
+		(at 226.06 134.62 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "594b1ac2-ff66-4f1b-a23b-4de3f0e2a67d")
+		(property "Reference" "J70"
+			(at 229.5271 128.27 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "RFPC-SMA28-F"
+			(at 229.5271 130.81 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" "dacboard-new:RFPC-SMA28-F"
+			(at 226.06 134.62 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify bottom)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 226.06 134.62 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 226.06 134.62 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "DigiKey_Part_Number" "2073-RFPC-SMA28-F-ND"
+			(at 226.06 134.62 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify bottom)
+				(hide yes)
+			)
+		)
+		(property "SnapEDA_Link" "https://www.snapeda.com/parts/RFPC-SMA28-F/GradConn/view-part/?ref=snap"
+			(at 226.06 134.62 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify bottom)
+				(hide yes)
+			)
+		)
+		(property "MAXIMUM_PACKAGE_HEIGHT" "9.8mm"
+			(at 226.06 134.62 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify bottom)
+				(hide yes)
+			)
+		)
+		(property "Package" "None"
+			(at 226.06 134.62 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify bottom)
+				(hide yes)
+			)
+		)
+		(property "Check_prices" "https://www.snapeda.com/parts/RFPC-SMA28-F/GradConn/view-part/?ref=eda"
+			(at 226.06 134.62 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify bottom)
+				(hide yes)
+			)
+		)
+		(property "STANDARD" "Manufacturer Recommendations"
+			(at 226.06 134.62 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify bottom)
+				(hide yes)
+			)
+		)
+		(property "PARTREV" "1.0"
+			(at 226.06 134.62 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify bottom)
+				(hide yes)
+			)
+		)
+		(property "MF" "GradConn"
+			(at 226.06 134.62 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify bottom)
+				(hide yes)
+			)
+		)
+		(property "MP" "RFPC-SMA28-F"
+			(at 226.06 134.62 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify bottom)
+				(hide yes)
+			)
+		)
+		(property "Description_1" "SMA Connector Jack, Female Socket 50 Ohms Panel Mount, Through Hole Solder"
+			(at 226.06 134.62 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify bottom)
+				(hide yes)
+			)
+		)
+		(property "MANUFACTURER" "GradConn"
+			(at 226.06 134.62 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify bottom)
+				(hide yes)
+			)
+		)
+		(pin "G1"
+			(uuid "64cd2faf-f4cb-49f9-858c-ac586a66843c")
+		)
+		(pin "G3"
+			(uuid "d3b8f613-e62c-4a7e-b618-ff334b66ec9e")
+		)
+		(pin "G4"
+			(uuid "8981038f-33c2-4c00-8c70-ae3e988d1bfb")
+		)
+		(pin "1"
+			(uuid "1a540387-d6d6-415f-b073-a6c92a43f5ea")
+		)
+		(pin "G2"
+			(uuid "1733643e-801d-44c2-bfd6-3efe94b36b5f")
+		)
+		(instances
+			(project "dacboard"
+				(path "/35cb74e4-0f64-454b-9b50-bfac13ed28a5/7ae8c1dd-5c28-4985-bc49-d575e389aef0/4adb754a-2b3d-4d25-87ee-782eac5fb207"
+					(reference "J70")
 					(unit 1)
 				)
 			)
@@ -8406,7 +8983,7 @@
 				)
 			)
 		)
-		(property "Footprint" "RFPC-SMA28-F:GRADCONN_RFPC-SMA28-F"
+		(property "Footprint" "dacboard-new:RFPC-SMA28-F"
 			(at 149.86 109.22 0)
 			(effects
 				(font
@@ -8639,73 +9216,6 @@
 		)
 	)
 	(symbol
-		(lib_id "power:GND")
-		(at 96.52 152.4 0)
-		(mirror y)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(uuid "70abd137-f7f3-4494-8f19-9f19a238eeb2")
-		(property "Reference" "#PWR0549"
-			(at 96.52 158.75 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Value" "AGND"
-			(at 89.662 153.924 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify right)
-			)
-		)
-		(property "Footprint" ""
-			(at 96.52 152.4 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" ""
-			(at 96.52 152.4 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
-			(at 96.52 152.4 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "1"
-			(uuid "8b68c5a2-1875-48c5-9629-bd2a4380094a")
-		)
-		(instances
-			(project "dacboard"
-				(path "/35cb74e4-0f64-454b-9b50-bfac13ed28a5/7ae8c1dd-5c28-4985-bc49-d575e389aef0/4adb754a-2b3d-4d25-87ee-782eac5fb207"
-					(reference "#PWR0549")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
 		(lib_id "RFPC-SMA28-F:RFPC-SMA28-F")
 		(at 172.72 72.39 0)
 		(unit 1)
@@ -8731,7 +9241,7 @@
 				)
 			)
 		)
-		(property "Footprint" "RFPC-SMA28-F:GRADCONN_RFPC-SMA28-F"
+		(property "Footprint" "dacboard-new:RFPC-SMA28-F"
 			(at 172.72 72.39 0)
 			(effects
 				(font
@@ -8955,6 +9465,71 @@
 			(project "dacboard"
 				(path "/35cb74e4-0f64-454b-9b50-bfac13ed28a5/7ae8c1dd-5c28-4985-bc49-d575e389aef0/4adb754a-2b3d-4d25-87ee-782eac5fb207"
 					(reference "#PWR0586")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "power:GNDD")
+		(at 52.07 134.62 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "7b121790-ffce-4615-b828-5bcc3d8bb450")
+		(property "Reference" "#PWR0544"
+			(at 52.07 140.97 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "DGND"
+			(at 52.07 138.43 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 52.07 134.62 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 52.07 134.62 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Power symbol creates a global label with name \"GNDD\" , digital ground"
+			(at 52.07 134.62 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "d84f09ff-bbdf-45ef-be92-e4e06443552b")
+		)
+		(instances
+			(project "dacboard"
+				(path "/35cb74e4-0f64-454b-9b50-bfac13ed28a5/7ae8c1dd-5c28-4985-bc49-d575e389aef0/4adb754a-2b3d-4d25-87ee-782eac5fb207"
+					(reference "#PWR0544")
 					(unit 1)
 				)
 			)
@@ -9187,7 +9762,7 @@
 				)
 			)
 		)
-		(property "Footprint" "RFPC-SMA28-F:GRADCONN_RFPC-SMA28-F"
+		(property "Footprint" "dacboard-new:RFPC-SMA28-F"
 			(at 104.14 109.22 0)
 			(effects
 				(font
@@ -9375,7 +9950,7 @@
 				)
 			)
 		)
-		(property "Footprint" "RFPC-SMA28-F:GRADCONN_RFPC-SMA28-F"
+		(property "Footprint" "dacboard-new:RFPC-SMA28-F"
 			(at 104.14 91.44 0)
 			(effects
 				(font
@@ -9705,7 +10280,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "DLS3XS6AK44X:CONN_DLS3XS6AK44X_CEC"
+		(property "Footprint" "dacboard-new:DLS3XS6AK44X"
 			(at 45.72 35.56 0)
 			(effects
 				(font
@@ -9886,6 +10461,71 @@
 		)
 	)
 	(symbol
+		(lib_id "power:GNDD")
+		(at 96.52 168.91 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "96f00cb0-2755-4a7b-9f0d-d534ac33a3d6")
+		(property "Reference" "#PWR0550"
+			(at 96.52 175.26 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "DGND"
+			(at 96.52 172.72 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 96.52 168.91 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 96.52 168.91 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Power symbol creates a global label with name \"GNDD\" , digital ground"
+			(at 96.52 168.91 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "322c1751-c6cd-4e53-a681-606a69f84279")
+		)
+		(instances
+			(project "dacboard"
+				(path "/35cb74e4-0f64-454b-9b50-bfac13ed28a5/7ae8c1dd-5c28-4985-bc49-d575e389aef0/4adb754a-2b3d-4d25-87ee-782eac5fb207"
+					(reference "#PWR0550")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
 		(lib_id "RFPC-SMA28-F:RFPC-SMA28-F")
 		(at 148.59 72.39 0)
 		(unit 1)
@@ -9911,7 +10551,7 @@
 				)
 			)
 		)
-		(property "Footprint" "RFPC-SMA28-F:GRADCONN_RFPC-SMA28-F"
+		(property "Footprint" "dacboard-new:RFPC-SMA28-F"
 			(at 148.59 72.39 0)
 			(effects
 				(font
@@ -10166,7 +10806,7 @@
 				)
 			)
 		)
-		(property "Footprint" "RFPC-SMA28-F:GRADCONN_RFPC-SMA28-F"
+		(property "Footprint" "dacboard-new:RFPC-SMA28-F"
 			(at 127 72.39 0)
 			(effects
 				(font
@@ -10329,17 +10969,16 @@
 		)
 	)
 	(symbol
-		(lib_id "power:GND")
-		(at 96.52 182.88 0)
-		(mirror y)
+		(lib_id "power:GNDD")
+		(at 96.52 152.4 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
-		(uuid "9e9d86a6-9eae-40cd-a1dd-350aaa9016cc")
-		(property "Reference" "#PWR0551"
-			(at 96.52 189.23 0)
+		(uuid "9e14cb09-3584-4aa1-8b37-31202b495b24")
+		(property "Reference" "#PWR0553"
+			(at 96.52 158.75 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -10347,17 +10986,16 @@
 				(hide yes)
 			)
 		)
-		(property "Value" "AGND"
-			(at 89.662 184.404 0)
+		(property "Value" "DGND"
+			(at 96.52 156.21 0)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
-				(justify right)
 			)
 		)
 		(property "Footprint" ""
-			(at 96.52 182.88 0)
+			(at 96.52 152.4 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -10366,7 +11004,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 96.52 182.88 0)
+			(at 96.52 152.4 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -10374,8 +11012,8 @@
 				(hide yes)
 			)
 		)
-		(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
-			(at 96.52 182.88 0)
+		(property "Description" "Power symbol creates a global label with name \"GNDD\" , digital ground"
+			(at 96.52 152.4 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -10384,12 +11022,12 @@
 			)
 		)
 		(pin "1"
-			(uuid "65fa9379-005f-4a61-8322-c1aa93a76232")
+			(uuid "6f81485b-3c43-41a2-afa9-1991ea4dcb92")
 		)
 		(instances
 			(project "dacboard"
 				(path "/35cb74e4-0f64-454b-9b50-bfac13ed28a5/7ae8c1dd-5c28-4985-bc49-d575e389aef0/4adb754a-2b3d-4d25-87ee-782eac5fb207"
-					(reference "#PWR0551")
+					(reference "#PWR0553")
 					(unit 1)
 				)
 			)
@@ -10421,7 +11059,7 @@
 				)
 			)
 		)
-		(property "Footprint" "RFPC-SMA28-F:GRADCONN_RFPC-SMA28-F"
+		(property "Footprint" "dacboard-new:RFPC-SMA28-F"
 			(at 196.85 74.93 0)
 			(effects
 				(font
@@ -10679,7 +11317,7 @@
 				)
 			)
 		)
-		(property "Footprint" "RFPC-SMA28-F:GRADCONN_RFPC-SMA28-F"
+		(property "Footprint" "dacboard-new:RFPC-SMA28-F"
 			(at 173.99 91.44 0)
 			(effects
 				(font
@@ -10867,7 +11505,7 @@
 				)
 			)
 		)
-		(property "Footprint" "RFPC-SMA28-F:GRADCONN_RFPC-SMA28-F"
+		(property "Footprint" "dacboard-new:RFPC-SMA28-F"
 			(at 102.87 54.61 0)
 			(effects
 				(font
@@ -11055,7 +11693,7 @@
 				)
 			)
 		)
-		(property "Footprint" "RFPC-SMA28-F:GRADCONN_RFPC-SMA28-F"
+		(property "Footprint" "dacboard-new:RFPC-SMA28-F"
 			(at 128.27 91.44 0)
 			(effects
 				(font
@@ -11288,140 +11926,6 @@
 		)
 	)
 	(symbol
-		(lib_id "power:GND")
-		(at 96.52 135.89 0)
-		(mirror y)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(uuid "ac567ccf-b392-4c1a-8150-4fbe9b07465e")
-		(property "Reference" "#PWR0548"
-			(at 96.52 142.24 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Value" "AGND"
-			(at 89.662 137.414 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify right)
-			)
-		)
-		(property "Footprint" ""
-			(at 96.52 135.89 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" ""
-			(at 96.52 135.89 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
-			(at 96.52 135.89 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "1"
-			(uuid "79559062-eed5-427a-a605-c9a2adb79149")
-		)
-		(instances
-			(project "dacboard"
-				(path "/35cb74e4-0f64-454b-9b50-bfac13ed28a5/7ae8c1dd-5c28-4985-bc49-d575e389aef0/4adb754a-2b3d-4d25-87ee-782eac5fb207"
-					(reference "#PWR0548")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "power:GND")
-		(at 143.51 182.88 0)
-		(mirror y)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(uuid "adbbff15-cabd-47e2-91c2-8547f9cf019a")
-		(property "Reference" "#PWR0555"
-			(at 143.51 189.23 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Value" "AGND"
-			(at 136.652 184.404 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify right)
-			)
-		)
-		(property "Footprint" ""
-			(at 143.51 182.88 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" ""
-			(at 143.51 182.88 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
-			(at 143.51 182.88 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "1"
-			(uuid "7a18e0cf-fb80-4768-8ea4-534fe8c03f15")
-		)
-		(instances
-			(project "dacboard"
-				(path "/35cb74e4-0f64-454b-9b50-bfac13ed28a5/7ae8c1dd-5c28-4985-bc49-d575e389aef0/4adb754a-2b3d-4d25-87ee-782eac5fb207"
-					(reference "#PWR0555")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
 		(lib_id "Connector:Conn_Coaxial")
 		(at 143.51 130.81 0)
 		(unit 1)
@@ -11562,17 +12066,16 @@
 		)
 	)
 	(symbol
-		(lib_id "power:GND")
-		(at 52.07 134.62 0)
-		(mirror y)
+		(lib_id "power:GNDD")
+		(at 143.51 135.89 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
-		(uuid "b32ccdf7-2192-4e5d-b8ba-4444a38a348f")
-		(property "Reference" "#PWR0544"
-			(at 52.07 140.97 0)
+		(uuid "b35013f7-db47-4046-a687-51759b2ee4b9")
+		(property "Reference" "#PWR0552"
+			(at 143.51 142.24 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -11580,17 +12083,16 @@
 				(hide yes)
 			)
 		)
-		(property "Value" "AGND"
-			(at 45.212 136.144 0)
+		(property "Value" "DGND"
+			(at 143.51 139.7 0)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
-				(justify right)
 			)
 		)
 		(property "Footprint" ""
-			(at 52.07 134.62 0)
+			(at 143.51 135.89 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -11599,7 +12101,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 52.07 134.62 0)
+			(at 143.51 135.89 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -11607,8 +12109,8 @@
 				(hide yes)
 			)
 		)
-		(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
-			(at 52.07 134.62 0)
+		(property "Description" "Power symbol creates a global label with name \"GNDD\" , digital ground"
+			(at 143.51 135.89 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -11617,12 +12119,12 @@
 			)
 		)
 		(pin "1"
-			(uuid "c7318e08-f909-4f2c-8516-31dd28c915db")
+			(uuid "8a58d261-7c11-4c22-b329-4f9b0c68595b")
 		)
 		(instances
 			(project "dacboard"
 				(path "/35cb74e4-0f64-454b-9b50-bfac13ed28a5/7ae8c1dd-5c28-4985-bc49-d575e389aef0/4adb754a-2b3d-4d25-87ee-782eac5fb207"
-					(reference "#PWR0544")
+					(reference "#PWR0552")
 					(unit 1)
 				)
 			)
@@ -11654,7 +12156,7 @@
 				)
 			)
 		)
-		(property "Footprint" "RFPC-SMA28-F:GRADCONN_RFPC-SMA28-F"
+		(property "Footprint" "dacboard-new:RFPC-SMA28-F"
 			(at 223.52 93.98 0)
 			(effects
 				(font
@@ -11912,7 +12414,7 @@
 				)
 			)
 		)
-		(property "Footprint" "RFPC-SMA28-F:GRADCONN_RFPC-SMA28-F"
+		(property "Footprint" "dacboard-new:RFPC-SMA28-F"
 			(at 127 54.61 0)
 			(effects
 				(font
@@ -12075,17 +12577,16 @@
 		)
 	)
 	(symbol
-		(lib_id "power:GND")
-		(at 52.07 167.64 0)
-		(mirror y)
+		(lib_id "power:GNDD")
+		(at 143.51 168.91 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
-		(uuid "b8985b1f-fb5c-4314-b0d6-b4d6b9aba4d2")
-		(property "Reference" "#PWR0546"
-			(at 52.07 173.99 0)
+		(uuid "b7d9113b-cf5c-41fe-8486-ca6bbca1a95e")
+		(property "Reference" "#PWR0554"
+			(at 143.51 175.26 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -12093,17 +12594,16 @@
 				(hide yes)
 			)
 		)
-		(property "Value" "AGND"
-			(at 45.212 169.164 0)
+		(property "Value" "DGND"
+			(at 143.51 172.72 0)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
-				(justify right)
 			)
 		)
 		(property "Footprint" ""
-			(at 52.07 167.64 0)
+			(at 143.51 168.91 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -12112,7 +12612,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 52.07 167.64 0)
+			(at 143.51 168.91 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -12120,8 +12620,8 @@
 				(hide yes)
 			)
 		)
-		(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
-			(at 52.07 167.64 0)
+		(property "Description" "Power symbol creates a global label with name \"GNDD\" , digital ground"
+			(at 143.51 168.91 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -12130,12 +12630,12 @@
 			)
 		)
 		(pin "1"
-			(uuid "673c95c7-7b0e-4864-aa57-045b66d2a133")
+			(uuid "c288299e-a86a-4d04-80d9-d1670e27cae1")
 		)
 		(instances
 			(project "dacboard"
 				(path "/35cb74e4-0f64-454b-9b50-bfac13ed28a5/7ae8c1dd-5c28-4985-bc49-d575e389aef0/4adb754a-2b3d-4d25-87ee-782eac5fb207"
-					(reference "#PWR0546")
+					(reference "#PWR0554")
 					(unit 1)
 				)
 			)
@@ -12203,6 +12703,73 @@
 			(project "dacboard"
 				(path "/35cb74e4-0f64-454b-9b50-bfac13ed28a5/7ae8c1dd-5c28-4985-bc49-d575e389aef0/4adb754a-2b3d-4d25-87ee-782eac5fb207"
 					(reference "#PWR0590")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "power:GND")
+		(at 228.6 134.62 90)
+		(mirror x)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "bae26020-96fb-4ec7-84d1-dcdc3c67dcf9")
+		(property "Reference" "#PWR0567"
+			(at 234.95 134.62 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "AGND"
+			(at 232.41 136.906 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(property "Footprint" ""
+			(at 228.6 134.62 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 228.6 134.62 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
+			(at 228.6 134.62 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "b2a83e56-bcb9-4f48-92f7-6946f5924c8d")
+		)
+		(instances
+			(project "dacboard"
+				(path "/35cb74e4-0f64-454b-9b50-bfac13ed28a5/7ae8c1dd-5c28-4985-bc49-d575e389aef0/4adb754a-2b3d-4d25-87ee-782eac5fb207"
+					(reference "#PWR0567")
 					(unit 1)
 				)
 			)
@@ -12301,7 +12868,7 @@
 				)
 			)
 		)
-		(property "Footprint" "RFPC-SMA28-F:GRADCONN_RFPC-SMA28-F"
+		(property "Footprint" "dacboard-new:RFPC-SMA28-F"
 			(at 196.85 57.15 0)
 			(effects
 				(font
@@ -12665,73 +13232,6 @@
 		)
 	)
 	(symbol
-		(lib_id "power:GND")
-		(at 143.51 135.89 0)
-		(mirror y)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(uuid "d337a966-f6a1-4d41-999b-1e5381597c99")
-		(property "Reference" "#PWR0552"
-			(at 143.51 142.24 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Value" "AGND"
-			(at 136.652 137.414 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify right)
-			)
-		)
-		(property "Footprint" ""
-			(at 143.51 135.89 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" ""
-			(at 143.51 135.89 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
-			(at 143.51 135.89 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "1"
-			(uuid "dc623f9a-7484-43f0-bc0a-afcf2bf828f7")
-		)
-		(instances
-			(project "dacboard"
-				(path "/35cb74e4-0f64-454b-9b50-bfac13ed28a5/7ae8c1dd-5c28-4985-bc49-d575e389aef0/4adb754a-2b3d-4d25-87ee-782eac5fb207"
-					(reference "#PWR0552")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
 		(lib_id "RFPC-SMA28-F:RFPC-SMA28-F")
 		(at 128.27 109.22 0)
 		(unit 1)
@@ -12757,7 +13257,7 @@
 				)
 			)
 		)
-		(property "Footprint" "RFPC-SMA28-F:GRADCONN_RFPC-SMA28-F"
+		(property "Footprint" "dacboard-new:RFPC-SMA28-F"
 			(at 128.27 109.22 0)
 			(effects
 				(font
@@ -12945,7 +13445,7 @@
 				)
 			)
 		)
-		(property "Footprint" "RFPC-SMA28-F:GRADCONN_RFPC-SMA28-F"
+		(property "Footprint" "dacboard-new:RFPC-SMA28-F"
 			(at 222.25 57.15 0)
 			(effects
 				(font
@@ -13267,7 +13767,7 @@
 				)
 			)
 		)
-		(property "Footprint" "RFPC-SMA28-F:GRADCONN_RFPC-SMA28-F"
+		(property "Footprint" "dacboard-new:RFPC-SMA28-F"
 			(at 222.25 74.93 0)
 			(effects
 				(font
@@ -13500,6 +14000,71 @@
 		)
 	)
 	(symbol
+		(lib_id "power:GNDD")
+		(at 96.52 135.89 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "f0717a94-6be5-4f00-8950-924b2e44a13e")
+		(property "Reference" "#PWR0548"
+			(at 96.52 142.24 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "DGND"
+			(at 96.52 139.7 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 96.52 135.89 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 96.52 135.89 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Power symbol creates a global label with name \"GNDD\" , digital ground"
+			(at 96.52 135.89 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "6a4f43f6-3eb3-41de-a7ff-b949ebd09d36")
+		)
+		(instances
+			(project "dacboard"
+				(path "/35cb74e4-0f64-454b-9b50-bfac13ed28a5/7ae8c1dd-5c28-4985-bc49-d575e389aef0/4adb754a-2b3d-4d25-87ee-782eac5fb207"
+					(reference "#PWR0548")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
 		(lib_id "power:GND")
 		(at 226.06 99.06 0)
 		(mirror y)
@@ -13637,6 +14202,71 @@
 		)
 	)
 	(symbol
+		(lib_id "power:GNDD")
+		(at 143.51 152.4 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "f4bd7e36-c658-404a-b8ab-1d9278c03b59")
+		(property "Reference" "#PWR0549"
+			(at 143.51 158.75 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "DGND"
+			(at 143.51 156.21 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 143.51 152.4 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 143.51 152.4 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Power symbol creates a global label with name \"GNDD\" , digital ground"
+			(at 143.51 152.4 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "71f03adc-2019-41ef-9d1f-b2ef8635d10e")
+		)
+		(instances
+			(project "dacboard"
+				(path "/35cb74e4-0f64-454b-9b50-bfac13ed28a5/7ae8c1dd-5c28-4985-bc49-d575e389aef0/4adb754a-2b3d-4d25-87ee-782eac5fb207"
+					(reference "#PWR0549")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
 		(lib_id "Connector:Conn_Coaxial")
 		(at 143.51 147.32 0)
 		(unit 1)
@@ -13732,7 +14362,7 @@
 				)
 			)
 		)
-		(property "Footprint" "RFPC-SMA28-F:GRADCONN_RFPC-SMA28-F"
+		(property "Footprint" "dacboard-new:RFPC-SMA28-F"
 			(at 149.86 91.44 0)
 			(effects
 				(font
