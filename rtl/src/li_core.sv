@@ -6,14 +6,17 @@ module li_core
    #(parameter NUM_SAMPLE_WIDTH=LI_NUM_SAMPLE_WIDTH,
      parameter STRIDE_WIDTH=LI_STRIDE_WIDTH,
      parameter DEPTH=LI_DEPTH,
+     parameter PC_ADDR_WIDTH=LI_PC_ADDR_WIDTH,
      parameter ADC_WIDTH=LI_ADC_WIDTH,
+     parameter SAMPLE_TAG_WIDTH=LI_SAMPLE_TAG_WIDTH,
      parameter SEQ_REGS=LI_SEQ_REGS,
      parameter CTRL_REGS=LI_CTRL_REGS,
      parameter STATUS_REGS=LI_STATUS_REGS)
     (input  logic i_clk, i_rst,
 
      // sequencer interface
-     input  logic [$clog2(DEPTH)-1:0] i_addr,
+     input  logic [PC_ADDR_WIDTH-1:0] i_pc_addr,
+     input  logic [$clog2(DEPTH)-1:0] i_pc,
      input  li_insn_t i_insn,
      output logic o_next,
      input  logic i_empty,
@@ -30,6 +33,7 @@ module li_core
 
      // output interface
      output logic [ADC_WIDTH*8-1:0] o_QIx4,
+     output logic [SAMPLE_TAG_WIDTH*4-1:0] o_tagx4,
      output logic [3:0] o_validx4,
      output logic o_last,
 
@@ -51,9 +55,11 @@ module li_core
     li_decode_stg_t d;
 
     li_decode #(
-        .DEPTH(DEPTH)
+        .DEPTH(DEPTH),
+        .PC_ADDR_WIDTH(PC_ADDR_WIDTH)
     ) DECODER (
-        .i_addr(i_addr),
+        .i_pc_addr(i_pc_addr),
+        .i_pc(i_pc),
         .i_insn(i_insn),
         .d(d),
         .o_insn_modified(o_insn_modified)
@@ -76,15 +82,20 @@ module li_core
         .i_stride_left(s.r_stride_left),
         .o_stride_next(s.w_stride_next),
 
+        .i_index(s.r_index),
+        .o_index_next(s.w_index_next),
+
         .i_idle(s.r_idle),
 
         .o_validx4(s.w_validx4),
+        .o_indexx4(s.w_indexx4),
         .o_done(s.w_done)
     );
 
     always_ff @(posedge i_clk) begin
         if (i_rst) begin
-            s.r_addr <= 'bx;
+            s.r_pc_addr <= 'bx;
+            s.r_pc <= 'bx;
             s.r_samples <= 'b0;
             s.r_samples_left <= 'd0;
             s.r_stride <= 'd1;
@@ -96,11 +107,13 @@ module li_core
         else if (!w_stall) begin
 
             if ((s.w_done || s.r_done) && !i_empty) begin
-                s.r_addr <= d.w_addr;
+                s.r_pc_addr <= d.w_pc_addr;
+                s.r_pc <= d.w_pc;
                 s.r_samples <= d.w_samples;
                 s.r_samples_left <= d.w_samples;
                 s.r_stride <= d.w_stride;
                 s.r_stride_left <= 'd0;
+                s.r_index <= 'd0;
                 s.r_idle <= d.w_idle;
                 s.r_marker <= d.w_marker;
                 s.r_done <= 1'b0;
@@ -108,6 +121,7 @@ module li_core
             else begin
                 s.r_samples_left <= s.w_samples_next;
                 s.r_stride_left <= s.w_stride_next;
+                s.r_index <= s.w_index_next;
                 if (!s.r_done)
                     s.r_done <= s.w_done;
                 if (s.w_done)
@@ -118,6 +132,12 @@ module li_core
     end
 
     assign s.w_QIx4 = i_QIx4;
+    assign s.w_tagx4 = {
+        s.r_pc_addr, s.w_indexx4[NUM_SAMPLE_WIDTH*4-1:NUM_SAMPLE_WIDTH*3], 
+        s.r_pc_addr, s.w_indexx4[NUM_SAMPLE_WIDTH*3-1:NUM_SAMPLE_WIDTH*2], 
+        s.r_pc_addr, s.w_indexx4[NUM_SAMPLE_WIDTH*2-1:NUM_SAMPLE_WIDTH], 
+        s.r_pc_addr, s.w_indexx4[NUM_SAMPLE_WIDTH-1:0]
+    };
     assign s.w_last = (s.w_samples_next == 'd0) && (s.w_validx4 != 'h0);
 
     assign o_next = (s.w_done || s.r_done) && !i_empty && !w_stall;
@@ -131,14 +151,18 @@ module li_core
     
     always_ff @(posedge i_clk) begin
         if (i_rst) begin
-            p.r_addr <= 'bx;
+            p.r_pc_addr <= 'bx;
+            p.r_pc <= 'bx;
             p.r_QIx4 <= 'bx;
-            p.r_validx4 <= 8'h0;
+            p.r_tagx4 <= 'bx;
+            p.r_validx4 <= 4'h0;
             p.r_last <= 1'b0;
         end
         else begin
-            p.r_addr <= w_stall ? 'bx : s.r_addr;
+            p.r_pc_addr <= w_stall ? 'bx : s.r_pc_addr;
+            p.r_pc <= w_stall ? 'bx : s.r_pc;
             p.r_QIx4 <= w_stall ? 'bx : s.w_QIx4;
+            p.r_tagx4 <= w_stall ? 'bx : s.w_tagx4;
             p.r_validx4 <= w_stall ? 8'h0 : s.w_validx4;
             p.r_last <= w_stall ? 1'b0 : s.w_last;
         end
@@ -159,6 +183,11 @@ module li_core
     assign p.w_QIx4_shftamt[2] = {p.w_validx4_shftamt[2], 5'b00000};
     assign p.w_QIx4_shftamt[3] = {p.w_validx4_shftamt[3], 5'b00000};
 
+    assign p.w_tagx4_shftamt[0] = {p.w_validx4_shftamt[0], 5'b00000};
+    assign p.w_tagx4_shftamt[1] = {p.w_validx4_shftamt[1], 5'b00000};
+    assign p.w_tagx4_shftamt[2] = {p.w_validx4_shftamt[2], 5'b00000};
+    assign p.w_tagx4_shftamt[3] = {p.w_validx4_shftamt[3], 5'b00000};
+
     for (genvar i = 0; i < 4; i++) begin : SCAN_SHIFT_GEN
 
         assign p.w_validx4_shift[i] = p.r_validx4[i] ? {
@@ -170,12 +199,19 @@ module li_core
             {(ADC_WIDTH*2*i){1'b0}}
         } >> p.w_QIx4_shftamt[i] : 'h0;
 
+        assign p.w_tagx4_shift[i] = p.r_validx4[i] ? {
+            {(SAMPLE_TAG_WIDTH*(3-i)){1'b0}}, p.r_tagx4[SAMPLE_TAG_WIDTH*(i+1)-1:SAMPLE_TAG_WIDTH*i], 
+            {(SAMPLE_TAG_WIDTH*i){1'b0}}
+        } >> p.w_QIx4_shftamt[i] : 'h0;
+
     end
 
     assign p.w_validx4_packed = p.w_validx4_shift[0] | p.w_validx4_shift[1] |
         p.w_validx4_shift[2] | p.w_validx4_shift[3];
     assign p.w_QIx4_packed = p.w_QIx4_shift[0] | p.w_QIx4_shift[1] |
         p.w_QIx4_shift[2] | p.w_QIx4_shift[3];
+    assign p.w_tagx4_packed = p.w_tagx4_shift[0] | p.w_tagx4_shift[1] |
+        p.w_tagx4_shift[2] | p.w_tagx4_shift[3];
 
     assign p.w_samples = {1'b0, p.w_validx4_scan[3]} + {2'b00, p.r_validx4[3]};
 
@@ -188,15 +224,19 @@ module li_core
 
     always_ff @(posedge i_clk) begin
         if (i_rst) begin
-            a.r_addr <= 'bx;
+            a.r_pc_addr <= 'bx;
+            a.r_pc <= 'bx;
             a.r_QIx4 <= 'b0;
+            a.r_tagx4 <= 'b0;
             a.r_validx4 <= 4'h0;
             a.r_last <= 1'b0;
             a.r_samples <= 'd0;
         end
         else begin
-            a.r_addr <= p.r_addr; 
+            a.r_pc_addr <= p.r_pc_addr;
+            a.r_pc <= p.r_pc;
             a.r_QIx4 <= p.w_QIx4_packed;
+            a.r_tagx4 <= p.w_tagx4_packed;
             a.r_validx4 <= p.w_validx4_packed;
             a.r_last <= p.r_last;
             a.r_samples <= p.w_samples;
@@ -209,6 +249,9 @@ module li_core
     assign a.w_QIx8_aligned = {{(ADC_WIDTH*8){1'b0}}, b.r_QIx4} |
         ({{(ADC_WIDTH*8){1'b0}}, a.r_QIx4} << {b.r_samples, 5'b0000});
 
+    assign a.w_tagx8_aligned = {{(SAMPLE_TAG_WIDTH*4){1'b0}}, b.r_tagx4} |
+        ({{(SAMPLE_TAG_WIDTH*4){1'b0}}, a.r_tagx4} << {b.r_samples, 5'b0000});
+
     assign a.w_forward_last = (b.w_total_samples == 'd4) && !b.r_last && a.r_last;
 
     assign b.w_total_samples = {1'b0, a.r_samples} + {1'b0, b.r_samples};
@@ -216,28 +259,36 @@ module li_core
 
     assign b.w_validx4_inbuf = b.r_last ? b.r_validx4 : a.w_validx8_aligned[3:0];
     assign b.w_QIx4_inbuf = b.r_last ? b.r_QIx4 : a.w_QIx8_aligned[8*ADC_WIDTH-1:0];
+    assign b.w_tagx4_inbuf = b.r_last ? b.r_tagx4 : a.w_tagx8_aligned[4*SAMPLE_TAG_WIDTH-1:0];
 
     assign b.w_validx4_overflow = b.r_last ? 'h0 : a.w_validx8_aligned[7:4];
     assign b.w_QIx4_overflow = b.r_last ? 'h0 : a.w_QIx8_aligned[16*ADC_WIDTH-1:8*ADC_WIDTH];
+    assign b.w_tagx4_overflow = b.r_last ? 'h0 : a.w_tagx8_aligned[8*SAMPLE_TAG_WIDTH-1:4*SAMPLE_TAG_WIDTH];
 
     always_ff @(posedge i_clk) begin
-        if (i_rst) begin 
-            b.r_addr <= 'bx;
+        if (i_rst) begin
+            b.r_pc_addr <= 'bx;
+            b.r_pc <= 'bx;
             b.r_QIx4 <= 'b0;
+            b.r_tagx4 <= 'b0;
             b.r_validx4 <= 4'h0;
             b.r_last <= 1'b0;
             b.r_samples <= 'd0;
         end
         else if (b.r_last) begin
-            b.r_addr <= a.r_addr;
+            b.r_pc_addr <= a.r_pc_addr;
+            b.r_pc <= a.r_pc;
             b.r_QIx4 <= a.r_QIx4;
+            b.r_tagx4 <= a.r_tagx4;
             b.r_validx4 <= a.r_validx4;
             b.r_last <= a.r_last;
             b.r_samples <= a.r_samples;
         end
         else begin
-            b.r_addr <= a.r_addr;
+            b.r_pc_addr <= a.r_pc_addr;
+            b.r_pc <= a.r_pc;
             b.r_QIx4 <= b.w_full ? b.w_QIx4_overflow : b.w_QIx4_inbuf;
+            b.r_tagx4 <= b.w_full ? b.w_tagx4_overflow : b.w_tagx4_inbuf;
             b.r_validx4 <= b.w_full ? b.w_validx4_overflow : b.w_validx4_inbuf;
             b.r_last <= a.w_forward_last ? 1'b0 : a.r_last;
             b.r_samples <= b.w_full ? (b.w_total_samples - 'd4) : b.w_total_samples;
@@ -253,24 +304,30 @@ module li_core
     always_ff @(posedge i_clk) begin
         if (i_rst) begin
             o <= '{
-                r_addr: 'bx,
+                r_pc_addr: 'bx,
+                r_pc: 'bx,
                 r_QIx4: 'b0,
+                r_tagx4: 'b0,
                 r_validx4: 'h0,
                 r_last: 1'b0
             };
         end
         else if (b.w_full || b.r_last) begin
             o <= '{
-                r_addr: b.r_addr,
+                r_pc_addr: b.r_pc_addr,
+                r_pc: b.r_pc,
                 r_QIx4: b.w_QIx4_inbuf,
+                r_tagx4: b.w_tagx4_inbuf,
                 r_validx4: b.w_validx4_inbuf,
                 r_last: b.r_last || a.w_forward_last
             };
         end
         else begin
             o <= '{
-                r_addr: 'bx,
+                r_pc_addr: 'bx,
+                r_pc: 'bx,
                 r_QIx4: 'b0,
+                r_tagx4: 'b0,
                 r_validx4: 'h0,
                 r_last: 1'b0
             };
@@ -288,6 +345,7 @@ module li_core
     ****************/
 
     assign o_QIx4 = o.r_QIx4;
+    assign o_tagx4 = o.r_tagx4;
     assign o_validx4 = o.r_validx4;
     assign o_last = o.r_last;
 
@@ -299,8 +357,10 @@ module li_core
         !p.r_last && !a.r_last && !b.r_last && !o.r_last;
 
     assign o_eop = '{
-        w_addr: o.r_addr,
+        r_pc_addr: o.r_pc_addr,
+        r_pc: o.r_pc,
         w_QIx4: o.r_QIx4,
+        w_tagx4: o.r_tagx4,
         w_validx4: o.r_validx4,
         w_last: o.r_last
     };

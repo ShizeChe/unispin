@@ -30,8 +30,8 @@ module rf_ctrl
             r_default_Q <= 'h0;
         end
         else if (w_new_ctrl) begin
-            r_default_I <= i_regs[0][IQ_WIDTH+1:2];
-            r_default_Q <= i_regs[0][IQ_WIDTH+17:18];
+            r_default_I <= i_regs[0][IQ_WIDTH-1:0];
+            r_default_Q <= i_regs[1][IQ_WIDTH-1:0];
         end
     end
 

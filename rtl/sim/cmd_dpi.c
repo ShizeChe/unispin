@@ -105,6 +105,15 @@ int cmd_accept_poll(int timeout_ms)
 /*    out[pos] = '\0';*/
 /*    return 1;*/
 /*}*/
+int cmd_sendline(const char *s)
+{
+    if (conn_fd < 0) return -1;
+    size_t len = strlen(s);
+    ssize_t r = write(conn_fd, s, len);
+    if (r < 0) return -1;
+    return (int)r;
+}
+
 int cmd_getline(const svOpenArrayHandle line_buf)
 {
     if (conn_fd < 0) return -1;

@@ -485,17 +485,17 @@ proc create_root_design { parentCell } {
   set o_rf_seq_regs3 [ create_bd_port -dir O -from 479 -to 0 o_rf_seq_regs3 ]
   set o_rf_seq_regs4 [ create_bd_port -dir O -from 479 -to 0 o_rf_seq_regs4 ]
   set o_rf_seq_regs5 [ create_bd_port -dir O -from 479 -to 0 o_rf_seq_regs5 ]
-  set o_rf_ctrl_regs0 [ create_bd_port -dir O -from 63 -to 0 o_rf_ctrl_regs0 ]
-  set o_rf_ctrl_regs1 [ create_bd_port -dir O -from 63 -to 0 o_rf_ctrl_regs1 ]
-  set o_rf_ctrl_regs2 [ create_bd_port -dir O -from 63 -to 0 o_rf_ctrl_regs2 ]
-  set o_rf_ctrl_regs3 [ create_bd_port -dir O -from 63 -to 0 o_rf_ctrl_regs3 ]
-  set o_rf_ctrl_regs4 [ create_bd_port -dir O -from 63 -to 0 o_rf_ctrl_regs4 ]
-  set o_rf_ctrl_regs5 [ create_bd_port -dir O -from 63 -to 0 o_rf_ctrl_regs5 ]
+  set o_rf_ctrl_regs0 [ create_bd_port -dir O -from 95 -to 0 o_rf_ctrl_regs0 ]
+  set o_rf_ctrl_regs1 [ create_bd_port -dir O -from 95 -to 0 o_rf_ctrl_regs1 ]
+  set o_rf_ctrl_regs2 [ create_bd_port -dir O -from 95 -to 0 o_rf_ctrl_regs2 ]
+  set o_rf_ctrl_regs3 [ create_bd_port -dir O -from 95 -to 0 o_rf_ctrl_regs3 ]
+  set o_rf_ctrl_regs4 [ create_bd_port -dir O -from 95 -to 0 o_rf_ctrl_regs4 ]
+  set o_rf_ctrl_regs5 [ create_bd_port -dir O -from 95 -to 0 o_rf_ctrl_regs5 ]
   set o_processor_rst_n [ create_bd_port -dir O -from 0 -to 0 o_processor_rst_n ]
   set o_li_seq_regs0 [ create_bd_port -dir O -from 415 -to 0 o_li_seq_regs0 ]
-  set o_li_ctrl_regs0 [ create_bd_port -dir O -from 127 -to 0 o_li_ctrl_regs0 ]
+  set o_li_ctrl_regs0 [ create_bd_port -dir O -from 191 -to 0 o_li_ctrl_regs0 ]
   set o_li_seq_regs1 [ create_bd_port -dir O -from 415 -to 0 o_li_seq_regs1 ]
-  set o_li_ctrl_regs1 [ create_bd_port -dir O -from 127 -to 0 o_li_ctrl_regs1 ]
+  set o_li_ctrl_regs1 [ create_bd_port -dir O -from 191 -to 0 o_li_ctrl_regs1 ]
   set i_li_validx4_0 [ create_bd_port -dir I -from 3 -to 0 i_li_validx4_0 ]
   set i_li_validx4_1 [ create_bd_port -dir I -from 3 -to 0 i_li_validx4_1 ]
   set i_li_last_0 [ create_bd_port -dir I i_li_last_0 ]
@@ -521,7 +521,7 @@ proc create_root_design { parentCell } {
   set o_nco_ctrl_regs2 [ create_bd_port -dir O -from 223 -to 0 o_nco_ctrl_regs2 ]
   set o_nco_ctrl_regs3 [ create_bd_port -dir O -from 223 -to 0 o_nco_ctrl_regs3 ]
   set o_nco_ctrl_regs4 [ create_bd_port -dir O -from 223 -to 0 o_nco_ctrl_regs4 ]
-  set i_lch_status_regs [ create_bd_port -dir I -from 31 -to 0 i_lch_status_regs ]
+  set i_lch_status_regs [ create_bd_port -dir I -from 63 -to 0 i_lch_status_regs ]
   set o_lch_ctrl_regs [ create_bd_port -dir O -from 255 -to 0 o_lch_ctrl_regs ]
   set o_li_samples_lost0 [ create_bd_port -dir O -from 31 -to 0 o_li_samples_lost0 ]
   set o_li_samples_inbuf0 [ create_bd_port -dir O -from 7 -to 0 o_li_samples_inbuf0 ]
@@ -1917,8 +1917,6 @@ Port;FD4A0000;FD4AFFFF;0|FPD;DPDMA;FD4C0000;FD4CFFFF;0|FPD;DDR_XMPU5_CFG;FD05000
   [get_bd_pins usp_rf_data_converter_0/s2_axis_aresetn] \
   [get_bd_ports o_processor_rst_n] \
   [get_bd_pins usp_rf_data_converter_0/s3_axis_aresetn] \
-  [get_bd_pins li_axi_write_0/s_axi_aresetn] \
-  [get_bd_pins li_axi_write_1/s_axi_aresetn] \
   [get_bd_pins dc_regs_10/s_axi_aresetn] \
   [get_bd_pins dc_regs_11/s_axi_aresetn] \
   [get_bd_pins dc_regs_12/s_axi_aresetn] \
@@ -1941,19 +1939,21 @@ Port;FD4A0000;FD4AFFFF;0|FPD;DPDMA;FD4C0000;FD4CFFFF;0|FPD;DDR_XMPU5_CFG;FD05000
   [get_bd_pins dc_regs_7/s_axi_aresetn] \
   [get_bd_pins dc_regs_8/s_axi_aresetn] \
   [get_bd_pins dc_regs_9/s_axi_aresetn] \
+  [get_bd_pins ex_regs_0/s_axi_aresetn] \
+  [get_bd_pins ex_regs_1/s_axi_aresetn] \
+  [get_bd_pins dc_regs_1/s_axi_aresetn] \
+  [get_bd_pins dc_regs_0/s_axi_aresetn] \
+  [get_bd_pins launch_regs_0/s_axi_aresetn] \
+  [get_bd_pins li_regs_0/s_axi_aresetn] \
+  [get_bd_pins li_regs_1/s_axi_aresetn] \
   [get_bd_pins rf_regs_0/s_axi_aresetn] \
   [get_bd_pins rf_regs_1/s_axi_aresetn] \
   [get_bd_pins rf_regs_2/s_axi_aresetn] \
   [get_bd_pins rf_regs_3/s_axi_aresetn] \
   [get_bd_pins rf_regs_4/s_axi_aresetn] \
   [get_bd_pins rf_regs_5/s_axi_aresetn] \
-  [get_bd_pins li_regs_0/s_axi_aresetn] \
-  [get_bd_pins li_regs_1/s_axi_aresetn] \
-  [get_bd_pins ex_regs_0/s_axi_aresetn] \
-  [get_bd_pins ex_regs_1/s_axi_aresetn] \
-  [get_bd_pins dc_regs_1/s_axi_aresetn] \
-  [get_bd_pins dc_regs_0/s_axi_aresetn] \
-  [get_bd_pins launch_regs_0/s_axi_aresetn]
+  [get_bd_pins li_axi_write_0/s_axi_aresetn] \
+  [get_bd_pins li_axi_write_1/s_axi_aresetn]
   connect_bd_net -net rf_regs_0_o_ctrl_regs  [get_bd_pins rf_regs_0/o_ctrl_regs] \
   [get_bd_ports o_rf_ctrl_regs0]
   connect_bd_net -net rf_regs_0_o_seq_regs  [get_bd_pins rf_regs_0/o_seq_regs] \
@@ -1990,8 +1990,6 @@ Port;FD4A0000;FD4AFFFF;0|FPD;DPDMA;FD4C0000;FD4CFFFF;0|FPD;DDR_XMPU5_CFG;FD05000
   [get_bd_pins zynq_ultra_ps_e_0/saxihp1_fpd_aclk] \
   [get_bd_pins zynq_ultra_ps_e_0/saxihp0_fpd_aclk] \
   [get_bd_pins usp_rf_data_converter_0/s3_axis_aclk] \
-  [get_bd_pins li_axi_write_0/s_axi_aclk] \
-  [get_bd_pins li_axi_write_1/s_axi_aclk] \
   [get_bd_pins dc_regs_10/s_axi_aclk] \
   [get_bd_pins dc_regs_11/s_axi_aclk] \
   [get_bd_pins dc_regs_12/s_axi_aclk] \
@@ -2014,19 +2012,21 @@ Port;FD4A0000;FD4AFFFF;0|FPD;DPDMA;FD4C0000;FD4CFFFF;0|FPD;DDR_XMPU5_CFG;FD05000
   [get_bd_pins dc_regs_7/s_axi_aclk] \
   [get_bd_pins dc_regs_8/s_axi_aclk] \
   [get_bd_pins dc_regs_9/s_axi_aclk] \
+  [get_bd_pins ex_regs_0/s_axi_aclk] \
+  [get_bd_pins ex_regs_1/s_axi_aclk] \
+  [get_bd_pins dc_regs_1/s_axi_aclk] \
+  [get_bd_pins dc_regs_0/s_axi_aclk] \
+  [get_bd_pins launch_regs_0/s_axi_aclk] \
+  [get_bd_pins li_regs_0/s_axi_aclk] \
+  [get_bd_pins li_regs_1/s_axi_aclk] \
   [get_bd_pins rf_regs_0/s_axi_aclk] \
   [get_bd_pins rf_regs_1/s_axi_aclk] \
   [get_bd_pins rf_regs_2/s_axi_aclk] \
   [get_bd_pins rf_regs_3/s_axi_aclk] \
   [get_bd_pins rf_regs_4/s_axi_aclk] \
   [get_bd_pins rf_regs_5/s_axi_aclk] \
-  [get_bd_pins li_regs_0/s_axi_aclk] \
-  [get_bd_pins li_regs_1/s_axi_aclk] \
-  [get_bd_pins ex_regs_0/s_axi_aclk] \
-  [get_bd_pins ex_regs_1/s_axi_aclk] \
-  [get_bd_pins dc_regs_1/s_axi_aclk] \
-  [get_bd_pins dc_regs_0/s_axi_aclk] \
-  [get_bd_pins launch_regs_0/s_axi_aclk]
+  [get_bd_pins li_axi_write_0/s_axi_aclk] \
+  [get_bd_pins li_axi_write_1/s_axi_aclk]
   connect_bd_net -net zynq_ultra_ps_e_0_pl_clk0  [get_bd_pins zynq_ultra_ps_e_0/pl_clk0] \
   [get_bd_pins smartconnect_0/aclk1] \
   [get_bd_pins proc_sys_reset_0/slowest_sync_clk] \

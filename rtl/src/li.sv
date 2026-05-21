@@ -10,6 +10,7 @@ module li
      parameter DEPTH=LI_DEPTH,
      parameter PC_ADDR_WIDTH=LI_PC_ADDR_WIDTH,
      parameter ADC_WIDTH=LI_ADC_WIDTH,
+     parameter SAMPLE_TAG_WIDTH=LI_SAMPLE_TAG_WIDTH,
      parameter AXIBUF_ADDR_WIDTH=LI_AXIBUF_ADDR_WIDTH,
      parameter IQ_WIDTH=LI_IQ_WIDTH,
      parameter SEQ_REGS=LI_SEQ_REGS,
@@ -29,6 +30,7 @@ module li
      output logic [3:0] o_sample_mask,
 
      output logic [ADC_WIDTH*8-1:0] o_QIx4,
+     output logic [SAMPLE_TAG_WIDTH*4-1:0] o_tagx4,
      output logic [3:0] o_validx4,
      output logic o_last,
 
@@ -42,14 +44,11 @@ module li
      output li_ctrl_t o_ctrl,
 
      // eop for verification
-     output li_eop_t o_eop,
-
-     // from li_save for status report
-     input [31:0] i_samples_lost,
-     input [AXIBUF_ADDR_WIDTH-1:0] i_samples_inbuf);
+     output li_eop_t o_eop);
 
     logic w_next, w_empty;
-    logic [$clog2(DEPTH)-1:0] w_addr;
+    logic [PC_ADDR_WIDTH-1:0] w_pc_addr;
+    logic [$clog2(DEPTH)-1:0] w_pc;
     li_insn_t w_insn, w_insn_modified;
 
     bram_sequencer #(
@@ -68,8 +67,8 @@ module li
         .o_pc_rd(o_pc_rd),
         .o_insn_rd(o_insn_rd),
 
-        .o_pc_addr(),
-        .o_pc(w_addr),
+        .o_pc_addr(w_pc_addr),
+        .o_pc(w_pc),
         .o_insn(w_insn),
         .i_next(w_next),
         .o_empty(w_empty),
@@ -80,6 +79,7 @@ module li
     	.NUM_SAMPLE_WIDTH(NUM_SAMPLE_WIDTH),
         .STRIDE_WIDTH(STRIDE_WIDTH),
         .DEPTH(DEPTH),
+        .PC_ADDR_WIDTH(PC_ADDR_WIDTH),
         .ADC_WIDTH(ADC_WIDTH),
         .SEQ_REGS(SEQ_REGS),
         .CTRL_REGS(CTRL_REGS)
@@ -87,7 +87,8 @@ module li
         .i_clk(i_clk),
         .i_rst(i_rst),
 
-        .i_addr(w_addr),
+        .i_pc_addr(w_pc_addr),
+        .i_pc(w_pc),
         .i_insn(w_insn),
         .o_next(w_next),
         .i_empty(w_empty),
@@ -101,6 +102,7 @@ module li
         .o_armed(o_armed),
 
         .o_QIx4(o_QIx4),
+        .o_tagx4(o_tagx4),
         .o_validx4(o_validx4),
         .o_last(o_last),
 

@@ -15,7 +15,7 @@ parameter RF_DEPTH=512;
 parameter RF_PC_ADDR_WIDTH=12;
 parameter RF_REG_PER_INSN=(RF_INSN_WIDTH+31)/32;
 parameter RF_SEQ_REGS=RF_REG_PER_INSN+11;
-parameter RF_CTRL_REGS=2;
+parameter RF_CTRL_REGS=3;
 parameter RF_STATUS_REGS=RF_REG_PER_INSN+4;
 parameter RF_BUFFER_STAGES=2;
 

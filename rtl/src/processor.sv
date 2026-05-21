@@ -80,6 +80,7 @@ module processor
 
      // li output
      output logic [0:NUM_LI_CHANNEL-1][LI_ADC_WIDTH*8-1:0] o_li_QIx4_bus,
+     output logic [0:NUM_LI_CHANNEL-1][LI_SAMPLE_TAG_WIDTH*4-1:0] o_li_tagx4_bus,
      output logic [0:NUM_LI_CHANNEL-1][3:0] o_li_validx4_bus,
      output logic [0:NUM_LI_CHANNEL-1] o_li_last_bus,
 
@@ -276,6 +277,7 @@ module processor
             .o_sample_mask(o_li_sample_mask_bus[i]),
 
             .o_QIx4(o_li_QIx4_bus[i]),
+            .o_tagx4(o_li_tagx4_bus[i]),
             .o_validx4(o_li_validx4_bus[i]),
             .o_last(o_li_last_bus[i]),
 
@@ -288,10 +290,7 @@ module processor
 
             .o_ctrl(o_li_ctrl_bus[i]),
 
-            .o_eop(o_li_eop_bus[i]),
-
-            .i_samples_lost(i_li_samples_lost_bus[i]),
-            .i_samples_inbuf(i_li_samples_inbuf_bus[i])
+            .o_eop(o_li_eop_bus[i])
         );
 
     end

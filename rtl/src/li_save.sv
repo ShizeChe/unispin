@@ -4,13 +4,15 @@
 
 module li_save
    #(parameter ADC_WIDTH=LI_ADC_WIDTH,
-     parameter FIFO_ADDR_WIDTH=LI_AXIBUF_ADDR_WIDTH)
+     parameter FIFO_ADDR_WIDTH=LI_AXIBUF_ADDR_WIDTH,
+     parameter SAMPLE_TAG_WIDTH=LI_SAMPLE_TAG_WIDTH)
     (input  logic i_clk, i_rst,
 
      // interface with li core
      input  logic [3:0] i_validx4,
      input  logic i_last,
      input  logic [ADC_WIDTH*8-1:0] i_QIx4,
+     input  logic [SAMPLE_TAG_WIDTH*4-1:0] i_tagx4,
 
      input li_ctrl_t i_ctrl,
 
@@ -100,13 +102,22 @@ module li_save
 
     logic [127:0] w_axi_data;
 
-    bram_fifo #(
-        .DATA_WIDTH(ADC_WIDTH*8),
-        .ADDR_WIDTH(FIFO_ADDR_WIDTH)
-    ) BFIFO (
+    bram_fifo_2to1 #(
+        .DATA_WIDTH_A((SAMPLE_TAG_WIDTH+ADC_WIDTH*2)*4),
+        .ADDR_WIDTH_A(FIFO_ADDR_WIDTH-1)
+    ) IQFIFO (
         .i_clk(i_clk),
         .i_rst(i_rst),
-        .i_data(i_QIx4),
+        .i_data({
+            i_tagx4[SAMPLE_TAG_WIDTH*4-1:SAMPLE_TAG_WIDTH*3], 
+            i_QIx4[ADC_WIDTH*8-1:ADC_WIDTH*6],
+            i_tagx4[SAMPLE_TAG_WIDTH*3-1:SAMPLE_TAG_WIDTH*2], 
+            i_QIx4[ADC_WIDTH*6-1:ADC_WIDTH*4],
+            i_tagx4[SAMPLE_TAG_WIDTH*2-1:SAMPLE_TAG_WIDTH*1],
+            i_QIx4[ADC_WIDTH*4-1:ADC_WIDTH*2],
+            i_tagx4[SAMPLE_TAG_WIDTH-1:0], 
+            i_QIx4[ADC_WIDTH*2-1:0]
+        }),
         .i_enq(w_enq),
         .i_deq(w_deq),
         .o_data(w_axi_data),

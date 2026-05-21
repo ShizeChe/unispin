@@ -8,15 +8,17 @@ parameter LI_ITER_WIDTH=20;
 parameter LI_DEPTH=512;
 parameter LI_PC_ADDR_WIDTH=12;
 parameter LI_ADC_WIDTH=16;
+parameter LI_SAMPLE_TAG_WIDTH=LI_PC_ADDR_WIDTH+LI_NUM_SAMPLE_WIDTH;
 
 parameter LI_IQ_WIDTH=14;
 
 parameter LI_REG_PER_INSN=(LI_INSN_WIDTH+31)/32;
 parameter LI_SEQ_REGS=LI_REG_PER_INSN+11;
-parameter LI_CTRL_REGS=4;
+parameter LI_CTRL_REGS=6;
 parameter LI_STATUS_REGS=LI_REG_PER_INSN+6;
 
 parameter LI_AXIBUF_ADDR_WIDTH=8;
+
 
 typedef struct packed {
     logic [LI_IQ_WIDTH-1:0] w_default_I;
@@ -25,6 +27,7 @@ typedef struct packed {
     logic [48:0] w_base_addr;
     logic w_clear_lost;
 } li_ctrl_t;
+
 
 typedef struct packed {
     logic w_arm;
@@ -36,8 +39,11 @@ typedef struct packed {
     logic [LI_STRIDE_WIDTH-1:0] w_stride;
 } li_insn_t;
 
+
 typedef struct {
-    logic [$clog2(LI_DEPTH)-1:0] w_addr;
+    logic [LI_PC_ADDR_WIDTH-1:0] w_pc_addr;
+    logic [$clog2(LI_DEPTH)-1:0] w_pc;
+
     logic w_arm;
     logic w_idle;
     logic w_marker;
@@ -46,74 +52,125 @@ typedef struct {
     logic [LI_STRIDE_WIDTH-1:0] w_stride;
 } li_decode_stg_t;
 
+
 typedef struct {
-    logic [$clog2(LI_DEPTH)-1:0] r_addr;
+    logic [LI_PC_ADDR_WIDTH-1:0] r_pc_addr;
+    logic [$clog2(LI_DEPTH)-1:0] r_pc;
+
     logic [LI_NUM_SAMPLE_WIDTH-1:0] r_samples;
     logic [LI_NUM_SAMPLE_WIDTH-1:0] r_samples_left;
     logic [LI_NUM_SAMPLE_WIDTH-1:0] w_samples_next;
+
     logic [LI_STRIDE_WIDTH-1:0] r_stride;
     logic [LI_STRIDE_WIDTH-1:0] r_stride_left;
     logic [LI_STRIDE_WIDTH-1:0] w_stride_next;
+
+    logic [LI_NUM_SAMPLE_WIDTH-1:0] r_index;
+    logic [LI_NUM_SAMPLE_WIDTH-1:0] w_index_next;
+
     logic [3:0] w_validx4;
+
     logic w_done;
     logic r_done;
+
     logic r_idle;
     logic r_marker;
+
     logic [LI_ADC_WIDTH*8-1:0] w_QIx4;
+    logic [LI_NUM_SAMPLE_WIDTH*4-1:0] w_indexx4;
+    logic [LI_SAMPLE_TAG_WIDTH*4-1:0] w_tagx4;
     logic w_last;
 } li_sample_stg_t;
 
+
 typedef struct {
-    logic [$clog2(LI_DEPTH)-1:0] r_addr;
+    logic [LI_PC_ADDR_WIDTH-1:0] r_pc_addr;
+    logic [$clog2(LI_DEPTH)-1:0] r_pc;
+
     logic [LI_ADC_WIDTH*8-1:0] r_QIx4;
+    logic [LI_SAMPLE_TAG_WIDTH*4-1:0] r_tagx4;
     logic [3:0] r_validx4;
     logic r_last;
+
     logic [3:0][1:0] w_validx4_scan;
+
     logic [3:0][1:0] w_validx4_shftamt;
     logic [3:0][6:0] w_QIx4_shftamt;
+    logic [LI_SAMPLE_TAG_WIDTH*4-1:0] w_tagx4_shftamt;
+
     logic [3:0][3:0] w_validx4_shift;
     logic [3:0][LI_ADC_WIDTH*8-1:0] w_QIx4_shift;
+    logic [3:0][LI_SAMPLE_TAG_WIDTH*4-1:0] w_tagx4_shift;
+
     logic [3:0] w_validx4_packed;
     logic [LI_ADC_WIDTH*8-1:0] w_QIx4_packed;
+    logic [LI_SAMPLE_TAG_WIDTH*4-1:0] w_tagx4_packed;
+
     logic [2:0] w_samples;
 } li_pack_stg_t;
 
+
 typedef struct {
-    logic [$clog2(LI_DEPTH)-1:0] r_addr;
+    logic [LI_PC_ADDR_WIDTH-1:0] r_pc_addr;
+    logic [$clog2(LI_DEPTH)-1:0] r_pc;
+
     logic [LI_ADC_WIDTH*8-1:0] r_QIx4;
+    logic [LI_SAMPLE_TAG_WIDTH*4-1:0] r_tagx4;
     logic [3:0] r_validx4;
     logic r_last;
+
     logic [2:0] r_samples;
-    logic [15:0] w_validx8_aligned;
+
+    logic [7:0] w_validx8_aligned;
     logic [LI_ADC_WIDTH*16-1:0] w_QIx8_aligned;
+    logic [LI_SAMPLE_TAG_WIDTH*8-1:0] w_tagx8_aligned;
+
     logic w_forward_last;
 } li_align_stg_t;
 
-typedef struct {
-    logic [$clog2(LI_DEPTH)-1:0] r_addr;
-    logic [LI_ADC_WIDTH*8-1:0] r_QIx4;
-    logic [3:0] r_validx4;
-    logic r_last;
-    logic [2:0] r_samples;
-    logic [3:0] w_total_samples;
-    logic w_full;
-    logic [3:0] w_validx4_inbuf;
-    logic [LI_ADC_WIDTH*8-1:0] w_QIx4_inbuf;
-    logic [3:0] w_validx4_overflow;
-    logic [LI_ADC_WIDTH*8-1:0] w_QIx4_overflow;
-} li_buffer_stg_t;
 
 typedef struct {
-    logic [$clog2(LI_DEPTH)-1:0] r_addr;
+    logic [LI_PC_ADDR_WIDTH-1:0] r_pc_addr;
+    logic [$clog2(LI_DEPTH)-1:0] r_pc;
+
     logic [LI_ADC_WIDTH*8-1:0] r_QIx4;
+    logic [LI_SAMPLE_TAG_WIDTH*4-1:0] r_tagx4;
+    logic [3:0] r_validx4;
+    logic r_last;
+
+    logic [2:0] r_samples;
+
+    logic [3:0] w_total_samples;
+
+    logic w_full;
+
+    logic [3:0] w_validx4_inbuf;
+    logic [LI_ADC_WIDTH*8-1:0] w_QIx4_inbuf;
+    logic [LI_SAMPLE_TAG_WIDTH*4-1:0] w_tagx4_inbuf;
+
+    logic [3:0] w_validx4_overflow;
+    logic [LI_ADC_WIDTH*8-1:0] w_QIx4_overflow;
+    logic [LI_SAMPLE_TAG_WIDTH*4-1:0] w_tagx4_overflow;
+} li_buffer_stg_t;
+
+
+typedef struct {
+    logic [LI_PC_ADDR_WIDTH-1:0] r_pc_addr;
+    logic [$clog2(LI_DEPTH)-1:0] r_pc;
+
+    logic [LI_ADC_WIDTH*8-1:0] r_QIx4;
+    logic [LI_SAMPLE_TAG_WIDTH*4-1:0] r_tagx4;
     logic [3:0] r_validx4;
     logic r_last;
 } li_output_stg_t;
 
+
 // eop = end of pipeline
 typedef struct packed {
-    logic [$clog2(LI_DEPTH)-1:0] w_addr;
+    logic [LI_PC_ADDR_WIDTH-1:0] r_pc_addr;
+    logic [$clog2(LI_DEPTH)-1:0] r_pc;
     logic [LI_ADC_WIDTH*8-1:0] w_QIx4;
+    logic [LI_SAMPLE_TAG_WIDTH*4-1:0] w_tagx4;
     logic [3:0] w_validx4;
     logic w_last;
 } li_eop_t;

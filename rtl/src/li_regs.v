@@ -3,7 +3,7 @@
 
 module li_regs
    #(parameter NUM_SEQ_REGS=13,
-     parameter NUM_CTRL_REGS=4,
+     parameter NUM_CTRL_REGS=6,
      parameter NUM_STATUS_REGS=8,
      parameter ADDR_WIDTH=$clog2(NUM_SEQ_REGS+NUM_CTRL_REGS+NUM_STATUS_REGS)+2,
      parameter [31:0] ADDR_BASE=32'hA0000000)

@@ -45,7 +45,9 @@ SRC_PROC := $(SRC_SEQ) $(SRC_DC) $(SRC_RF) $(SRC_LI) $(SRC_EX) \
             lib/axil_slave_regs.sv \
             lib/debouncer.sv \
             lib/button_detector.sv \
-            lib/bram_fifo.sv
+            lib/bram_fifo.sv \
+            lib/bram_2to1.sv \
+            lib/bram_fifo_2to1.sv
 
 SRC_REGS := src/dc_regs.v \
             src/rf_regs.v \

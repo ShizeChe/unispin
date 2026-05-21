@@ -7,6 +7,7 @@ module li_axi_write
      input  wire [3:0] i_validx4,
      input  wire i_last,
      input  wire [127:0] i_QIx4,
+     input  wire [127:0] i_tagx4,
 
      input  wire [85:0] i_ctrl,
 
@@ -73,11 +74,12 @@ module li_axi_write
         .i_validx4(i_validx4),
         .i_last(i_last),
         .i_QIx4(i_QIx4),
+        .i_tagx4(i_tagx4),
 
         .i_ctrl(i_ctrl),
 
-        .o_samples_lost(),
-        .o_samples_inbuf(),
+        .o_samples_lost(o_samples_lost),
+        .o_samples_inbuf(o_samples_inbuf),
 
         // AW
         .o_awvalid(m_axi_awvalid),
