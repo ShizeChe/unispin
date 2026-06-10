@@ -304,10 +304,8 @@ void rf_assemble(rf_program_t *prog) {
 
     }
 
-    // Pack rf_ctrl_t: {w_default_I[27:14], w_default_Q[13:0]}
-    prog->ctrl_regs[0] = (((uint32_t)prog->ctrl.default_I & 0x3fff) << 14) |
-                         ((uint32_t)prog->ctrl.default_Q & 0x3fff);
-
+    prog->ctrl_regs[0] = (uint32_t)(prog->ctrl.default_I & 0x3fff);
+    prog->ctrl_regs[1] = (uint32_t)(prog->ctrl.default_Q & 0x3fff);
     prog->ctrl_regs[RF_CTRL_REGS-1] = (prog->ctrl.default_I != -1) ||
         (prog->ctrl.default_Q != -1);
 
@@ -336,6 +334,13 @@ int rf_load_insns(int rf_channel, rf_program_t *rf_program) {
     volatile uint32_t *rf_base = (volatile uint32_t *)((char *)rf_va);
     unsigned int n = rf_program->len;
 
+    for (int i = 0; i < RF_CTRL_REGS; i++) {
+        if (rf_program->ctrl_regs[i] != -1)
+            *(rf_base + RF_BRAM_SEQ_REGS + i) = rf_program->ctrl_regs[i];
+    }
+    *(rf_base + RF_BRAM_SEQ_REGS + RF_CTRL_REGS - 1) = 0;
+    *(rf_base + RF_BRAM_SEQ_REGS + RF_CTRL_REGS - 1) = 1;
+
     for (unsigned int i = 0; i < n; i++) {
         rf_base[BRAM_IST_ADDR] = i;
         for (unsigned int k = 0; k < RF_REG_PER_INSN; k++)
@@ -355,12 +360,6 @@ int rf_load_insns(int rf_channel, rf_program_t *rf_program) {
     rf_base[BRAM_DEPTH(RF_REG_PER_INSN)] = n - 1;
     rf_base[BRAM_START(RF_REG_PER_INSN)] = 0;
     rf_base[BRAM_START(RF_REG_PER_INSN)] = 1;
-
-    *(rf_base + RF_BRAM_SEQ_REGS + RF_CTRL_REGS - 1) = 0;
-    for (int i = 0; i < RF_CTRL_REGS; i++) {
-        if (rf_program->ctrl_regs[i] != -1)
-            *(rf_base + RF_BRAM_SEQ_REGS + i) = rf_program->ctrl_regs[i];
-    }
 
 #if EXE
     __asm__ __volatile__("dsb oshst" ::: "memory");

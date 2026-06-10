@@ -158,6 +158,7 @@ module pl
 
     logic [0:NUM_LI_CHANNEL-1][3:0] w_li_validx4_bus;
     logic [0:NUM_LI_CHANNEL-1][LI_ADC_WIDTH*8-1:0] w_li_QIx4_save_bus;
+    logic [0:NUM_LI_CHANNEL-1][LI_SAMPLE_TAG_WIDTH*8-1:0] w_li_tagx4_save_bus;
     logic [0:NUM_LI_CHANNEL-1] w_li_last_bus;
     li_ctrl_t [0:NUM_LI_CHANNEL-1] w_li_ctrl_bus;
 
@@ -456,6 +457,7 @@ module pl
         .o_li_ctrl_regs0(w_li_ctrl_regs[0]),
         .i_li_status_regs0(w_li_status_regs[0]),
         .i_li_QIx4_0(w_li_QIx4_save_bus[0]),
+        .i_li_tagx4_0(w_li_tagx4_save_bus[0]),
         .i_li_validx4_0(w_li_validx4_bus[0]),
         .i_li_last_0(w_li_last_bus[0]),
         .i_li_ctrl_0(w_li_ctrl_bus[0]),
@@ -466,6 +468,7 @@ module pl
         .o_li_ctrl_regs1(w_li_ctrl_regs[1]),
         .i_li_status_regs1(w_li_status_regs[1]),
         .i_li_QIx4_1(w_li_QIx4_save_bus[1]),
+        .i_li_tagx4_1(w_li_tagx4_save_bus[1]),
         .i_li_validx4_1(w_li_validx4_bus[1]),
         .i_li_last_1(w_li_last_bus[1]),
         .i_li_ctrl_1(w_li_ctrl_bus[1]),
@@ -565,6 +568,7 @@ module pl
         
         .o_li_QIx4_bus(w_li_QIx4_save_bus),
         .o_li_validx4_bus(w_li_validx4_bus),
+        .o_li_tagx4_bus(w_li_tagx4_save_bus),
         .o_li_last_bus(w_li_last_bus),
 
         .o_li_ctrl_bus(w_li_ctrl_bus),

@@ -606,6 +606,8 @@ proc create_root_design { parentCell } {
   set i_dc_status_regs21 [ create_bd_port -dir I -from 223 -to 0 i_dc_status_regs21 ]
   set i_dc_status_regs22 [ create_bd_port -dir I -from 223 -to 0 i_dc_status_regs22 ]
   set i_dc_status_regs23 [ create_bd_port -dir I -from 223 -to 0 i_dc_status_regs23 ]
+  set i_li_tagx4_0 [ create_bd_port -dir I -from 127 -to 0 i_li_tagx4_0 ]
+  set i_li_tagx4_1 [ create_bd_port -dir I -from 127 -to 0 i_li_tagx4_1 ]
 
   # Create instance: zynq_ultra_ps_e_0, and set properties
   set zynq_ultra_ps_e_0 [ create_bd_cell -type ip -vlnv xilinx.com:ip:zynq_ultra_ps_e:3.5 zynq_ultra_ps_e_0 ]
@@ -1788,6 +1790,10 @@ Port;FD4A0000;FD4AFFFF;0|FPD;DPDMA;FD4C0000;FD4CFFFF;0|FPD;DDR_XMPU5_CFG;FD05000
   [get_bd_pins li_axi_write_0/i_last]
   connect_bd_net -net i_last_0_2  [get_bd_ports i_li_last_1] \
   [get_bd_pins li_axi_write_1/i_last]
+  connect_bd_net -net i_li_tagx4_0_1  [get_bd_ports i_li_tagx4_0] \
+  [get_bd_pins li_axi_write_0/i_tagx4]
+  connect_bd_net -net i_li_tagx4_1_1  [get_bd_ports i_li_tagx4_1] \
+  [get_bd_pins li_axi_write_1/i_tagx4]
   connect_bd_net -net i_li_validx4_1  [get_bd_ports i_li_validx4_0] \
   [get_bd_pins li_axi_write_0/i_validx4]
   connect_bd_net -net i_li_validx4_1_1  [get_bd_ports i_li_validx4_1] \

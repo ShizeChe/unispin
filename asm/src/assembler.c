@@ -93,8 +93,12 @@ static int assemble(FILE *fp,
                 } else if (sscanf(line, ".program li%u ", &channel)) {
 
                     li_programs[channel] = (li_program_t *)calloc(1, sizeof(li_program_t));
-                    li_programs[channel]->ctrl.nco_freq = -1;
+                    li_programs[channel]->ctrl.nco_freq  = -1;
                     li_programs[channel]->ctrl.nco_phase = -1;
+                    li_programs[channel]->ctrl.default_I = -1;
+                    li_programs[channel]->ctrl.default_Q = -1;
+                    li_programs[channel]->ctrl.max_burst = -1;
+                    li_programs[channel]->ctrl.base_addr = -1;
 
                     state = LI_CTRL;
                     success = fgets(line, sizeof(line), fp);
@@ -348,6 +352,15 @@ static int assemble(FILE *fp,
                 uint32_t li_nco_phase_hex;
                 double li_nco_phase;
 
+                uint32_t li_default_I_hex;
+                double li_default_I;
+
+                uint32_t li_default_Q_hex;
+                double li_default_Q;
+
+                uint32_t li_max_burst_val;
+                uint64_t li_base_addr_hex;
+
                 if (sscanf(line, ".fnco %31s ", li_ctrl_tok)) {
 
                     if (sscanf(li_ctrl_tok, "0x%lx", &li_nco_freq_hex)) {
@@ -358,7 +371,7 @@ static int assemble(FILE *fp,
 
                     } else if (parse_freq(li_ctrl_tok, &li_nco_freq) == 0) {
 
-                        li_programs[channel]->ctrl.nco_freq = real2twos(LI_FNCO_MIN, 
+                        li_programs[channel]->ctrl.nco_freq = real2twos(LI_FNCO_MIN,
                             LI_FNCO_MAX, LI_FNCO_BITS, li_nco_freq, 1);
 
                         success = fgets(line, sizeof(line), fp);
@@ -377,8 +390,71 @@ static int assemble(FILE *fp,
 
                     } else if (sscanf(li_ctrl_tok, "%lf", &li_nco_phase)) {
 
-                        li_programs[channel]->ctrl.nco_phase = real2twos(LI_PNCO_MIN, 
+                        li_programs[channel]->ctrl.nco_phase = real2twos(LI_PNCO_MIN,
                             LI_PNCO_MAX, LI_PNCO_BITS, li_nco_phase, 1);
+
+                        success = fgets(line, sizeof(line), fp);
+
+                    } else {
+                        return -1;
+                    }
+
+                } else if (sscanf(line, ".defI %31s ", li_ctrl_tok)) {
+
+                    if (sscanf(li_ctrl_tok, "0x%x", &li_default_I_hex)) {
+
+                        li_programs[channel]->ctrl.default_I = (int32_t)li_default_I_hex;
+
+                        success = fgets(line, sizeof(line), fp);
+
+                    } else if (sscanf(li_ctrl_tok, "%lf", &li_default_I)) {
+
+                        li_programs[channel]->ctrl.default_I = real2twos(-1,
+                            1, LI_IQ_BITS, li_default_I, 1);
+
+                        success = fgets(line, sizeof(line), fp);
+
+                    } else {
+                        return -1;
+                    }
+
+                } else if (sscanf(line, ".defQ %31s ", li_ctrl_tok)) {
+
+                    if (sscanf(li_ctrl_tok, "0x%x", &li_default_Q_hex)) {
+
+                        li_programs[channel]->ctrl.default_Q = (int32_t)li_default_Q_hex;
+
+                        success = fgets(line, sizeof(line), fp);
+
+                    } else if (sscanf(li_ctrl_tok, "%lf", &li_default_Q)) {
+
+                        li_programs[channel]->ctrl.default_Q = real2twos(-1,
+                            1, LI_IQ_BITS, li_default_Q, 1);
+
+                        success = fgets(line, sizeof(line), fp);
+
+                    } else {
+                        return -1;
+                    }
+
+                } else if (sscanf(line, ".maxb %31s ", li_ctrl_tok)) {
+
+                    if (sscanf(li_ctrl_tok, "0x%x", &li_max_burst_val) ||
+                        sscanf(li_ctrl_tok, "%u",   &li_max_burst_val)) {
+
+                        li_programs[channel]->ctrl.max_burst = (int32_t)li_max_burst_val;
+
+                        success = fgets(line, sizeof(line), fp);
+
+                    } else {
+                        return -1;
+                    }
+
+                } else if (sscanf(line, ".addr %31s ", li_ctrl_tok)) {
+
+                    if (sscanf(li_ctrl_tok, "0x%lx", &li_base_addr_hex)) {
+
+                        li_programs[channel]->ctrl.base_addr = (int64_t)li_base_addr_hex;
 
                         success = fgets(line, sizeof(line), fp);
 
@@ -826,145 +902,6 @@ static int write_sim(dc_program_t *dc_programs[],
     return 0;
 }
 
-static void write_reg_sim(uint8_t idx, uint32_t data) {
-    sim_sendf("0x%02X\n", (uint8_t)(idx & 0x7f));
-    sim_sendf("0x%02X\n", (uint8_t)(data >> 24));
-    sim_sendf("0x%02X\n", (uint8_t)(data >> 16));
-    sim_sendf("0x%02X\n", (uint8_t)(data >> 8));
-    sim_sendf("0x%02X\n", (uint8_t)(data));
-}
-
-static int write_sim_uart(dc_program_t *dc_programs[], 
-                          rf_program_t *rf_programs[],
-                          li_program_t *li_programs[],
-                          ex_program_t *ex_programs[],
-                          launch_t *launch) {
-
-    if (sim_connect(SOCKET) != 0) {
-        printf("Connection unseccessful\n");
-        return -1;
-    }
-
-    for (int i = 0; i < DC_CHANNELS; i++) {
-
-        if (dc_programs[i] != NULL) {
-
-            write_reg_sim(DC_SEQ_REGS + DC_CTRL_REGS - 1, 0);
-            
-            for (unsigned int j = 0; j < DC_CTRL_REGS - 1; j++) {
-                if (dc_programs[i]->ctrl_regs[j] != -1)
-                    write_reg_sim(DC_SEQ_REGS + j, dc_programs[i]->ctrl_regs[j]);
-            }
-
-            write_reg_sim(DC_SEQ_REGS + DC_CTRL_REGS - 1, (1U << i));
-
-            write_reg_sim(DC_SEQ_REGS - 1, 0);
-            
-            for (unsigned int j = 0; j < DC_SEQ_REGS - 1; j++) {
-                write_reg_sim(j, dc_programs[i]->seq_regs[j]);
-            }
-
-            write_reg_sim(DC_SEQ_REGS - 1, (1U << i));
-
-        }
-
-    }
-
-    for (int i = 0; i < RF_CHANNELS; i++) {
-
-        uint32_t base = DC_SEQ_REGS + DC_CTRL_REGS;
-
-        if (rf_programs[i] != NULL) {
-
-            write_reg_sim(base + RF_SEQ_REGS + RF_CTRL_REGS - 1, 0);
-            
-            for (unsigned int j = 0; j < RF_CTRL_REGS - 1; j++) {
-                if (rf_programs[i]->ctrl_regs[j] != -1)
-                    write_reg_sim(base + RF_SEQ_REGS + j, rf_programs[i]->ctrl_regs[j]);
-            }
-
-            write_reg_sim(base + RF_SEQ_REGS + RF_CTRL_REGS - 1, (1U << i));
-
-            write_reg_sim(base + RF_SEQ_REGS - 1, 0);
-            
-            for (unsigned int j = 0; j < RF_SEQ_REGS - 1; j++) {
-                write_reg_sim(base + j, rf_programs[i]->seq_regs[j]);
-            }
-
-            write_reg_sim(base + RF_SEQ_REGS - 1, (1U << i));
-
-        }
-
-    }
-
-    for (int i = 0; i < LI_CHANNELS; i++) {
-
-        uint32_t base = DC_SEQ_REGS + DC_CTRL_REGS + RF_SEQ_REGS + RF_CTRL_REGS;
-
-        if (li_programs[i] != NULL) {
-
-            write_reg_sim(base + LI_SEQ_REGS + LI_CTRL_REGS - 1, 0);
-            
-            for (unsigned int j = 0; j < LI_CTRL_REGS - 1; j++) {
-                if (li_programs[i]->ctrl_regs[j] != -1)
-                    write_reg_sim(base + LI_SEQ_REGS + j, li_programs[i]->ctrl_regs[j]);
-            }
-
-            write_reg_sim(base + LI_SEQ_REGS + LI_CTRL_REGS - 1, (1U << i));
-
-            write_reg_sim(base + LI_SEQ_REGS - 1, 0);
-            
-            for (unsigned int j = 0; j < LI_SEQ_REGS - 1; j++) {
-                write_reg_sim(base + j, li_programs[i]->seq_regs[j]);
-            }
-
-            write_reg_sim(base + LI_SEQ_REGS - 1, (1U << i));
-
-        }
-
-    }
-
-    for (int i = 0; i < EX_CHANNELS; i++) {
-
-        uint32_t base = DC_SEQ_REGS + DC_CTRL_REGS + RF_SEQ_REGS + RF_CTRL_REGS + LI_SEQ_REGS + LI_CTRL_REGS;
-
-        if (ex_programs[i] != NULL) {
-            
-            write_reg_sim(base + EX_SEQ_REGS - 1, 0);
-            
-            for (unsigned int j = 0; j < EX_SEQ_REGS - 1; j++) {
-                write_reg_sim(base + j, ex_programs[i]->seq_regs[j]);
-            }
-
-            write_reg_sim(base + EX_SEQ_REGS - 1, (1U << i));
-
-        }
-
-    }
-
-    if (launch != NULL) {
-
-        uint32_t base = DC_SEQ_REGS + DC_CTRL_REGS +
-                        RF_SEQ_REGS + RF_CTRL_REGS +
-                        LI_SEQ_REGS + LI_CTRL_REGS;
-
-        write_reg_sim(base + LAUNCH_TOTAL_REGS - 1, 0);
-
-        write_reg_sim(base,     launch->dc_chmask);
-        write_reg_sim(base + 1, launch->rf_chmask);
-        write_reg_sim(base + 2, launch->li_chmask);
-        write_reg_sim(base + 3, launch->ex_chmask);
-        write_reg_sim(base + 4, launch->use_trigger);
-        write_reg_sim(base + 5, launch->iters);
-        write_reg_sim(base + LAUNCH_TOTAL_REGS - 1, 1);
-
-    }
-
-    sim_sendf("run %lu\n", program_t(dc_programs, rf_programs, li_programs, ex_programs) + 1000);
-
-    return 0;
-}
-
 static void write_bin(dc_program_t *dc_programs[], 
                       rf_program_t *rf_programs[],
                       li_program_t *li_programs[],
@@ -1060,203 +997,6 @@ static void write_bin(dc_program_t *dc_programs[],
         fprintf(op, "\n");
 
     }
-}
-
-static int write_single(int uartfd, uint8_t addr, uint32_t tval) {
-
-    uint8_t tx[6] = {0, 0, 0, 0, 0, 0};
-
-    ssize_t n;
-
-    tx[0] = (uint8_t)(addr);
-    tx[1] = (uint8_t)(tval >> 24);
-    tx[2] = (uint8_t)(tval >> 16);
-    tx[3] = (uint8_t)(tval >> 8);
-    tx[4] = (uint8_t)(tval);
-
-    n = write(uartfd, tx, sizeof(tx) - 1);
-    if (n < 0) {
-        perror("write error");
-        return -1;
-    }
-
-    return 0;
-
-}
-
-static int read_uart_regs(int uartfd) {
-
-    uint8_t tx[2] = {0, 0};
-    uint8_t rx[5] = {0, 0, 0, 0, 0};
-
-    uint32_t regval = 0;
-
-    int total_regs = DC_SEQ_REGS + DC_CTRL_REGS +
-                     RF_SEQ_REGS + RF_CTRL_REGS +
-                     LAUNCH_TOTAL_REGS;
-
-    for (int i = 0; i < total_regs; i++) {
-
-        tx[0] = ((uint8_t)i) | (0b10000000);
-        ssize_t n = write(uartfd, tx, sizeof(tx) - 1);
-        if (n < 0) {
-            perror("write error");
-            return -1;
-        }
-
-        ssize_t r = read(uartfd, rx, sizeof(rx) - 1);
-        if (r < 0) {
-            perror("read error");
-            return -1;
-        } else if (r == 0) {
-            printf("read timeout (no data)\n");
-            return -1;
-        } else {
-            regval |= ((uint32_t)rx[0]) << 24;
-            regval |= ((uint32_t)rx[1]) << 16;
-            regval |= ((uint32_t)rx[2]) << 8;
-            regval |= ((uint32_t)rx[3]);
-            printf("0x%08" PRIX32 "\n", regval);
-            regval = 0;
-        }
-
-    }
-
-    return 0;
-
-}
-
-static int read_single(int uartfd, uint8_t addr) {
-
-    uint8_t tx[2] = {0, 0};
-    uint8_t rx[5] = {0, 0, 0, 0, 0};
-
-    uint32_t regval = 0;
-
-
-    tx[0] = ((uint8_t)addr) | (0b10000000);
-    ssize_t n = write(uartfd, tx, sizeof(tx) - 1);
-    if (n < 0) {
-        perror("write error");
-        return -1;
-    }
-
-    ssize_t r = read(uartfd, rx, sizeof(rx) - 1);
-    if (r < 0) {
-        perror("read error");
-        return -1;
-    } else if (r == 0) {
-        printf("read timeout (no data)\n");
-        return -1;
-    } else {
-        regval |= ((uint32_t)rx[0]) << 24;
-        regval |= ((uint32_t)rx[1]) << 16;
-        regval |= ((uint32_t)rx[2]) << 8;
-        regval |= ((uint32_t)rx[3]);
-        printf("0x%08" PRIX32 "\n", regval);
-        regval = 0;
-    }
-
-    return 0;
-
-}
-
-static int setup_uart(int fd, speed_t speed) {
-
-    struct termios tty;
-
-    if (tcgetattr(fd, &tty) != 0) {
-        perror("tcgetattr");
-        return -1;
-    }
-
-    // Set baud rate
-    cfsetispeed(&tty, speed);
-    cfsetospeed(&tty, speed);
-
-    // 8N1, no flow control
-    tty.c_cflag = (tty.c_cflag & ~CSIZE) | CS8; // 8-bit chars
-    tty.c_iflag &= ~(IGNBRK | BRKINT | PARMRK | ISTRIP
-                   | INLCR | IGNCR | ICRNL | IXON | IXOFF | IXANY);
-    tty.c_lflag &= ~(ECHO | ECHONL | ICANON | ISIG | IEXTEN);
-    tty.c_oflag &= ~OPOST;
-
-    tty.c_cflag |= (CLOCAL | CREAD);            // ignore modem controls, enable reading
-    tty.c_cflag &= ~(PARENB | PARODD);          // no parity
-    tty.c_cflag &= ~CSTOPB;                     // 1 stop bit
-    tty.c_cflag &= ~CRTSCTS;                    // no HW flow control
-
-    // Read timeout behavior:
-    // VMIN=0, VTIME=10 => read returns immediately with what’s available,
-    // or waits up to 1.0s (10 deciseconds) for at least 1 byte.
-    tty.c_cc[VMIN]  = 0;
-    tty.c_cc[VTIME] = 10;
-
-    if (tcsetattr(fd, TCSANOW, &tty) != 0) {
-        perror("tcsetattr");
-        return -1;
-    }
-
-    // Flush any pending data
-    tcflush(fd, TCIOFLUSH);
-    return 0;
-
-}
-
-static int parse_u8_optarg(char *s, uint8_t *out)
-{
-    if (!s) return 0;
-
-    // Optional: skip leading spaces
-    while (isspace((unsigned char)*s)) s++;
-    if (*s == '\0') return 0;
-
-    errno = 0;
-    char *end = NULL;
-    unsigned long v = strtoul(s, &end, 0); // base 0: allows 123, 0x7F, 077
-
-    // No digits parsed
-    if (end == s) return 0;
-
-    // Optional: allow trailing spaces
-    while (isspace((unsigned char)*end)) end++;
-    if (*end != '\0') return 0;
-
-    if (errno == ERANGE) return 0;     // overflow from conversion
-    if (v > UINT8_MAX) return 0;       // not fit in uint8_t
-
-    *out = (uint8_t)v;
-    return 1;
-}
-
-static int parse_u32_optarg(const char *s, uint32_t *out)
-{
-    if (!s) return 0;
-
-    while (isspace((unsigned char)*s)) s++;
-    if (*s == '\0') return 0;
-
-    // Reject sign
-    if (*s == '+' || *s == '-') return 0;
-
-    // Allow optional 0x / 0X
-    if (s[0] == '0' && (s[1] == 'x' || s[1] == 'X')) s += 2;
-
-    // Require at least one hex digit
-    if (!isxdigit((unsigned char)*s)) return 0;
-
-    errno = 0;
-    char *end = NULL;
-    unsigned long v = strtoul(s, &end, 16);
-
-    while (isspace((unsigned char)*end)) end++;
-    if (*end != '\0') return 0;     // trailing junk
-    if (errno == ERANGE) return 0;  // overflow in conversion
-
-    if (v > 0xFFFFFFFFUL) return 0; // fit in 32 bits
-
-    *out = (uint32_t)v;
-    return 1;
 }
 
 // ---- disassembler helpers ----
@@ -1634,13 +1374,7 @@ int main(int argc, char *argv[]) {
     int sim = 0;
     int exe = 0;
     int read = 0;
-    int write = 0;
-    char *wdev = NULL;
     char *rdev = NULL;
-    int uart = 0;
-    int test = 0;
-    uint8_t addr;
-    uint32_t tval;
 
     while ((opt = getopt(argc, argv, "f:o:w:r:t:v:sxu")) != -1) {
         switch (opt) {
@@ -1653,42 +1387,21 @@ int main(int argc, char *argv[]) {
             case 's':
                 sim = 1;
                 break;
-            case 'u':
-                uart = 1;
-                break;
             case 'x':
                 exe = 1;
-                break;
-            case 'w':
-                write = 1;
-                wdev = optarg;
                 break;
             case 'r':
                 read = 1;
                 rdev = optarg;
                 break;
-            case 't':
-                test = 1;
-                if (!parse_u8_optarg(optarg, &addr)) {
-                    fprintf(stderr, "Invalid -t (uint8_t): '%s'\n", optarg);
-                    return 1;
-                }
-                break;
-            case 'v':
-                if (!parse_u32_optarg(optarg, &tval)) {
-                    fprintf(stderr, "Invalid -v (uint8_t): '%s'\n", optarg);
-                    return 1;
-                }
-                break;
             default:
-                fprintf(stderr, "Usage: %s [-f file] [-o out] [-s] [-x] [-w wdev] [-r ch] [-t addr]\n"
-                            "  -r ch   read channel (e.g. rf3, dc0, li1, ex0); with -u reads via UART\n", argv[0]);
+                fprintf(stderr, "Usage: %s [-f file] [-o out] [-s] [-x] [-r ch]\n", argv[0]);
                 return 1;
         }
     }
 
-    if (file == NULL && !read && !write) {
-        fprintf(stderr, "Usage: %s [-f file] [-o out] [-s] [-x] [-w wdev] [-r rdev] [-t addr]\n", argv[0]);
+    if (file == NULL && !read) {
+        fprintf(stderr, "Usage: %s [-f file] [-o out] [-s] [-x] [-r ch]\n", argv[0]);
         return 1;
     }
 
@@ -1704,48 +1417,6 @@ int main(int argc, char *argv[]) {
     ex_program_t *ex_programs[LI_CHANNELS] = {NULL};
     launch_t *launch = NULL;
 
-    int rfd, wfd;
-
-    if (test) {
-
-        if ((!read && !write) || (read && write)) {
-            fprintf(stderr, "must have one of [-r rdev] [-w wdev] specified when using -t");
-            return 1;
-        }
-
-        if (read) {
-            rfd = open(rdev, O_RDWR | O_NOCTTY | O_SYNC);
-            if (rfd < 0) {
-                fprintf(stderr, "open(%s) failed: %s\n", rdev, strerror(errno));
-                return 1;
-            }
-            if (setup_uart(rfd, B921600) != 0) {
-                close(rfd);
-                return 1;
-            }
-
-            for (int i = 0; i < 100; i++) {
-                read_single(rfd, addr);
-            }
-            close(rfd);
-        } else if (write) {
-            wfd = open(wdev, O_RDWR | O_NOCTTY | O_SYNC);
-            if (wfd < 0) {
-                fprintf(stderr, "open(%s) failed: %s\n", wdev, strerror(errno));
-                return 1;
-            }
-            if (setup_uart(wfd, B921600) != 0) {
-                close(wfd);
-                return 1;
-            }
-
-            write_single(wfd, addr, tval);
-            close(wfd);
-        }
-
-        return 0;
-    }
-
     if (file != NULL) {
         fp = fopen(file, "r");
         assemble(fp, dc_programs, rf_programs, li_programs, ex_programs, &launch);
@@ -1754,12 +1425,13 @@ int main(int argc, char *argv[]) {
         printf("program t: %ld ns\n", program_t(dc_programs, rf_programs, li_programs, ex_programs));
     }
 
+    if (read) {
+        inspect_named_channel(rdev);
+    }
+
     if (sim) {
         printf("simulate\n");
-        if (uart)
-            write_sim_uart(dc_programs, rf_programs, li_programs, ex_programs, launch);
-        else
-            write_sim(dc_programs, rf_programs, li_programs, ex_programs, launch);
+        write_sim(dc_programs, rf_programs, li_programs, ex_programs, launch);
     }
 
     if (exe) {
@@ -1781,47 +1453,6 @@ int main(int argc, char *argv[]) {
         }
         if (launch != NULL)
             launch_load(launch);
-    }
-
-    if (write) {
-        wfd = open(wdev, O_RDWR | O_NOCTTY | O_SYNC);
-        if (wfd < 0) {
-            fprintf(stderr, "open(%s) failed: %s\n", wdev, strerror(errno));
-            return 1;
-        }
-        if (setup_uart(wfd, B921600) != 0) {
-            close(wfd);
-            return 1;
-        }
-        for (int ch = 0; ch < DC_CHANNELS; ch++) {
-            if (dc_programs[ch] != NULL)
-                dc_write_regs(ch, dc_programs[ch], wfd);
-        }
-        for (int ch = 0; ch < RF_CHANNELS; ch++) {
-            if (rf_programs[ch] != NULL)
-                rf_write_regs(ch, rf_programs[ch], wfd);
-        }
-        if (launch != NULL)
-            launch_load(launch);
-        close(wfd);
-    }
-
-    if (read) {
-        if (uart) {
-            rfd = open(rdev, O_RDWR | O_NOCTTY | O_SYNC);
-            if (rfd < 0) {
-                fprintf(stderr, "open(%s) failed: %s\n", rdev, strerror(errno));
-                return 1;
-            }
-            if (setup_uart(rfd, B921600) != 0) {
-                close(rfd);
-                return 1;
-            }
-            read_uart_regs(rfd);
-            close(rfd);
-        } else {
-            inspect_named_channel(rdev);
-        }
     }
 
     for (int i = 0; i < DC_CHANNELS; i++) {

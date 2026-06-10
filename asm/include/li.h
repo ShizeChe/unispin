@@ -29,7 +29,7 @@
 #define LI_REG_PER_INSN 2
 #define LI_SEQ_REGS (LI_DEPTH * LI_REG_PER_INSN)
 #define LI_BRAM_SEQ_REGS BRAM_SEQ_TOTAL(LI_REG_PER_INSN)
-#define LI_CTRL_REGS 4
+#define LI_CTRL_REGS 6
 #define LI_STATUS_REGS (LI_REG_PER_INSN + 6)
 
 static const int li_uio_map[LI_CHANNELS] = {31, 32};
@@ -47,6 +47,10 @@ typedef struct {
 typedef struct {
     int64_t nco_freq;
     int32_t nco_phase;
+    int32_t default_I;
+    int32_t default_Q;
+    int32_t max_burst;
+    int64_t base_addr;
 } li_ctrl_t;
 
 typedef struct {

@@ -393,14 +393,23 @@ module io
     assign o_adcio15 = w_mosi7; // 24
 
     // PMOD0
-    assign o_pmod00 = w_ldac23; // 1
-    assign o_pmod01 = w_sclk11; // 2
-    assign o_pmod02 = w_mosi23; // 3
-    assign o_pmod03 = w_mosi11; // 4
-    assign o_pmod04 = w_sclk23; // 5
-    assign o_pmod05 = w_ldac11; // 6
-    assign o_pmod06 = w_cs23; // 7
-    assign w_miso10 = i_pmod07; // 8
+    // assign o_pmod00 = w_ldac23; // 1
+    // assign o_pmod01 = w_sclk11; // 2
+    // assign o_pmod02 = w_mosi23; // 3
+    // assign o_pmod03 = w_mosi11; // 4
+    // assign o_pmod04 = w_sclk23; // 5
+    // assign o_pmod05 = w_ldac11; // 6
+    // assign o_pmod06 = w_cs23; // 7
+    // assign w_miso10 = i_pmod07; // 8
+
+    assign o_pmod00 = w_cs23; // 1
+    assign o_pmod01 = w_mosi23; // 2
+    assign o_pmod02 = 1'b0; // 3
+    assign o_pmod03 = w_sclk23; // 4
+    assign o_pmod04 = w_ldac23; // 5
+    assign o_pmod05 = 1'b1; // 6
+    assign o_pmod06 = 1'b1; // 7
+    assign w_miso10 = 1'b0; // 8
 
     // PMOD1
     assign w_miso23 = i_pmod10; // 1

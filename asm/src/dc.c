@@ -586,6 +586,14 @@ int dc_load_insns(int dc_channel, dc_program_t *dc_program) {
     volatile uint32_t *dc_base = (volatile uint32_t *)((char *)dc_va);
     unsigned int n = dc_program->len;
 
+    // Write ctrl regs (follow seq regs in AXI address space)
+    for (int i = 0; i < DC_CTRL_REGS; i++) {
+        if (dc_program->ctrl_regs[i] != -1)
+            *(dc_base + DC_BRAM_SEQ_REGS + i) = dc_program->ctrl_regs[i];
+    }
+    *(dc_base + DC_BRAM_SEQ_REGS + DC_CTRL_REGS - 1) = 0;
+    *(dc_base + DC_BRAM_SEQ_REGS + DC_CTRL_REGS - 1) = 1;
+
     // Write IMEM: for each instruction, set address, data, then strobe 0→1
     for (unsigned int i = 0; i < n; i++) {
         dc_base[BRAM_IST_ADDR] = i;
@@ -608,13 +616,6 @@ int dc_load_insns(int dc_channel, dc_program_t *dc_program) {
     dc_base[BRAM_DEPTH(DC_REG_PER_INSN)] = n - 1;
     dc_base[BRAM_START(DC_REG_PER_INSN)] = 0;
     dc_base[BRAM_START(DC_REG_PER_INSN)] = 1;
-
-    // Write ctrl regs (follow seq regs in AXI address space)
-    *(dc_base + DC_BRAM_SEQ_REGS + DC_CTRL_REGS - 1) = 0;
-    for (int i = 0; i < DC_CTRL_REGS; i++) {
-        if (dc_program->ctrl_regs[i] != -1)
-            *(dc_base + DC_BRAM_SEQ_REGS + i) = dc_program->ctrl_regs[i];
-    }
 
 #if EXE
     __asm__ __volatile__("dsb oshst" ::: "memory");

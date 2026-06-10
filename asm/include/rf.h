@@ -45,7 +45,7 @@ static inline int clog2_u32(uint32_t n) {
 #define RF_REG_PER_INSN 4
 #define RF_SEQ_REGS (RF_DEPTH * RF_REG_PER_INSN)
 #define RF_BRAM_SEQ_REGS BRAM_SEQ_TOTAL(RF_REG_PER_INSN)
-#define RF_CTRL_REGS 2
+#define RF_CTRL_REGS 3
 #define RF_STATUS_REGS (RF_REG_PER_INSN + 4)
 
 static const int rf_uio_map[RF_CHANNELS] = {38, 39, 40, 41, 42, 43};

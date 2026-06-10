@@ -171,6 +171,19 @@ void li_assemble(li_program_t *prog) {
 
     }
 
+    prog->ctrl_regs[0] = prog->ctrl.default_I == -1 ? -1 : (int32_t)(prog->ctrl.default_I & 0x3fff);
+    prog->ctrl_regs[1] = prog->ctrl.default_Q == -1 ? -1 : (int32_t)(prog->ctrl.default_Q & 0x3fff);
+    prog->ctrl_regs[2] = prog->ctrl.max_burst  == -1 ? -1 : (int32_t)(prog->ctrl.max_burst  & 0xff);
+    if (prog->ctrl.base_addr == -1) {
+        prog->ctrl_regs[3] = -1;
+        prog->ctrl_regs[4] = -1;
+    } else {
+        prog->ctrl_regs[3] = (int32_t)(((uint64_t)prog->ctrl.base_addr >> 32) & 0x1ffff);
+        prog->ctrl_regs[4] = (int32_t)((uint64_t)prog->ctrl.base_addr & 0xffffffff);
+    }
+    prog->ctrl_regs[LI_CTRL_REGS-1] = (prog->ctrl.default_I != -1) || (prog->ctrl.default_Q != -1) ||
+        (prog->ctrl.max_burst != -1) || (prog->ctrl.base_addr != -1);
+
 }
 
 int li_load_insns(int li_channel, li_program_t *li_program) {
@@ -196,6 +209,13 @@ int li_load_insns(int li_channel, li_program_t *li_program) {
     volatile uint32_t *li_base = (volatile uint32_t *)((char *)li_va);
     unsigned int n = li_program->len;
 
+    for (int i = 0; i < LI_CTRL_REGS; i++) {
+        if (li_program->ctrl_regs[i] != -1)
+            *(li_base + LI_BRAM_SEQ_REGS + i) = li_program->ctrl_regs[i];
+    }
+    *(li_base + LI_BRAM_SEQ_REGS + LI_CTRL_REGS - 1) = 0;
+    *(li_base + LI_BRAM_SEQ_REGS + LI_CTRL_REGS - 1) = 1;
+
     for (unsigned int i = 0; i < n; i++) {
         li_base[BRAM_IST_ADDR] = i;
         for (unsigned int k = 0; k < LI_REG_PER_INSN; k++)
@@ -215,12 +235,6 @@ int li_load_insns(int li_channel, li_program_t *li_program) {
     li_base[BRAM_DEPTH(LI_REG_PER_INSN)] = n - 1;
     li_base[BRAM_START(LI_REG_PER_INSN)] = 0;
     li_base[BRAM_START(LI_REG_PER_INSN)] = 1;
-
-    *(li_base + LI_BRAM_SEQ_REGS + LI_CTRL_REGS - 1) = 0;
-    for (int i = 0; i < LI_CTRL_REGS; i++) {
-        if (li_program->ctrl_regs[i] != -1)
-            *(li_base + LI_BRAM_SEQ_REGS + i) = li_program->ctrl_regs[i];
-    }
 
 #if EXE
     __asm__ __volatile__("dsb oshst" ::: "memory");
