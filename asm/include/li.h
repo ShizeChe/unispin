@@ -2,11 +2,21 @@
 #define LI_H
 
 #include <stdint.h>
+#include <stddef.h>
 #include <math.h>
 #include "common.h"
+#include "rf.h"
 
 #define LI_CHANNELS 2
-#define LI_DEPTH 16
+
+#define LI_DEPTH 512
+#define LI_PC_ADDR_WIDTH 12
+#define LI_PC_MEM_DEPTH  (1 << LI_PC_ADDR_WIDTH)
+#define LI_REG_PER_INSN 2
+#define LI_INSN_MEM_DEPTH (LI_DEPTH * LI_REG_PER_INSN)
+#define LI_BRAM_SEQ_REGS BRAM_SEQ_TOTAL(LI_REG_PER_INSN)
+#define LI_CTRL_REGS 6
+#define LI_STATUS_REGS (LI_REG_PER_INSN + 6)
 
 #define LI_SAMPLE_BITS 20
 #define LI_FNCO_BITS 48
@@ -14,8 +24,8 @@
 #define LI_FSAMPLING_HZ 2000000000ULL
 #define LI_FNCO_MIN (-((long double)RF_FSAMPLING_HZ / 2.0L))
 #define LI_FNCO_MAX ((LI_FSAMPLING_HZ / 2) - (LI_FSAMPLING_HZ / ldexpl(1.0L, LI_FNCO_BITS)))
-#define LI_ADC_HZ 1000000000ULL // x2 decimation
-#define LI_ADC_GHZ 1.0 // x2 decimation
+#define LI_ADC_HZ 1000000000ULL
+#define LI_ADC_GHZ 1.0
 #define LI_NS_PER_SAMPLE 1.0
 #define LI_MAX_SAMPLES ((1u << LI_SAMPLE_BITS) - 1u)
 
@@ -24,13 +34,6 @@
 #define LI_PNCO_MAX (180 - (360 / ldexpl(1.0L, 18)))
 
 #define LI_IQ_BITS 14
-
-#define LI_DEPTH 16
-#define LI_REG_PER_INSN 2
-#define LI_SEQ_REGS (LI_DEPTH * LI_REG_PER_INSN)
-#define LI_BRAM_SEQ_REGS BRAM_SEQ_TOTAL(LI_REG_PER_INSN)
-#define LI_CTRL_REGS 6
-#define LI_STATUS_REGS (LI_REG_PER_INSN + 6)
 
 static const int li_uio_map[LI_CHANNELS] = {31, 32};
 
@@ -58,8 +61,8 @@ typedef struct {
     uint32_t repeat;
     uint32_t len;
     li_insn_t insns[LI_DEPTH];
-    uint32_t seq_regs[LI_SEQ_REGS];
-    int32_t ctrl_regs[LI_CTRL_REGS];
+    uint32_t pc_mem[LI_PC_MEM_DEPTH];
+    uint32_t insn_mem[LI_INSN_MEM_DEPTH];
 } li_program_t;
 
 typedef struct {
@@ -78,10 +81,11 @@ typedef struct {
     li_opt_t opt;
 } li_idl_t;
 
-int li_parse_insn(char *line, li_insn_t *insn);
+int  li_parse_insn(char *line, li_insn_t *insn);
 void li_assemble(li_program_t *prog);
-int li_load_insns(int li_channel, li_program_t *li_program);
-int li_read_regs(int li_channel, uint32_t *seq_regs, uint32_t *ctrl_regs);
-int li_write_regs(int li_channel, li_program_t *li_program, int uartfd);
+int  li_load_insns(int ch, li_program_t *prog);
+
+void disasm_li(const uint32_t *r, char *buf, size_t sz);
+int  li_inspect_channel(int ch);
 
 #endif

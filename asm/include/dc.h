@@ -2,12 +2,10 @@
 #define DC_H
 
 #include <stdint.h>
+#include <stddef.h>
 #include "common.h"
 
 #define DC_CHANNELS 24
-#define INSN_PER_DC_CHANNEL 10
-#define REG_PER_DC_CHANNEL 32
-
 #define DC_DAC_BITS 20
 #define DC_CYCLE_BITS 30
 #define DC_MAX_HOLD_CYCLES ((1u << DC_CYCLE_BITS) - 1u)
@@ -22,16 +20,18 @@
 #define DC_MAX_HOLD_NS (DC_MAX_HOLD_CYCLES * NS_PER_CYCLE)
 #define MAX_DT (NS_PER_CYCLE * DC_MAX_HOLD_CYCLES)
 
-#define DC_DEPTH 10
-#define DC_SEQ_REGS (DC_DEPTH * DC_REG_PER_INSN)
+#define DC_DEPTH 512
+#define DC_PC_ADDR_WIDTH 12
+#define DC_PC_MEM_DEPTH  (1 << DC_PC_ADDR_WIDTH)
+#define DC_INSN_MEM_DEPTH (DC_DEPTH * DC_REG_PER_INSN)
 #define DC_BRAM_SEQ_REGS BRAM_SEQ_TOTAL(DC_REG_PER_INSN)
 #define DC_CTRL_REGS 5
 #define DC_STATUS_REGS (DC_REG_PER_INSN + 4)
 
 static const int dc_uio_map[DC_CHANNELS] = {
-    4, 5, 16, 21, 22, 23, 24, 25, 26, 27, 6, 7, 
+    4, 5, 16, 21, 22, 23, 24, 25, 26, 27, 6, 7,
     8, 9, 10, 11, 12, 13, 14, 15, 17, 18, 19, 20
-}; 
+};
 
 typedef struct {
     uint32_t iters;
@@ -59,8 +59,8 @@ typedef struct {
     uint32_t repeat;
     uint32_t len;
     dc_insn_t insns[DC_DEPTH];
-    uint32_t seq_regs[DC_SEQ_REGS];
-    int32_t ctrl_regs[DC_CTRL_REGS];
+    uint32_t pc_mem[DC_PC_MEM_DEPTH];
+    uint32_t insn_mem[DC_INSN_MEM_DEPTH];
 } dc_program_t;
 
 typedef struct {
@@ -114,10 +114,11 @@ typedef struct {
     dc_opt_t opt;
 } dc_idl_t;
 
-int dc_parse_insn(char *line, dc_insn_t *insn);
+int  dc_parse_insn(char *line, dc_insn_t *insn);
 void dc_assemble(dc_program_t *prog);
-int dc_load_insns(int dc_channel, dc_program_t *dc_program);
-int dc_read_regs(int dc_channel, uint32_t *seq_regs, uint32_t *ctrl_regs);
-int dc_write_regs(int dc_channel, dc_program_t *dc_program, int uartfd);
+int  dc_load_insns(int ch, dc_program_t *prog);
+
+void disasm_dc(const uint32_t *r, char *buf, size_t sz);
+int  dc_inspect_channel(int ch);
 
 #endif

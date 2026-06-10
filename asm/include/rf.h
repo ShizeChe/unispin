@@ -2,22 +2,27 @@
 #define RF_H
 
 #include <stdint.h>
+#include <stddef.h>
 #include <math.h>
 #include "common.h"
 
 static inline int clog2_u32(uint32_t n) {
     int r = 0;
     n--;
-    while (n > 0) {
-        n >>= 1;
-        r++;
-    }
+    while (n > 0) { n >>= 1; r++; }
     return r;
 }
 
 #define RF_CHANNELS 6
 
-#define RF_DEPTH 16
+#define RF_DEPTH 512
+#define RF_PC_ADDR_WIDTH 12
+#define RF_PC_MEM_DEPTH  (1 << RF_PC_ADDR_WIDTH)
+#define RF_REG_PER_INSN 4
+#define RF_INSN_MEM_DEPTH (RF_DEPTH * RF_REG_PER_INSN)
+#define RF_BRAM_SEQ_REGS BRAM_SEQ_TOTAL(RF_REG_PER_INSN)
+#define RF_CTRL_REGS 3
+#define RF_STATUS_REGS (RF_REG_PER_INSN + 4)
 
 #define RF_KBC_BITS 36
 #define RF_SAMPLE_BITS 20
@@ -40,13 +45,6 @@ static inline int clog2_u32(uint32_t n) {
 #define RF_PNCO_MAX (180 - (360 / ldexpl(1.0L, 18)))
 
 #define RF_IQ_BITS 14
-
-#define RF_DEPTH 16
-#define RF_REG_PER_INSN 4
-#define RF_SEQ_REGS (RF_DEPTH * RF_REG_PER_INSN)
-#define RF_BRAM_SEQ_REGS BRAM_SEQ_TOTAL(RF_REG_PER_INSN)
-#define RF_CTRL_REGS 3
-#define RF_STATUS_REGS (RF_REG_PER_INSN + 4)
 
 static const int rf_uio_map[RF_CHANNELS] = {38, 39, 40, 41, 42, 43};
 
@@ -72,8 +70,8 @@ typedef struct {
     uint32_t repeat;
     uint32_t len;
     rf_insn_t insns[RF_DEPTH];
-    uint32_t seq_regs[RF_SEQ_REGS];
-    int32_t ctrl_regs[RF_CTRL_REGS];
+    uint32_t pc_mem[RF_PC_MEM_DEPTH];
+    uint32_t insn_mem[RF_INSN_MEM_DEPTH];
 } rf_program_t;
 
 typedef struct {
@@ -107,10 +105,11 @@ typedef struct {
     rf_opt_t opt;
 } rf_ful_t;
 
-int rf_parse_insn(char *line, rf_insn_t *insn, long double fnco_hz);
+int  rf_parse_insn(char *line, rf_insn_t *insn, long double fnco_hz);
 void rf_assemble(rf_program_t *prog);
-int rf_load_insns(int rf_channel, rf_program_t *rf_program);
-int rf_read_regs(int rf_channel, uint32_t *seq_regs, uint32_t *ctrl_regs);
-int rf_write_regs(int rf_channel, rf_program_t *rf_program, int uartfd);
+int  rf_load_insns(int ch, rf_program_t *prog);
+
+void disasm_rf(const uint32_t *r, char *buf, size_t sz);
+int  rf_inspect_channel(int ch);
 
 #endif

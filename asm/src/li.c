@@ -5,10 +5,12 @@
 #include <math.h>
 #include <string.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <assert.h>
 #include <fcntl.h>
 #include <unistd.h>
 #include <errno.h>
+#include <inttypes.h>
 #include <sys/mman.h>
 
 static uint32_t li_t2samples(double t_ns) {
@@ -160,29 +162,16 @@ void li_assemble(li_program_t *prog) {
     for (unsigned int i = 0; i < prog->len; i++) {
 
         li_insn_t *insn = &(prog->insns[i]);
-        uint32_t *reg = &(prog->seq_regs[i * LI_REG_PER_INSN]);
+        uint32_t *reg = &(prog->insn_mem[i * LI_REG_PER_INSN]);
 
-        // Pack 62-bit li_insn_t into 2 x 32-bit registers
-        // insn[61:32] → reg[0][29:0], insn[31:0] → reg[1]
         reg[0] = (insn->arm << 29) | (insn->sticky_arm << 28) |
                  (insn->idle << 27) | (insn->marker << 26) |
                  (insn->samples << 6) | (insn->dsamples >> 14);
         reg[1] = ((insn->dsamples & 0x3FFF) << 18) | insn->stride;
 
-    }
+        prog->pc_mem[i] = i;
 
-    prog->ctrl_regs[0] = prog->ctrl.default_I == -1 ? -1 : (int32_t)(prog->ctrl.default_I & 0x3fff);
-    prog->ctrl_regs[1] = prog->ctrl.default_Q == -1 ? -1 : (int32_t)(prog->ctrl.default_Q & 0x3fff);
-    prog->ctrl_regs[2] = prog->ctrl.max_burst  == -1 ? -1 : (int32_t)(prog->ctrl.max_burst  & 0xff);
-    if (prog->ctrl.base_addr == -1) {
-        prog->ctrl_regs[3] = -1;
-        prog->ctrl_regs[4] = -1;
-    } else {
-        prog->ctrl_regs[3] = (int32_t)(((uint64_t)prog->ctrl.base_addr >> 32) & 0x1ffff);
-        prog->ctrl_regs[4] = (int32_t)((uint64_t)prog->ctrl.base_addr & 0xffffffff);
     }
-    prog->ctrl_regs[LI_CTRL_REGS-1] = (prog->ctrl.default_I != -1) || (prog->ctrl.default_Q != -1) ||
-        (prog->ctrl.max_burst != -1) || (prog->ctrl.base_addr != -1);
 
 }
 
@@ -209,24 +198,27 @@ int li_load_insns(int li_channel, li_program_t *li_program) {
     volatile uint32_t *li_base = (volatile uint32_t *)((char *)li_va);
     unsigned int n = li_program->len;
 
-    for (int i = 0; i < LI_CTRL_REGS; i++) {
-        if (li_program->ctrl_regs[i] != -1)
-            *(li_base + LI_BRAM_SEQ_REGS + i) = li_program->ctrl_regs[i];
-    }
     *(li_base + LI_BRAM_SEQ_REGS + LI_CTRL_REGS - 1) = 0;
+    if (li_program->ctrl.default_I != -1) *(li_base + LI_BRAM_SEQ_REGS + 0) = (uint32_t)(li_program->ctrl.default_I & 0x3fff);
+    if (li_program->ctrl.default_Q != -1) *(li_base + LI_BRAM_SEQ_REGS + 1) = (uint32_t)(li_program->ctrl.default_Q & 0x3fff);
+    if (li_program->ctrl.max_burst != -1) *(li_base + LI_BRAM_SEQ_REGS + 2) = (uint32_t)(li_program->ctrl.max_burst & 0xff);
+    if (li_program->ctrl.base_addr != -1) {
+        *(li_base + LI_BRAM_SEQ_REGS + 3) = (uint32_t)(((uint64_t)li_program->ctrl.base_addr >> 32) & 0x1ffff);
+        *(li_base + LI_BRAM_SEQ_REGS + 4) = (uint32_t)((uint64_t)li_program->ctrl.base_addr & 0xffffffff);
+    }
     *(li_base + LI_BRAM_SEQ_REGS + LI_CTRL_REGS - 1) = 1;
 
     for (unsigned int i = 0; i < n; i++) {
         li_base[BRAM_IST_ADDR] = i;
         for (unsigned int k = 0; k < LI_REG_PER_INSN; k++)
-            li_base[BRAM_IST_LO + k] = li_program->seq_regs[i * LI_REG_PER_INSN + k];
+            li_base[BRAM_IST_LO + k] = li_program->insn_mem[i * LI_REG_PER_INSN + k];
         li_base[BRAM_IST_STRB(LI_REG_PER_INSN)] = 0;
         li_base[BRAM_IST_STRB(LI_REG_PER_INSN)] = 1;
     }
 
     for (unsigned int j = 0; j < n; j++) {
         li_base[BRAM_PCST_ADDR] = j;
-        li_base[BRAM_PCST]      = j;
+        li_base[BRAM_PCST]      = li_program->pc_mem[j];
         li_base[BRAM_PCST_STRB] = 0;
         li_base[BRAM_PCST_STRB] = 1;
     }
@@ -245,133 +237,160 @@ int li_load_insns(int li_channel, li_program_t *li_program) {
     return 0;
 }
 
-int li_read_regs(int li_channel, uint32_t *seq_regs, uint32_t *ctrl_regs) {
+// ---- disassembler ----
 
-    assert(0 <= li_channel && li_channel <= LI_CHANNELS - 1);
+static void li_fmt_ns(double ns, char *buf, size_t sz) {
+    if      (ns >= 1e9) snprintf(buf, sz, "%gs",  ns * 1e-9);
+    else if (ns >= 1e6) snprintf(buf, sz, "%gms", ns * 1e-6);
+    else if (ns >= 1e3) snprintf(buf, sz, "%gus", ns * 1e-3);
+    else                snprintf(buf, sz, "%gns", ns);
+}
 
-    char uio_path[32];
-    snprintf(uio_path, sizeof(uio_path), "/dev/uio%d", li_uio_map[li_channel]);
+static void li_build_opts(char *buf, size_t sz,
+                          int arm, int sticky_arm, int marker, const char *extra) {
+    const char *flags[3];
+    int nf = 0;
+    if (arm)        flags[nf++] = "arm";
+    if (sticky_arm) flags[nf++] = "sticky_arm";
+    if (marker)     flags[nf++] = "marker";
+    if (nf == 0 && (!extra || !extra[0])) { buf[0] = '\0'; return; }
 
-    int li_fd = open(uio_path, O_RDWR);
-    if (li_fd < 0) {
-        fprintf(stderr, "open(\"%s\") failed: %s\n", uio_path, strerror(errno));
+    snprintf(buf, sz, " (");
+    for (int i = 0; i < nf; i++) {
+        strncat(buf, flags[i], sz - strlen(buf) - 1);
+        if (i < nf - 1 || (extra && extra[0]))
+            strncat(buf, " ", sz - strlen(buf) - 1);
+    }
+    if (extra && extra[0])
+        strncat(buf, extra, sz - strlen(buf) - 1);
+    strncat(buf, ")", sz - strlen(buf) - 1);
+}
+
+void disasm_li(const uint32_t *r, char *buf, size_t sz) {
+    uint32_t arm        = (r[0] >> 29) & 1u;
+    uint32_t sticky_arm = (r[0] >> 28) & 1u;
+    uint32_t idle       = (r[0] >> 27) & 1u;
+    uint32_t marker     = (r[0] >> 26) & 1u;
+    uint32_t samples    = (r[0] >> 6) & 0xFFFFFu;
+    uint32_t dsamples   = ((r[0] & 0x3Fu) << 14) | (r[1] >> 18);
+    uint32_t stride     = r[1] & 0x3FFFFu;
+
+    char extra[48] = "";
+    if (dsamples) {
+        char dtbuf[32];
+        li_fmt_ns((double)dsamples * LI_NS_PER_SAMPLE, dtbuf, sizeof(dtbuf));
+        snprintf(extra, sizeof(extra), "t+%s", dtbuf);
+    }
+    char opts[96];
+    li_build_opts(opts, sizeof(opts), (int)arm, (int)sticky_arm, (int)marker, extra);
+
+    if (idle) {
+        char tbuf[32];
+        li_fmt_ns((double)samples * LI_NS_PER_SAMPLE, tbuf, sizeof(tbuf));
+        snprintf(buf, sz, "idl t=%s%s", tbuf, opts);
+    } else {
+        char tbuf[32];
+        li_fmt_ns((double)samples * (double)stride * LI_NS_PER_SAMPLE, tbuf, sizeof(tbuf));
+        snprintf(buf, sz, "sam n=%u t=%s%s", samples, tbuf, opts);
+    }
+}
+
+int li_inspect_channel(int ch) {
+
+    if (ch < 0 || ch >= LI_CHANNELS) {
+        fprintf(stderr, "li channel must be 0..%d\n", LI_CHANNELS - 1);
         return 1;
     }
 
-    void *li_va = mmap(NULL, 0x1000, PROT_READ | PROT_WRITE, MAP_SHARED, li_fd, 0);
-    if (li_va == MAP_FAILED) {
-        fprintf(stderr, "mmap() %s failed: %s\n", uio_path, strerror(errno));
-        close(li_fd);
+    char path[32];
+    snprintf(path, sizeof(path), "/dev/uio%d", li_uio_map[ch]);
+
+    int fd = open(path, O_RDWR);
+    if (fd < 0) { fprintf(stderr, "open(%s): %s\n", path, strerror(errno)); return 1; }
+
+    void *va = mmap(NULL, 0x1000, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
+    if (va == MAP_FAILED) {
+        fprintf(stderr, "mmap(%s): %s\n", path, strerror(errno));
+        close(fd);
         return 1;
     }
 
-    volatile uint32_t *li_base = (volatile uint32_t *)((char *)li_va);
+    volatile uint32_t *base   = (volatile uint32_t *)va;
+    int                sb     = BRAM_SEQ_TOTAL(LI_REG_PER_INSN) + LI_CTRL_REGS;
+    volatile uint32_t *status = base + sb;
 
-    for (int i = 0; i < LI_BRAM_SEQ_REGS; i++) {
-        seq_regs[i] = *(li_base + i);
-    }
-    for (int i = 0; i < LI_CTRL_REGS; i++) {
-        ctrl_regs[i] = *(li_base + LI_BRAM_SEQ_REGS + i);
+    uint32_t depth  = base[BRAM_DEPTH(LI_REG_PER_INSN)];
+    uint32_t nsteps = depth + 1;
+    if (nsteps > (uint32_t)LI_PC_MEM_DEPTH) nsteps = LI_PC_MEM_DEPTH;
+
+    uint32_t flags = status[LI_REG_PER_INSN + 3];
+    uint32_t iters = status[LI_REG_PER_INSN + 1];
+
+    printf("li%d:\n", ch);
+    printf("  depth:  %u (%u steps)\n", depth, nsteps);
+    printf("  iters:  %u\n", iters);
+    printf("  armed:  %u\n", (flags >> 1) & 1u);
+    printf("  empty:  %u\n",  flags & 1u);
+    if (LI_STATUS_REGS > LI_REG_PER_INSN + 4)
+        printf("  samples_lost:  %08" PRIX32 "\n", (uint32_t)status[LI_REG_PER_INSN + 4]);
+    if (LI_STATUS_REGS > LI_REG_PER_INSN + 5)
+        printf("  samples_inbuf: %08" PRIX32 "\n", (uint32_t)status[LI_REG_PER_INSN + 5]);
+
+    uint32_t *pc_seq     = malloc(nsteps * sizeof(uint32_t));
+    uint32_t *insn_cache = calloc((size_t)LI_DEPTH * LI_REG_PER_INSN, sizeof(uint32_t));
+    uint8_t  *fetched    = calloc(LI_DEPTH, 1);
+    int       ret        = 0;
+
+    if (!pc_seq || !insn_cache || !fetched) {
+        fprintf(stderr, "malloc failed\n");
+        ret = 1;
+        goto done;
     }
 
-    munmap(li_va, 0x1000);
-    close(li_fd);
-    return 0;
+    for (uint32_t addr = 0; addr < nsteps; addr++) {
+        base[BRAM_PCST_ADDR]              = addr;
+        base[BRAM_PCLD_STRB(LI_REG_PER_INSN)] = 0;
+        base[BRAM_PCLD_STRB(LI_REG_PER_INSN)] = 1;
+        pc_seq[addr] = (uint32_t)status[LI_REG_PER_INSN];
+    }
+
+    for (uint32_t addr = 0; addr < nsteps; addr++) {
+        uint32_t pc = pc_seq[addr] & (LI_DEPTH - 1);
+        if (!fetched[pc]) {
+            base[BRAM_IST_ADDR]               = pc;
+            base[BRAM_ILD_STRB(LI_REG_PER_INSN)] = 0;
+            base[BRAM_ILD_STRB(LI_REG_PER_INSN)] = 1;
+            for (int k = 0; k < LI_REG_PER_INSN; k++)
+                insn_cache[pc * LI_REG_PER_INSN + k] = (uint32_t)status[k];
+            fetched[pc] = 1;
+        }
+    }
+
+    printf("  program:\n");
+    for (uint32_t addr = 0; addr < nsteps; addr++) {
+        uint32_t pc = pc_seq[addr] & (LI_DEPTH - 1);
+        char abuf[128] = "???";
+        disasm_li(&insn_cache[pc * LI_REG_PER_INSN], abuf, sizeof(abuf));
+        printf("    [%u] pc=%u: %s\n", addr, pc, abuf);
+    }
+
+    printf("  status:\n");
+    for (int k = 0; k < LI_REG_PER_INSN; k++)
+        printf("    insn_rd[%d]:   %08" PRIX32 "\n", k, (uint32_t)status[k]);
+    printf("    pc_rd:        %08" PRIX32 "\n", (uint32_t)status[LI_REG_PER_INSN]);
+    printf("    iters:        %08" PRIX32 "\n", (uint32_t)status[LI_REG_PER_INSN + 1]);
+    printf("    pcmem_depth:  %08" PRIX32 "\n", (uint32_t)status[LI_REG_PER_INSN + 2]);
+    printf("    flags:        %08" PRIX32 " (armed=%u empty=%u)\n",
+           (uint32_t)status[LI_REG_PER_INSN + 3],
+           (flags >> 1) & 1u, flags & 1u);
+
+done:
+    free(pc_seq);
+    free(insn_cache);
+    free(fetched);
+    munmap(va, 0x1000);
+    close(fd);
+    return ret;
 
 }
 
-int li_write_regs(int li_channel, li_program_t *li_program, int uartfd) {
-
-    uint8_t tx[6] = {0, 0, 0, 0, 0, 0};
-
-    ssize_t n;
-
-    int base = DC_SEQ_REGS + DC_CTRL_REGS + RF_SEQ_REGS + RF_CTRL_REGS;
-
-    for (int i = 0; i < LI_CTRL_REGS - 1; i++) {
-
-        if (li_program->ctrl_regs[i] != -1) {
-            tx[0] = (uint8_t)(base + LI_SEQ_REGS + i);
-            tx[1] = (uint8_t)(((uint32_t)li_program->ctrl_regs[i]) >> 24);
-            tx[2] = (uint8_t)(((uint32_t)li_program->ctrl_regs[i]) >> 16);
-            tx[3] = (uint8_t)(((uint32_t)li_program->ctrl_regs[i]) >> 8);
-            tx[4] = (uint8_t)(((uint32_t)li_program->ctrl_regs[i]));
-        }
-
-        n = write(uartfd, tx, sizeof(tx) - 1);
-        if (n < 0) {
-            perror("write error");
-            return -1;
-        }
-
-    }
-
-    tx[0] = (uint8_t)(base + LI_SEQ_REGS + LI_CTRL_REGS - 1);
-    tx[1] = 0;
-    tx[2] = 0;
-    tx[3] = 0;
-    tx[4] = 0;
-
-    n = write(uartfd, tx, sizeof(tx) - 1);
-    if (n < 0) {
-        perror("write error");
-        return -1;
-    }
-
-    tx[0] = (uint8_t)(base + LI_SEQ_REGS + LI_CTRL_REGS - 1);
-    uint32_t chsel = 1U << li_channel;
-    tx[1] = (uint8_t)(chsel >> 24);
-    tx[2] = (uint8_t)(chsel >> 16);
-    tx[3] = (uint8_t)(chsel >> 8);
-    tx[4] = (uint8_t)(chsel);
-
-    n = write(uartfd, tx, sizeof(tx) - 1);
-    if (n < 0) {
-        perror("write error");
-        return -1;
-    }
-
-    for (int i = 0; i < LI_SEQ_REGS - 1; i++) {
-
-        tx[0] = (uint8_t)(base + i);
-        tx[1] = (uint8_t)(li_program->seq_regs[i] >> 24);
-        tx[2] = (uint8_t)(li_program->seq_regs[i] >> 16);
-        tx[3] = (uint8_t)(li_program->seq_regs[i] >> 8);
-        tx[4] = (uint8_t)(li_program->seq_regs[i]);
-
-        n = write(uartfd, tx, sizeof(tx) - 1);
-        if (n < 0) {
-            perror("write error");
-            return -1;
-        }
-
-    }
-
-    tx[0] = (uint8_t)(base + LI_SEQ_REGS - 1);
-    tx[1] = 0;
-    tx[2] = 0;
-    tx[3] = 0;
-    tx[4] = 0;
-
-    n = write(uartfd, tx, sizeof(tx) - 1);
-    if (n < 0) {
-        perror("write error");
-        return -1;
-    }
-
-    tx[0] = (uint8_t)(base + LI_SEQ_REGS - 1);
-    chsel = 1U << li_channel;
-    tx[1] = (uint8_t)(chsel >> 24);
-    tx[2] = (uint8_t)(chsel >> 16);
-    tx[3] = (uint8_t)(chsel >> 8);
-    tx[4] = (uint8_t)(chsel);
-
-    n = write(uartfd, tx, sizeof(tx) - 1);
-    if (n < 0) {
-        perror("write error");
-        return -1;
-    }
-
-    return 0;
-
-}

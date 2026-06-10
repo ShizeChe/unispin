@@ -4,10 +4,12 @@
 #include <math.h>
 #include <string.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <assert.h>
 #include <fcntl.h>
 #include <unistd.h>
 #include <errno.h>
+#include <inttypes.h>
 #include <sys/mman.h>
 
 static uint32_t rf_t2samples(double t_ns) {
@@ -291,23 +293,17 @@ void rf_assemble(rf_program_t *prog) {
     for (unsigned int i = 0; i < prog->len; i++) {
 
         rf_insn_t *insn = &(prog->insns[i]);
-        uint32_t *reg = &(prog->seq_regs[i * RF_REG_PER_INSN]);
+        uint32_t *reg = &(prog->insn_mem[i * RF_REG_PER_INSN]);
 
-        // Pack 117-bit rf_insn_t into 4 x 32-bit registers (MSB-first in concat)
-        // insn[116:96] → reg[0][20:0], insn[95:64] → reg[1], insn[63:32] → reg[2],
-        // insn[31:0] → reg[3]
         reg[0] = (insn->arm << 20) | (insn->sticky_arm << 19) |
                  (insn->kbc_mode << 17) | (uint32_t)(insn->kbc1 >> 19);
         reg[1] = (uint32_t)((insn->kbc1 & 0x7FFFF) << 13) | (uint32_t)(insn->kbc2 >> 23);
         reg[2] = (uint32_t)((insn->kbc2 & 0x7FFFFF) << 9) | (insn->samples >> 11);
         reg[3] = ((insn->samples & 0x7FF) << 21) | (insn->dsamples << 1) | insn->marker;
 
-    }
+        prog->pc_mem[i] = i;
 
-    prog->ctrl_regs[0] = (uint32_t)(prog->ctrl.default_I & 0x3fff);
-    prog->ctrl_regs[1] = (uint32_t)(prog->ctrl.default_Q & 0x3fff);
-    prog->ctrl_regs[RF_CTRL_REGS-1] = (prog->ctrl.default_I != -1) ||
-        (prog->ctrl.default_Q != -1);
+    }
 
 }
 
@@ -334,24 +330,22 @@ int rf_load_insns(int rf_channel, rf_program_t *rf_program) {
     volatile uint32_t *rf_base = (volatile uint32_t *)((char *)rf_va);
     unsigned int n = rf_program->len;
 
-    for (int i = 0; i < RF_CTRL_REGS; i++) {
-        if (rf_program->ctrl_regs[i] != -1)
-            *(rf_base + RF_BRAM_SEQ_REGS + i) = rf_program->ctrl_regs[i];
-    }
     *(rf_base + RF_BRAM_SEQ_REGS + RF_CTRL_REGS - 1) = 0;
+    if (rf_program->ctrl.default_I != -1) *(rf_base + RF_BRAM_SEQ_REGS + 0) = (uint32_t)(rf_program->ctrl.default_I & 0x3fff);
+    if (rf_program->ctrl.default_Q != -1) *(rf_base + RF_BRAM_SEQ_REGS + 1) = (uint32_t)(rf_program->ctrl.default_Q & 0x3fff);
     *(rf_base + RF_BRAM_SEQ_REGS + RF_CTRL_REGS - 1) = 1;
 
     for (unsigned int i = 0; i < n; i++) {
         rf_base[BRAM_IST_ADDR] = i;
         for (unsigned int k = 0; k < RF_REG_PER_INSN; k++)
-            rf_base[BRAM_IST_LO + k] = rf_program->seq_regs[i * RF_REG_PER_INSN + k];
+            rf_base[BRAM_IST_LO + k] = rf_program->insn_mem[i * RF_REG_PER_INSN + k];
         rf_base[BRAM_IST_STRB(RF_REG_PER_INSN)] = 0;
         rf_base[BRAM_IST_STRB(RF_REG_PER_INSN)] = 1;
     }
 
     for (unsigned int j = 0; j < n; j++) {
         rf_base[BRAM_PCST_ADDR] = j;
-        rf_base[BRAM_PCST]      = j;
+        rf_base[BRAM_PCST]      = rf_program->pc_mem[j];
         rf_base[BRAM_PCST_STRB] = 0;
         rf_base[BRAM_PCST_STRB] = 1;
     }
@@ -371,133 +365,170 @@ int rf_load_insns(int rf_channel, rf_program_t *rf_program) {
 
 }
 
-int rf_read_regs(int rf_channel, uint32_t *seq_regs, uint32_t *ctrl_regs) {
+// ---- disassembler ----
 
-    assert(0 <= rf_channel && rf_channel <= RF_CHANNELS - 1);
-
-    char uio_path[32];
-    snprintf(uio_path, sizeof(uio_path), "/dev/uio%d", rf_uio_map[rf_channel]);
-
-    int rf_fd = open(uio_path, O_RDWR);
-    if (rf_fd < 0) {
-        fprintf(stderr, "open(\"%s\") failed: %s\n", uio_path, strerror(errno));
-        return 1;
-    }
-
-    void *rf_va = mmap(NULL, 0x1000, PROT_READ | PROT_WRITE, MAP_SHARED, rf_fd, 0);
-    if (rf_va == MAP_FAILED) {
-        fprintf(stderr, "mmap() %s failed: %s\n", uio_path, strerror(errno));
-        close(rf_fd);
-        return 1;
-    }
-
-    volatile uint32_t *rf_base = (volatile uint32_t *)((char *)rf_va);
-
-    for (int i = 0; i < RF_BRAM_SEQ_REGS; i++) {
-        seq_regs[i] = *(rf_base + i);
-    }
-    for (int i = 0; i < RF_CTRL_REGS; i++) {
-        ctrl_regs[i] = *(rf_base + RF_BRAM_SEQ_REGS + i);
-    }
-
-    munmap(rf_va, 0x1000);
-    close(rf_fd);
-    return 0;
-
+static void rf_fmt_ns(double ns, char *buf, size_t sz) {
+    if      (ns >= 1e9) snprintf(buf, sz, "%gs",  ns * 1e-9);
+    else if (ns >= 1e6) snprintf(buf, sz, "%gms", ns * 1e-6);
+    else if (ns >= 1e3) snprintf(buf, sz, "%gus", ns * 1e-3);
+    else                snprintf(buf, sz, "%gns", ns);
 }
 
-int rf_write_regs(int rf_channel, rf_program_t *rf_program, int uartfd) {
+static void rf_build_opts(char *buf, size_t sz,
+                          int arm, int sticky_arm, int marker, const char *extra) {
+    const char *flags[3];
+    int nf = 0;
+    if (arm)        flags[nf++] = "arm";
+    if (sticky_arm) flags[nf++] = "sticky_arm";
+    if (marker)     flags[nf++] = "marker";
+    if (nf == 0 && (!extra || !extra[0])) { buf[0] = '\0'; return; }
 
-    uint8_t tx[6] = {0, 0, 0, 0, 0, 0};
+    snprintf(buf, sz, " (");
+    for (int i = 0; i < nf; i++) {
+        strncat(buf, flags[i], sz - strlen(buf) - 1);
+        if (i < nf - 1 || (extra && extra[0]))
+            strncat(buf, " ", sz - strlen(buf) - 1);
+    }
+    if (extra && extra[0])
+        strncat(buf, extra, sz - strlen(buf) - 1);
+    strncat(buf, ")", sz - strlen(buf) - 1);
+}
 
-    ssize_t n;
+void disasm_rf(const uint32_t *r, char *buf, size_t sz) {
+    uint32_t arm        = (r[0] >> 20) & 1u;
+    uint32_t sticky_arm = (r[0] >> 19) & 1u;
+    uint32_t kbc_mode   = (r[0] >> 17) & 3u;
+    uint64_t kbc1       = ((uint64_t)(r[0] & 0x1FFFFu) << 19) | ((uint64_t)r[1] >> 13);
+    uint64_t kbc2       = ((uint64_t)(r[1] & 0x1FFFu) << 23) | ((uint64_t)r[2] >> 9);
+    uint32_t samples    = ((r[2] & 0x1FFu) << 11) | (r[3] >> 21);
+    uint32_t dsamples   = (r[3] >> 1) & 0xFFFFFu;
+    uint32_t marker     = r[3] & 1u;
 
-    int base = DC_SEQ_REGS + DC_CTRL_REGS;
+    char tbuf[32];
+    rf_fmt_ns((double)samples * RF_NS_PER_SAMPLE, tbuf, sizeof(tbuf));
+    char extra[48] = "";
+    if (dsamples) {
+        char dtbuf[32];
+        rf_fmt_ns((double)dsamples * RF_NS_PER_SAMPLE, dtbuf, sizeof(dtbuf));
+        snprintf(extra, sizeof(extra), "t+%s", dtbuf);
+    }
+    char opts[96];
+    rf_build_opts(opts, sizeof(opts), (int)arm, (int)sticky_arm, (int)marker, extra);
 
-    for (int i = 0; i < RF_CTRL_REGS - 1; i++) {
-
-        if (rf_program->ctrl_regs[i] != -1) {
-            tx[0] = (uint8_t)(base + RF_SEQ_REGS + i);
-            tx[1] = (uint8_t)(((uint32_t)rf_program->ctrl_regs[i]) >> 24);
-            tx[2] = (uint8_t)(((uint32_t)rf_program->ctrl_regs[i]) >> 16);
-            tx[3] = (uint8_t)(((uint32_t)rf_program->ctrl_regs[i]) >> 8);
-            tx[4] = (uint8_t)(((uint32_t)rf_program->ctrl_regs[i]));
+    switch (kbc_mode) {
+        case 3:
+            snprintf(buf, sz, "idl t=%s%s", tbuf, opts);
+            break;
+        case 2: {
+            long double phs = twos2real(-180.0L,
+                                        180.0L - ldexpl(1.0L, -RF_KBC_BITS),
+                                        RF_KBC_BITS, kbc2);
+            double phsd = round((double)phs * 1e5) / 1e5;
+            if (phsd == 0.0) phsd = 0.0;
+            snprintf(buf, sz, "ply phs=%g t=%s%s", phsd, tbuf, opts);
+            break;
         }
+        case 1:
+            snprintf(buf, sz, "chp t=%s kbc1=0x%09" PRIx64 " kbc2=0x%09" PRIx64 "%s",
+                     tbuf, kbc1, kbc2, opts);
+            break;
+        default:
+            snprintf(buf, sz, "??? kbc_mode=%u t=%s%s", kbc_mode, tbuf, opts);
+            break;
+    }
+}
 
-        n = write(uartfd, tx, sizeof(tx) - 1);
-        if (n < 0) {
-            perror("write error");
-            return -1;
+int rf_inspect_channel(int ch) {
+
+    if (ch < 0 || ch >= RF_CHANNELS) {
+        fprintf(stderr, "rf channel must be 0..%d\n", RF_CHANNELS - 1);
+        return 1;
+    }
+
+    char path[32];
+    snprintf(path, sizeof(path), "/dev/uio%d", rf_uio_map[ch]);
+
+    int fd = open(path, O_RDWR);
+    if (fd < 0) { fprintf(stderr, "open(%s): %s\n", path, strerror(errno)); return 1; }
+
+    void *va = mmap(NULL, 0x1000, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
+    if (va == MAP_FAILED) {
+        fprintf(stderr, "mmap(%s): %s\n", path, strerror(errno));
+        close(fd);
+        return 1;
+    }
+
+    volatile uint32_t *base   = (volatile uint32_t *)va;
+    int                sb     = BRAM_SEQ_TOTAL(RF_REG_PER_INSN) + RF_CTRL_REGS;
+    volatile uint32_t *status = base + sb;
+
+    uint32_t depth  = base[BRAM_DEPTH(RF_REG_PER_INSN)];
+    uint32_t nsteps = depth + 1;
+    if (nsteps > (uint32_t)RF_PC_MEM_DEPTH) nsteps = RF_PC_MEM_DEPTH;
+
+    uint32_t flags = status[RF_REG_PER_INSN + 3];
+    uint32_t iters = status[RF_REG_PER_INSN + 1];
+
+    printf("rf%d:\n", ch);
+    printf("  depth:  %u (%u steps)\n", depth, nsteps);
+    printf("  iters:  %u\n", iters);
+    printf("  armed:  %u\n", (flags >> 1) & 1u);
+    printf("  empty:  %u\n",  flags & 1u);
+
+    uint32_t *pc_seq     = malloc(nsteps * sizeof(uint32_t));
+    uint32_t *insn_cache = calloc((size_t)RF_DEPTH * RF_REG_PER_INSN, sizeof(uint32_t));
+    uint8_t  *fetched    = calloc(RF_DEPTH, 1);
+    int       ret        = 0;
+
+    if (!pc_seq || !insn_cache || !fetched) {
+        fprintf(stderr, "malloc failed\n");
+        ret = 1;
+        goto done;
+    }
+
+    for (uint32_t addr = 0; addr < nsteps; addr++) {
+        base[BRAM_PCST_ADDR]              = addr;
+        base[BRAM_PCLD_STRB(RF_REG_PER_INSN)] = 0;
+        base[BRAM_PCLD_STRB(RF_REG_PER_INSN)] = 1;
+        pc_seq[addr] = (uint32_t)status[RF_REG_PER_INSN];
+    }
+
+    for (uint32_t addr = 0; addr < nsteps; addr++) {
+        uint32_t pc = pc_seq[addr] & (RF_DEPTH - 1);
+        if (!fetched[pc]) {
+            base[BRAM_IST_ADDR]               = pc;
+            base[BRAM_ILD_STRB(RF_REG_PER_INSN)] = 0;
+            base[BRAM_ILD_STRB(RF_REG_PER_INSN)] = 1;
+            for (int k = 0; k < RF_REG_PER_INSN; k++)
+                insn_cache[pc * RF_REG_PER_INSN + k] = (uint32_t)status[k];
+            fetched[pc] = 1;
         }
-
     }
 
-    tx[0] = (uint8_t)(base + RF_SEQ_REGS + RF_CTRL_REGS - 1);
-    tx[1] = 0;
-    tx[2] = 0;
-    tx[3] = 0;
-    tx[4] = 0;
-
-    n = write(uartfd, tx, sizeof(tx) - 1);
-    if (n < 0) {
-        perror("write error");
-        return -1;
+    printf("  program:\n");
+    for (uint32_t addr = 0; addr < nsteps; addr++) {
+        uint32_t pc = pc_seq[addr] & (RF_DEPTH - 1);
+        char abuf[128] = "???";
+        disasm_rf(&insn_cache[pc * RF_REG_PER_INSN], abuf, sizeof(abuf));
+        printf("    [%u] pc=%u: %s\n", addr, pc, abuf);
     }
 
-    tx[0] = (uint8_t)(base + RF_SEQ_REGS + RF_CTRL_REGS - 1);
-    uint32_t chsel = 1U << rf_channel;
-    tx[1] = (uint8_t)(chsel >> 24);
-    tx[2] = (uint8_t)(chsel >> 16);
-    tx[3] = (uint8_t)(chsel >> 8);
-    tx[4] = (uint8_t)(chsel);
+    printf("  status:\n");
+    for (int k = 0; k < RF_REG_PER_INSN; k++)
+        printf("    insn_rd[%d]:   %08" PRIX32 "\n", k, (uint32_t)status[k]);
+    printf("    pc_rd:        %08" PRIX32 "\n", (uint32_t)status[RF_REG_PER_INSN]);
+    printf("    iters:        %08" PRIX32 "\n", (uint32_t)status[RF_REG_PER_INSN + 1]);
+    printf("    pcmem_depth:  %08" PRIX32 "\n", (uint32_t)status[RF_REG_PER_INSN + 2]);
+    printf("    flags:        %08" PRIX32 " (armed=%u empty=%u)\n",
+           (uint32_t)status[RF_REG_PER_INSN + 3],
+           (flags >> 1) & 1u, flags & 1u);
 
-    n = write(uartfd, tx, sizeof(tx) - 1);
-    if (n < 0) {
-        perror("write error");
-        return -1;
-    }
-
-    for (int i = 0; i < RF_SEQ_REGS - 1; i++) {
-
-        tx[0] = (uint8_t)(base + i);
-        tx[1] = (uint8_t)(rf_program->seq_regs[i] >> 24);
-        tx[2] = (uint8_t)(rf_program->seq_regs[i] >> 16);
-        tx[3] = (uint8_t)(rf_program->seq_regs[i] >> 8);
-        tx[4] = (uint8_t)(rf_program->seq_regs[i]);
-
-        n = write(uartfd, tx, sizeof(tx) - 1);
-        if (n < 0) {
-            perror("write error");
-            return -1;
-        }
-
-    }
-
-    tx[0] = (uint8_t)(base + RF_SEQ_REGS - 1);
-    tx[1] = 0;
-    tx[2] = 0;
-    tx[3] = 0;
-    tx[4] = 0;
-
-    n = write(uartfd, tx, sizeof(tx) - 1);
-    if (n < 0) {
-        perror("write error");
-        return -1;
-    }
-
-    tx[0] = (uint8_t)(base + RF_SEQ_REGS - 1);
-    chsel = 1U << rf_channel;
-    tx[1] = (uint8_t)(chsel >> 24);
-    tx[2] = (uint8_t)(chsel >> 16);
-    tx[3] = (uint8_t)(chsel >> 8);
-    tx[4] = (uint8_t)(chsel);
-
-    n = write(uartfd, tx, sizeof(tx) - 1);
-    if (n < 0) {
-        perror("write error");
-        return -1;
-    }
-
-    return 0;
+done:
+    free(pc_seq);
+    free(insn_cache);
+    free(fetched);
+    munmap(va, 0x1000);
+    close(fd);
+    return ret;
 
 }

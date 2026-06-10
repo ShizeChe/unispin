@@ -8,6 +8,7 @@
 #include <fcntl.h>
 #include <unistd.h>
 #include <errno.h>
+#include <inttypes.h>
 #include <sys/mman.h>
 
 
@@ -538,10 +539,8 @@ void dc_assemble(dc_program_t *prog) {
     for (unsigned int i = 0; i < prog->len; i++) {
 
         dc_insn_t *insn = &(prog->insns[i]);
-        uint32_t *reg = &(prog->seq_regs[i * DC_REG_PER_INSN]);
+        uint32_t *reg = &(prog->insn_mem[i * DC_REG_PER_INSN]);
 
-        // Pack 91-bit dc_insn_t into 3 x 32-bit registers (MSB-first in concat)
-        // insn[90:64] → reg[0][26:0], insn[63:32] → reg[1], insn[31:0] → reg[2]
         reg[0] = (insn->iters << 17) | (insn->spi_din >> 7);
         reg[1] = ((insn->spi_din & 0x7f) << 25) | (insn->dspi_din << 5) |
                  (insn->spi_rd << 4) | (insn->strb_ldac << 3) |
@@ -550,16 +549,9 @@ void dc_assemble(dc_program_t *prog) {
                  (insn->arm << 3) | (insn->sticky_arm << 2) |
                  (insn->idle << 1) | insn->marker;
 
+        prog->pc_mem[i] = i;
+
     }
-
-    prog->ctrl_regs[0] = prog->ctrl.dvsr;
-    prog->ctrl_regs[1] = prog->ctrl.delay_cycles;
-    prog->ctrl_regs[2] = prog->ctrl.cs_up_cycles;
-    prog->ctrl_regs[3] = prog->ctrl.ldac_cycles;
-
-    prog->ctrl_regs[DC_CTRL_REGS-1] = (prog->ctrl_regs[0] != -1) ||
-        (prog->ctrl_regs[1] != -1) || (prog->ctrl_regs[2] != -1) ||
-        (prog->ctrl_regs[3] != -1);
 
 }
 
@@ -586,32 +578,31 @@ int dc_load_insns(int dc_channel, dc_program_t *dc_program) {
     volatile uint32_t *dc_base = (volatile uint32_t *)((char *)dc_va);
     unsigned int n = dc_program->len;
 
-    // Write ctrl regs (follow seq regs in AXI address space)
-    for (int i = 0; i < DC_CTRL_REGS; i++) {
-        if (dc_program->ctrl_regs[i] != -1)
-            *(dc_base + DC_BRAM_SEQ_REGS + i) = dc_program->ctrl_regs[i];
-    }
+    // Write ctrl regs from ctrl struct; last reg is the write strobe
     *(dc_base + DC_BRAM_SEQ_REGS + DC_CTRL_REGS - 1) = 0;
+    if (dc_program->ctrl.dvsr         != -1) *(dc_base + DC_BRAM_SEQ_REGS + 0) = (uint32_t)dc_program->ctrl.dvsr;
+    if (dc_program->ctrl.delay_cycles != -1) *(dc_base + DC_BRAM_SEQ_REGS + 1) = (uint32_t)dc_program->ctrl.delay_cycles;
+    if (dc_program->ctrl.cs_up_cycles != -1) *(dc_base + DC_BRAM_SEQ_REGS + 2) = (uint32_t)dc_program->ctrl.cs_up_cycles;
+    if (dc_program->ctrl.ldac_cycles  != -1) *(dc_base + DC_BRAM_SEQ_REGS + 3) = (uint32_t)dc_program->ctrl.ldac_cycles;
     *(dc_base + DC_BRAM_SEQ_REGS + DC_CTRL_REGS - 1) = 1;
 
-    // Write IMEM: for each instruction, set address, data, then strobe 0→1
+    // Write IMEM
     for (unsigned int i = 0; i < n; i++) {
         dc_base[BRAM_IST_ADDR] = i;
         for (unsigned int k = 0; k < DC_REG_PER_INSN; k++)
-            dc_base[BRAM_IST_LO + k] = dc_program->seq_regs[i * DC_REG_PER_INSN + k];
+            dc_base[BRAM_IST_LO + k] = dc_program->insn_mem[i * DC_REG_PER_INSN + k];
         dc_base[BRAM_IST_STRB(DC_REG_PER_INSN)] = 0;
         dc_base[BRAM_IST_STRB(DC_REG_PER_INSN)] = 1;
     }
 
-    // Write PCMEM: sequential mapping pcmem[j] = j
+    // Write PCMEM
     for (unsigned int j = 0; j < n; j++) {
         dc_base[BRAM_PCST_ADDR] = j;
-        dc_base[BRAM_PCST]      = j;
+        dc_base[BRAM_PCST]      = dc_program->pc_mem[j];
         dc_base[BRAM_PCST_STRB] = 0;
         dc_base[BRAM_PCST_STRB] = 1;
     }
 
-    // Write iteration count, depth, then start strobe
     dc_base[BRAM_ITERS(DC_REG_PER_INSN)] = dc_program->repeat;
     dc_base[BRAM_DEPTH(DC_REG_PER_INSN)] = n - 1;
     dc_base[BRAM_START(DC_REG_PER_INSN)] = 0;
@@ -627,132 +618,214 @@ int dc_load_insns(int dc_channel, dc_program_t *dc_program) {
 
 }
 
-int dc_read_regs(int dc_channel, uint32_t *seq_regs, uint32_t *ctrl_regs) {
+// ---- disassembler ----
 
-    assert(0 <= dc_channel && dc_channel <= DC_CHANNELS - 1);
+static void fmt_ns(double ns, char *buf, size_t sz) {
+    if      (ns >= 1e9) snprintf(buf, sz, "%gs",  ns * 1e-9);
+    else if (ns >= 1e6) snprintf(buf, sz, "%gms", ns * 1e-6);
+    else if (ns >= 1e3) snprintf(buf, sz, "%gus", ns * 1e-3);
+    else                snprintf(buf, sz, "%gns", ns);
+}
 
-    char uio_path[32];
-    snprintf(uio_path, sizeof(uio_path), "/dev/uio%d", dc_uio_map[dc_channel]);
+static void build_opts(char *buf, size_t sz,
+                       int arm, int sticky_arm, int marker, const char *extra) {
+    const char *flags[3];
+    int nf = 0;
+    if (arm)        flags[nf++] = "arm";
+    if (sticky_arm) flags[nf++] = "sticky_arm";
+    if (marker)     flags[nf++] = "marker";
+    if (nf == 0 && (!extra || !extra[0])) { buf[0] = '\0'; return; }
 
-    int dc_fd = open(uio_path, O_RDWR);
-    if (dc_fd < 0) {
-        fprintf(stderr, "open(\"%s\") failed: %s\n", uio_path, strerror(errno));
+    snprintf(buf, sz, " (");
+    for (int i = 0; i < nf; i++) {
+        strncat(buf, flags[i], sz - strlen(buf) - 1);
+        if (i < nf - 1 || (extra && extra[0]))
+            strncat(buf, " ", sz - strlen(buf) - 1);
+    }
+    if (extra && extra[0])
+        strncat(buf, extra, sz - strlen(buf) - 1);
+    strncat(buf, ")", sz - strlen(buf) - 1);
+}
+
+static const char *dc_reg_name(uint32_t r) {
+    switch (r & 0x7u) {
+        case 1: return "dr";
+        case 2: return "cr";
+        case 3: return "clr";
+        case 4: return "scr";
+        default: return "??";
+    }
+}
+
+void disasm_dc(const uint32_t *r, char *buf, size_t sz) {
+    uint32_t iters       = r[0] >> 17;
+    uint32_t spi_din     = ((r[0] & 0x1FFFFu) << 7) | (r[1] >> 25);
+    uint32_t dspi_din    = (r[1] >> 5) & 0xFFFFFu;
+    uint32_t spi_rd      = (r[1] >> 4) & 1u;
+    uint32_t strb_ldac   = (r[1] >> 3) & 1u;
+    uint32_t hold_cycles = ((r[1] & 0x7u) << 27) | (r[2] >> 5);
+    uint32_t modify      = (r[2] >> 4) & 1u;
+    uint32_t arm         = (r[2] >> 3) & 1u;
+    uint32_t sticky_arm  = (r[2] >> 2) & 1u;
+    uint32_t idle        = (r[2] >> 1) & 1u;
+    uint32_t marker      = r[2] & 1u;
+
+    /* sign-extend dspi_din as 20-bit two's complement */
+    int32_t dspi_signed = (dspi_din & (1u << 19))
+                          ? (int32_t)(dspi_din | 0xFFF00000u) : (int32_t)dspi_din;
+
+    char tbuf[32], extra[48], opts[96];
+    fmt_ns((double)(hold_cycles + 1u) * NS_PER_CYCLE, tbuf, sizeof(tbuf));
+
+    if (idle) {
+        extra[0] = '\0';
+        if (modify) {
+            char dtbuf[32];
+            fmt_ns((double)dspi_signed * NS_PER_CYCLE, dtbuf, sizeof(dtbuf));
+            snprintf(extra, sizeof(extra), "t+%s", dtbuf);
+        }
+        build_opts(opts, sizeof(opts), (int)arm, (int)sticky_arm, (int)marker, extra);
+        snprintf(buf, sz, "%s t=%s%s",
+                 (strb_ldac || spi_rd) ? "ful" : "idl", tbuf, opts);
+
+    } else if (iters > 0 && strb_ldac) {
+        /* sign-extend 20-bit DAC codes so twos2real's (int32_t)k cast is correct */
+        uint32_t raw1 = spi_din & 0xFFFFFu;
+        uint32_t se1  = (raw1 & (1u<<19)) ? (raw1 | 0xFFF00000u) : raw1;
+        int64_t  v2k  = (int64_t)(int32_t)se1 + (int64_t)iters * (int64_t)dspi_signed;
+        uint32_t raw2 = (uint32_t)(v2k & 0xFFFFFu);
+        uint32_t se2  = (raw2 & (1u<<19)) ? (raw2 | 0xFFF00000u) : raw2;
+        /* round to 0.1mV to suppress two's-complement asymmetry artifacts; clear -0 */
+        double v1 = round((double)twos2real(VMIN, VMAX, DC_DAC_BITS, se1) * 1e4) / 1e4;
+        double v2 = round((double)twos2real(VMIN, VMAX, DC_DAC_BITS, se2) * 1e4) / 1e4;
+        if (v1 == 0.0) v1 = 0.0;
+        if (v2 == 0.0) v2 = 0.0;
+        build_opts(opts, sizeof(opts), (int)arm, (int)sticky_arm, (int)marker, "");
+        snprintf(buf, sz, "swp v1=%g v2=%g n=%u dt=%s%s",
+                 v1, v2, iters + 1u, tbuf, opts);
+
+    } else if (strb_ldac && !((spi_din >> 23) & 1u)) {
+        uint32_t raw = spi_din & 0xFFFFFu;
+        uint32_t se  = (raw & (1u<<19)) ? (raw | 0xFFF00000u) : raw;
+        double v = round((double)twos2real(VMIN, VMAX, DC_DAC_BITS, se) * 1e4) / 1e4;
+        if (v == 0.0) v = 0.0;
+        extra[0] = '\0';
+        if (modify) {
+            uint32_t dse = (uint32_t)dspi_signed;
+            double vd = round((double)twos2real(VMIN, VMAX, DC_DAC_BITS, dse) * 1e4) / 1e4;
+            snprintf(extra, sizeof(extra), "v+%g", vd);
+        }
+        build_opts(opts, sizeof(opts), (int)arm, (int)sticky_arm, (int)marker, extra);
+        snprintf(buf, sz, "lvl v=%g t=%s%s", v, tbuf, opts);
+
+    } else if ((spi_din >> 23) & 1u) {
+        build_opts(opts, sizeof(opts), (int)arm, (int)sticky_arm, (int)marker, "");
+        snprintf(buf, sz, "get %s%s", dc_reg_name((spi_din >> 20) & 0x7u), opts);
+
+    } else if (spi_din != 0) {
+        uint32_t ri  = (spi_din >> 20) & 0x7u;
+        uint32_t din = spi_din & 0xFFFFFu;
+        build_opts(opts, sizeof(opts), (int)arm, (int)sticky_arm, (int)marker, "");
+        snprintf(buf, sz, "set %s 0x%x%s", dc_reg_name(ri), din, opts);
+
+    } else {
+        build_opts(opts, sizeof(opts), (int)arm, (int)sticky_arm, (int)marker, "");
+        snprintf(buf, sz, "nop%s", opts);
+    }
+}
+
+int dc_inspect_channel(int ch) {
+
+    if (ch < 0 || ch >= DC_CHANNELS) {
+        fprintf(stderr, "dc channel must be 0..%d\n", DC_CHANNELS - 1);
         return 1;
     }
 
-    void *dc_va = mmap(NULL, 0x1000, PROT_READ | PROT_WRITE, MAP_SHARED, dc_fd, 0);
-    if (dc_va == MAP_FAILED) {
-        fprintf(stderr, "mmap() %s failed: %s\n", uio_path, strerror(errno));
-        close(dc_fd);
+    char path[32];
+    snprintf(path, sizeof(path), "/dev/uio%d", dc_uio_map[ch]);
+
+    int fd = open(path, O_RDWR);
+    if (fd < 0) { fprintf(stderr, "open(%s): %s\n", path, strerror(errno)); return 1; }
+
+    void *va = mmap(NULL, 0x1000, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
+    if (va == MAP_FAILED) {
+        fprintf(stderr, "mmap(%s): %s\n", path, strerror(errno));
+        close(fd);
         return 1;
     }
 
-    volatile uint32_t *dc_base = (volatile uint32_t *)((char *)dc_va);
+    volatile uint32_t *base   = (volatile uint32_t *)va;
+    int                sb     = BRAM_SEQ_TOTAL(DC_REG_PER_INSN) + DC_CTRL_REGS;
+    volatile uint32_t *status = base + sb;
 
-    for (int i = 0; i < DC_BRAM_SEQ_REGS; i++) {
-        seq_regs[i] = *(dc_base + i);
-    }
-    for (int i = 0; i < DC_CTRL_REGS; i++) {
-        ctrl_regs[i] = *(dc_base + DC_BRAM_SEQ_REGS + i);
+    uint32_t depth  = base[BRAM_DEPTH(DC_REG_PER_INSN)];
+    uint32_t nsteps = depth + 1;
+    if (nsteps > (uint32_t)DC_PC_MEM_DEPTH) nsteps = DC_PC_MEM_DEPTH;
+
+    uint32_t flags = status[DC_REG_PER_INSN + 3];
+    uint32_t iters = status[DC_REG_PER_INSN + 1];
+
+    printf("dc%d:\n", ch);
+    printf("  depth:  %u (%u steps)\n", depth, nsteps);
+    printf("  iters:  %u\n", iters);
+    printf("  armed:  %u\n", (flags >> 1) & 1u);
+    printf("  empty:  %u\n",  flags & 1u);
+
+    uint32_t *pc_seq     = malloc(nsteps * sizeof(uint32_t));
+    uint32_t *insn_cache = calloc((size_t)DC_DEPTH * DC_REG_PER_INSN, sizeof(uint32_t));
+    uint8_t  *fetched    = calloc(DC_DEPTH, 1);
+    int       ret        = 0;
+
+    if (!pc_seq || !insn_cache || !fetched) {
+        fprintf(stderr, "malloc failed\n");
+        ret = 1;
+        goto done;
     }
 
-    munmap(dc_va, 0x1000);
-    close(dc_fd);
-    return 0;
+    for (uint32_t addr = 0; addr < nsteps; addr++) {
+        base[BRAM_PCST_ADDR]             = addr;
+        base[BRAM_PCLD_STRB(DC_REG_PER_INSN)] = 0;
+        base[BRAM_PCLD_STRB(DC_REG_PER_INSN)] = 1;
+        pc_seq[addr] = (uint32_t)status[DC_REG_PER_INSN];
+    }
+
+    for (uint32_t addr = 0; addr < nsteps; addr++) {
+        uint32_t pc = pc_seq[addr] & (DC_DEPTH - 1);
+        if (!fetched[pc]) {
+            base[BRAM_IST_ADDR]              = pc;
+            base[BRAM_ILD_STRB(DC_REG_PER_INSN)] = 0;
+            base[BRAM_ILD_STRB(DC_REG_PER_INSN)] = 1;
+            for (int k = 0; k < DC_REG_PER_INSN; k++)
+                insn_cache[pc * DC_REG_PER_INSN + k] = (uint32_t)status[k];
+            fetched[pc] = 1;
+        }
+    }
+
+    printf("  program:\n");
+    for (uint32_t addr = 0; addr < nsteps; addr++) {
+        uint32_t pc = pc_seq[addr] & (DC_DEPTH - 1);
+        char abuf[128] = "???";
+        disasm_dc(&insn_cache[pc * DC_REG_PER_INSN], abuf, sizeof(abuf));
+        printf("    [%u] pc=%u: %s\n", addr, pc, abuf);
+    }
+
+    printf("  status:\n");
+    for (int k = 0; k < DC_REG_PER_INSN; k++)
+        printf("    insn_rd[%d]:   %08" PRIX32 "\n", k, (uint32_t)status[k]);
+    printf("    pc_rd:        %08" PRIX32 "\n", (uint32_t)status[DC_REG_PER_INSN]);
+    printf("    iters:        %08" PRIX32 "\n", (uint32_t)status[DC_REG_PER_INSN + 1]);
+    printf("    pcmem_depth:  %08" PRIX32 "\n", (uint32_t)status[DC_REG_PER_INSN + 2]);
+    printf("    flags:        %08" PRIX32 " (armed=%u empty=%u)\n",
+           (uint32_t)status[DC_REG_PER_INSN + 3],
+           (flags >> 1) & 1u, flags & 1u);
+
+done:
+    free(pc_seq);
+    free(insn_cache);
+    free(fetched);
+    munmap(va, 0x1000);
+    close(fd);
+    return ret;
 
 }
 
-int dc_write_regs(int dc_channel, dc_program_t *dc_program, int uartfd) {
-
-    uint8_t tx[6] = {0, 0, 0, 0, 0, 0};
-
-    ssize_t n;
-
-    for (int i = 0; i < DC_CTRL_REGS - 1; i++) {
-
-        if (dc_program->ctrl_regs[i] != -1) {
-            tx[0] = (uint8_t)(DC_SEQ_REGS + i);
-            tx[1] = (uint8_t)(((uint32_t)dc_program->ctrl_regs[i]) >> 24);
-            tx[2] = (uint8_t)(((uint32_t)dc_program->ctrl_regs[i]) >> 16);
-            tx[3] = (uint8_t)(((uint32_t)dc_program->ctrl_regs[i]) >> 8);
-            tx[4] = (uint8_t)(((uint32_t)dc_program->ctrl_regs[i]));
-        }
-
-
-        n = write(uartfd, tx, sizeof(tx) - 1);
-        if (n < 0) {
-            perror("write error");
-            return -1;
-        }
-
-    }
-
-    tx[0] = (uint8_t)(DC_SEQ_REGS + DC_CTRL_REGS - 1);
-    tx[1] = 0;
-    tx[2] = 0;
-    tx[3] = 0;
-    tx[4] = 0;
-
-    n = write(uartfd, tx, sizeof(tx) - 1);
-    if (n < 0) {
-        perror("write error");
-        return -1;
-    }
-
-    tx[0] = (uint8_t)(DC_SEQ_REGS + DC_CTRL_REGS - 1);
-    uint32_t chsel = 1U << dc_channel;
-    tx[1] = (uint8_t)(chsel >> 24);
-    tx[2] = (uint8_t)(chsel >> 16);
-    tx[3] = (uint8_t)(chsel >> 8);
-    tx[4] = (uint8_t)(chsel);
-
-    n = write(uartfd, tx, sizeof(tx) - 1);
-    if (n < 0) {
-        perror("write error");
-        return -1;
-    }
-
-    for (int i = 0; i < DC_SEQ_REGS - 1; i++) {
-
-        tx[0] = (uint8_t)i;
-        tx[1] = (uint8_t)(dc_program->seq_regs[i] >> 24);
-        tx[2] = (uint8_t)(dc_program->seq_regs[i] >> 16);
-        tx[3] = (uint8_t)(dc_program->seq_regs[i] >> 8);
-        tx[4] = (uint8_t)(dc_program->seq_regs[i]);
-
-        n = write(uartfd, tx, sizeof(tx) - 1);
-        if (n < 0) {
-            perror("write error");
-            return -1;
-        }
-
-    }
-
-    tx[0] = (uint8_t)(DC_SEQ_REGS - 1);
-    tx[1] = 0;
-    tx[2] = 0;
-    tx[3] = 0;
-    tx[4] = 0;
-
-    n = write(uartfd, tx, sizeof(tx) - 1);
-    if (n < 0) {
-        perror("write error");
-        return -1;
-    }
-
-    tx[0] = (uint8_t)(DC_SEQ_REGS - 1);
-    chsel = 1U << dc_channel;
-    tx[1] = (uint8_t)(chsel >> 24);
-    tx[2] = (uint8_t)(chsel >> 16);
-    tx[3] = (uint8_t)(chsel >> 8);
-    tx[4] = (uint8_t)(chsel);
-
-    n = write(uartfd, tx, sizeof(tx) - 1);
-    if (n < 0) {
-        perror("write error");
-        return -1;
-    }
-
-    return 0;
-
-}
