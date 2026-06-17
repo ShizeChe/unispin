@@ -29,7 +29,6 @@ module ex_tb;
         .i_clk(w_clk),
         .i_rst(w_rst),
         .i_seq_regs(w_seq_regs),
-        .i_seq_uregs({(EX_SEQ_REGS*32){1'b0}}),
         .o_realx16(w_realx16),
         .i_start(w_start),
         .o_armed(w_armed),
@@ -110,9 +109,11 @@ module ex_tb;
         for (int i = 0; i < num_insns; i++) begin
             insns[i] = '{
                 w_arm: (i == 0),
+                w_sticky_arm: 1'b0,
                 w_real: $urandom_range(0, 14'h3FFF),
                 w_samples: $urandom_range(0, MAX_SAMPLES),
-                w_dsamples: $urandom_range(0, MAX_SAMPLES)
+                w_dsamples: $urandom_range(0, MAX_SAMPLES),
+                w_marker: 1'b0
             };
             $display("insn%0d", i);
             $display("w_arm=%0d", insns[i].w_arm);

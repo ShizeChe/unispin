@@ -62,7 +62,7 @@ SRC_IO := lib/ad5791.sv \
 
 # ── targets ──────────────────────────────────────────────────────────────────
 
-.PHONY: all simulator dc_tb rf_tb li_tb ex_tb bram_sequencer_tb launch_tb run gui clean list
+.PHONY: all simulator dc_tb rf_tb li_tb ex_tb ex_pulse_tb bram_sequencer_tb launch_tb run gui clean list
 
 all: simulator
 
@@ -79,6 +79,9 @@ li_tb: tb/li_tb.sv $(SRC_SEQ) $(SRC_LI) lib/zcu216_adc.sv
 	$(SIM) $(VCS_FLAGS) $^ -o $@
 
 ex_tb: tb/ex_tb.sv $(SRC_SEQ) $(SRC_EX) lib/zcu216_real_dac.sv
+	$(SIM) $(VCS_FLAGS) $^ -o $@
+
+ex_pulse_tb: tb/ex_pulse_tb.sv $(SRC_SEQ) $(SRC_EX) lib/zcu216_real_dac.sv
 	$(SIM) $(VCS_FLAGS) $^ -o $@
 
 bram_sequencer_tb: tb/bram_sequencer_tb.sv $(SRC_SEQ)
@@ -100,7 +103,7 @@ gui:
 # ── housekeeping ─────────────────────────────────────────────────────────────
 
 list:
-	@echo "Targets:  simulator  dc_tb  rf_tb  li_tb  ex_tb  bram_sequencer_tb  launch_tb"
+	@echo "Targets:  simulator  dc_tb  rf_tb  li_tb  ex_tb  ex_pulse_tb  bram_sequencer_tb  launch_tb"
 	@echo "Sources:"
 	@ls -1 src/*.sv lib/*.sv sim/*.sv tb/*.sv 2>/dev/null | sed 's/^/  /'
 
@@ -110,6 +113,7 @@ clean:
 	       rf_tb rf_tb.daidir \
 	       li_tb li_tb.daidir \
 	       ex_tb ex_tb.daidir \
+	       ex_pulse_tb ex_pulse_tb.daidir \
 	       bram_sequencer_tb bram_sequencer_tb.daidir \
 	       launch_tb launch_tb.daidir \
 	       csrc ucli.key vc_hdrs.h \
