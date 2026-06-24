@@ -1923,6 +1923,7 @@ Port;FD4A0000;FD4AFFFF;0|FPD;DPDMA;FD4C0000;FD4CFFFF;0|FPD;DDR_XMPU5_CFG;FD05000
   [get_bd_pins usp_rf_data_converter_0/s2_axis_aresetn] \
   [get_bd_ports o_processor_rst_n] \
   [get_bd_pins usp_rf_data_converter_0/s3_axis_aresetn] \
+  [get_bd_pins dc_regs_0/s_axi_aresetn] \
   [get_bd_pins dc_regs_10/s_axi_aresetn] \
   [get_bd_pins dc_regs_11/s_axi_aresetn] \
   [get_bd_pins dc_regs_12/s_axi_aresetn] \
@@ -1933,6 +1934,7 @@ Port;FD4A0000;FD4AFFFF;0|FPD;DPDMA;FD4C0000;FD4CFFFF;0|FPD;DDR_XMPU5_CFG;FD05000
   [get_bd_pins dc_regs_17/s_axi_aresetn] \
   [get_bd_pins dc_regs_18/s_axi_aresetn] \
   [get_bd_pins dc_regs_19/s_axi_aresetn] \
+  [get_bd_pins dc_regs_1/s_axi_aresetn] \
   [get_bd_pins dc_regs_20/s_axi_aresetn] \
   [get_bd_pins dc_regs_21/s_axi_aresetn] \
   [get_bd_pins dc_regs_22/s_axi_aresetn] \
@@ -1947,9 +1949,9 @@ Port;FD4A0000;FD4AFFFF;0|FPD;DPDMA;FD4C0000;FD4CFFFF;0|FPD;DDR_XMPU5_CFG;FD05000
   [get_bd_pins dc_regs_9/s_axi_aresetn] \
   [get_bd_pins ex_regs_0/s_axi_aresetn] \
   [get_bd_pins ex_regs_1/s_axi_aresetn] \
-  [get_bd_pins dc_regs_1/s_axi_aresetn] \
-  [get_bd_pins dc_regs_0/s_axi_aresetn] \
   [get_bd_pins launch_regs_0/s_axi_aresetn] \
+  [get_bd_pins li_axi_write_0/s_axi_aresetn] \
+  [get_bd_pins li_axi_write_1/s_axi_aresetn] \
   [get_bd_pins li_regs_0/s_axi_aresetn] \
   [get_bd_pins li_regs_1/s_axi_aresetn] \
   [get_bd_pins rf_regs_0/s_axi_aresetn] \
@@ -1957,9 +1959,7 @@ Port;FD4A0000;FD4AFFFF;0|FPD;DPDMA;FD4C0000;FD4CFFFF;0|FPD;DDR_XMPU5_CFG;FD05000
   [get_bd_pins rf_regs_2/s_axi_aresetn] \
   [get_bd_pins rf_regs_3/s_axi_aresetn] \
   [get_bd_pins rf_regs_4/s_axi_aresetn] \
-  [get_bd_pins rf_regs_5/s_axi_aresetn] \
-  [get_bd_pins li_axi_write_0/s_axi_aresetn] \
-  [get_bd_pins li_axi_write_1/s_axi_aresetn]
+  [get_bd_pins rf_regs_5/s_axi_aresetn]
   connect_bd_net -net rf_regs_0_o_ctrl_regs  [get_bd_pins rf_regs_0/o_ctrl_regs] \
   [get_bd_ports o_rf_ctrl_regs0]
   connect_bd_net -net rf_regs_0_o_seq_regs  [get_bd_pins rf_regs_0/o_seq_regs] \
@@ -1996,6 +1996,7 @@ Port;FD4A0000;FD4AFFFF;0|FPD;DPDMA;FD4C0000;FD4CFFFF;0|FPD;DDR_XMPU5_CFG;FD05000
   [get_bd_pins zynq_ultra_ps_e_0/saxihp1_fpd_aclk] \
   [get_bd_pins zynq_ultra_ps_e_0/saxihp0_fpd_aclk] \
   [get_bd_pins usp_rf_data_converter_0/s3_axis_aclk] \
+  [get_bd_pins dc_regs_0/s_axi_aclk] \
   [get_bd_pins dc_regs_10/s_axi_aclk] \
   [get_bd_pins dc_regs_11/s_axi_aclk] \
   [get_bd_pins dc_regs_12/s_axi_aclk] \
@@ -2006,6 +2007,7 @@ Port;FD4A0000;FD4AFFFF;0|FPD;DPDMA;FD4C0000;FD4CFFFF;0|FPD;DDR_XMPU5_CFG;FD05000
   [get_bd_pins dc_regs_17/s_axi_aclk] \
   [get_bd_pins dc_regs_18/s_axi_aclk] \
   [get_bd_pins dc_regs_19/s_axi_aclk] \
+  [get_bd_pins dc_regs_1/s_axi_aclk] \
   [get_bd_pins dc_regs_20/s_axi_aclk] \
   [get_bd_pins dc_regs_21/s_axi_aclk] \
   [get_bd_pins dc_regs_22/s_axi_aclk] \
@@ -2020,9 +2022,9 @@ Port;FD4A0000;FD4AFFFF;0|FPD;DPDMA;FD4C0000;FD4CFFFF;0|FPD;DDR_XMPU5_CFG;FD05000
   [get_bd_pins dc_regs_9/s_axi_aclk] \
   [get_bd_pins ex_regs_0/s_axi_aclk] \
   [get_bd_pins ex_regs_1/s_axi_aclk] \
-  [get_bd_pins dc_regs_1/s_axi_aclk] \
-  [get_bd_pins dc_regs_0/s_axi_aclk] \
   [get_bd_pins launch_regs_0/s_axi_aclk] \
+  [get_bd_pins li_axi_write_0/s_axi_aclk] \
+  [get_bd_pins li_axi_write_1/s_axi_aclk] \
   [get_bd_pins li_regs_0/s_axi_aclk] \
   [get_bd_pins li_regs_1/s_axi_aclk] \
   [get_bd_pins rf_regs_0/s_axi_aclk] \
@@ -2030,9 +2032,7 @@ Port;FD4A0000;FD4AFFFF;0|FPD;DPDMA;FD4C0000;FD4CFFFF;0|FPD;DDR_XMPU5_CFG;FD05000
   [get_bd_pins rf_regs_2/s_axi_aclk] \
   [get_bd_pins rf_regs_3/s_axi_aclk] \
   [get_bd_pins rf_regs_4/s_axi_aclk] \
-  [get_bd_pins rf_regs_5/s_axi_aclk] \
-  [get_bd_pins li_axi_write_0/s_axi_aclk] \
-  [get_bd_pins li_axi_write_1/s_axi_aclk]
+  [get_bd_pins rf_regs_5/s_axi_aclk]
   connect_bd_net -net zynq_ultra_ps_e_0_pl_clk0  [get_bd_pins zynq_ultra_ps_e_0/pl_clk0] \
   [get_bd_pins smartconnect_0/aclk1] \
   [get_bd_pins proc_sys_reset_0/slowest_sync_clk] \

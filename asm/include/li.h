@@ -83,7 +83,7 @@ typedef struct {
 
 int  li_parse_insn(char *line, li_insn_t *insn);
 void li_assemble(li_program_t *prog);
-int  li_load_insns(int ch, li_program_t *prog);
+int  li_store_insns(int ch, li_program_t *prog);
 
 void disasm_li(const uint32_t *r, char *buf, size_t sz);
 int  li_inspect_channel(int ch);

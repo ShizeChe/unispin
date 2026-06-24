@@ -175,7 +175,7 @@ void li_assemble(li_program_t *prog) {
 
 }
 
-int li_load_insns(int li_channel, li_program_t *li_program) {
+int li_store_insns(int li_channel, li_program_t *li_program) {
 
     assert(0 <= li_channel && li_channel <= LI_CHANNELS - 1);
 
@@ -198,15 +198,18 @@ int li_load_insns(int li_channel, li_program_t *li_program) {
     volatile uint32_t *li_base = (volatile uint32_t *)((char *)li_va);
     unsigned int n = li_program->len;
 
-    *(li_base + LI_BRAM_SEQ_REGS + LI_CTRL_REGS - 1) = 0;
-    if (li_program->ctrl.default_I != -1) *(li_base + LI_BRAM_SEQ_REGS + 0) = (uint32_t)(li_program->ctrl.default_I & 0x3fff);
-    if (li_program->ctrl.default_Q != -1) *(li_base + LI_BRAM_SEQ_REGS + 1) = (uint32_t)(li_program->ctrl.default_Q & 0x3fff);
-    if (li_program->ctrl.max_burst != -1) *(li_base + LI_BRAM_SEQ_REGS + 2) = (uint32_t)(li_program->ctrl.max_burst & 0xff);
-    if (li_program->ctrl.base_addr != -1) {
-        *(li_base + LI_BRAM_SEQ_REGS + 3) = (uint32_t)(((uint64_t)li_program->ctrl.base_addr >> 32) & 0x1ffff);
-        *(li_base + LI_BRAM_SEQ_REGS + 4) = (uint32_t)((uint64_t)li_program->ctrl.base_addr & 0xffffffff);
+    if (li_program->ctrl.default_I != -1 || li_program->ctrl.default_Q != -1 ||
+        li_program->ctrl.max_burst != -1 || li_program->ctrl.base_addr != -1) {
+        *(li_base + LI_BRAM_SEQ_REGS + LI_CTRL_REGS - 1) = 0;
+        if (li_program->ctrl.default_I != -1) *(li_base + LI_BRAM_SEQ_REGS + 0) = (uint32_t)(li_program->ctrl.default_I & 0x3fff);
+        if (li_program->ctrl.default_Q != -1) *(li_base + LI_BRAM_SEQ_REGS + 1) = (uint32_t)(li_program->ctrl.default_Q & 0x3fff);
+        if (li_program->ctrl.max_burst != -1) *(li_base + LI_BRAM_SEQ_REGS + 2) = (uint32_t)(li_program->ctrl.max_burst & 0xff);
+        if (li_program->ctrl.base_addr != -1) {
+            *(li_base + LI_BRAM_SEQ_REGS + 3) = (uint32_t)(((uint64_t)li_program->ctrl.base_addr >> 32) & 0x1ffff);
+            *(li_base + LI_BRAM_SEQ_REGS + 4) = (uint32_t)((uint64_t)li_program->ctrl.base_addr & 0xffffffff);
+        }
+        *(li_base + LI_BRAM_SEQ_REGS + LI_CTRL_REGS - 1) = 1;
     }
-    *(li_base + LI_BRAM_SEQ_REGS + LI_CTRL_REGS - 1) = 1;
 
     for (unsigned int i = 0; i < n; i++) {
         li_base[BRAM_IST_ADDR] = i;

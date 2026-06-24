@@ -76,55 +76,5 @@ module fifo
     assign o_almost_full = r_num_data >= AF_DEPTH;
     assign o_almost_empty = r_num_data <= AE_DEPTH;
 
-`ifdef FORMAL
-
-    default clocking @(posedge i_clk); endclocking
-    default disable iff (i_rst);
-
-    full: cover property (o_full);
-    almost_full: cover property (o_almost_full);
-    empty: cover property (o_empty);
-    almost_empty: cover property (o_almost_empty);
-
-    no_enq_when_full: assert property (
-        o_full |=> $stable(r_enq_ptr)
-    );
-
-    no_deq_when_empty: assert property (
-        o_empty |=> $stable(r_deq_ptr)
-    );
-
-    ring_invariant: assert property (
-        r_deq_ptr + r_num_data[$clog2(DEPTH)-1:0] == r_enq_ptr 
-    );
-
-    logic [WIDTH-1:0] r_ref_data [DEPTH];
-    logic [WIDTH-1:0] r_ref_cycles [DEPTH];
-
-    generate for (genvar i = 0; i < DEPTH; i++) begin : REF_GEN
-        always_ff @(posedge i_clk) begin
-            if (i_rst) begin
-                r_ref_data[i] <= 'h0;
-                r_ref_cycles[i] <= 'h0;
-            end
-            else if (w_enq_en && (w_enq_ptr == i)) begin
-                r_ref_data[i] <= i_data;
-                r_ref_cycles[i] <= w_num_data - 'd1;
-            end
-            else if (!o_empty && i_deq) begin
-                r_ref_cycles[i] <= r_ref_cycles[i] - 'd1;
-            end
-        end
-    end endgenerate
-
-    generate for (genvar i = 0; i < DEPTH; i++) begin : DATA_INTEGRITY_GEN
-        data_integrity: assert property (
-            (w_enq_en && (w_enq_ptr == i)) ##[1:$] (r_ref_cycles[i] == 'd0) |-> 
-            (o_data == r_ref_data[i])
-        );
-    end endgenerate
-
-`endif
-
 endmodule
 

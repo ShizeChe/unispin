@@ -402,11 +402,11 @@ module io
     // assign o_pmod06 = w_cs23; // 7
     // assign w_miso10 = i_pmod07; // 8
 
-    assign o_pmod00 = w_cs23; // 1
-    assign o_pmod01 = w_mosi23; // 2
+    assign o_pmod00 = w_cs24; // 1
+    assign o_pmod01 = w_mosi24; // 2
     assign o_pmod02 = 1'b0; // 3
-    assign o_pmod03 = w_sclk23; // 4
-    assign o_pmod04 = w_ldac23; // 5
+    assign o_pmod03 = w_sclk24; // 4
+    assign o_pmod04 = w_ldac24; // 5
     assign o_pmod05 = 1'b1; // 6
     assign o_pmod06 = 1'b1; // 7
     assign w_miso10 = 1'b0; // 8

@@ -116,7 +116,7 @@ typedef struct {
 
 int  dc_parse_insn(char *line, dc_insn_t *insn);
 void dc_assemble(dc_program_t *prog);
-int  dc_load_insns(int ch, dc_program_t *prog);
+int  dc_store_insns(int ch, dc_program_t *prog);
 
 void disasm_dc(const uint32_t *r, char *buf, size_t sz);
 int  dc_inspect_channel(int ch);

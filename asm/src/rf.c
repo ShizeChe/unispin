@@ -307,7 +307,7 @@ void rf_assemble(rf_program_t *prog) {
 
 }
 
-int rf_load_insns(int rf_channel, rf_program_t *rf_program) {
+int rf_store_insns(int rf_channel, rf_program_t *rf_program) {
 
     assert(0 <= rf_channel && rf_channel <= RF_CHANNELS - 1);
 
@@ -330,10 +330,12 @@ int rf_load_insns(int rf_channel, rf_program_t *rf_program) {
     volatile uint32_t *rf_base = (volatile uint32_t *)((char *)rf_va);
     unsigned int n = rf_program->len;
 
-    *(rf_base + RF_BRAM_SEQ_REGS + RF_CTRL_REGS - 1) = 0;
-    if (rf_program->ctrl.default_I != -1) *(rf_base + RF_BRAM_SEQ_REGS + 0) = (uint32_t)(rf_program->ctrl.default_I & 0x3fff);
-    if (rf_program->ctrl.default_Q != -1) *(rf_base + RF_BRAM_SEQ_REGS + 1) = (uint32_t)(rf_program->ctrl.default_Q & 0x3fff);
-    *(rf_base + RF_BRAM_SEQ_REGS + RF_CTRL_REGS - 1) = 1;
+    if (rf_program->ctrl.default_I != -1 || rf_program->ctrl.default_Q != -1) {
+        *(rf_base + RF_BRAM_SEQ_REGS + RF_CTRL_REGS - 1) = 0;
+        if (rf_program->ctrl.default_I != -1) *(rf_base + RF_BRAM_SEQ_REGS + 0) = (uint32_t)(rf_program->ctrl.default_I & 0x3fff);
+        if (rf_program->ctrl.default_Q != -1) *(rf_base + RF_BRAM_SEQ_REGS + 1) = (uint32_t)(rf_program->ctrl.default_Q & 0x3fff);
+        *(rf_base + RF_BRAM_SEQ_REGS + RF_CTRL_REGS - 1) = 1;
+    }
 
     for (unsigned int i = 0; i < n; i++) {
         rf_base[BRAM_IST_ADDR] = i;

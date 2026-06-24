@@ -555,7 +555,7 @@ void dc_assemble(dc_program_t *prog) {
 
 }
 
-int dc_load_insns(int dc_channel, dc_program_t *dc_program) {
+int dc_store_insns(int dc_channel, dc_program_t *dc_program) {
 
     assert(0 <= dc_channel && dc_channel <= DC_CHANNELS - 1);
 
@@ -579,12 +579,15 @@ int dc_load_insns(int dc_channel, dc_program_t *dc_program) {
     unsigned int n = dc_program->len;
 
     // Write ctrl regs from ctrl struct; last reg is the write strobe
-    *(dc_base + DC_BRAM_SEQ_REGS + DC_CTRL_REGS - 1) = 0;
-    if (dc_program->ctrl.dvsr         != -1) *(dc_base + DC_BRAM_SEQ_REGS + 0) = (uint32_t)dc_program->ctrl.dvsr;
-    if (dc_program->ctrl.delay_cycles != -1) *(dc_base + DC_BRAM_SEQ_REGS + 1) = (uint32_t)dc_program->ctrl.delay_cycles;
-    if (dc_program->ctrl.cs_up_cycles != -1) *(dc_base + DC_BRAM_SEQ_REGS + 2) = (uint32_t)dc_program->ctrl.cs_up_cycles;
-    if (dc_program->ctrl.ldac_cycles  != -1) *(dc_base + DC_BRAM_SEQ_REGS + 3) = (uint32_t)dc_program->ctrl.ldac_cycles;
-    *(dc_base + DC_BRAM_SEQ_REGS + DC_CTRL_REGS - 1) = 1;
+    if (dc_program->ctrl.dvsr != -1 || dc_program->ctrl.delay_cycles != -1 ||
+        dc_program->ctrl.cs_up_cycles != -1 || dc_program->ctrl.ldac_cycles != -1) {
+        *(dc_base + DC_BRAM_SEQ_REGS + DC_CTRL_REGS - 1) = 0;
+        if (dc_program->ctrl.dvsr         != -1) *(dc_base + DC_BRAM_SEQ_REGS + 0) = (uint32_t)dc_program->ctrl.dvsr;
+        if (dc_program->ctrl.delay_cycles != -1) *(dc_base + DC_BRAM_SEQ_REGS + 1) = (uint32_t)dc_program->ctrl.delay_cycles;
+        if (dc_program->ctrl.cs_up_cycles != -1) *(dc_base + DC_BRAM_SEQ_REGS + 2) = (uint32_t)dc_program->ctrl.cs_up_cycles;
+        if (dc_program->ctrl.ldac_cycles  != -1) *(dc_base + DC_BRAM_SEQ_REGS + 3) = (uint32_t)dc_program->ctrl.ldac_cycles;
+        *(dc_base + DC_BRAM_SEQ_REGS + DC_CTRL_REGS - 1) = 1;
+    }
 
     // Write IMEM
     for (unsigned int i = 0; i < n; i++) {

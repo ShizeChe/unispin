@@ -258,7 +258,7 @@ module bram_sequencer
     logic [INSN_WIDTH-1:0] w_imem_wr_data;
     logic [PC_WIDTH-1:0] w_imem_rd_addr;
 
-    assign w_imem_rd_addr = p.r_active ? i.w_pc2use : w_ildst_addr;
+    assign w_imem_rd_addr = i.r_pc_valid ? i.w_pc2use : w_ildst_addr;
 
     bram #(
         .DATA_WIDTH(INSN_WIDTH),
@@ -273,7 +273,7 @@ module bram_sequencer
         .i_clk_b(i_clk),
         .i_wr_b(1'b0),
         .i_addr_b(w_imem_rd_addr),
-        .i_din_b('h0),
+        .i_din_b('0),
         .o_dout_b(o.w_insn)
     );
 

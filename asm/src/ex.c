@@ -170,7 +170,7 @@ void ex_assemble(ex_program_t *prog) {
 
 }
 
-int ex_load_insns(int ex_channel, ex_program_t *ex_program) {
+int ex_store_insns(int ex_channel, ex_program_t *ex_program) {
 
     assert(0 <= ex_channel && ex_channel <= EX_CHANNELS - 1);
 

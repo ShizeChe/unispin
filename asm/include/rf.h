@@ -107,7 +107,7 @@ typedef struct {
 
 int  rf_parse_insn(char *line, rf_insn_t *insn, long double fnco_hz);
 void rf_assemble(rf_program_t *prog);
-int  rf_load_insns(int ch, rf_program_t *prog);
+int  rf_store_insns(int ch, rf_program_t *prog);
 
 void disasm_rf(const uint32_t *r, char *buf, size_t sz);
 int  rf_inspect_channel(int ch);

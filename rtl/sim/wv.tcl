@@ -120,7 +120,7 @@ wvCollapseGroup -win $nw "launch/LCH/start"
 wvCollapseGroup -win $nw "launch/LCH"
 wvCollapseGroup -win $nw "launch"
 
-for {set ch 0} {$ch >= 0} {incr ch -1} {
+for {set ch 23} {$ch >= 0} {incr ch -1} {
 
     wvSelectGroup -win $nw {dc}
     wvAddSubGroup -win $nw "ch$ch"
@@ -309,7 +309,7 @@ for {set ch 0} {$ch >= 0} {incr ch -1} {
 
 }
 
-for {set ch 0} {$ch >= 0} {incr ch -1} {
+for {set ch 23} {$ch >= 0} {incr ch -1} {
 
     wvCollapseGroup -win $nw "dc/ch$ch/AXIL_REGS/aw"
     wvCollapseGroup -win $nw "dc/ch$ch/AXIL_REGS/w"
@@ -710,7 +710,8 @@ for {set ch 0} {$ch >= 0} {incr ch -1} {
     wvAddSignal -win $nw "/simulator/PROCESSOR/LI_GEN\[$ch\]/LI/CORE/d" \
                          "/simulator/PROCESSOR/LI_GEN\[$ch\]/LI/CORE/i_empty" \
                          "/simulator/PROCESSOR/LI_GEN\[$ch\]/LI/CORE/o_next" \
-                         "/simulator/PROCESSOR/LI_GEN\[$ch\]/LI/CORE/i_addr" \
+                         "/simulator/PROCESSOR/LI_GEN\[$ch\]/LI/CORE/i_pc_addr" \
+                         "/simulator/PROCESSOR/LI_GEN\[$ch\]/LI/CORE/i_pc" \
                          "/simulator/PROCESSOR/LI_GEN\[$ch\]/LI/CORE/i_insn" \
                          "/simulator/PROCESSOR/LI_GEN\[$ch\]/LI/CORE/o_insn_modified" \
                          "/simulator/PROCESSOR/LI_GEN\[$ch\]/LI/CORE/o_armed" \
@@ -955,17 +956,4 @@ for {set ch 0} {$ch >= 0} {incr ch -1} {
 }
 
 wvCollapseGroup -win $nw "ex"
-
-wvAddGroup -win $nw {btn}
-
-wvSetPosition -win $nw {("btn" 0)}
-wvAddSignal -win $nw "simulator/PROCESSOR/BTN/i_clk" \
-                     "simulator/PROCESSOR/BTN/i_rst" \
-                     "simulator/PROCESSOR/BTN/i_btn\[0\]" \
-                     "simulator/PROCESSOR/BTN/w_btn_steady\[0\]" \
-                     "simulator/PROCESSOR/BTN/r_ff1\[0\]" \
-                     "simulator/PROCESSOR/BTN/r_ff2\[0\]" \
-                     "simulator/PROCESSOR/BTN/o_pressed\[0\]" \
-
-wvCollapseGroup -win $nw "btn"
 

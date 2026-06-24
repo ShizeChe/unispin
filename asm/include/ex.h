@@ -60,7 +60,7 @@ typedef struct {
 
 int  ex_parse_insn(char *line, ex_insn_t *insn);
 void ex_assemble(ex_program_t *prog);
-int  ex_load_insns(int ch, ex_program_t *prog);
+int  ex_store_insns(int ch, ex_program_t *prog);
 
 void disasm_ex(const uint32_t *r, char *buf, size_t sz);
 int  ex_inspect_channel(int ch);

@@ -463,12 +463,15 @@ int write_sim(dc_program_t *dc_programs[],
         dc_program_t *p = dc_programs[i];
         unsigned int n = p->len;
 
-        sim_sendf("0x%08X 0x%08X\n", base + (DC_BRAM_SEQ_REGS + DC_CTRL_REGS - 1) * 4, 0);
-        if (p->ctrl.dvsr         != -1) sim_sendf("0x%08X 0x%08X\n", base + (DC_BRAM_SEQ_REGS + 0) * 4, (uint32_t)p->ctrl.dvsr);
-        if (p->ctrl.delay_cycles != -1) sim_sendf("0x%08X 0x%08X\n", base + (DC_BRAM_SEQ_REGS + 1) * 4, (uint32_t)p->ctrl.delay_cycles);
-        if (p->ctrl.cs_up_cycles != -1) sim_sendf("0x%08X 0x%08X\n", base + (DC_BRAM_SEQ_REGS + 2) * 4, (uint32_t)p->ctrl.cs_up_cycles);
-        if (p->ctrl.ldac_cycles  != -1) sim_sendf("0x%08X 0x%08X\n", base + (DC_BRAM_SEQ_REGS + 3) * 4, (uint32_t)p->ctrl.ldac_cycles);
-        sim_sendf("0x%08X 0x%08X\n", base + (DC_BRAM_SEQ_REGS + DC_CTRL_REGS - 1) * 4, 1);
+        if (p->ctrl.dvsr != -1 || p->ctrl.delay_cycles != -1 ||
+            p->ctrl.cs_up_cycles != -1 || p->ctrl.ldac_cycles != -1) {
+            sim_sendf("0x%08X 0x%08X\n", base + (DC_BRAM_SEQ_REGS + DC_CTRL_REGS - 1) * 4, 0);
+            if (p->ctrl.dvsr         != -1) sim_sendf("0x%08X 0x%08X\n", base + (DC_BRAM_SEQ_REGS + 0) * 4, (uint32_t)p->ctrl.dvsr);
+            if (p->ctrl.delay_cycles != -1) sim_sendf("0x%08X 0x%08X\n", base + (DC_BRAM_SEQ_REGS + 1) * 4, (uint32_t)p->ctrl.delay_cycles);
+            if (p->ctrl.cs_up_cycles != -1) sim_sendf("0x%08X 0x%08X\n", base + (DC_BRAM_SEQ_REGS + 2) * 4, (uint32_t)p->ctrl.cs_up_cycles);
+            if (p->ctrl.ldac_cycles  != -1) sim_sendf("0x%08X 0x%08X\n", base + (DC_BRAM_SEQ_REGS + 3) * 4, (uint32_t)p->ctrl.ldac_cycles);
+            sim_sendf("0x%08X 0x%08X\n", base + (DC_BRAM_SEQ_REGS + DC_CTRL_REGS - 1) * 4, 1);
+        }
 
         for (unsigned int k = 0; k < n; k++) {
             sim_sendf("0x%08X 0x%08X\n", base + BRAM_IST_ADDR * 4, k);
@@ -498,10 +501,12 @@ int write_sim(dc_program_t *dc_programs[],
         rf_program_t *p = rf_programs[i];
         unsigned int n = p->len;
 
-        sim_sendf("0x%08X 0x%08X\n", base + (RF_BRAM_SEQ_REGS + RF_CTRL_REGS - 1) * 4, 0);
-        if (p->ctrl.default_I != -1) sim_sendf("0x%08X 0x%08X\n", base + (RF_BRAM_SEQ_REGS + 0) * 4, (uint32_t)(p->ctrl.default_I & 0x3fff));
-        if (p->ctrl.default_Q != -1) sim_sendf("0x%08X 0x%08X\n", base + (RF_BRAM_SEQ_REGS + 1) * 4, (uint32_t)(p->ctrl.default_Q & 0x3fff));
-        sim_sendf("0x%08X 0x%08X\n", base + (RF_BRAM_SEQ_REGS + RF_CTRL_REGS - 1) * 4, 1);
+        if (p->ctrl.default_I != -1 || p->ctrl.default_Q != -1) {
+            sim_sendf("0x%08X 0x%08X\n", base + (RF_BRAM_SEQ_REGS + RF_CTRL_REGS - 1) * 4, 0);
+            if (p->ctrl.default_I != -1) sim_sendf("0x%08X 0x%08X\n", base + (RF_BRAM_SEQ_REGS + 0) * 4, (uint32_t)(p->ctrl.default_I & 0x3fff));
+            if (p->ctrl.default_Q != -1) sim_sendf("0x%08X 0x%08X\n", base + (RF_BRAM_SEQ_REGS + 1) * 4, (uint32_t)(p->ctrl.default_Q & 0x3fff));
+            sim_sendf("0x%08X 0x%08X\n", base + (RF_BRAM_SEQ_REGS + RF_CTRL_REGS - 1) * 4, 1);
+        }
 
         for (unsigned int k = 0; k < n; k++) {
             sim_sendf("0x%08X 0x%08X\n", base + BRAM_IST_ADDR * 4, k);
@@ -531,15 +536,18 @@ int write_sim(dc_program_t *dc_programs[],
         li_program_t *p = li_programs[i];
         unsigned int n = p->len;
 
-        sim_sendf("0x%08X 0x%08X\n", base + (LI_BRAM_SEQ_REGS + LI_CTRL_REGS - 1) * 4, 0);
-        if (p->ctrl.default_I != -1) sim_sendf("0x%08X 0x%08X\n", base + (LI_BRAM_SEQ_REGS + 0) * 4, (uint32_t)(p->ctrl.default_I & 0x3fff));
-        if (p->ctrl.default_Q != -1) sim_sendf("0x%08X 0x%08X\n", base + (LI_BRAM_SEQ_REGS + 1) * 4, (uint32_t)(p->ctrl.default_Q & 0x3fff));
-        if (p->ctrl.max_burst != -1) sim_sendf("0x%08X 0x%08X\n", base + (LI_BRAM_SEQ_REGS + 2) * 4, (uint32_t)(p->ctrl.max_burst & 0xff));
-        if (p->ctrl.base_addr != -1) {
-            sim_sendf("0x%08X 0x%08X\n", base + (LI_BRAM_SEQ_REGS + 3) * 4, (uint32_t)(((uint64_t)p->ctrl.base_addr >> 32) & 0x1ffff));
-            sim_sendf("0x%08X 0x%08X\n", base + (LI_BRAM_SEQ_REGS + 4) * 4, (uint32_t)((uint64_t)p->ctrl.base_addr & 0xffffffff));
+        if (p->ctrl.default_I != -1 || p->ctrl.default_Q != -1 ||
+            p->ctrl.max_burst != -1 || p->ctrl.base_addr != -1) {
+            sim_sendf("0x%08X 0x%08X\n", base + (LI_BRAM_SEQ_REGS + LI_CTRL_REGS - 1) * 4, 0);
+            if (p->ctrl.default_I != -1) sim_sendf("0x%08X 0x%08X\n", base + (LI_BRAM_SEQ_REGS + 0) * 4, (uint32_t)(p->ctrl.default_I & 0x3fff));
+            if (p->ctrl.default_Q != -1) sim_sendf("0x%08X 0x%08X\n", base + (LI_BRAM_SEQ_REGS + 1) * 4, (uint32_t)(p->ctrl.default_Q & 0x3fff));
+            if (p->ctrl.max_burst != -1) sim_sendf("0x%08X 0x%08X\n", base + (LI_BRAM_SEQ_REGS + 2) * 4, (uint32_t)(p->ctrl.max_burst & 0xff));
+            if (p->ctrl.base_addr != -1) {
+                sim_sendf("0x%08X 0x%08X\n", base + (LI_BRAM_SEQ_REGS + 3) * 4, (uint32_t)(((uint64_t)p->ctrl.base_addr >> 32) & 0x1ffff));
+                sim_sendf("0x%08X 0x%08X\n", base + (LI_BRAM_SEQ_REGS + 4) * 4, (uint32_t)((uint64_t)p->ctrl.base_addr & 0xffffffff));
+            }
+            sim_sendf("0x%08X 0x%08X\n", base + (LI_BRAM_SEQ_REGS + LI_CTRL_REGS - 1) * 4, 1);
         }
-        sim_sendf("0x%08X 0x%08X\n", base + (LI_BRAM_SEQ_REGS + LI_CTRL_REGS - 1) * 4, 1);
 
         for (unsigned int k = 0; k < n; k++) {
             sim_sendf("0x%08X 0x%08X\n", base + BRAM_IST_ADDR * 4, k);

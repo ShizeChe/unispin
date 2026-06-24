@@ -91,11 +91,11 @@
     set cr 0x2
 
 .program dc23
-.dvsr 65535
-.dlay 65535
-.csup 65535
-.ldac 32767
+.dvsr 655
+.dlay 655
+.csup 655
+.ldac 377
 .repeat 1
     set cr 0x2
-    swp v1=-10 v2=0 n=10 dt=50ms
+    swp v1=-10 v2=0 n=10 dt=50us
 

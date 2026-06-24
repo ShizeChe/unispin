@@ -86,13 +86,13 @@ int main(int argc, char *argv[]) {
     /* -x: load onto hardware via UIO */
     if (exe) {
         for (int ch = 0; ch < DC_CHANNELS; ch++)
-            if (dc_programs[ch]) dc_load_insns(ch, dc_programs[ch]);
+            if (dc_programs[ch]) dc_store_insns(ch, dc_programs[ch]);
         for (int ch = 0; ch < RF_CHANNELS; ch++)
-            if (rf_programs[ch]) rf_load_insns(ch, rf_programs[ch]);
+            if (rf_programs[ch]) rf_store_insns(ch, rf_programs[ch]);
         for (int ch = 0; ch < LI_CHANNELS; ch++)
-            if (li_programs[ch]) li_load_insns(ch, li_programs[ch]);
+            if (li_programs[ch]) li_store_insns(ch, li_programs[ch]);
         for (int ch = 0; ch < EX_CHANNELS; ch++)
-            if (ex_programs[ch]) ex_load_insns(ch, ex_programs[ch]);
+            if (ex_programs[ch]) ex_store_insns(ch, ex_programs[ch]);
         if (launch) launch_load(launch);
     }
 
