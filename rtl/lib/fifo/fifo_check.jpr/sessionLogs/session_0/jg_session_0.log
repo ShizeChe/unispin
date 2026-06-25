@@ -1,0 +1,1398 @@
+# ----------------------------------------
+# Jasper Version Info
+# tool      : Jasper 2024.09
+# platform  : Linux 5.14.0-570.24.1.el9_6.x86_64
+# version   : 2024.09 FCS 64 bits
+# build date: 2024.09.26 14:35:17 UTC
+# ----------------------------------------
+# started   : 2026-06-24 18:34:06 EDT
+# hostname  : localhost.localdomain.(none)
+# pid       : 1862281
+# arguments : '-label' 'session_0' '-console' '//127.0.0.1:46445' '-style' 'windows' '-data' 'AAAA4nicY2RgYLCp////PwMYMD6A0Aw2jAyoAMRnQhUJbEChGRhYYZoZkAQ4GHQZ0hgKGMqg7BKGZIYcINsEKqrPUAwUKWLIBPJKgGx9oHgmEOczxAPFMxhSgWQ2gx5cHxfQjAKg+nyGLCBPBofqLLAaEAAAiS4bnw==' '-proj' '/home/shizeche/hardware/unispin/rtl/lib/fifo/fifo_check.jpr/sessionLogs/session_0' '-init' '-hidden' '/home/shizeche/hardware/unispin/rtl/lib/fifo/fifo_check.jpr/.tmp/.initCmds.tcl' 'fpv/scripts/fifo_check.tcl'
+
+Any disclosure about the Cadence Design Systems software or its use
+model to any third party violates the written Non-Disclosure Agreement
+between Cadence Design Systems, Inc. and the customer.
+
+THIS SOFTWARE CONTAINS CONFIDENTIAL INFORMATION AND TRADE SECRETS OF
+CADENCE DESIGN SYSTEMS, INC. USE, DISCLOSURE, OR REPRODUCTION IS
+PROHIBITED WITHOUT THE PRIOR EXPRESS WRITTEN PERMISSION OF CADENCE
+DESIGN SYSTEMS, INC.
+
+Copyright (C) 2000-2024 Cadence Design Systems, Inc. All Rights
+Reserved.  Unpublished -- rights reserved under the copyright laws of
+the United States.
+
+This product includes software developed by others and redistributed
+according to license agreement. See doc/third_party_readme.txt for
+further details.
+
+RESTRICTED RIGHTS LEGEND
+
+Use, duplication, or disclosure by the Government is subject to
+restrictions as set forth in subparagraph (c) (1) (ii) of the Rights in
+Technical Data and Computer Software clause at DFARS 252.227-7013 or
+subparagraphs (c) (1) and (2) of Commercial Computer Software -- Restricted
+Rights at 48 CFR 52.227-19, as applicable.
+
+
+                          Cadence Design Systems, Inc.
+                          2655 Seely Avenue
+                          San Jose, CA 95134
+                          Phone: 408.943.1234
+
+For technical assistance visit http://support.cadence.com.
+
+Jasper Apps Analysis Session - /home/shizeche/hardware/unispin/rtl/lib/fifo/fifo_check.jpr/sessionLogs/session_0
+
+INFO: successfully checked out licenses "jasper_interactive" and "jasper_fao".
+INFO: reading configuration file "/home/shizeche/.config/cadence/jasper.conf".
+% # ---------------------------------------------------------------------------
+% # Environment
+% # ---------------------------------------------------------------------------
+% set RTL_DIR rtl
+rtl
+% set SVA_DIR fpv/sva
+fpv/sva
+% 
+% # Default proof params -- shrunk from the RTL defaults (DEPTH=32, WIDTH=4)
+% # so proofs converge quickly. Override before sourcing:
+% #   set FIFO_DEPTH 16 ; set FIFO_WIDTH 16 ; source fifo_check.tcl
+% if {![info exists FIFO_DEPTH]} { set FIFO_DEPTH 8 }
+8
+% if {![info exists FIFO_WIDTH]} { set FIFO_WIDTH 8 }
+8
+% 
+% # ---------------------------------------------------------------------------
+% # Compile
+% # ---------------------------------------------------------------------------
+% clear -all
+INFO (IPF121): Cleared environment completely for new design analysis.
+% 
+% # RTL (Verilog-2001, also accepted by -sv)
+% analyze -sv $RTL_DIR/fifo.sv
+[-- (VERI-1482)] Analyzing Verilog file '/home/shizeche/hardware/cadence/jasper/jasper_2024.09/lib/verilog/packages/std/std.sv' into library 'std'
+[-- (VERI-1482)] Analyzing Verilog file 'rtl/fifo.sv'
+% 
+% # SVA and bindings (SystemVerilog)
+% analyze -sv $SVA_DIR/fv_fifo.sv
+[-- (VERI-1482)] Analyzing Verilog file 'fpv/sva/fv_fifo.sv'
+% 
+% # ---------------------------------------------------------------------------
+% # Elaborate
+% #
+% # -disable_auto_bbox keeps the data memory in-scope (the auto blackboxer
+% # would otherwise abstract away the FIFO data array and break the
+% # data-integrity proofs).
+% # ---------------------------------------------------------------------------
+% elaborate -top fifo                                            \
+    -disable_auto_bbox                                         \
+    -parameter DEPTH                       $FIFO_DEPTH         \
+    -parameter WIDTH                       $FIFO_WIDTH         \
+
+INFO (ISW003): Top module name is "fifo".
+[INFO (HIER-8002)] rtl/fifo.sv(73): Disabling old hierarchical reference handler
+[INFO (VERI-1018)] fpv/sva/fv_fifo.sv(1): compiling module 'fv_fifo'
+[WARN (VERI-1209)] fpv/sva/fv_fifo.sv(138): expression size 32 truncated to fit in target size 8
+[WARN (VERI-1209)] fpv/sva/fv_fifo.sv(141): expression size 32 truncated to fit in target size 8
+[INFO (VERI-1018)] rtl/fifo.sv(3): compiling module 'fifo'
+[WARN (VERI-1209)] rtl/fifo.sv(40): expression size 32 truncated to fit in target size 3
+[WARN (VERI-1209)] rtl/fifo.sv(41): expression size 32 truncated to fit in target size 3
+[WARN (VERI-1209)] rtl/fifo.sv(46): expression size 32 truncated to fit in target size 3
+[WARN (VERI-1209)] rtl/fifo.sv(48): expression size 32 truncated to fit in target size 4
+[WARN (VERI-1209)] rtl/fifo.sv(53): expression size 32 truncated to fit in target size 3
+[WARN (VERI-1209)] rtl/fifo.sv(54): expression size 32 truncated to fit in target size 4
+INFO (INL208): Elaboration synthesis summary:
+  Number of synthesized netlists          3 (1 packages)
+  Single run mode                         On
+  Pipeline                                On (2 pipelined netlists)
+  Late hierarchical reference connection  On
+  Number of analyzed Verilog modules      3 (3 synthesized)
+  Number of analyzed VHDL entities        0 (0 synthesized)
+INFO (INL003): Clearing all state information (assumes, stopats, and so forth).
+fifo
+[<embedded>] % # ---------------------------------------------------------------------------
+[<embedded>] % # Clock / reset
+[<embedded>] % # ---------------------------------------------------------------------------
+[<embedded>] % clock i_clk
+[<embedded>] % reset i_rst
+INFO (IPM031): Clearing proof results of all properties.
+INFO (IRS006): Current reset condition is "i_rst".
+[<embedded>] % 
+[<embedded>] % # ---------------------------------------------------------------------------
+[<embedded>] % # Design info / sanity
+[<embedded>] % # ---------------------------------------------------------------------------
+[<embedded>] % get_design_info
+Statistics [for instance "fifo"]
+--------------------------
+# Flops:         28 (310) (104 property flop bits)
+# Latches:       0 (0)
+# Gates:         952 (5457)
+# Nets:          996
+# Ports:         8
+# RTL Lines:     224
+# RTL Instances: 2
+# Embedded Assumptions: 3
+# Embedded Assertions:  19
+# Embedded Covers:      27
+310
+[<embedded>] % 
+[<embedded>] % # ---------------------------------------------------------------------------
+[<embedded>] % # Engine mix + time limits
+[<embedded>] % #   c : condor (heavy)
+[<embedded>] % #   i : induction
+[<embedded>] % #   k : K-induction
+[<embedded>] % #   n : normalisation / property-directed
+[<embedded>] % #   d : directed (fast bug-hunt)
+[<embedded>] % # ---------------------------------------------------------------------------
+[<embedded>] % set_engine_mode {c i k n d}
+[<embedded>] % set_prove_time_limit 5m
+[<embedded>] % 
+[<embedded>] % # ---------------------------------------------------------------------------
+[<embedded>] % # Run proofs and covers
+[<embedded>] % # ---------------------------------------------------------------------------
+[<embedded>] % prove -all
+Ncustom1: Custom engine code is hT3Ng7hPPfiYQOTDZ3qhYOwGAM51eA+J/FjkM5shLioAsqhgLR4Ft+O1BuKG6ilQ83B9tLXSl+CwjiTMAQA
+INFO (IPF036): Starting proof on task: "<embedded>", 46 properties to prove with 0 already proven/unreachable
+INFO (IRS029): Starting reset analysis: phase 1 of 4.
+INFO (IRS030): Running reset analysis: phase 2 of 4.
+INFO (IRS031): Running reset analysis: phase 3 of 4.
+INFO (IRS020): Starting the reset analysis simulation with a limit of 100 iterations (phase 4 of 4).
+INFO (IRS024): Reset iterations 0 to 4 analyzed.
+INFO (IRS018): Reset analysis simulation executed for 3 iterations. Assigned values for 142 of 206 design flops, 0 of 0 design latches, 145 of 153 internal elements.
+INFO (IRS039): Reset analysis complete.
+INFO (IPF031): Settings used for proof thread 0:
+    orchestration                      = on
+    time_limit                         = 300s
+    per_property_time_limit            = 1s * 10 ^ scan
+    engine_mode                        = C I K N D 
+    proofgrid_per_engine_max_jobs      = 1
+    max engine jobs                    = auto
+    proofgrid_mode                     = local
+    proofgrid_restarts                 = 10
+0.0.PRE: A proof was found: No trace exists. [0.00 s]
+INFO (IPF051): 0.0.PRE: The cover property "fifo.FV_FIFO.ASM_idle_during_reset:precondition1" was proven unreachable in 0.00 s.
+0: Found proofs for 1 properties in preprocessing
+0: Using multistage preprocessing
+0: Starting reduce
+AMcustom2: Custom engine code is hT3N1rhP11/52HrFRS21ROp2LOjVTgPvT8L8BGXHgLhaIuqtT4nARFjUqrBL+7pLmaTOzBepZW/Jm8SSrHDybSQtoNiO3y43wk+dEoWlsZizu97Fih6O6lPVG/LpWP5SsUPwlGagLNa1FKEFvwVXyX7//8prySbvSxIHXr5er+z4RAEA
+Ncustom3: Custom engine code is hT3OXrhPByJp3TrFSTLhUmMH4KVtJgmTCnNDF46yMXOKY48m4LS5nE7yBzFjA7kDuwO/GhGUpEPiky3p3wmPn3dJZHxFMsafSoObRzSC+tn7sEY0WbTdZ/FV4hL3MYH/b1CIUvXSWR4wqEoVLsmMOD4xIPT4lI1LO6ZCO7PnnWQuLwetnvKlrXx6wCW/A+x+enqslg1YPobi4wEF/EvbzOvcTYdJvl2s4H2yZg2b2ofAVN5WvhWk1HoBAA
+ADcustom4: Custom engine code is hT3Nv7hPv1752HrFRa2kROx2f/ECJeZB2AZsLdlO8VwmIuqtT4nIDFXclhg+O+o+DMmQCekbheGk0kK28laA9gaOFDXsQp29J3X615HY1IPHJWd6FUFvCHjO+p1k652b5JJvZlShNpGlGSXAiQe/mEAj6tEBAA
+Tricustom5: Custom engine code is hT3Nu7hPt1752DvFRa0kNDiyIV97VyejwM9C/jCLJjdPvusZONHY42VYUy0Q1ZotnhcVtNc56tJ5wbxv6V2+XpdsaSlHck5vfnbYjdwj1OECy9U+7oSQ0SZE3g5ayD+Phuh4odCJTjeKa2k4elM9ldQfkAEA
+Gcustom6: Custom engine code is hT3NibhPDfeYQADBZnYcglOvK9Pfd7EOeniIqP8jNsyIqInncipMGcUXqAadachREE9F2PwhBUZUNw5kHnd4JdXkamORRgEA
+C2custom7: Custom engine code is hT3NirhPjfWYQADBZnYcglOvK9Pfd7EOeniIqP8jNsyIqInncgkrYMMXCYbdK0dUjZIF9d4cJ0rHoBDjwVLBKuG86XYVV00BAA
+AGcustom8: Custom engine code is hT3NirhP/fmYQADBZnYcglOvK9Pfd7EOeniIqP8jNsyIqInnckcwYMMXCYbdK0dUjZIF9d4cJ0rHoBDjwVLBKuHEZnZByh0BAA
+Bcustom9: Custom engine code is hT3NjrhPDfiYQADBZnYcglOvK9PfWxFtenjIyBqfrgr7if/jL/yPOuK1BAflEcW0DxNH2eDIoezN2gxlQFg81RZtiWXh7aiTAidvAQA
+Ncustom10: Custom engine code is hT3NR7hPByFp3TrFSTLhUmMH4KWtJglTyV/c51BHEeZWamnJv767nE6PCak26bd3gf3XGN3rIRheufhDieCJQVISo+gNYUKhiUedBKGtsP/a18svAnlMJZudHxDFwK5ufsyoxsIyiAeSY2oi3tEuoDHr5gw42DFKAG3PqO3CEsl8Azzdt3pl5nGA1Ifv2H02eYsFzWb/nfp8PMb3F0krE/EgBcm8TD9Div8BAA
+Tricustom11: Custom engine code is hT3Nu7hP3fiYQADBZnYcglNHp9bfd7EOeniIqP/ji8sGLQu8yhsFO+wxJ+O+R0bU8g/IewXFomyos+viQnWc2xYNYmMqpo3i40O7DaZR7qfp4YqNx26KRvQ/qx0BAA
+0: Finished reduce in 0s
+0.0.PRE: Performing Proof Simplification...
+0.0.C: clocks: 1, declared: 1, looping: 0, posedge: 1, negedge: 0, noedge: 0, bothedge: 0
+0.0.C: Proof Simplification Iteration 1	[0.00 s]
+0.0.PRE: A proof was found: No trace exists. [0.00 s]
+INFO (IPF057): 0.0.PRE: The property "fifo.FV_FIFO.AST_empty_after_reset" was proven in 0.00 s.
+0.0.PRE: A proof was found: No trace exists. [0.00 s]
+INFO (IPF051): 0.0.PRE: The cover property "fifo.FV_FIFO.AST_no_overflow:precondition1" was proven unreachable in 0.00 s.
+0.0.PRE: A proof was found: No trace exists. [0.00 s]
+INFO (IPF051): 0.0.PRE: The cover property "fifo.FV_FIFO.AST_no_underflow:precondition1" was proven unreachable in 0.00 s.
+0.0.C: A max_length bound was found. The shortest trace is no longer than 1 cycles. [0.00 s]
+INFO (IPF008): 0.0.C: A max_length bound of 1 was found for the property "fifo.FV_FIFO.ASM_no_deq_on_empty:precondition1" in 0.00 s.
+0.0.C: A max_length bound was found. The shortest trace is no longer than 1 cycles. [0.00 s]
+INFO (IPF008): 0.0.C: A max_length bound of 1 was found for the property "fifo.FV_FIFO.AST_empty_after_reset:precondition1" in 0.00 s.
+0.0.C: Proof Simplification Iteration 2	[0.00 s]
+0.0.PRE: A proof was found: No trace exists. [0.00 s]
+INFO (IPF057): 0.0.PRE: The property "fifo.FV_FIFO.AST_no_overflow" was proven in 0.00 s.
+0.0.PRE: A proof was found: No trace exists. [0.00 s]
+INFO (IPF057): 0.0.PRE: The property "fifo.FV_FIFO.AST_no_underflow" was proven in 0.00 s.
+0.0.C: Proof Simplification Iteration 3	[0.00 s]
+0.0.C: Proof Simplification Iteration 4	[0.00 s]
+0.0.PRE: A proof was found: No trace exists. [0.00 s]
+INFO (IPF057): 0.0.PRE: The property ":noDeadEnd" was proven in 0.00 s.
+    Use check_assumptions -show -dead_end to show this property in the property table.
+0.0.PRE: A proof was found: No trace exists. [0.00 s]
+INFO (IPF057): 0.0.PRE: The property ":noConflict" was proven in 0.00 s.
+    Use check_assumptions -show to show this property in the property table.
+INFO (IPF047): 0.0.PRE: The cover property ":live" was covered in 1 cycles in 0.00 s.
+    Use check_assumptions -show -live to show this property in the property table.
+0.0.PRE: Proof Simplification completed in 0.00 s
+0.0.C: Identified and disabled 1 duplicated target.
+0: About to start ProofGrid in its own thread with a limit of 10000 pending notifications and a limit of 10 traces.
+0: ============================= ProofGrid (v3) start =============================
+0: ProofGrid usable level: 39
+0: Initial ProofGrid level: 1
+0: ProofGrid is starting event handling
+0.0.K: Proofgrid shell started at 1862349@localhost.localdomain(local) jg_1862281_localhost.localdomain_1
+0.0.K: clocks: 1, declared: 1, looping: 0, posedge: 1, negedge: 0, noedge: 0, bothedge: 0
+0.0.C: Proofgrid shell started at 1862347@localhost.localdomain(local) jg_1862281_localhost.localdomain_1
+0.0.N: Proofgrid shell started at 1862346@localhost.localdomain(local) jg_1862281_localhost.localdomain_1
+0.0.N: clocks: 1, declared: 1, looping: 0, posedge: 1, negedge: 0, noedge: 0, bothedge: 0
+0.0.D: Proofgrid shell started at 1862350@localhost.localdomain(local) jg_1862281_localhost.localdomain_1
+0.0.D: clocks: 1, declared: 1, looping: 0, posedge: 1, negedge: 0, noedge: 0, bothedge: 0
+0.0.I: Proofgrid shell started at 1862348@localhost.localdomain(local) jg_1862281_localhost.localdomain_1
+0.0.I: clocks: 1, declared: 1, looping: 0, posedge: 1, negedge: 0, noedge: 0, bothedge: 0
+0.0.C: clocks: 1, declared: 1, looping: 0, posedge: 1, negedge: 0, noedge: 0, bothedge: 0
+0.0.I: Next scan (0) will use per property time limit: 1s * 10 ^ 0 = 1s
+0.0.I: Starting proof for property "fifo.FV_FIFO.ASM_no_enq_on_full:precondition1"	[0.00 s].
+0.0.C: Next scan (0) will use per property time limit: 1s * 10 ^ 0 = 1s
+0.0.C: Starting proof for property "fifo.FV_FIFO.ASM_no_enq_on_full:precondition1"	[0.00 s].
+0.0.I: Trace Attempt  1	[0.00 s]
+0.0.I: A max_length bound was found. The shortest trace is no longer than 1024 cycles. [0.00 s]
+INFO (IPF008): 0.0.I: A max_length bound of 1024 was found for the property "fifo.FV_FIFO.ASM_no_enq_on_full:precondition1" in 0.00 s.
+0.0.C: Trace Attempt  1	[0.00 s]
+0.0.I: Trace Attempt  2	[0.00 s]
+0.0.N: Next scan (0) will use per property time limit: 1s * 10 ^ 0 = 1s
+0.0.N: Starting proof for property "fifo.FV_FIFO.ASM_no_enq_on_full:precondition1"	[0.00 s].
+0.0.I: Trace Attempt  3	[0.00 s]
+0.0.C: Trace Attempt  2	[0.00 s]
+0.0.I: Trace Attempt  2	[0.00 s]
+0.0.N: Trace Attempt  3	[0.00 s]
+0.0.C: Trace Attempt  3	[0.00 s]
+0.0.I: Trace Attempt  3	[0.00 s]
+0.0.I: Trace Attempt  4	[0.00 s]
+0.0.D: Next scan (0) will use per property time limit: 1s * 10 ^ 0 = 1s
+0.0.D: Starting proof for property "fifo.FV_FIFO.ASM_no_enq_on_full:precondition1"	[0.00 s].
+0.0.I: Trace Attempt  3	[0.00 s]
+0.0.D: Trace Attempt  1	[0.00 s]
+0.0.N: Trace Attempt  4	[0.00 s]
+0.0.K: Next scan (0) will use per property time limit: 1s * 10 ^ 0 = 1s
+0.0.K: Starting proof for property "fifo.FV_FIFO.ASM_no_enq_on_full:precondition1"	[0.00 s].
+0.0.D: Trace Attempt  2	[0.00 s]
+0.0.N: Trace Attempt  5	[0.00 s]
+0.0.C: Trace Attempt  4	[0.00 s]
+0.0.K: Trace Attempt  4	[0.00 s]
+0.0.C: Trace Attempt  5	[0.00 s]
+0.0.I: Trace Attempt  4	[0.00 s]
+0.0.D: Trace Attempt  3	[0.00 s]
+0.0.I: Trace Attempt  5	[0.00 s]
+0.0.K: Trace Attempt  1	[0.00 s]
+0.0.K: Trace Attempt  2	[0.00 s]
+0.0.K: Trace Attempt  3	[0.00 s]
+0.0.K: Trace Attempt  4	[0.00 s]
+0.0.K: Trace Attempt  5	[0.00 s]
+0.0.D: Trace Attempt  5	[0.00 s]
+0.0.I: Trace Attempt  5	[0.00 s]
+0.0.K: Trace Attempt  9	[0.00 s]
+0.0.K: A trace with 9 cycles was found. [0.00 s]
+INFO (IPF047): 0.0.K: The cover property "fifo.FV_FIFO.ASM_no_enq_on_full:precondition1" was covered in 9 cycles in 0.01 s.
+INFO (IPF047): 0.0.K: The cover property "fifo.FV_FIFO.ASM_no_deq_on_empty:precondition1" was covered in 1 cycles in 0.01 s by the incidental trace "fifo.FV_FIFO.ASM_no_enq_on_full:precondition1".
+INFO (IPF047): 0.0.K: The cover property "fifo.FV_FIFO.AST_empty_after_reset:precondition1" was covered in 1 cycles in 0.01 s by the incidental trace "fifo.FV_FIFO.ASM_no_enq_on_full:precondition1".
+INFO (IPF047): 0.0.K: The cover property "fifo.FV_FIFO.AST_cnt_inc_on_enq_only:precondition1" was covered in 1 cycles in 0.01 s by the incidental trace "fifo.FV_FIFO.ASM_no_enq_on_full:precondition1".
+INFO (IPF047): 0.0.K: The cover property "fifo.FV_FIFO.AST_data_stable_no_deq:precondition1" was covered in 2 cycles in 0.01 s by the incidental trace "fifo.FV_FIFO.ASM_no_enq_on_full:precondition1".
+INFO (IPF047): 0.0.K: The cover property "fifo.FV_FIFO.COV_enq" was covered in 1 cycles in 0.01 s by the incidental trace "fifo.FV_FIFO.ASM_no_enq_on_full:precondition1".
+INFO (IPF047): 0.0.K: The cover property "fifo.FV_FIFO.COV_can_be_full" was covered in 9 cycles in 0.01 s by the incidental trace "fifo.FV_FIFO.ASM_no_enq_on_full:precondition1".
+INFO (IPF047): 0.0.K: The cover property "fifo.FV_FIFO.COV_enqx2" was covered in 2 cycles in 0.01 s by the incidental trace "fifo.FV_FIFO.ASM_no_enq_on_full:precondition1".
+INFO (IPF047): 0.0.K: The cover property "fifo.FV_FIFO.DATA_INTEGRITY_GEN[1].AST_data_integrity:precondition1" was covered in 2 cycles in 0.01 s by the incidental trace "fifo.FV_FIFO.ASM_no_enq_on_full:precondition1".
+0.0.N: Trace Attempt  9	[0.00 s]
+0.0.N: Stopped processing property "fifo.FV_FIFO.ASM_no_enq_on_full:precondition1"	[0.01 s].
+0.0.C: Trace Attempt  9	[0.00 s]
+0.0.C: Stopped processing property "fifo.FV_FIFO.ASM_no_enq_on_full:precondition1"	[0.01 s].
+0.0.K: Stopped processing property "fifo.FV_FIFO.ASM_no_enq_on_full:precondition1"	[0.01 s].
+0.0.D: Stopped processing property "fifo.FV_FIFO.ASM_no_enq_on_full:precondition1"	[0.01 s].
+0.0.I: Trace Attempt  8	[0.00 s]
+0.0.I: Stopped processing property "fifo.FV_FIFO.ASM_no_enq_on_full:precondition1"	[0.01 s].
+0.0.K: Starting proof for property "fifo.FV_FIFO.AST_empty_iff_cnt_zero"	[0.00 s].
+0.0.N: Starting proof for property "fifo.FV_FIFO.AST_empty_iff_cnt_zero"	[0.00 s].
+0.0.C: Starting proof for property "fifo.FV_FIFO.AST_empty_iff_cnt_zero"	[0.00 s].
+0.0.K: Trace Attempt  1	[0.00 s]
+0.0.K: A max_length bound was found. The shortest trace is no longer than 16384 cycles. [0.00 s]
+INFO (IPF008): 0.0.K: A max_length bound of 16384 was found for the property "fifo.FV_FIFO.AST_empty_iff_cnt_zero" in 0.00 s.
+0.0.I: Starting proof for property "fifo.FV_FIFO.AST_empty_iff_cnt_zero"	[0.00 s].
+0.0.N: Trace Attempt  1	[0.00 s]
+0.0.C: Trace Attempt  1	[0.00 s]
+0.0.D: Starting proof for property "fifo.FV_FIFO.AST_empty_iff_cnt_zero"	[0.00 s].
+0.0.I: Trace Attempt  1	[0.00 s]
+0.0.D: Trace Attempt  1	[0.00 s]
+0.0.N: Trace Attempt  2	[0.00 s]
+0.0.N: Trace Attempt  3	[0.00 s]
+0.0.I: Trace Attempt  2	[0.00 s]
+0.0.I: Trace Attempt  3	[0.00 s]
+0.0.D: Trace Attempt  2	[0.00 s]
+0.0.N: Trace Attempt  4	[0.00 s]
+0.0.K: Trace Attempt  1	[0.00 s]
+0.0.I: Trace Attempt  4	[0.00 s]
+0.0.K: Trace Attempt  2	[0.00 s]
+0.0.N: Trace Attempt  5	[0.00 s]
+0.0.C: Trace Attempt  2	[0.00 s]
+0.0.C: Trace Attempt  3	[0.00 s]
+0.0.I: Trace Attempt  5	[0.00 s]
+0.0.C: Trace Attempt  4	[0.00 s]
+0.0.K: Trace Attempt  3	[0.00 s]
+0.0.C: Trace Attempt  5	[0.00 s]
+0.0.K: Trace Attempt  4	[0.00 s]
+0.0.D: Trace Attempt  3	[0.00 s]
+0.0.K: Trace Attempt  5	[0.00 s]
+0.0.D: Trace Attempt  5	[0.00 s]
+0.0.I: Trace Attempt  1	[0.08 s]
+0.0.I: Trace Attempt  2	[0.08 s]
+0.0.N: Trace Attempt  1	[0.08 s]
+0.0.C: Partitioning 0 assumptions over 0 inputs...
+0.0.I: Trace Attempt  3	[0.08 s]
+0.0.N: Trace Attempt  2	[0.08 s]
+0.0.N: Trace Attempt  3	[0.08 s]
+0.0.N: Trace Attempt  4	[0.08 s]
+0.0.N: Trace Attempt  5	[0.08 s]
+0.0.C: Iteration  1	[0.08 s]
+0.0.I: Trace Attempt  5	[0.08 s]
+0.0.C: Iteration  2	[0.09 s]
+0.0.C: Iteration  3	[0.09 s]
+0.0.C: Iteration  4	[0.09 s]
+0.0.C: Iteration  5	[0.09 s]
+0.0.C: Iteration  6	[0.09 s]
+0.0.C: Iteration  7	[0.09 s]
+0.0.C: Iteration  8	[0.09 s]
+0.0.C: Iteration  9	[0.09 s]
+0.0.C: Iteration 10	[0.09 s]
+0.0.C: Iteration 11	[0.09 s]
+0.0.C: Iteration 12	[0.09 s]
+0.0.C: Iteration 13	[0.09 s]
+0.0.C: Iteration 14	[0.09 s]
+0.0.C: Iteration 15	[0.09 s]
+0.0.C: Iteration 16	[0.09 s]
+0.0.C: Iteration 17	[0.09 s]
+0.0.C: Trace Attempt 11	[0.07 s]
+0.0.C: A proof was found: No trace exists. [0.09 s]
+INFO (IPF057): 0.0.C: The property "fifo.FV_FIFO.AST_empty_iff_cnt_zero" was proven in 0.09 s.
+0.0.C: Stopped processing property "fifo.FV_FIFO.AST_empty_iff_cnt_zero"	[0.09 s].
+0.0.I: Stopped processing property "fifo.FV_FIFO.AST_empty_iff_cnt_zero"	[0.09 s].
+0.0.I: Starting proof for property "fifo.FV_FIFO.AST_full_iff_cnt_max"	[0.00 s].
+0.0.N: Trace Attempt  8	[0.09 s]
+0.0.N: Stopped processing property "fifo.FV_FIFO.AST_empty_iff_cnt_zero"	[0.09 s].
+0.0.N: Starting proof for property "fifo.FV_FIFO.AST_full_iff_cnt_max"	[0.00 s].
+0.0.I: Trace Attempt  1	[0.00 s]
+0.0.I: A max_length bound was found. The shortest trace is no longer than 16384 cycles. [0.00 s]
+INFO (IPF008): 0.0.I: A max_length bound of 16384 was found for the property "fifo.FV_FIFO.AST_full_iff_cnt_max" in 0.00 s.
+0.0.K: Trace Attempt 11	[0.06 s]
+0.0.K: Stopped processing property "fifo.FV_FIFO.AST_empty_iff_cnt_zero"	[0.09 s].
+0.0.K: Starting proof for property "fifo.FV_FIFO.AST_full_iff_cnt_max"	[0.00 s].
+0.0.N: Trace Attempt  1	[0.00 s]
+0.0.K: Trace Attempt  1	[0.00 s]
+0.0.I: Trace Attempt  2	[0.00 s]
+0.0.I: Trace Attempt  3	[0.00 s]
+0.0.D: Stopped processing property "fifo.FV_FIFO.AST_empty_iff_cnt_zero"	[0.09 s].
+0.0.D: Starting proof for property "fifo.FV_FIFO.AST_full_iff_cnt_max"	[0.00 s].
+0.0.N: Trace Attempt  2	[0.00 s]
+0.0.N: Trace Attempt  3	[0.00 s]
+0.0.I: Trace Attempt  2	[0.00 s]
+0.0.D: Trace Attempt  1	[0.00 s]
+0.0.N: Trace Attempt  3	[0.00 s]
+0.0.D: Trace Attempt  2	[0.00 s]
+0.0.K: Trace Attempt  1	[0.00 s]
+0.0.I: Trace Attempt  3	[0.00 s]
+0.0.I: Trace Attempt  4	[0.00 s]
+0.0.K: Trace Attempt  3	[0.00 s]
+0.0.I: Trace Attempt  3	[0.00 s]
+0.0.D: Trace Attempt  3	[0.00 s]
+0.0.N: Trace Attempt  4	[0.00 s]
+0.0.N: Trace Attempt  5	[0.00 s]
+0.0.K: Trace Attempt  1	[0.00 s]
+0.0.K: Trace Attempt  2	[0.00 s]
+0.0.I: Trace Attempt  4	[0.00 s]
+0.0.K: Trace Attempt  3	[0.00 s]
+0.0.I: Trace Attempt  5	[0.00 s]
+0.0.K: Trace Attempt  4	[0.00 s]
+0.0.C: Starting proof for property "fifo.FV_FIFO.AST_full_iff_cnt_max"	[0.00 s].
+0.0.C: Trace Attempt  4	[0.00 s]
+0.0.K: Trace Attempt  5	[0.00 s]
+0.0.D: Trace Attempt  5	[0.00 s]
+0.0.C: Trace Attempt  5	[0.00 s]
+0.0.C: Partitioning 1 assumptions over 0 inputs...
+0.0.C: Iteration  1	[0.07 s]
+0.0.N: Trace Attempt  1	[0.07 s]
+0.0.C: Iteration  2	[0.07 s]
+0.0.C: Iteration  3	[0.07 s]
+0.0.N: Trace Attempt  2	[0.07 s]
+0.0.C: Iteration  4	[0.07 s]
+0.0.N: Trace Attempt  3	[0.07 s]
+0.0.C: Iteration  5	[0.07 s]
+0.0.C: Iteration  6	[0.07 s]
+0.0.C: Iteration  7	[0.07 s]
+0.0.C: Iteration  8	[0.07 s]
+0.0.C: Iteration  9	[0.07 s]
+0.0.N: Trace Attempt  4	[0.07 s]
+0.0.C: Iteration 10	[0.07 s]
+0.0.C: Iteration 11	[0.07 s]
+0.0.C: Iteration 12	[0.07 s]
+0.0.C: Iteration 13	[0.07 s]
+0.0.C: Iteration 14	[0.07 s]
+0.0.C: Iteration 15	[0.07 s]
+0.0.I: Trace Attempt  1	[0.07 s]
+0.0.C: Iteration 16	[0.07 s]
+0.0.I: Trace Attempt  2	[0.07 s]
+0.0.C: Iteration 17	[0.07 s]
+0.0.N: Trace Attempt  5	[0.07 s]
+0.0.I: Trace Attempt  3	[0.07 s]
+0.0.C: Trace Attempt 13	[0.05 s]
+0.0.C: A proof was found: No trace exists. [0.07 s]
+INFO (IPF057): 0.0.C: The property "fifo.FV_FIFO.AST_full_iff_cnt_max" was proven in 0.08 s.
+0.0.C: Stopped processing property "fifo.FV_FIFO.AST_full_iff_cnt_max"	[0.08 s].
+0.0.N: Stopped processing property "fifo.FV_FIFO.AST_full_iff_cnt_max"	[0.08 s].
+0.0.N: Starting proof for property "fifo.FV_FIFO.AST_not_empty_full"	[0.00 s].
+0.0.I: Stopped processing property "fifo.FV_FIFO.AST_full_iff_cnt_max"	[0.08 s].
+0.0.I: Starting proof for property "fifo.FV_FIFO.AST_not_empty_full"	[0.00 s].
+0.0.K: Trace Attempt 14	[0.07 s]
+0.0.K: Stopped processing property "fifo.FV_FIFO.AST_full_iff_cnt_max"	[0.08 s].
+0.0.K: Starting proof for property "fifo.FV_FIFO.AST_not_empty_full"	[0.00 s].
+0.0.I: Trace Attempt  1	[0.00 s]
+0.0.I: A max_length bound was found. The shortest trace is no longer than 1024 cycles. [0.00 s]
+INFO (IPF008): 0.0.I: A max_length bound of 1024 was found for the property "fifo.FV_FIFO.AST_not_empty_full" in 0.00 s.
+0.0.D: Trace Attempt  9	[0.01 s]
+0.0.D: Stopped processing property "fifo.FV_FIFO.AST_full_iff_cnt_max"	[0.08 s].
+0.0.D: Starting proof for property "fifo.FV_FIFO.AST_not_empty_full"	[0.00 s].
+0.0.N: Trace Attempt  1	[0.00 s]
+0.0.K: Trace Attempt  1	[0.00 s]
+0.0.I: Trace Attempt  2	[0.00 s]
+0.0.I: Trace Attempt  3	[0.00 s]
+0.0.I: Trace Attempt  4	[0.00 s]
+0.0.I: A proof was found: No trace exists. [0.00 s]
+INFO (IPF057): 0.0.I: The property "fifo.FV_FIFO.AST_not_empty_full" was proven in 0.00 s.
+0.0.I: Stopped processing property "fifo.FV_FIFO.AST_not_empty_full"	[0.00 s].
+0.0.D: Trace Attempt  1	[0.00 s]
+0.0.N: Trace Attempt  2	[0.00 s]
+0.0.N: Stopped processing property "fifo.FV_FIFO.AST_not_empty_full"	[0.00 s].
+0.0.N: Starting proof for property "fifo.FV_FIFO.AST_cnt_le_depth"	[0.00 s].
+0.0.D: Stopped processing property "fifo.FV_FIFO.AST_not_empty_full"	[0.00 s].
+0.0.D: Starting proof for property "fifo.FV_FIFO.AST_cnt_le_depth"	[0.00 s].
+0.0.D: A max_length bound was found. The shortest trace is no longer than 16384 cycles. [0.00 s]
+INFO (IPF008): 0.0.D: A max_length bound of 16384 was found for the property "fifo.FV_FIFO.AST_cnt_le_depth" in 0.00 s.
+0.0.N: Trace Attempt  1	[0.00 s]
+0.0.D: Trace Attempt  1	[0.00 s]
+0.0.K: Trace Attempt  1	[0.00 s]
+0.0.N: Trace Attempt  2	[0.00 s]
+0.0.K: Stopped processing property "fifo.FV_FIFO.AST_not_empty_full"	[0.00 s].
+0.0.K: Starting proof for property "fifo.FV_FIFO.AST_cnt_le_depth"	[0.00 s].
+0.0.N: Trace Attempt  3	[0.00 s]
+0.0.D: Trace Attempt  2	[0.00 s]
+0.0.N: Trace Attempt  3	[0.00 s]
+0.0.K: Trace Attempt  3	[0.00 s]
+0.0.K: Trace Attempt  1	[0.00 s]
+0.0.N: Trace Attempt  4	[0.00 s]
+0.0.K: Trace Attempt  2	[0.00 s]
+0.0.N: Trace Attempt  5	[0.00 s]
+0.0.D: A proof was found: No trace exists. [0.00 s]
+INFO (IPF057): 0.0.D: The property "fifo.FV_FIFO.AST_cnt_le_depth" was proven in 0.00 s.
+0.0.D: Stopped processing property "fifo.FV_FIFO.AST_cnt_le_depth"	[0.00 s].
+0.0.K: Trace Attempt  3	[0.00 s]
+0.0.N: Trace Attempt  6	[0.00 s]
+0.0.N: Stopped processing property "fifo.FV_FIFO.AST_cnt_le_depth"	[0.00 s].
+0.0.N: Starting proof for property "fifo.FV_FIFO.AST_cnt_inc_on_enq_only"	[0.00 s].
+0.0.N: Trace Attempt  1	[0.00 s]
+0.0.N: A max_length bound was found. The shortest trace is no longer than 524288 cycles. [0.00 s]
+INFO (IPF008): 0.0.N: A max_length bound of 524288 was found for the property "fifo.FV_FIFO.AST_cnt_inc_on_enq_only" in 0.00 s.
+0.0.N: Trace Attempt  2	[0.00 s]
+0.0.K: Stopped processing property "fifo.FV_FIFO.AST_cnt_le_depth"	[0.00 s].
+0.0.K: Starting proof for property "fifo.FV_FIFO.AST_cnt_inc_on_enq_only"	[0.00 s].
+0.0.N: Trace Attempt  2	[0.00 s]
+0.0.K: Trace Attempt  2	[0.00 s]
+0.0.N: Trace Attempt  3	[0.00 s]
+0.0.C: Starting proof for property "fifo.FV_FIFO.AST_cnt_inc_on_enq_only"	[0.00 s].
+0.0.N: Trace Attempt  4	[0.00 s]
+0.0.N: Trace Attempt  5	[0.00 s]
+0.0.K: Trace Attempt  1	[0.00 s]
+0.0.C: Trace Attempt  2	[0.00 s]
+0.0.K: Trace Attempt  2	[0.00 s]
+0.0.I: Starting proof for property "fifo.FV_FIFO.AST_cnt_inc_on_enq_only"	[0.00 s].
+0.0.K: Trace Attempt  3	[0.00 s]
+0.0.I: Trace Attempt  2	[0.00 s]
+0.0.C: Trace Attempt  3	[0.00 s]
+0.0.C: Trace Attempt  4	[0.00 s]
+0.0.C: Trace Attempt  5	[0.00 s]
+0.0.K: Trace Attempt  4	[0.00 s]
+0.0.I: Trace Attempt  3	[0.00 s]
+0.0.I: Trace Attempt  4	[0.00 s]
+0.0.I: Trace Attempt  5	[0.00 s]
+0.0.N: Trace Attempt  1	[0.00 s]
+0.0.K: Trace Attempt  5	[0.00 s]
+0.0.D: Starting proof for property "fifo.FV_FIFO.AST_cnt_inc_on_enq_only"	[0.00 s].
+0.0.D: Trace Attempt  1	[0.00 s]
+0.0.D: Trace Attempt  2	[0.00 s]
+0.0.N: Trace Attempt  2	[0.00 s]
+0.0.I: Trace Attempt  1	[0.00 s]
+0.0.I: Trace Attempt  2	[0.00 s]
+0.0.N: Validation of fixpoint was successful. Time = 0.00
+0.0.N: A proof was found: No trace exists. [0.00 s]
+INFO (IPF057): 0.0.N: The property "fifo.FV_FIFO.AST_cnt_inc_on_enq_only" was proven in 0.00 s.
+0.0.N: Stopped processing property "fifo.FV_FIFO.AST_cnt_inc_on_enq_only"	[0.00 s].
+0.0.I: Stopped processing property "fifo.FV_FIFO.AST_cnt_inc_on_enq_only"	[0.00 s].
+0.0.I: Starting proof for property "fifo.FV_FIFO.AST_cnt_dec_on_deq_only"	[0.00 s].
+0.0.K: Trace Attempt  6	[0.00 s]
+0.0.K: Stopped processing property "fifo.FV_FIFO.AST_cnt_inc_on_enq_only"	[0.00 s].
+0.0.K: Starting proof for property "fifo.FV_FIFO.AST_cnt_dec_on_deq_only"	[0.00 s].
+0.0.I: Trace Attempt  1	[0.00 s]
+0.0.I: A max_length bound was found. The shortest trace is no longer than 524288 cycles. [0.00 s]
+INFO (IPF008): 0.0.I: A max_length bound of 524288 was found for the property "fifo.FV_FIFO.AST_cnt_dec_on_deq_only" in 0.00 s.
+0.0.D: Stopped processing property "fifo.FV_FIFO.AST_cnt_inc_on_enq_only"	[0.00 s].
+0.0.D: Starting proof for property "fifo.FV_FIFO.AST_cnt_dec_on_deq_only"	[0.00 s].
+0.0.K: Trace Attempt  1	[0.00 s]
+0.0.I: Trace Attempt  2	[0.00 s]
+0.0.I: Trace Attempt  3	[0.00 s]
+0.0.D: Trace Attempt  1	[0.00 s]
+0.0.I: Trace Attempt  2	[0.00 s]
+0.0.K: Trace Attempt  1	[0.00 s]
+0.0.D: Trace Attempt  2	[0.00 s]
+0.0.I: Trace Attempt  3	[0.00 s]
+0.0.K: Trace Attempt  3	[0.00 s]
+0.0.I: Trace Attempt  3	[0.00 s]
+0.0.K: Trace Attempt  1	[0.00 s]
+0.0.K: Trace Attempt  2	[0.00 s]
+0.0.I: Trace Attempt  4	[0.00 s]
+0.0.K: Trace Attempt  3	[0.00 s]
+0.0.D: A proof was found: No trace exists. [0.00 s]
+INFO (IPF057): 0.0.D: The property "fifo.FV_FIFO.AST_cnt_dec_on_deq_only" was proven in 0.00 s.
+0.0.D: Stopped processing property "fifo.FV_FIFO.AST_cnt_dec_on_deq_only"	[0.00 s].
+0.0.I: Trace Attempt  5	[0.00 s]
+0.0.I: Stopped processing property "fifo.FV_FIFO.AST_cnt_dec_on_deq_only"	[0.00 s].
+0.0.I: Starting proof for property "fifo.FV_FIFO.AST_cnt_dec_on_deq_only:precondition1"	[0.00 s].
+0.0.I: Trace Attempt  1	[0.00 s]
+0.0.I: A max_length bound was found. The shortest trace is no longer than 1024 cycles. [0.00 s]
+INFO (IPF008): 0.0.I: A max_length bound of 1024 was found for the property "fifo.FV_FIFO.AST_cnt_dec_on_deq_only:precondition1" in 0.00 s.
+0.0.I: Trace Attempt  2	[0.00 s]
+0.0.K: Stopped processing property "fifo.FV_FIFO.AST_cnt_dec_on_deq_only"	[0.00 s].
+0.0.K: Starting proof for property "fifo.FV_FIFO.AST_cnt_dec_on_deq_only:precondition1"	[0.00 s].
+0.0.I: Trace Attempt  2	[0.00 s]
+0.0.K: Trace Attempt  2	[0.00 s]
+0.0.I: A trace with 2 cycles was found. [0.00 s]
+INFO (IPF047): 0.0.I: The cover property "fifo.FV_FIFO.AST_cnt_dec_on_deq_only:precondition1" was covered in 2 cycles in 0.00 s.
+INFO (IPF047): 0.0.I: The cover property "fifo.FV_FIFO.COV_deq" was covered in 2 cycles in 0.00 s by the incidental trace "fifo.FV_FIFO.AST_cnt_dec_on_deq_only:precondition1".
+0.0.I: Stopped processing property "fifo.FV_FIFO.AST_cnt_dec_on_deq_only:precondition1"	[0.00 s].
+0.0.K: Stopped processing property "fifo.FV_FIFO.AST_cnt_dec_on_deq_only:precondition1"	[0.00 s].
+0.0.K: Starting proof for property "fifo.FV_FIFO.AST_cnt_hold_on_simul"	[0.00 s].
+0.0.N: Starting proof for property "fifo.FV_FIFO.AST_cnt_dec_on_deq_only:precondition1"	[0.00 s].
+0.0.N: Stopped processing property "fifo.FV_FIFO.AST_cnt_dec_on_deq_only:precondition1"	[0.00 s].
+0.0.C: Partitioning 4 assumptions over 0 inputs...
+0.0.K: Trace Attempt  1	[0.00 s]
+0.0.K: A max_length bound was found. The shortest trace is no longer than 524288 cycles. [0.00 s]
+INFO (IPF008): 0.0.K: A max_length bound of 524288 was found for the property "fifo.FV_FIFO.AST_cnt_hold_on_simul" in 0.00 s.
+0.0.K: Trace Attempt  1	[0.00 s]
+0.0.K: Trace Attempt  2	[0.00 s]
+0.0.K: Trace Attempt  2	[0.00 s]
+0.0.C: Iteration  1	[0.00 s]
+0.0.K: Trace Attempt  1	[0.00 s]
+0.0.K: Trace Attempt  2	[0.00 s]
+0.0.D: Starting proof for property "fifo.FV_FIFO.AST_cnt_hold_on_simul"	[0.00 s].
+0.0.K: Trace Attempt  3	[0.00 s]
+0.0.D: Trace Attempt  1	[0.00 s]
+0.0.D: Trace Attempt  2	[0.00 s]
+0.0.K: Trace Attempt  4	[0.00 s]
+0.0.C: Iteration  2	[0.00 s]
+0.0.I: Starting proof for property "fifo.FV_FIFO.AST_cnt_hold_on_simul"	[0.00 s].
+0.0.N: Starting proof for property "fifo.FV_FIFO.AST_cnt_hold_on_simul"	[0.00 s].
+0.0.I: Trace Attempt  2	[0.00 s]
+0.0.N: Trace Attempt  2	[0.00 s]
+0.0.K: Trace Attempt  5	[0.00 s]
+0.0.C: Trace Attempt 12	[0.00 s]
+0.0.C: Stopped processing property "fifo.FV_FIFO.AST_cnt_inc_on_enq_only"	[0.00 s].
+0.0.C: Starting proof for property "fifo.FV_FIFO.AST_cnt_hold_on_simul"	[0.00 s].
+0.0.I: Trace Attempt  3	[0.00 s]
+0.0.I: Trace Attempt  4	[0.00 s]
+0.0.C: Trace Attempt  2	[0.00 s]
+0.0.D: A proof was found: No trace exists. [0.00 s]
+INFO (IPF057): 0.0.D: The property "fifo.FV_FIFO.AST_cnt_hold_on_simul" was proven in 0.00 s.
+0.0.D: Stopped processing property "fifo.FV_FIFO.AST_cnt_hold_on_simul"	[0.00 s].
+0.0.N: Trace Attempt  3	[0.00 s]
+0.0.I: Trace Attempt  5	[0.00 s]
+0.0.N: Stopped processing property "fifo.FV_FIFO.AST_cnt_hold_on_simul"	[0.00 s].
+0.0.N: Starting proof for property "fifo.FV_FIFO.AST_cnt_hold_on_simul:precondition1"	[0.00 s].
+0.0.N: Starting proof for property "fifo.FV_FIFO.COV_simul"	[0.00 s].
+0.0.I: Stopped processing property "fifo.FV_FIFO.AST_cnt_hold_on_simul"	[0.00 s].
+0.0.I: Starting proof for property "fifo.FV_FIFO.AST_cnt_hold_on_simul:precondition1"	[0.00 s].
+0.0.I: Starting proof for property "fifo.FV_FIFO.COV_simul"	[0.00 s].
+0.0.N: Trace Attempt  1	[0.00 s]
+0.0.I: Trace Attempt  1	[0.00 s]
+0.0.I: A max_length bound was found. The shortest trace is no longer than 1024 cycles. [0.00 s]
+INFO (IPF008): 0.0.I: A max_length bound of 1024 was found for the property "fifo.FV_FIFO.AST_cnt_hold_on_simul:precondition1" in 0.00 s.
+0.0.I: A max_length bound was found. The shortest trace is no longer than 1024 cycles. [0.00 s]
+INFO (IPF008): 0.0.I: A max_length bound of 1024 was found for the property "fifo.FV_FIFO.COV_simul" in 0.00 s.
+0.0.K: Stopped processing property "fifo.FV_FIFO.AST_cnt_hold_on_simul"	[0.00 s].
+0.0.K: Starting proof for property "fifo.FV_FIFO.AST_cnt_hold_on_simul:precondition1"	[0.00 s].
+0.0.K: Starting proof for property "fifo.FV_FIFO.COV_simul"	[0.00 s].
+0.0.C: Trace Attempt  3	[0.00 s]
+0.0.I: Trace Attempt  2	[0.00 s]
+0.0.N: Trace Attempt  2	[0.00 s]
+0.0.C: Stopped processing property "fifo.FV_FIFO.AST_cnt_hold_on_simul"	[0.00 s].
+0.0.K: Trace Attempt  1	[0.00 s]
+0.0.C: Starting proof for property "fifo.FV_FIFO.AST_cnt_hold_on_simul:precondition1"	[0.00 s].
+0.0.C: Starting proof for property "fifo.FV_FIFO.COV_simul"	[0.00 s].
+0.0.I: Trace Attempt  2	[0.00 s]
+0.0.N: Trace Attempt  2	[0.00 s]
+0.0.C: Trace Attempt  2	[0.00 s]
+0.0.I: A trace with 2 cycles was found. [0.00 s]
+INFO (IPF047): 0.0.I: The cover property "fifo.FV_FIFO.AST_cnt_hold_on_simul:precondition1" was covered in 2 cycles in 0.00 s.
+INFO (IPF047): 0.0.I: The cover property "fifo.FV_FIFO.COV_simul" was covered in 2 cycles in 0.00 s.
+0.0.I: Stopped processing property "fifo.FV_FIFO.AST_cnt_hold_on_simul:precondition1"	[0.00 s].
+0.0.I: Stopped processing property "fifo.FV_FIFO.COV_simul"	[0.00 s].
+0.0.K: Trace Attempt  1	[0.00 s]
+0.0.N: Stopped processing property "fifo.FV_FIFO.AST_cnt_hold_on_simul:precondition1"	[0.00 s].
+0.0.N: Stopped processing property "fifo.FV_FIFO.COV_simul"	[0.00 s].
+0.0.C: Stopped processing property "fifo.FV_FIFO.AST_cnt_hold_on_simul:precondition1"	[0.00 s].
+0.0.C: Stopped processing property "fifo.FV_FIFO.COV_simul"	[0.00 s].
+0.0.K: Stopped processing property "fifo.FV_FIFO.AST_cnt_hold_on_simul:precondition1"	[0.00 s].
+0.0.K: Stopped processing property "fifo.FV_FIFO.COV_simul"	[0.00 s].
+0.0.K: Starting proof for property "fifo.FV_FIFO.AST_data_stable_no_deq"	[0.00 s].
+0.0.K: Trace Attempt  1	[0.00 s]
+0.0.K: Trace Attempt  1	[0.00 s]
+0.0.K: Trace Attempt  2	[0.00 s]
+0.0.K: Trace Attempt  3	[0.00 s]
+0.0.K: Trace Attempt  3	[0.00 s]
+0.0.D: Starting proof for property "fifo.FV_FIFO.AST_data_stable_no_deq"	[0.00 s].
+0.0.D: Trace Attempt  1	[0.00 s]
+0.0.D: Trace Attempt  2	[0.00 s]
+0.0.I: Starting proof for property "fifo.FV_FIFO.AST_data_stable_no_deq"	[0.00 s].
+0.0.N: Starting proof for property "fifo.FV_FIFO.AST_data_stable_no_deq"	[0.00 s].
+0.0.C: Starting proof for property "fifo.FV_FIFO.AST_data_stable_no_deq"	[0.00 s].
+0.0.I: Trace Attempt  2	[0.00 s]
+0.0.K: Trace Attempt  1	[0.00 s]
+0.0.N: Trace Attempt  3	[0.00 s]
+0.0.C: Trace Attempt  3	[0.00 s]
+0.0.K: Trace Attempt  2	[0.00 s]
+0.0.I: Trace Attempt  3	[0.00 s]
+0.0.K: Trace Attempt  3	[0.00 s]
+0.0.D: Trace Attempt  3	[0.00 s]
+0.0.I: Trace Attempt  3	[0.00 s]
+0.0.K: Trace Attempt  4	[0.00 s]
+0.0.N: Trace Attempt  4	[0.00 s]
+0.0.C: Trace Attempt  4	[0.00 s]
+0.0.N: Trace Attempt  4	[0.00 s]
+0.0.C: Trace Attempt  4	[0.00 s]
+0.0.I: Trace Attempt  4	[0.00 s]
+0.0.K: Trace Attempt  4	[0.00 s]
+0.0.I: Trace Attempt  4	[0.00 s]
+0.0.D: Trace Attempt  4	[0.00 s]
+0.0.K: Trace Attempt  1	[0.00 s]
+0.0.C: Trace Attempt  5	[0.00 s]
+0.0.K: Trace Attempt  2	[0.00 s]
+0.0.N: Trace Attempt  5	[0.00 s]
+0.0.K: Trace Attempt  3	[0.00 s]
+0.0.I: Trace Attempt  5	[0.00 s]
+0.0.C: Trace Attempt  5	[0.00 s]
+0.0.N: Trace Attempt  5	[0.00 s]
+0.0.I: Trace Attempt  5	[0.00 s]
+0.0.K: Trace Attempt  5	[0.00 s]
+0.0.K: Trace Attempt  1	[0.01 s]
+0.0.K: Trace Attempt  2	[0.01 s]
+0.0.K: Trace Attempt  1	[0.01 s]
+0.0.K: Trace Attempt  2	[0.01 s]
+0.0.K: Trace Attempt  3	[0.01 s]
+0.0.K: Trace Attempt  1	[0.02 s]
+0.0.K: Trace Attempt  2	[0.02 s]
+0.0.K: Trace Attempt  3	[0.02 s]
+0.0.K: Trace Attempt  4	[0.02 s]
+0.0.K: Trace Attempt  5	[0.03 s]
+0.0.K: Trace Attempt  1	[0.05 s]
+0.0.K: Trace Attempt  2	[0.05 s]
+0.0.K: Trace Attempt  3	[0.05 s]
+0.0.K: Trace Attempt  1	[0.09 s]
+0.0.K: Trace Attempt  2	[0.09 s]
+0.0.K: Trace Attempt  3	[0.09 s]
+0.0.K: Trace Attempt  4	[0.09 s]
+0.0.K: Trace Attempt  5	[0.10 s]
+0.0.K: Trace Attempt  1	[0.19 s]
+0.0.K: Trace Attempt  2	[0.19 s]
+0.0.K: Trace Attempt  3	[0.19 s]
+0.0.K: Trace Attempt  4	[0.19 s]
+0.0.K: Trace Attempt  5	[0.19 s]
+0.0.N: Trace Attempt  1	[0.29 s]
+0.0.N: Trace Attempt  2	[0.29 s]
+0.0.N: Trace Attempt  3	[0.29 s]
+0.0.N: Trace Attempt  4	[0.30 s]
+0.0.N: Trace Attempt  5	[0.30 s]
+0.0.I: Trace Attempt  1	[0.30 s]
+0.0.I: Trace Attempt  2	[0.30 s]
+0.0.I: Trace Attempt  3	[0.30 s]
+0.0.C: Partitioning 1 assumptions over 0 inputs...
+0.0.I: Trace Attempt  4	[0.30 s]
+0.0.C: Iteration  1	[0.33 s]
+0.0.C: Iteration  2	[0.34 s]
+0.0.C: Iteration  3	[0.34 s]
+0.0.C: Iteration  4	[0.34 s]
+0.0.N: Validation of fixpoint was successful. Time = 0.00
+0.0.N: Trace Attempt 15	[0.35 s]
+0.0.N: A proof was found: No trace exists. [0.36 s]
+INFO (IPF057): 0.0.N: The property "fifo.FV_FIFO.AST_data_stable_no_deq" was proven in 0.36 s.
+0.0.N: Stopped processing property "fifo.FV_FIFO.AST_data_stable_no_deq"	[0.36 s].
+0.0.N: Starting proof for property "fifo.FV_FIFO.COV_can_be_empty"	[0.00 s].
+0.0.N: Trace Attempt  1	[0.00 s]
+0.0.N: A max_length bound was found. The shortest trace is no longer than 2048 cycles. [0.00 s]
+INFO (IPF008): 0.0.N: A max_length bound of 2048 was found for the property "fifo.FV_FIFO.COV_can_be_empty" in 0.00 s.
+0.0.N: Trace Attempt  2	[0.00 s]
+0.0.N: Trace Attempt  3	[0.00 s]
+0.0.I: Trace Attempt  6	[0.31 s]
+0.0.I: Stopped processing property "fifo.FV_FIFO.AST_data_stable_no_deq"	[0.36 s].
+0.0.I: Starting proof for property "fifo.FV_FIFO.COV_can_be_empty"	[0.00 s].
+0.0.N: Trace Attempt  3	[0.00 s]
+0.0.K: Trace Attempt 14	[0.30 s]
+0.0.K: Stopped processing property "fifo.FV_FIFO.AST_data_stable_no_deq"	[0.36 s].
+0.0.K: Starting proof for property "fifo.FV_FIFO.COV_can_be_empty"	[0.00 s].
+0.0.I: Trace Attempt  2	[0.00 s]
+0.0.N: A trace with 3 cycles was found. [0.00 s]
+INFO (IPF047): 0.0.N: The cover property "fifo.FV_FIFO.COV_can_be_empty" was covered in 3 cycles in 0.00 s.
+0.0.N: Stopped processing property "fifo.FV_FIFO.COV_can_be_empty"	[0.00 s].
+0.0.I: Trace Attempt  3	[0.00 s]
+0.0.K: Stopped processing property "fifo.FV_FIFO.COV_can_be_empty"	[0.00 s].
+0.0.I: Stopped processing property "fifo.FV_FIFO.COV_can_be_empty"	[0.00 s].
+0.0.I: Starting proof for property "fifo.FV_FIFO.COV_fill_then_drain"	[0.00 s].
+0.0.I: Trace Attempt  1	[0.00 s]
+0.0.I: A max_length bound was found. The shortest trace is no longer than 2048 cycles. [0.00 s]
+INFO (IPF008): 0.0.I: A max_length bound of 2048 was found for the property "fifo.FV_FIFO.COV_fill_then_drain" in 0.00 s.
+0.0.I: Trace Attempt  2	[0.00 s]
+0.0.I: Trace Attempt  3	[0.00 s]
+0.0.I: Trace Attempt  2	[0.00 s]
+0.0.C: Trace Attempt 13	[0.26 s]
+0.0.C: Stopped processing property "fifo.FV_FIFO.AST_data_stable_no_deq"	[0.36 s].
+0.0.C: Starting proof for property "fifo.FV_FIFO.COV_fill_then_drain"	[0.00 s].
+0.0.I: Trace Attempt  3	[0.00 s]
+0.0.I: Trace Attempt  4	[0.00 s]
+0.0.I: Trace Attempt  3	[0.00 s]
+0.0.C: Trace Attempt  4	[0.00 s]
+0.0.I: Trace Attempt  4	[0.00 s]
+0.0.I: Trace Attempt  5	[0.00 s]
+0.0.C: Trace Attempt  5	[0.00 s]
+0.0.N: Starting proof for property "fifo.FV_FIFO.COV_fill_then_drain"	[0.00 s].
+0.0.K: Starting proof for property "fifo.FV_FIFO.COV_fill_then_drain"	[0.00 s].
+0.0.N: Trace Attempt  4	[0.00 s]
+0.0.K: Trace Attempt  4	[0.00 s]
+0.0.K: Trace Attempt  1	[0.00 s]
+0.0.K: Trace Attempt  2	[0.00 s]
+0.0.N: Trace Attempt  5	[0.00 s]
+0.0.K: Trace Attempt  3	[0.00 s]
+0.0.K: Trace Attempt  4	[0.00 s]
+0.0.K: Trace Attempt  5	[0.00 s]
+0.0.I: Trace Attempt  1	[0.00 s]
+0.0.I: Trace Attempt  2	[0.00 s]
+0.0.I: Trace Attempt  4	[0.00 s]
+0.0.N: Trace Attempt  1	[0.00 s]
+0.0.N: Trace Attempt  2	[0.00 s]
+0.0.N: Trace Attempt  3	[0.00 s]
+0.0.I: Trace Attempt  5	[0.00 s]
+0.0.C: Partitioning 1 assumptions over 0 inputs...
+0.0.C: Iteration  1	[0.01 s]
+0.0.C: Iteration  2	[0.01 s]
+0.0.I: Trace Attempt  1	[0.01 s]
+0.0.I: Trace Attempt  2	[0.01 s]
+0.0.I: Trace Attempt  4	[0.01 s]
+0.0.N: Trace Attempt 17	[0.00 s]
+0.0.N: A trace with 17 cycles was found. [0.01 s]
+INFO (IPF047): 0.0.N: The cover property "fifo.FV_FIFO.COV_fill_then_drain" was covered in 17 cycles in 0.01 s.
+INFO (IPF047): 0.0.N: The cover property "fifo.FV_FIFO.COV_deqx2" was covered in 10 cycles in 0.01 s by the incidental trace "fifo.FV_FIFO.COV_fill_then_drain".
+INFO (IPF047): 0.0.N: The cover property "fifo.FV_FIFO.DATA_INTEGRITY_GEN[0].AST_data_integrity:precondition1" was covered in 16 cycles in 0.01 s by the incidental trace "fifo.FV_FIFO.COV_fill_then_drain".
+INFO (IPF047): 0.0.N: The cover property "fifo.FV_FIFO.DATA_INTEGRITY_GEN[2].AST_data_integrity:precondition1" was covered in 10 cycles in 0.01 s by the incidental trace "fifo.FV_FIFO.COV_fill_then_drain".
+INFO (IPF047): 0.0.N: The cover property "fifo.FV_FIFO.DATA_INTEGRITY_GEN[3].AST_data_integrity:precondition1" was covered in 11 cycles in 0.01 s by the incidental trace "fifo.FV_FIFO.COV_fill_then_drain".
+INFO (IPF047): 0.0.N: The cover property "fifo.FV_FIFO.DATA_INTEGRITY_GEN[4].AST_data_integrity:precondition1" was covered in 12 cycles in 0.01 s by the incidental trace "fifo.FV_FIFO.COV_fill_then_drain".
+INFO (IPF047): 0.0.N: The cover property "fifo.FV_FIFO.DATA_INTEGRITY_GEN[5].AST_data_integrity:precondition1" was covered in 13 cycles in 0.01 s by the incidental trace "fifo.FV_FIFO.COV_fill_then_drain".
+INFO (IPF047): 0.0.N: The cover property "fifo.FV_FIFO.DATA_INTEGRITY_GEN[6].AST_data_integrity:precondition1" was covered in 14 cycles in 0.01 s by the incidental trace "fifo.FV_FIFO.COV_fill_then_drain".
+INFO (IPF047): 0.0.N: The cover property "fifo.FV_FIFO.DATA_INTEGRITY_GEN[7].AST_data_integrity:precondition1" was covered in 15 cycles in 0.01 s by the incidental trace "fifo.FV_FIFO.COV_fill_then_drain".
+0.0.N: Stopped processing property "fifo.FV_FIFO.COV_fill_then_drain"	[0.01 s].
+0.0.I: Trace Attempt 11	[0.01 s]
+0.0.I: Stopped processing property "fifo.FV_FIFO.COV_fill_then_drain"	[0.01 s].
+0.0.I: Starting proof for property "fifo.FV_FIFO.COV_full_held_4cycle"	[0.00 s].
+0.0.K: Trace Attempt 17	[0.00 s]
+0.0.K: Stopped processing property "fifo.FV_FIFO.COV_fill_then_drain"	[0.01 s].
+0.0.K: Starting proof for property "fifo.FV_FIFO.COV_full_held_4cycle"	[0.00 s].
+0.0.I: Trace Attempt  1	[0.00 s]
+0.0.I: A max_length bound was found. The shortest trace is no longer than 8192 cycles. [0.00 s]
+INFO (IPF008): 0.0.I: A max_length bound of 8192 was found for the property "fifo.FV_FIFO.COV_full_held_4cycle" in 0.00 s.
+0.0.C: Trace Attempt 17	[0.01 s]
+0.0.C: Stopped processing property "fifo.FV_FIFO.COV_fill_then_drain"	[0.01 s].
+0.0.C: Starting proof for property "fifo.FV_FIFO.COV_full_held_4cycle"	[0.00 s].
+0.0.K: Trace Attempt  1	[0.00 s]
+0.0.I: Trace Attempt  2	[0.00 s]
+0.0.I: Trace Attempt  3	[0.00 s]
+0.0.C: Trace Attempt  1	[0.00 s]
+0.0.I: Trace Attempt  2	[0.00 s]
+0.0.K: Trace Attempt  1	[0.00 s]
+0.0.I: Trace Attempt  3	[0.00 s]
+0.0.I: Trace Attempt  4	[0.00 s]
+0.0.C: Trace Attempt  2	[0.00 s]
+0.0.I: Trace Attempt  3	[0.00 s]
+0.0.K: Trace Attempt  4	[0.00 s]
+0.0.C: Trace Attempt  4	[0.00 s]
+0.0.I: Trace Attempt  4	[0.00 s]
+0.0.I: Trace Attempt  5	[0.00 s]
+0.0.C: Trace Attempt  5	[0.00 s]
+0.0.I: Trace Attempt  4	[0.00 s]
+0.0.K: Trace Attempt  1	[0.00 s]
+0.0.K: Trace Attempt  2	[0.00 s]
+0.0.I: Trace Attempt  5	[0.00 s]
+0.0.I: Trace Attempt  5	[0.00 s]
+0.0.K: Trace Attempt  1	[0.00 s]
+0.0.K: Trace Attempt  2	[0.00 s]
+0.0.N: Starting proof for property "fifo.FV_FIFO.COV_full_held_4cycle"	[0.00 s].
+0.0.K: Trace Attempt  3	[0.00 s]
+0.0.K: Trace Attempt  4	[0.00 s]
+0.0.N: Trace Attempt  7	[0.00 s]
+0.0.K: Trace Attempt  5	[0.00 s]
+0.0.C: Trace Attempt 12	[0.00 s]
+0.0.C: A trace with 12 cycles was found. [0.00 s]
+INFO (IPF047): 0.0.C: The cover property "fifo.FV_FIFO.COV_full_held_4cycle" was covered in 12 cycles in 0.00 s.
+0.0.C: Stopped processing property "fifo.FV_FIFO.COV_full_held_4cycle"	[0.00 s].
+0.0.I: Trace Attempt  9	[0.00 s]
+0.0.I: Stopped processing property "fifo.FV_FIFO.COV_full_held_4cycle"	[0.00 s].
+0.0.K: Trace Attempt 12	[0.00 s]
+0.0.K: Stopped processing property "fifo.FV_FIFO.COV_full_held_4cycle"	[0.00 s].
+0.0.N: Trace Attempt 12	[0.00 s]
+0.0.N: Stopped processing property "fifo.FV_FIFO.COV_full_held_4cycle"	[0.00 s].
+0.0.N: Starting proof for property "fifo.FV_FIFO.DATA_INTEGRITY_GEN[0].AST_data_integrity"	[0.00 s].
+0.0.N: Trace Attempt  1	[0.00 s]
+0.0.N: Trace Attempt  2	[0.00 s]
+0.0.N: Trace Attempt  2	[0.00 s]
+0.0.N: Trace Attempt  3	[0.00 s]
+0.0.N: Trace Attempt  4	[0.00 s]
+0.0.N: Trace Attempt  5	[0.00 s]
+0.0.C: Starting proof for property "fifo.FV_FIFO.DATA_INTEGRITY_GEN[0].AST_data_integrity"	[0.00 s].
+0.0.K: Starting proof for property "fifo.FV_FIFO.DATA_INTEGRITY_GEN[0].AST_data_integrity"	[0.00 s].
+0.0.I: Starting proof for property "fifo.FV_FIFO.DATA_INTEGRITY_GEN[0].AST_data_integrity"	[0.00 s].
+0.0.I: Trace Attempt  3	[0.00 s]
+0.0.C: Trace Attempt  9	[0.00 s]
+0.0.I: Trace Attempt  4	[0.00 s]
+0.0.I: Trace Attempt  5	[0.00 s]
+0.0.K: Trace Attempt  9	[0.00 s]
+0.0.I: Trace Attempt  4	[0.00 s]
+0.0.I: Trace Attempt  5	[0.00 s]
+0.0.I: Trace Attempt  5	[0.00 s]
+0.0.K: Trace Attempt  1	[0.00 s]
+0.0.K: Trace Attempt  2	[0.00 s]
+0.0.K: Trace Attempt  3	[0.00 s]
+0.0.K: Trace Attempt  4	[0.00 s]
+0.0.K: Trace Attempt  5	[0.00 s]
+0.0.D: Trace Attempt 10	[0.10 s]
+0.0.D: Stopped processing property "fifo.FV_FIFO.AST_data_stable_no_deq"	[0.40 s].
+0.0.D: Starting proof for property "fifo.FV_FIFO.DATA_INTEGRITY_GEN[0].AST_data_integrity"	[0.00 s].
+0.0.D: Trace Attempt  1	[0.00 s]
+0.0.D: Trace Attempt  2	[0.00 s]
+0.0.D: Trace Attempt  3	[0.00 s]
+0.0.D: Trace Attempt  5	[0.00 s]
+0.0.N: Trace Attempt  1	[0.04 s]
+0.0.N: Trace Attempt  2	[0.04 s]
+0.0.N: Trace Attempt  3	[0.04 s]
+0.0.N: Trace Attempt  5	[0.04 s]
+0.0.N: Validation of fixpoint was successful. Time = 0.00
+0.0.N: Trace Attempt 13	[0.06 s]
+0.0.N: A proof was found: No trace exists. [0.06 s]
+INFO (IPF057): 0.0.N: The property "fifo.FV_FIFO.DATA_INTEGRITY_GEN[0].AST_data_integrity" was proven in 0.06 s.
+0.0.N: Stopped processing property "fifo.FV_FIFO.DATA_INTEGRITY_GEN[0].AST_data_integrity"	[0.06 s].
+0.0.I: Trace Attempt 12	[0.02 s]
+0.0.I: Stopped processing property "fifo.FV_FIFO.DATA_INTEGRITY_GEN[0].AST_data_integrity"	[0.06 s].
+0.0.I: Starting proof for property "fifo.FV_FIFO.DATA_INTEGRITY_GEN[1].AST_data_integrity"	[0.00 s].
+0.0.C: Trace Attempt 12	[0.02 s]
+0.0.C: Stopped processing property "fifo.FV_FIFO.DATA_INTEGRITY_GEN[0].AST_data_integrity"	[0.06 s].
+0.0.C: Starting proof for property "fifo.FV_FIFO.DATA_INTEGRITY_GEN[1].AST_data_integrity"	[0.00 s].
+0.0.K: Trace Attempt 13	[0.04 s]
+0.0.K: Stopped processing property "fifo.FV_FIFO.DATA_INTEGRITY_GEN[0].AST_data_integrity"	[0.06 s].
+0.0.K: Starting proof for property "fifo.FV_FIFO.DATA_INTEGRITY_GEN[1].AST_data_integrity"	[0.00 s].
+0.0.D: Trace Attempt 10	[0.01 s]
+0.0.D: Stopped processing property "fifo.FV_FIFO.DATA_INTEGRITY_GEN[0].AST_data_integrity"	[0.05 s].
+0.0.D: Starting proof for property "fifo.FV_FIFO.DATA_INTEGRITY_GEN[1].AST_data_integrity"	[0.00 s].
+0.0.I: Trace Attempt  1	[0.00 s]
+0.0.C: Trace Attempt  1	[0.00 s]
+0.0.K: Trace Attempt  1	[0.00 s]
+0.0.D: Trace Attempt  1	[0.00 s]
+0.0.I: Trace Attempt  2	[0.00 s]
+0.0.C: Trace Attempt  2	[0.00 s]
+0.0.K: Trace Attempt  1	[0.00 s]
+0.0.D: Trace Attempt  2	[0.00 s]
+0.0.I: Trace Attempt  2	[0.00 s]
+0.0.K: Trace Attempt  2	[0.00 s]
+0.0.C: Trace Attempt  2	[0.00 s]
+0.0.I: Trace Attempt  3	[0.00 s]
+0.0.N: Starting proof for property "fifo.FV_FIFO.DATA_INTEGRITY_GEN[1].AST_data_integrity"	[0.00 s].
+0.0.K: Trace Attempt  1	[0.00 s]
+0.0.I: Trace Attempt  4	[0.00 s]
+0.0.K: Trace Attempt  2	[0.00 s]
+0.0.N: Trace Attempt  2	[0.00 s]
+0.0.C: Trace Attempt  3	[0.00 s]
+0.0.D: Trace Attempt  3	[0.00 s]
+0.0.I: Trace Attempt  3	[0.00 s]
+0.0.N: Trace Attempt  4	[0.00 s]
+0.0.K: Trace Attempt  4	[0.00 s]
+0.0.C: Trace Attempt  4	[0.00 s]
+0.0.I: Trace Attempt  4	[0.00 s]
+0.0.I: Trace Attempt  5	[0.00 s]
+0.0.D: Trace Attempt  4	[0.00 s]
+0.0.K: Trace Attempt  1	[0.00 s]
+0.0.N: Trace Attempt  5	[0.00 s]
+0.0.K: Trace Attempt  2	[0.00 s]
+0.0.K: Trace Attempt  3	[0.00 s]
+0.0.K: Trace Attempt  4	[0.00 s]
+0.0.C: Trace Attempt  5	[0.00 s]
+0.0.K: Trace Attempt  5	[0.01 s]
+0.0.N: Trace Attempt  1	[0.03 s]
+0.0.N: Trace Attempt  2	[0.03 s]
+0.0.N: Trace Attempt  3	[0.03 s]
+0.0.N: Trace Attempt  4	[0.04 s]
+0.0.N: Trace Attempt  5	[0.04 s]
+0.0.I: Trace Attempt  1	[0.12 s]
+0.0.I: Trace Attempt  2	[0.12 s]
+0.0.I: Trace Attempt  3	[0.12 s]
+0.0.C: Partitioning 1 assumptions over 0 inputs...
+0.0.I: Trace Attempt  4	[0.12 s]
+0.0.C: Iteration  1	[0.13 s]
+0.0.C: Iteration  2	[0.15 s]
+0.0.C: Iteration  3	[0.15 s]
+0.0.C: Iteration  4	[0.15 s]
+0.0.C: Iteration  5	[0.15 s]
+0.0.C: Iteration  6	[0.15 s]
+0.0.C: Iteration  7	[0.15 s]
+0.0.C: Iteration  8	[0.15 s]
+0.0.N: Validation of fixpoint was successful. Time = 0.00
+0.0.C: Iteration  9	[0.15 s]
+0.0.N: Trace Attempt 17	[0.12 s]
+0.0.N: A proof was found: No trace exists. [0.15 s]
+INFO (IPF057): 0.0.N: The property "fifo.FV_FIFO.DATA_INTEGRITY_GEN[1].AST_data_integrity" was proven in 0.15 s.
+0.0.N: Stopped processing property "fifo.FV_FIFO.DATA_INTEGRITY_GEN[1].AST_data_integrity"	[0.15 s].
+0.0.N: Starting proof for property "fifo.FV_FIFO.DATA_INTEGRITY_GEN[2].AST_data_integrity"	[0.00 s].
+0.0.I: Trace Attempt  7	[0.14 s]
+0.0.I: Stopped processing property "fifo.FV_FIFO.DATA_INTEGRITY_GEN[1].AST_data_integrity"	[0.15 s].
+0.0.I: Starting proof for property "fifo.FV_FIFO.DATA_INTEGRITY_GEN[2].AST_data_integrity"	[0.00 s].
+0.0.N: Trace Attempt  1	[0.00 s]
+0.0.I: Trace Attempt  1	[0.00 s]
+0.0.N: Trace Attempt  2	[0.00 s]
+0.0.K: Trace Attempt 14	[0.10 s]
+0.0.K: Stopped processing property "fifo.FV_FIFO.DATA_INTEGRITY_GEN[1].AST_data_integrity"	[0.15 s].
+0.0.K: Starting proof for property "fifo.FV_FIFO.DATA_INTEGRITY_GEN[2].AST_data_integrity"	[0.00 s].
+0.0.I: Trace Attempt  2	[0.00 s]
+0.0.N: Trace Attempt  2	[0.00 s]
+0.0.I: Trace Attempt  2	[0.00 s]
+0.0.N: Trace Attempt  3	[0.00 s]
+0.0.K: Trace Attempt  2	[0.00 s]
+0.0.I: Trace Attempt  3	[0.00 s]
+0.0.C: Iteration 10	[0.15 s]
+0.0.N: Trace Attempt  3	[0.00 s]
+0.0.K: Trace Attempt  1	[0.00 s]
+0.0.I: Trace Attempt  3	[0.00 s]
+0.0.K: Trace Attempt  3	[0.00 s]
+0.0.C: Trace Attempt 13	[0.05 s]
+0.0.C: Stopped processing property "fifo.FV_FIFO.DATA_INTEGRITY_GEN[1].AST_data_integrity"	[0.15 s].
+0.0.C: Starting proof for property "fifo.FV_FIFO.DATA_INTEGRITY_GEN[2].AST_data_integrity"	[0.00 s].
+0.0.I: Trace Attempt  4	[0.00 s]
+0.0.N: Trace Attempt  4	[0.00 s]
+0.0.I: Trace Attempt  5	[0.00 s]
+0.0.K: Trace Attempt  1	[0.00 s]
+0.0.C: Trace Attempt  3	[0.00 s]
+0.0.N: Trace Attempt  5	[0.00 s]
+0.0.K: Trace Attempt  2	[0.00 s]
+0.0.K: Trace Attempt  3	[0.00 s]
+0.0.I: Trace Attempt  4	[0.00 s]
+0.0.N: Trace Attempt  5	[0.00 s]
+0.0.C: Trace Attempt  5	[0.00 s]
+0.0.K: Trace Attempt  5	[0.00 s]
+0.0.I: Trace Attempt  5	[0.00 s]
+0.0.D: Trace Attempt 10	[0.06 s]
+0.0.D: Stopped processing property "fifo.FV_FIFO.DATA_INTEGRITY_GEN[1].AST_data_integrity"	[0.16 s].
+0.0.D: Starting proof for property "fifo.FV_FIFO.DATA_INTEGRITY_GEN[2].AST_data_integrity"	[0.00 s].
+0.0.D: Trace Attempt  1	[0.00 s]
+0.0.D: Trace Attempt  2	[0.00 s]
+0.0.K: Trace Attempt  1	[0.01 s]
+0.0.K: Trace Attempt  2	[0.01 s]
+0.0.K: Trace Attempt  3	[0.01 s]
+0.0.D: Trace Attempt  3	[0.00 s]
+0.0.K: Trace Attempt  4	[0.01 s]
+0.0.K: Trace Attempt  5	[0.01 s]
+0.0.D: Trace Attempt  4	[0.00 s]
+0.0.D: Trace Attempt  5	[0.00 s]
+0.0.N: Trace Attempt  1	[0.06 s]
+0.0.N: Trace Attempt  2	[0.06 s]
+0.0.N: Trace Attempt  3	[0.06 s]
+0.0.N: Trace Attempt  4	[0.06 s]
+0.0.N: Validation of fixpoint was successful. Time = 0.00
+0.0.N: Trace Attempt  6	[0.06 s]
+0.0.N: A proof was found: No trace exists. [0.07 s]
+INFO (IPF057): 0.0.N: The property "fifo.FV_FIFO.DATA_INTEGRITY_GEN[2].AST_data_integrity" was proven in 0.07 s.
+0.0.N: Stopped processing property "fifo.FV_FIFO.DATA_INTEGRITY_GEN[2].AST_data_integrity"	[0.07 s].
+0.0.I: Trace Attempt 13	[0.05 s]
+0.0.I: Stopped processing property "fifo.FV_FIFO.DATA_INTEGRITY_GEN[2].AST_data_integrity"	[0.07 s].
+0.0.D: Trace Attempt  8	[0.03 s]
+0.0.D: Stopped processing property "fifo.FV_FIFO.DATA_INTEGRITY_GEN[2].AST_data_integrity"	[0.07 s].
+0.0.C: Trace Attempt 13	[0.06 s]
+0.0.C: Stopped processing property "fifo.FV_FIFO.DATA_INTEGRITY_GEN[2].AST_data_integrity"	[0.07 s].
+0.0.I: Starting proof for property "fifo.FV_FIFO.DATA_INTEGRITY_GEN[3].AST_data_integrity"	[0.00 s].
+0.0.D: Starting proof for property "fifo.FV_FIFO.DATA_INTEGRITY_GEN[3].AST_data_integrity"	[0.00 s].
+0.0.C: Starting proof for property "fifo.FV_FIFO.DATA_INTEGRITY_GEN[3].AST_data_integrity"	[0.00 s].
+0.0.K: Trace Attempt 14	[0.05 s]
+0.0.K: Stopped processing property "fifo.FV_FIFO.DATA_INTEGRITY_GEN[2].AST_data_integrity"	[0.07 s].
+0.0.K: Starting proof for property "fifo.FV_FIFO.DATA_INTEGRITY_GEN[3].AST_data_integrity"	[0.00 s].
+0.0.I: Trace Attempt  1	[0.00 s]
+0.0.D: Trace Attempt  1	[0.00 s]
+0.0.C: Trace Attempt  1	[0.00 s]
+0.0.I: Trace Attempt  2	[0.00 s]
+0.0.K: Trace Attempt  1	[0.00 s]
+0.0.C: Trace Attempt  2	[0.00 s]
+0.0.D: Trace Attempt  2	[0.00 s]
+0.0.I: Trace Attempt  2	[0.00 s]
+0.0.K: Trace Attempt  1	[0.00 s]
+0.0.C: Trace Attempt  2	[0.00 s]
+0.0.I: Trace Attempt  3	[0.00 s]
+0.0.I: Trace Attempt  4	[0.00 s]
+0.0.K: Trace Attempt  2	[0.00 s]
+0.0.C: Trace Attempt  3	[0.00 s]
+0.0.K: Trace Attempt  1	[0.00 s]
+0.0.D: Trace Attempt  3	[0.00 s]
+0.0.N: Starting proof for property "fifo.FV_FIFO.DATA_INTEGRITY_GEN[3].AST_data_integrity"	[0.00 s].
+0.0.I: Trace Attempt  3	[0.00 s]
+0.0.K: Trace Attempt  4	[0.00 s]
+0.0.C: Trace Attempt  4	[0.00 s]
+0.0.N: Trace Attempt  4	[0.00 s]
+0.0.I: Trace Attempt  4	[0.00 s]
+0.0.D: Trace Attempt  4	[0.00 s]
+0.0.I: Trace Attempt  4	[0.00 s]
+0.0.K: Trace Attempt  1	[0.00 s]
+0.0.K: Trace Attempt  2	[0.00 s]
+0.0.K: Trace Attempt  3	[0.00 s]
+0.0.N: Trace Attempt  5	[0.00 s]
+0.0.K: Trace Attempt  4	[0.00 s]
+0.0.C: Trace Attempt  5	[0.00 s]
+0.0.I: Trace Attempt  5	[0.00 s]
+0.0.K: Trace Attempt  5	[0.00 s]
+0.0.D: Trace Attempt  5	[0.00 s]
+0.0.I: Trace Attempt  5	[0.01 s]
+0.0.K: Trace Attempt  1	[0.03 s]
+0.0.K: Trace Attempt  2	[0.03 s]
+0.0.K: Trace Attempt  3	[0.03 s]
+0.0.K: Trace Attempt  4	[0.03 s]
+0.0.K: Trace Attempt  5	[0.03 s]
+0: ProofGrid usable level: 5
+0.0.I: Trace Attempt  1	[0.11 s]
+0.0.I: Trace Attempt  2	[0.11 s]
+0.0.I: Trace Attempt  3	[0.11 s]
+0.0.I: Trace Attempt  4	[0.11 s]
+0.0.I: Trace Attempt  5	[0.11 s]
+0.0.N: Trace Attempt  1	[0.13 s]
+0.0.N: Trace Attempt  2	[0.14 s]
+0.0.N: Trace Attempt  3	[0.14 s]
+0.0.N: Trace Attempt  4	[0.14 s]
+0.0.C: Partitioning 1 assumptions over 0 inputs...
+0.0.N: Trace Attempt  5	[0.14 s]
+0.0.C: Iteration  1	[0.15 s]
+0.0.N: Validation of fixpoint was successful. Time = 0.00
+0.0.N: Trace Attempt 12	[0.15 s]
+0.0.N: A proof was found: No trace exists. [0.15 s]
+INFO (IPF057): 0.0.N: The property "fifo.FV_FIFO.DATA_INTEGRITY_GEN[3].AST_data_integrity" was proven in 0.15 s.
+0.0.N: Stopped processing property "fifo.FV_FIFO.DATA_INTEGRITY_GEN[3].AST_data_integrity"	[0.15 s].
+0.0.K: Trace Attempt 15	[0.14 s]
+0.0.K: Stopped processing property "fifo.FV_FIFO.DATA_INTEGRITY_GEN[3].AST_data_integrity"	[0.15 s].
+0.0.K: Starting proof for property "fifo.FV_FIFO.DATA_INTEGRITY_GEN[4].AST_data_integrity"	[0.00 s].
+0.0.K: Trace Attempt  1	[0.00 s]
+0.0.K: Trace Attempt  1	[0.00 s]
+0.0.K: Trace Attempt  2	[0.00 s]
+0.0.K: Trace Attempt  3	[0.00 s]
+0.0.C: Trace Attempt 13	[0.09 s]
+0.0.C: Stopped processing property "fifo.FV_FIFO.DATA_INTEGRITY_GEN[3].AST_data_integrity"	[0.16 s].
+0.0.C: Starting proof for property "fifo.FV_FIFO.DATA_INTEGRITY_GEN[4].AST_data_integrity"	[0.00 s].
+0.0.K: Trace Attempt  3	[0.00 s]
+0.0.K: Trace Attempt  1	[0.00 s]
+0.0.K: Trace Attempt  2	[0.00 s]
+0.0.N: Starting proof for property "fifo.FV_FIFO.DATA_INTEGRITY_GEN[4].AST_data_integrity"	[0.00 s].
+0.0.K: Trace Attempt  3	[0.00 s]
+0.0.K: Trace Attempt  4	[0.00 s]
+0.0.K: Trace Attempt  5	[0.00 s]
+0.0.C: Trace Attempt  3	[0.00 s]
+0.0.C: Trace Attempt  4	[0.00 s]
+0.0.K: Trace Attempt  5	[0.00 s]
+0.0.N: Trace Attempt  5	[0.00 s]
+0.0.C: Trace Attempt  5	[0.00 s]
+0.0.K: Trace Attempt  1	[0.00 s]
+0.0.K: Trace Attempt  2	[0.00 s]
+0.0.I: Trace Attempt  8	[0.13 s]
+0.0.I: Stopped processing property "fifo.FV_FIFO.DATA_INTEGRITY_GEN[3].AST_data_integrity"	[0.16 s].
+0.0.I: Starting proof for property "fifo.FV_FIFO.DATA_INTEGRITY_GEN[4].AST_data_integrity"	[0.00 s].
+0.0.K: Trace Attempt  3	[0.00 s]
+0.0.D: Trace Attempt  9	[0.05 s]
+0.0.D: Stopped processing property "fifo.FV_FIFO.DATA_INTEGRITY_GEN[3].AST_data_integrity"	[0.16 s].
+0.0.D: Starting proof for property "fifo.FV_FIFO.DATA_INTEGRITY_GEN[4].AST_data_integrity"	[0.00 s].
+0.0.K: Trace Attempt  4	[0.00 s]
+0.0.D: Trace Attempt  1	[0.00 s]
+0.0.I: Trace Attempt  4	[0.00 s]
+0.0.D: Trace Attempt  2	[0.00 s]
+0.0.K: Trace Attempt  5	[0.00 s]
+0.0.I: Trace Attempt  5	[0.00 s]
+0.0.D: Trace Attempt  3	[0.00 s]
+0.0.I: Trace Attempt  5	[0.00 s]
+0.0.D: Trace Attempt  4	[0.00 s]
+0.0.D: Trace Attempt  5	[0.00 s]
+0.0.K: Trace Attempt  1	[0.05 s]
+0.0.K: Trace Attempt  2	[0.05 s]
+0.0.K: Trace Attempt  3	[0.05 s]
+0.0.K: Trace Attempt  4	[0.05 s]
+0.0.K: Trace Attempt  5	[0.05 s]
+0.0.N: Trace Attempt  1	[0.13 s]
+0.0.N: Trace Attempt  2	[0.13 s]
+0.0.N: Trace Attempt  3	[0.13 s]
+0.0.N: Trace Attempt  4	[0.13 s]
+0.0.N: Trace Attempt  5	[0.13 s]
+0.0.I: Trace Attempt  1	[0.13 s]
+0.0.I: Trace Attempt  2	[0.13 s]
+0.0.I: Trace Attempt  3	[0.13 s]
+0.0.I: Trace Attempt  4	[0.13 s]
+0.0.I: Trace Attempt  5	[0.13 s]
+0.0.N: Validation of fixpoint was successful. Time = 0.00
+0.0.N: Trace Attempt  9	[0.14 s]
+0.0.N: A proof was found: No trace exists. [0.14 s]
+INFO (IPF057): 0.0.N: The property "fifo.FV_FIFO.DATA_INTEGRITY_GEN[4].AST_data_integrity" was proven in 0.14 s.
+0.0.N: Stopped processing property "fifo.FV_FIFO.DATA_INTEGRITY_GEN[4].AST_data_integrity"	[0.14 s].
+0.0.I: Trace Attempt  6	[0.14 s]
+0.0.I: Stopped processing property "fifo.FV_FIFO.DATA_INTEGRITY_GEN[4].AST_data_integrity"	[0.14 s].
+0.0.I: Starting proof for property "fifo.FV_FIFO.DATA_INTEGRITY_GEN[5].AST_data_integrity"	[0.00 s].
+0.0.C: Trace Attempt 13	[0.13 s]
+0.0.C: Stopped processing property "fifo.FV_FIFO.DATA_INTEGRITY_GEN[4].AST_data_integrity"	[0.14 s].
+0.0.C: Starting proof for property "fifo.FV_FIFO.DATA_INTEGRITY_GEN[5].AST_data_integrity"	[0.00 s].
+0.0.K: Trace Attempt 14	[0.11 s]
+0.0.K: Stopped processing property "fifo.FV_FIFO.DATA_INTEGRITY_GEN[4].AST_data_integrity"	[0.15 s].
+0.0.K: Starting proof for property "fifo.FV_FIFO.DATA_INTEGRITY_GEN[5].AST_data_integrity"	[0.00 s].
+0.0.I: Trace Attempt  1	[0.00 s]
+0.0.D: Trace Attempt 10	[0.09 s]
+0.0.D: Stopped processing property "fifo.FV_FIFO.DATA_INTEGRITY_GEN[4].AST_data_integrity"	[0.14 s].
+0.0.C: Trace Attempt  1	[0.00 s]
+0.0.D: Starting proof for property "fifo.FV_FIFO.DATA_INTEGRITY_GEN[5].AST_data_integrity"	[0.00 s].
+0.0.K: Trace Attempt  1	[0.00 s]
+0.0.I: Trace Attempt  2	[0.00 s]
+0.0.I: Trace Attempt  3	[0.00 s]
+0.0.C: Trace Attempt  2	[0.00 s]
+0.0.D: Trace Attempt  1	[0.00 s]
+0.0.I: Trace Attempt  2	[0.00 s]
+0.0.K: Trace Attempt  1	[0.00 s]
+0.0.D: Trace Attempt  2	[0.00 s]
+0.0.C: Trace Attempt  3	[0.00 s]
+0.0.I: Trace Attempt  3	[0.00 s]
+0.0.I: Trace Attempt  4	[0.00 s]
+0.0.K: Trace Attempt  3	[0.00 s]
+0.0.C: Trace Attempt  4	[0.00 s]
+0.0.C: Trace Attempt  5	[0.00 s]
+0.0.I: Trace Attempt  3	[0.00 s]
+0.0.K: Trace Attempt  1	[0.00 s]
+0.0.I: Trace Attempt  4	[0.00 s]
+0.0.N: Starting proof for property "fifo.FV_FIFO.DATA_INTEGRITY_GEN[5].AST_data_integrity"	[0.00 s].
+0.0.D: Trace Attempt  3	[0.00 s]
+0.0.I: Trace Attempt  4	[0.00 s]
+0.0.N: Trace Attempt  6	[0.00 s]
+0.0.I: Trace Attempt  5	[0.00 s]
+0.0.D: Trace Attempt  4	[0.00 s]
+0.0.I: Trace Attempt  5	[0.00 s]
+0.0.K: Trace Attempt  1	[0.00 s]
+0.0.K: Trace Attempt  2	[0.00 s]
+0.0.K: Trace Attempt  3	[0.00 s]
+0.0.K: Trace Attempt  4	[0.00 s]
+0.0.K: Trace Attempt  5	[0.00 s]
+0.0.N: Trace Attempt  1	[0.03 s]
+0.0.N: Trace Attempt  2	[0.03 s]
+0.0.N: Trace Attempt  3	[0.03 s]
+0.0.N: Trace Attempt  4	[0.03 s]
+0.0.N: Trace Attempt  5	[0.04 s]
+0.0.N: Validation of fixpoint was successful. Time = 0.00
+0.0.N: Trace Attempt 14	[0.06 s]
+0.0.N: A proof was found: No trace exists. [0.06 s]
+INFO (IPF057): 0.0.N: The property "fifo.FV_FIFO.DATA_INTEGRITY_GEN[5].AST_data_integrity" was proven in 0.06 s.
+0.0.N: Stopped processing property "fifo.FV_FIFO.DATA_INTEGRITY_GEN[5].AST_data_integrity"	[0.06 s].
+0.0.N: Starting proof for property "fifo.FV_FIFO.DATA_INTEGRITY_GEN[6].AST_data_integrity"	[0.00 s].
+0.0.I: Trace Attempt 11	[0.03 s]
+0.0.I: Stopped processing property "fifo.FV_FIFO.DATA_INTEGRITY_GEN[5].AST_data_integrity"	[0.06 s].
+0.0.I: Starting proof for property "fifo.FV_FIFO.DATA_INTEGRITY_GEN[6].AST_data_integrity"	[0.00 s].
+0.0.C: Trace Attempt 11	[0.03 s]
+0.0.C: Stopped processing property "fifo.FV_FIFO.DATA_INTEGRITY_GEN[5].AST_data_integrity"	[0.06 s].
+0.0.K: Trace Attempt 13	[0.05 s]
+0.0.C: Starting proof for property "fifo.FV_FIFO.DATA_INTEGRITY_GEN[6].AST_data_integrity"	[0.00 s].
+0.0.K: Stopped processing property "fifo.FV_FIFO.DATA_INTEGRITY_GEN[5].AST_data_integrity"	[0.06 s].
+0.0.N: Trace Attempt  1	[0.00 s]
+0.0.K: Starting proof for property "fifo.FV_FIFO.DATA_INTEGRITY_GEN[6].AST_data_integrity"	[0.00 s].
+0.0.D: Trace Attempt  7	[0.01 s]
+0.0.D: Stopped processing property "fifo.FV_FIFO.DATA_INTEGRITY_GEN[5].AST_data_integrity"	[0.06 s].
+0.0.D: Starting proof for property "fifo.FV_FIFO.DATA_INTEGRITY_GEN[6].AST_data_integrity"	[0.00 s].
+0.0.N: Trace Attempt  2	[0.00 s]
+0.0.N: Trace Attempt  3	[0.00 s]
+0.0.C: Trace Attempt  1	[0.00 s]
+0.0.I: Trace Attempt  1	[0.00 s]
+0.0.K: Trace Attempt  1	[0.00 s]
+0.0.I: Trace Attempt  2	[0.00 s]
+0.0.C: Trace Attempt  2	[0.00 s]
+0.0.D: Trace Attempt  1	[0.00 s]
+0.0.K: Trace Attempt  1	[0.00 s]
+0.0.N: Trace Attempt  3	[0.00 s]
+0.0.I: Trace Attempt  2	[0.00 s]
+0.0.D: Trace Attempt  2	[0.00 s]
+0.0.C: Trace Attempt  3	[0.00 s]
+0.0.I: Trace Attempt  3	[0.00 s]
+0.0.I: Trace Attempt  4	[0.00 s]
+0.0.N: Trace Attempt  4	[0.00 s]
+0.0.I: Trace Attempt  5	[0.00 s]
+0.0.K: Trace Attempt  3	[0.00 s]
+0.0.N: Trace Attempt  5	[0.00 s]
+0.0.C: Trace Attempt  4	[0.00 s]
+0.0.K: Trace Attempt  1	[0.00 s]
+0.0.I: Trace Attempt  4	[0.00 s]
+0.0.D: Trace Attempt  3	[0.00 s]
+0.0.I: Trace Attempt  5	[0.00 s]
+0.0.I: Trace Attempt  5	[0.00 s]
+0.0.D: Trace Attempt  5	[0.00 s]
+0.0.K: Trace Attempt  1	[0.00 s]
+0.0.K: Trace Attempt  2	[0.00 s]
+0.0.K: Trace Attempt  3	[0.00 s]
+0.0.K: Trace Attempt  4	[0.00 s]
+0.0.K: Trace Attempt  5	[0.00 s]
+0.0.N: Trace Attempt  1	[0.04 s]
+0.0.N: Trace Attempt  2	[0.04 s]
+0.0.N: Trace Attempt  3	[0.04 s]
+0.0.N: Trace Attempt  5	[0.04 s]
+0.0.N: Validation of fixpoint was successful. Time = 0.00
+0.0.N: Trace Attempt 10	[0.05 s]
+0.0.N: A proof was found: No trace exists. [0.05 s]
+INFO (IPF057): 0.0.N: The property "fifo.FV_FIFO.DATA_INTEGRITY_GEN[6].AST_data_integrity" was proven in 0.05 s.
+0.0.N: Stopped processing property "fifo.FV_FIFO.DATA_INTEGRITY_GEN[6].AST_data_integrity"	[0.05 s].
+0.0.C: Trace Attempt 11	[0.02 s]
+0.0.C: Stopped processing property "fifo.FV_FIFO.DATA_INTEGRITY_GEN[6].AST_data_integrity"	[0.05 s].
+0.0.C: Starting proof for property "fifo.FV_FIFO.DATA_INTEGRITY_GEN[7].AST_data_integrity"	[0.00 s].
+0.0.I: Trace Attempt 11	[0.03 s]
+0.0.I: Stopped processing property "fifo.FV_FIFO.DATA_INTEGRITY_GEN[6].AST_data_integrity"	[0.05 s].
+0.0.I: Starting proof for property "fifo.FV_FIFO.DATA_INTEGRITY_GEN[7].AST_data_integrity"	[0.00 s].
+0.0.K: Trace Attempt 13	[0.04 s]
+0.0.K: Stopped processing property "fifo.FV_FIFO.DATA_INTEGRITY_GEN[6].AST_data_integrity"	[0.05 s].
+0.0.K: Starting proof for property "fifo.FV_FIFO.DATA_INTEGRITY_GEN[7].AST_data_integrity"	[0.00 s].
+0.0.C: Trace Attempt  1	[0.00 s]
+0.0.I: Trace Attempt  1	[0.00 s]
+0.0.K: Trace Attempt  1	[0.00 s]
+0.0.D: Trace Attempt  8	[0.01 s]
+0.0.D: Stopped processing property "fifo.FV_FIFO.DATA_INTEGRITY_GEN[6].AST_data_integrity"	[0.05 s].
+0.0.D: Starting proof for property "fifo.FV_FIFO.DATA_INTEGRITY_GEN[7].AST_data_integrity"	[0.00 s].
+0.0.C: Trace Attempt  2	[0.00 s]
+0.0.I: Trace Attempt  2	[0.00 s]
+0.0.C: Trace Attempt  3	[0.00 s]
+0.0.I: Trace Attempt  3	[0.00 s]
+0.0.D: Trace Attempt  1	[0.00 s]
+0.0.K: Trace Attempt  1	[0.00 s]
+0.0.I: Trace Attempt  2	[0.00 s]
+0.0.C: Trace Attempt  3	[0.00 s]
+0.0.D: Trace Attempt  2	[0.00 s]
+0.0.I: Trace Attempt  3	[0.00 s]
+0.0.I: Trace Attempt  4	[0.00 s]
+0.0.K: Trace Attempt  3	[0.00 s]
+0.0.C: Trace Attempt  4	[0.00 s]
+0.0.C: Trace Attempt  5	[0.00 s]
+0.0.K: Trace Attempt  1	[0.00 s]
+0.0.N: Starting proof for property "fifo.FV_FIFO.DATA_INTEGRITY_GEN[7].AST_data_integrity"	[0.00 s].
+0.0.I: Trace Attempt  4	[0.00 s]
+0.0.D: Trace Attempt  3	[0.00 s]
+0.0.I: Trace Attempt  5	[0.00 s]
+0.0.N: Trace Attempt  8	[0.00 s]
+0.0.I: Trace Attempt  5	[0.00 s]
+0.0.D: Trace Attempt  5	[0.00 s]
+0.0.K: Trace Attempt  1	[0.00 s]
+0.0.K: Trace Attempt  2	[0.00 s]
+0.0.K: Trace Attempt  3	[0.00 s]
+0.0.K: Trace Attempt  4	[0.00 s]
+0.0.K: Trace Attempt  5	[0.00 s]
+0.0.N: Trace Attempt  1	[0.04 s]
+0.0.N: Trace Attempt  2	[0.04 s]
+0.0.N: Trace Attempt  3	[0.04 s]
+0.0.N: Trace Attempt  4	[0.04 s]
+0.0.N: Validation of fixpoint was successful. Time = 0.00
+0.0.N: Trace Attempt  7	[0.04 s]
+0.0.N: A proof was found: No trace exists. [0.05 s]
+INFO (IPF057): 0.0.N: The property "fifo.FV_FIFO.DATA_INTEGRITY_GEN[7].AST_data_integrity" was proven in 0.05 s.
+0.0.N: Stopped processing property "fifo.FV_FIFO.DATA_INTEGRITY_GEN[7].AST_data_integrity"	[0.05 s].
+INFO (IPF144): 0: Initiating shutdown of proof [1.30 s]
+0.0.C: Trace Attempt 12	[0.04 s]
+0.0.C: Stopped processing property "fifo.FV_FIFO.DATA_INTEGRITY_GEN[7].AST_data_integrity"	[0.05 s].
+0.0.I: Trace Attempt 12	[0.05 s]
+0.0.I: Stopped processing property "fifo.FV_FIFO.DATA_INTEGRITY_GEN[7].AST_data_integrity"	[0.05 s].
+0.0.K: Trace Attempt 12	[0.02 s]
+0.0.K: Stopped processing property "fifo.FV_FIFO.DATA_INTEGRITY_GEN[7].AST_data_integrity"	[0.05 s].
+0.0.C: All properties determined. [0.05 s]
+0.0.K: All properties determined. [0.05 s]
+0.0.D: Trace Attempt  9	[0.01 s]
+0.0.D: Stopped processing property "fifo.FV_FIFO.DATA_INTEGRITY_GEN[7].AST_data_integrity"	[0.05 s].
+0.0.I: All properties determined. [0.05 s]
+0.0.D: All properties determined. [0.05 s]
+0.0.N: All properties determined. [0.05 s]
+0.0.C: Exited with Success (@ 1.30 s)
+0: ProofGrid usable level: 0
+0.0.K: Exited with Success (@ 1.30 s)
+0.0.I: Exited with Success (@ 1.30 s)
+0.0.D: Exited with Success (@ 1.30 s)
+0.0.N: Exited with Success (@ 1.30 s)
+0: --------------------------------------------------------------
+ProofGrid Summary (utilization 93.91 %)
+--------------------------------------------------------------
+     engines started                               :     5
+     engine jobs started                           :     5
+
+    Time in state (seconds)
+    --------------------------------------------
+               Pending     Running        Dead
+    --------------------------------------------
+    min           0.00        0.00        0.00
+    mean          0.08        1.30        0.00
+    median        0.08        1.30        0.00
+    max           0.09        1.30        0.00
+    sum           0.42        6.51        0.00
+
+    Data read    : 139.29 kiB
+    Data written : 17.82 kiB
+
+0: ProofGrid usable level: 0
+0: All pending notifications were processed.
+INFO (IPF059): 0: Completed proof on task: "<embedded>"
+
+==============================================================
+SUMMARY
+==============================================================
+           Properties Considered              : 46
+                 assertions                   : 19
+                  - proven                    : 19 (100%)
+                  - bounded_proven (user)     : 0 (0%)
+                  - bounded_proven (auto)     : 0 (0%)
+                  - marked_proven             : 0 (0%)
+                  - cex                       : 0 (0%)
+                  - ar_cex                    : 0 (0%)
+                  - undetermined              : 0 (0%)
+                  - unknown                   : 0 (0%)
+                  - error                     : 0 (0%)
+                 covers                       : 27
+                  - unreachable               : 3 (11.1111%)
+                  - bounded_unreachable (user): 0 (0%)
+                  - covered                   : 24 (88.8889%)
+                  - ar_covered                : 0 (0%)
+                  - undetermined              : 0 (0%)
+                  - unknown                   : 0 (0%)
+                  - error                     : 0 (0%)
+determined
+[<embedded>] % report -summary
+
+==============================================================
+    Jasper Verification Results
+==============================================================
+    2024.09 FCS 64 bits for Linux64 4.18.0-372.26.1.el8_6.x86_64
+    Host Name: localhost
+    User Name: shizeche
+    Printed on: Wednesday, Jun24, 2026 06:34:08 PM EDT
+    Working Directory: /home/shizeche/hardware/unispin/rtl/lib/fifo
+
+
+==============================================================
+SUMMARY
+==============================================================
+    Total Tasks           : 1
+    Total Properties      : 49
+          assumptions     : 3                   
+           - approved     : 0                   ( 0.0% )
+           - temporary    : 3                   ( 100.0% )
+          assertions      : 19                  
+           - proven       : 19                  ( 100.0% )
+           - marked_proven: 0                   ( 0.0% )
+           - cex          : 0                   ( 0.0% )
+           - ar_cex       : 0                   ( 0.0% )
+           - undetermined : 0                   ( 0.0% )
+           - unprocessed  : 0                   ( 0.0% )
+           - error        : 0                   ( 0.0% )
+          covers          : 27                  
+           - unreachable  : 3                   ( 11.1% )
+           - covered      : 24                  ( 88.9% )
+           - ar_covered   : 0                   ( 0.0% )
+           - undetermined : 0                   ( 0.0% )
+           - unprocessed  : 0                   ( 0.0% )
+           - error        : 0                   ( 0.0% )
+[<embedded>] % 
+[<embedded>] % # Uncomment for batch use:
+[<embedded>] % # exit
+INFO (IPL005): Received request to exit from the console.
+INFO (IPL014): Waiting for the Tcl-thread to exit.
+INFO: Waiting for proof threads to stop...
+INFO: Proof threads stopped.
+INFO (IPL018): The peak resident set memory use for this session was 0.421 GB.
+INFO (IPL015): The Tcl-thread exited with status 0.
+INFO (IPL016): Exiting the analysis session with status 0.

@@ -2,17 +2,13 @@
 
 module fifo
    #(parameter WIDTH=8,
-     parameter DEPTH=8,
-     parameter AF_DEPTH=6,
-     parameter AE_DEPTH=2)
+     parameter DEPTH=8)
     (input  logic i_clk, i_rst,
      input  logic [WIDTH-1:0] i_data,
      input  logic i_enq,
      input  logic i_deq,
      output logic [WIDTH-1:0] o_data,
-     output logic o_full, o_empty,
-     output logic o_almost_full,
-     output logic o_almost_empty);
+     output logic o_full, o_empty);
 
     logic [WIDTH-1:0] r_data [DEPTH];
 
@@ -73,8 +69,6 @@ module fifo
     end
 
     assign o_data = r_data[r_deq_ptr];
-    assign o_almost_full = r_num_data >= AF_DEPTH;
-    assign o_almost_empty = r_num_data <= AE_DEPTH;
 
 endmodule
 

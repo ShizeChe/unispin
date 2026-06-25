@@ -1,0 +1,69 @@
+2026-06-24 18:30:17.160761 (1858053) main____ INFO    ----------------------------------------
+2026-06-24 18:30:17.160786 (1858053) main____ INFO    Jasper version info
+2026-06-24 18:30:17.160790 (1858053) main____ INFO      tool      : Jasper 2024.09
+2026-06-24 18:30:17.160793 (1858053) main____ INFO      version   : 2024.09 FCS 64 bits
+2026-06-24 18:30:17.160795 (1858053) main____ INFO      build date: 2024.09.26 14:35:17 UTC
+2026-06-24 18:30:17.160797 (1858053) main____ INFO    ----------------------------------------
+2026-06-24 18:30:17.160798 (1858053) main____ INFO    Runtime info:
+2026-06-24 18:30:17.160800 (1858053) main____ INFO      platform  : Linux 5.14.0-570.24.1.el9_6.x86_64 x86_64
+2026-06-24 18:30:17.160804 (1858053) main____ INFO      hostname  : localhost.localdomain
+2026-06-24 18:30:17.160806 (1858053) main____ INFO      pid       : 1858053
+2026-06-24 18:30:17.160808 (1858053) main____ INFO      arguments : '-style' 'windows' '-fpv' '-tcl' 'fpv/scripts/fifo_check.tcl' '-proj' 'fifo_check.jpr'
+2026-06-24 18:30:17.160810 (1858053) main____ INFO      locale    : UTF-8
+2026-06-24 18:30:17.160812 (1858053) main____ INFO    ----------------------------------------
+2026-06-24 18:30:17.160814 (1858053) main____ INFO    System resource limits info:
+2026-06-24 18:30:17.160816 (1858053) main____ INFO      virtual memory: unlimited
+2026-06-24 18:30:17.160819 (1858053) main____ INFO      cpu time      : unlimited
+2026-06-24 18:30:17.160822 (1858053) main____ INFO      processes     : 254278
+2026-06-24 18:30:17.160826 (1858053) main____ INFO      stack size    : 8388608 B
+2026-06-24 18:30:17.160829 (1858053) main____ INFO      core file size: unlimited
+2026-06-24 18:30:17.160831 (1858053) main____ INFO      open files    : 1024
+2026-06-24 18:30:17.160833 (1858053) main____ INFO      file size     : unlimited
+2026-06-24 18:30:17.160835 (1858053) main____ INFO    ----------------------------------------
+2026-06-24 18:30:17.160836 (1858053) main____ INFO    Memory statistics:
+2026-06-24 18:30:17.160839 (1858053) main____ INFO      total physical memory  : 65302492 kB
+2026-06-24 18:30:17.160841 (1858053) main____ INFO      free physical memory   : 6475328 kB
+2026-06-24 18:30:17.160844 (1858053) main____ INFO      committed address space: 94534500 kB
+2026-06-24 18:30:17.160845 (1858053) main____ INFO    ----------------------------------------
+2026-06-24 18:30:17.161066 (1858053) main____ INFO    Important environment variables:
+2026-06-24 18:30:17.161072 (1858053) main____ INFO      CDS_LIC_FILE       : '1711@head.hep.upenn.edu'
+2026-06-24 18:30:17.161074 (1858053) main____ INFO      DISPLAY            : ':1'
+2026-06-24 18:30:17.161076 (1858053) main____ INFO      JASPER_CPU_CHECK   : '1'
+2026-06-24 18:30:17.161078 (1858053) main____ INFO      JASPER_INSTALL_DIR : '/home/shizeche/hardware/cadence/jasper/jasper_2024.09'
+2026-06-24 18:30:17.161080 (1858053) main____ INFO      JASPER_KERNEL_CHECK: '1'
+2026-06-24 18:30:17.161082 (1858053) main____ INFO      JASPER_OS_CHECK    : '1'
+2026-06-24 18:30:17.161084 (1858053) main____ INFO      JASPER_PLATFORM    : 'Linux64'
+2026-06-24 18:30:17.161086 (1858053) main____ INFO      LANG               : 'en_US.UTF-8'
+2026-06-24 18:30:17.161087 (1858053) main____ INFO    ----------------------------------------
+2026-06-24 18:30:17.161265 (1858053) lic_core INFO    Initializing license system ...
+2026-06-24 18:30:17.161902 (1858053) lic_core INFO    ... license system initialized.
+2026-06-24 18:30:17.166998 (1858053) lic__man INFO    Claim 'main' for <ui>.
+2026-06-24 18:30:17.167011 (1858053) lic_core INFO    (1) checking out 'jasper_interactive' ...
+2026-06-24 18:30:17.185710 (1858053) lic_core INFO    ... (1) checkout succeeded
+2026-06-24 18:30:17.186006 (1858053) lic__man INFO    Claim 'fpv' for <ui>.
+2026-06-24 18:30:17.186013 (1858053) lic_core INFO    (2) checking out 'jasper_fpv' ...
+2026-06-24 18:30:17.200720 (1858053) lic_core INFO    ... (2) checkout failed (error: -5) ("FLEXnet ERROR(-5, 0, 0): No such feature exists.")
+2026-06-24 18:30:17.200730 (1858053) lic_core INFO    (3) checking out 'jasper_fao' ...
+2026-06-24 18:30:17.218215 (1858053) lic_core INFO    ... (3) checkout succeeded
+2026-06-24 18:30:17.218485 (1858053) main____ INFO    Tool inactivity delay is 480000 ms.
+2026-06-24 18:30:17.444273 (1858053) lic__man INFO    Claim 'fpv' for <ui>.
+2026-06-24 18:30:17.503913 (1858053) lic__man INFO    Unclaim 'fpv' for <ui>.
+2026-06-24 18:30:17.503927 (1858053) lic__man INFO    Claim 'fpv' for <ui>.
+2026-06-24 18:30:17.505852 (1858053) session_ INFO    Starting analysis session with session id 'session_0' (launcher: <local>) ...
+2026-06-24 18:30:17.508402 (1858053) session_ INFO    Analysis session with session id 'session_0' started (pid: 1858076)
+2026-06-24 18:30:17.870865 (1858053) session_ INFO    Analysis session 'session_0' connected to the console (host: 127.0.0.1:33606)
+2026-06-24 18:30:17.999009 (1858053) main____ INFO    Releasing console memory by request of analysis session 'session_0'.
+2026-06-24 18:30:17.999233 (1858053) lic__man INFO    Unclaim everything for 'session_0'.
+2026-06-24 18:30:18.403231 (1858053) lic__man INFO    Unclaim everything for 'session_0'.
+2026-06-24 18:30:18.452951 (1858053) lic__man INFO    Claim 'fpv' for 'session_0'.
+2026-06-24 18:30:18.452966 (1858053) lic__man INFO    Claim 'fpv' for 'session_0/prove-0'.
+2026-06-24 18:30:19.860533 (1858053) lic__man INFO    Unclaim everything for 'session_0/prove-0'.
+2026-06-24 18:30:22.722028 (1858053) lic__man INFO    Claim 'fpv' for 'session_0'.
+2026-06-24 18:33:50.544641 (1858053) lic__man INFO    Claim 'fpv' for 'session_0'.
+2026-06-24 18:33:50.544661 (1858053) lic__man INFO    Claim 'fpv' for 'session_0/prove-1'.
+2026-06-24 18:33:50.587457 (1858053) lic__man INFO    Unclaim everything for 'session_0/prove-1'.
+2026-06-24 18:34:03.704271 (1858053) main____ INFO    About to exit: requested from GUI
+2026-06-24 18:34:03.729884 (1858053) session_ INFO    Analysis session 'session_0' disconnected.
+2026-06-24 18:34:03.732151 (1858053) lic_core INFO    (1) checkin jasper_interactive
+2026-06-24 18:34:03.734334 (1858053) lic_core INFO    (3) checkin jasper_fao
+2026-06-24 18:34:03.736373 (1858053) main____ INFO    Exiting with status 0.

@@ -25,7 +25,7 @@
 //   ADDR_WIDTH  — AXI address width in bits
 //   ID_WIDTH    — AXI ID width in bits
 
-module axi_slave_regs
+module axi_slave_regs_vip
    #(parameter int DATA_WIDTH = 128,
      parameter int ADDR_WIDTH = 49,
      parameter int ID_WIDTH   = 6)

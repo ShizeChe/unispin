@@ -8,10 +8,9 @@ module fv_fifo #(
     input logic i_deq,
     input logic [WIDTH-1:0] o_data,
     input logic o_full, o_empty,
-    input logic o_almost_full,
-    input logic o_almost_empty,
     input logic w_enq_en,
-    input logic [$clog2(DEPTH)-1:0] w_enq_ptr);
+    input logic [$clog2(DEPTH)-1:0] w_enq_ptr,
+    input logic [$clog2(DEPTH):0] w_num_data);
 
     default clocking @(posedge i_clk); endclocking
     default disable iff (i_rst);
@@ -37,7 +36,7 @@ module fv_fifo #(
         $fell(i_rst) |-> o_empty && !o_full
     );
 
-    logic [$clog2(DEPTH)-1:0] r_ref_cnt;
+    logic [$clog2(DEPTH):0] r_ref_cnt;
     
     always_ff @(posedge i_clk) begin
         if (i_rst) r_ref_cnt <= '0;
@@ -61,15 +60,15 @@ module fv_fifo #(
     );
 
     AST_cnt_inc_on_enq_only: assert property (
-        (i_enq && !i_deq && !o_empty) |=> (r_ref_cnt == $past(r_ref_cnt) + '1)
+        (i_enq && !i_deq && !o_full) |=> (r_ref_cnt == ($past(r_ref_cnt) + 'd1))
     );
 
     AST_cnt_dec_on_deq_only: assert property (
-        (!i_enq && i_deq && !o_full) |=> (r_ref_cnt == $past(r_ref_cnt) - '1)
+        (!i_enq && i_deq && !o_empty) |=> (r_ref_cnt == ($past(r_ref_cnt) - 'd1))
     );
 
     AST_cnt_hold_on_simul: assert property (
-        (i_enq && i_deq && !o_empty && !i_full) |=> (r_ref_cnt == $past(r_ref_cnt))
+        (i_enq && i_deq && !o_empty && !o_full) |=> (r_ref_cnt == $past(r_ref_cnt))
     );
 
     AST_no_overflow: assert property (
@@ -81,7 +80,7 @@ module fv_fifo #(
     );
 
     AST_data_stable_no_deq: assert property (
-        !i_deq |=> $stable(o_data)
+        !o_empty && !i_deq |=> $stable(o_data)
     );
 
 
@@ -151,15 +150,11 @@ module fv_fifo #(
         );
     end endgenerate
 
-);
-
 endmodule
 
 bind fifo fv_fifo #(
     .WIDTH(WIDTH),
-    .DEPTH(DEPTH),
-    .AF_DEPTH(AF_DEPTH),
-    .AE_DEPTH(AE_DEPTH)
+    .DEPTH(DEPTH)
 ) FV_FIFO (
     .*
 );

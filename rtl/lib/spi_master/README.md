@@ -1,4 +1,4 @@
-# lib/spi
+# lib/spi_master
 
 General-purpose SPI master primitive.
 

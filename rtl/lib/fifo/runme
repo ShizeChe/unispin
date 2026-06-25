@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+MODE="${1:-check}"
+
+case "$MODE" in
+  check) TCL="fpv/scripts/fifo_check.tcl" ;;
+  cover) TCL="fpv/scripts/fifo_cover.tcl" ;;
+  smoke) TCL="fpv/scripts/fifo_smoke.tcl" ;;
+  *)
+    echo "Unknown mode: $MODE  (expected one of: check, cover, smoke)" >&2
+    exit 1 ;;
+esac
+
+if ! command -v jg >/dev/null 2>&1; then
+  echo "ERROR: 'jg' (JasperGold) is not on \$PATH." >&2
+  echo "Source your Cadence env-setup script first." >&2
+  exit 2
+fi
+
+echo "[runme] mode=$MODE  tcl=$TCL"
+exec jg -fpv -tcl "$TCL" -proj "fifo_${MODE}.jpr" "$@"
