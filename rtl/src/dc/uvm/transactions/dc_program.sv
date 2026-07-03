@@ -21,7 +21,7 @@ class dc_program #(
     };
 
     constraint delay_gt_ldac_cons {
-        has_ctrl -> (ctrl.w_delay_cycles >= w_ldac_cycles);
+        has_ctrl -> (ctrl.w_delay_cycles >= ctrl.w_ldac_cycles);
     };
 
     constraint insn_min_hold_cycles_cons {
@@ -36,7 +36,7 @@ class dc_program #(
         super.new(name);
     endfunction
 
-    `uvm_object_utils_begin(dc_program#(IMEM_DEPTH))
+    `uvm_object_utils_begin(dc_program#(MIN_HOLD_CYCLES))
         `uvm_field_int(has_ctrl, UVM_ALL_ON)
         `uvm_field_int(ctrl, UVM_ALL_ON)
         `uvm_field_array_int(insns, UVM_ALL_ON)
