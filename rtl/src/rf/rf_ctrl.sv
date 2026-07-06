@@ -16,7 +16,7 @@ module rf_ctrl
     edge_detector CTRLWR (
         .i_clk(i_clk),
         .i_rst(i_rst),
-        .i_signal(i_regs[CTRL_REGS-1][0]),
+        .i_signal(i_regs[RF_CTRL_STRB_REG][0]),
         .o_posedge(w_new_ctrl),
         .o_negedge()
     );
@@ -30,8 +30,8 @@ module rf_ctrl
             r_default_Q <= 'h0;
         end
         else if (w_new_ctrl) begin
-            r_default_I <= i_regs[0][IQ_WIDTH-1:0];
-            r_default_Q <= i_regs[1][IQ_WIDTH-1:0];
+            r_default_I <= i_regs[RF_DEFAULT_I_REG][IQ_WIDTH-1:0];
+            r_default_Q <= i_regs[RF_DEFAULT_Q_REG][IQ_WIDTH-1:0];
         end
     end
 

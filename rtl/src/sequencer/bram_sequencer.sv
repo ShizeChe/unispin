@@ -31,17 +31,13 @@ module bram_sequencer
     * pcmem store
     *************/
 
-    localparam PCST_ADDR_REG = 0;
-    localparam PCST_REG = PCST_ADDR_REG + 1;
-    localparam PCST_STRB_REG = PCST_REG + 1;
-
     logic [PC_ADDR_WIDTH-1:0] w_pcldst_addr;
     logic [PC_WIDTH-1:0] w_pcst;
     logic w_pcst_strb, w_pcst_wr;
 
-    assign w_pcldst_addr = i_regs[PCST_ADDR_REG][PC_ADDR_WIDTH-1:0];
-    assign w_pcst = i_regs[PCST_REG][PC_WIDTH-1:0];
-    assign w_pcst_strb = i_regs[PCST_STRB_REG][0];
+    assign w_pcldst_addr = i_regs[`PCST_ADDR_REG][PC_ADDR_WIDTH-1:0];
+    assign w_pcst = i_regs[`PCST_REG][PC_WIDTH-1:0];
+    assign w_pcst_strb = i_regs[`PCST_STRB_REG][0];
 
     edge_detector PCWR (
         .i_clk(i_clk),
@@ -55,18 +51,13 @@ module bram_sequencer
     * imem store
     ************/
 
-    localparam IST_ADDR_REG = PCST_STRB_REG + 1;
-    localparam IST_REG_LO = IST_ADDR_REG + 1;
-    localparam IST_REG_HI = IST_REG_LO + REG_PER_INSN - 1;
-    localparam IST_STRB_REG = IST_REG_HI + 1;
-
     logic [PC_WIDTH-1:0] w_ildst_addr;
     logic [INSN_WIDTH-1:0] w_ist;
     logic w_ist_strb, w_ist_wr;
 
-    assign w_ildst_addr = i_regs[IST_ADDR_REG][PC_WIDTH-1:0];
-    assign w_ist = {i_regs[IST_REG_LO:IST_REG_HI]}[INSN_WIDTH-1:0];
-    assign w_ist_strb = i_regs[IST_STRB_REG][0];
+    assign w_ildst_addr = i_regs[`IST_ADDR_REG][PC_WIDTH-1:0];
+    assign w_ist = {i_regs[`IST_REG_LO:`IST_REG_HI(REG_PER_INSN)]}[INSN_WIDTH-1:0];
+    assign w_ist_strb = i_regs[`IST_STRB_REG(REG_PER_INSN)][0];
 
     edge_detector IWR (
         .i_clk(i_clk),
@@ -80,25 +71,18 @@ module bram_sequencer
     * pc stage
     **********/
 
-    localparam ITERS_REG      = IST_STRB_REG + 1;
-    localparam DEPTH_REG      = ITERS_REG + 1;
-    localparam START_STRB_REG = DEPTH_REG + 1;
-    localparam HALT_STRB_REG  = START_STRB_REG + 1;
-    localparam PCLD_STRB_REG  = HALT_STRB_REG + 1;
-    localparam ILD_STRB_REG   = PCLD_STRB_REG + 1;
-
     logic [ITER_WIDTH-1:0] w_iters;
     logic [DEPTH_WIDTH-1:0] w_depth;
     logic w_start_strb, w_halt_strb;
     logic w_pcld_strb, w_pcld_rd;
     logic w_ild_strb, w_ild_rd;
 
-    assign w_iters      = i_regs[ITERS_REG][ITER_WIDTH-1:0];
-    assign w_depth      = i_regs[DEPTH_REG][DEPTH_WIDTH-1:0];
-    assign w_start_strb = i_regs[START_STRB_REG][0];
-    assign w_halt_strb  = i_regs[HALT_STRB_REG][0];
-    assign w_pcld_strb  = i_regs[PCLD_STRB_REG][0];
-    assign w_ild_strb   = i_regs[ILD_STRB_REG][0];
+    assign w_iters      = i_regs[`ITERS_REG(REG_PER_INSN)][ITER_WIDTH-1:0];
+    assign w_depth      = i_regs[`DEPTH_REG(REG_PER_INSN)][DEPTH_WIDTH-1:0];
+    assign w_start_strb = i_regs[`START_STRB_REG(REG_PER_INSN)][0];
+    assign w_halt_strb  = i_regs[`HALT_STRB_REG(REG_PER_INSN)][0];
+    assign w_pcld_strb  = i_regs[`PCLD_STRB_REG(REG_PER_INSN)][0];
+    assign w_ild_strb   = i_regs[`ILD_STRB_REG(REG_PER_INSN)][0];
 
     typedef struct {
         logic [PC_ADDR_WIDTH-1:0] r_pc_addr;

@@ -120,36 +120,6 @@ module processor
      output logic [0:LCH_STATUS_REGS-1][31:0] o_lch_status_regs);
 
     /****************************
-    * status reg index localparams
-    ****************************/
-
-    localparam DC_INSN_RD_REG     = 0;
-    localparam DC_PC_RD_REG       = DC_REG_PER_INSN;
-    localparam DC_ITERS_REG       = DC_REG_PER_INSN+1;
-    localparam DC_PCMEM_DEPTH_REG = DC_REG_PER_INSN+2;
-    localparam DC_FLAGS_REG       = DC_REG_PER_INSN+3;
-
-    localparam RF_INSN_RD_REG     = 0;
-    localparam RF_PC_RD_REG       = RF_REG_PER_INSN;
-    localparam RF_ITERS_REG       = RF_REG_PER_INSN+1;
-    localparam RF_PCMEM_DEPTH_REG = RF_REG_PER_INSN+2;
-    localparam RF_FLAGS_REG       = RF_REG_PER_INSN+3;
-
-    localparam LI_INSN_RD_REG       = 0;
-    localparam LI_PC_RD_REG         = LI_REG_PER_INSN;
-    localparam LI_ITERS_REG         = LI_REG_PER_INSN+1;
-    localparam LI_PCMEM_DEPTH_REG   = LI_REG_PER_INSN+2;
-    localparam LI_FLAGS_REG         = LI_REG_PER_INSN+3;
-    localparam LI_SAMPLES_LOST_REG  = LI_REG_PER_INSN+4;
-    localparam LI_SAMPLES_INBUF_REG = LI_REG_PER_INSN+5;
-
-    localparam EX_INSN_RD_REG     = 0;
-    localparam EX_PC_RD_REG       = EX_REG_PER_INSN;
-    localparam EX_ITERS_REG       = EX_REG_PER_INSN+1;
-    localparam EX_PCMEM_DEPTH_REG = EX_REG_PER_INSN+2;
-    localparam EX_FLAGS_REG       = EX_REG_PER_INSN+3;
-
-    /****************************
     * channel output signal buses
     ****************************/
 

@@ -19,6 +19,20 @@ parameter DC_SEQ_REGS=DC_REG_PER_INSN+11;
 parameter DC_CTRL_REGS=4+1;
 parameter DC_STATUS_REGS=DC_REG_PER_INSN+4;
 
+// dc_ctrl's i_regs map
+parameter DC_DVSR_REG       = 0;                  // SPI clock divisor
+parameter DC_DELAY_REG      = DC_DVSR_REG + 1;    // inter-word delay cycles
+parameter DC_CS_UP_REG      = DC_DELAY_REG + 1;   // CS-high hold cycles
+parameter DC_LDAC_REG       = DC_CS_UP_REG + 1;   // LDAC pulse hold cycles
+parameter DC_CTRL_STRB_REG  = DC_CTRL_REGS - 1;   // pulse to latch DVSR/DELAY/CS_UP/LDAC above
+
+// processor's o_dc_status_regs map (one bus per dc channel)
+parameter DC_INSN_RD_REG     = 0;                     // DC_REG_PER_INSN words: last instruction read via ILD_STRB_REG
+parameter DC_PC_RD_REG       = DC_REG_PER_INSN;       // PC value read via PCLD_STRB_REG
+parameter DC_ITERS_REG       = DC_REG_PER_INSN+1;     // iterations remaining in the running program
+parameter DC_PCMEM_DEPTH_REG = DC_REG_PER_INSN+2;     // depth (inclusive last address) of the running program
+parameter DC_FLAGS_REG       = DC_REG_PER_INSN+3;     // {armed, empty}
+
 typedef struct packed {
     logic [DC_SPI_DVSR_WIDTH-1:0] w_dvsr; // inclusive countdown
     logic [DC_SPI_DELAY_WIDTH-1:0] w_delay_cycles;

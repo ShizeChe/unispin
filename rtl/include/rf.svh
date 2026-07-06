@@ -19,6 +19,18 @@ parameter RF_CTRL_REGS=3;
 parameter RF_STATUS_REGS=RF_REG_PER_INSN+4;
 parameter RF_BUFFER_STAGES=2;
 
+// rf_ctrl's i_regs map
+parameter RF_DEFAULT_I_REG = 0;                // default I sample
+parameter RF_DEFAULT_Q_REG = RF_DEFAULT_I_REG + 1; // default Q sample
+parameter RF_CTRL_STRB_REG = RF_CTRL_REGS - 1; // pulse to latch DEFAULT_I/DEFAULT_Q above
+
+// processor's o_rf_status_regs map (one bus per rf channel)
+parameter RF_INSN_RD_REG     = 0;                 // RF_REG_PER_INSN words: last instruction read via ILD_STRB_REG
+parameter RF_PC_RD_REG       = RF_REG_PER_INSN;   // PC value read via PCLD_STRB_REG
+parameter RF_ITERS_REG       = RF_REG_PER_INSN+1; // iterations remaining in the running program
+parameter RF_PCMEM_DEPTH_REG = RF_REG_PER_INSN+2; // depth (inclusive last address) of the running program
+parameter RF_FLAGS_REG       = RF_REG_PER_INSN+3; // {armed, empty}
+
 parameter RF_NCO_FREQ_WIDTH=48;
 parameter RF_NCO_PHASE_WIDTH=18;
 parameter RF_NCO_EN_WIDTH=6;

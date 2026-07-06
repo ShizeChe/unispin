@@ -17,7 +17,7 @@ module li_ctrl
     edge_detector CTRLWR (
         .i_clk(i_clk),
         .i_rst(i_rst),
-        .i_signal(i_regs[CTRL_REGS-1][0]),
+        .i_signal(i_regs[LI_CTRL_STRB_REG][0]),
         .o_posedge(w_new_ctrl),
         .o_negedge()
     );
@@ -34,10 +34,10 @@ module li_ctrl
             r_base_addr <= 'h0;
         end
         else if (w_new_ctrl) begin
-            r_default_I <= i_regs[0][IQ_WIDTH-1:0];
-            r_default_Q <= i_regs[1][IQ_WIDTH-1:0];
-            r_max_burst  <= i_regs[2][7:0];
-            r_base_addr  <= {i_regs[3][16:0], i_regs[4][31:0]};
+            r_default_I <= i_regs[LI_DEFAULT_I_REG][IQ_WIDTH-1:0];
+            r_default_Q <= i_regs[LI_DEFAULT_Q_REG][IQ_WIDTH-1:0];
+            r_max_burst  <= i_regs[LI_MAX_BURST_REG][7:0];
+            r_base_addr  <= {i_regs[LI_BASE_ADDR_HI_REG][16:0], i_regs[LI_BASE_ADDR_LO_REG][31:0]};
         end
     end
 

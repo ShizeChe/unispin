@@ -359,7 +359,7 @@ module dc_core
         end
         else if (
             ((s.r_sbuf.r_valid && s.r_sbuf.r_arm && s.r_sbuf.r_done) ||
-            (s.r_sbuf.r_valid && s.r_ibuf.r_arm && (
+            (s.r_ibuf.r_valid && s.r_ibuf.r_arm && (
                 (s.r_sbuf.r_valid && s.r_sbuf.r_done) ||
                 (i_empty && i.r_bubble)
             )) && !i_start)

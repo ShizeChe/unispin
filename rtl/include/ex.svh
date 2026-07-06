@@ -14,6 +14,13 @@ parameter EX_REG_PER_INSN=(EX_INSN_WIDTH+31)/32;
 parameter EX_SEQ_REGS=EX_REG_PER_INSN+11;
 parameter EX_STATUS_REGS=EX_REG_PER_INSN+4;
 
+// processor's o_ex_status_regs map (one bus per ex channel)
+parameter EX_INSN_RD_REG     = 0;                 // EX_REG_PER_INSN words: last instruction read via ILD_STRB_REG
+parameter EX_PC_RD_REG       = EX_REG_PER_INSN;   // PC value read via PCLD_STRB_REG
+parameter EX_ITERS_REG       = EX_REG_PER_INSN+1; // iterations remaining in the running program
+parameter EX_PCMEM_DEPTH_REG = EX_REG_PER_INSN+2; // depth (inclusive last address) of the running program
+parameter EX_FLAGS_REG       = EX_REG_PER_INSN+3; // {armed, empty}
+
 typedef struct packed {
     logic w_arm;
     logic w_sticky_arm;

@@ -19,6 +19,22 @@ parameter LI_STATUS_REGS=LI_REG_PER_INSN+6;
 
 parameter LI_AXIBUF_ADDR_WIDTH=8;
 
+// li_ctrl's i_regs map
+parameter LI_DEFAULT_I_REG   = 0;                   // default I sample
+parameter LI_DEFAULT_Q_REG   = LI_DEFAULT_I_REG + 1; // default Q sample
+parameter LI_MAX_BURST_REG   = LI_DEFAULT_Q_REG + 1; // max AXI burst length
+parameter LI_BASE_ADDR_HI_REG = LI_MAX_BURST_REG + 1;  // base_addr[48:32]
+parameter LI_BASE_ADDR_LO_REG = LI_BASE_ADDR_HI_REG + 1; // base_addr[31:0]
+parameter LI_CTRL_STRB_REG   = LI_CTRL_REGS - 1;    // pulse to latch DEFAULT_I/Q, MAX_BURST, BASE_ADDR above (also clears samples-lost)
+
+// processor's o_li_status_regs map (one bus per li channel)
+parameter LI_INSN_RD_REG        = 0;                 // LI_REG_PER_INSN words: last instruction read via ILD_STRB_REG
+parameter LI_PC_RD_REG          = LI_REG_PER_INSN;   // PC value read via PCLD_STRB_REG
+parameter LI_ITERS_REG          = LI_REG_PER_INSN+1; // iterations remaining in the running program
+parameter LI_PCMEM_DEPTH_REG    = LI_REG_PER_INSN+2; // depth (inclusive last address) of the running program
+parameter LI_FLAGS_REG          = LI_REG_PER_INSN+3; // {armed, empty}
+parameter LI_SAMPLES_LOST_REG   = LI_REG_PER_INSN+4; // count of samples dropped due to AXI buffer overflow
+parameter LI_SAMPLES_INBUF_REG  = LI_REG_PER_INSN+5; // samples currently buffered awaiting AXI write
 
 typedef struct packed {
     logic [LI_IQ_WIDTH-1:0] w_default_I;
