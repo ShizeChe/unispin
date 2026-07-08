@@ -54,10 +54,6 @@ module dc_tb;
 
     logic sclk, mosi, miso, cs_n, ldac_n;
 
-    logic empty;
-
-    dc_eop_t eop;
-
     dc DUT (
         .i_clk         (clk),
         .i_rst         (rst),
@@ -82,9 +78,9 @@ module dc_tb;
         .i_start       (in_if.i_start),
         .o_armed       (in_if.o_armed),
 
-        .o_empty       (empty),
+        .o_empty       (out_if.o_empty),
 
-        .o_eop         (eop)
+        .o_eop         (out_if.o_eop)
     );
 
     ad5791 DAC (
