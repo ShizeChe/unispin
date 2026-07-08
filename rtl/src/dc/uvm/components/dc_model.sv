@@ -7,16 +7,12 @@
 // w_spi_dout is left 'x (dc_tb never drives i_miso, so it isn't predictable
 // yet); the scoreboard's compare() only checks the fields this model
 // actually predicts.
-class dc_model extends uvm_component;
+class dc_model #(int MIN_HOLD_CYCLES) extends uvm_component;
 
-    `uvm_component_utils(dc_model)
+    `uvm_component_param_utils(dc_model #(MIN_HOLD_CYCLES))
 
-    // dc_driver's ap_pgm (an analysis port) writes into pgm_fifo, which is
-    // always unbounded so that write never blocks the driver; run_phase then
-    // actively pulls from it one at a time via pgm_port.
-    uvm_tlm_analysis_fifo #(dc_program #(MIN_HOLD_CYCLES)) pgm_fifo;
     uvm_blocking_get_port #(dc_program #(MIN_HOLD_CYCLES)) pgm_port;
-    uvm_analysis_port #(dc_trace) ap;
+    uvm_analysis_port #(dc_trace) trc_ap;
 
     // The DAC's committed output code. A real register that persists across
     // separate dc_program items (unlike the program content below, which
@@ -26,19 +22,15 @@ class dc_model extends uvm_component;
 
     function new(string name = "dc_model", uvm_component parent = null);
         super.new(name, parent);
+        `uvm_info("dc_model", "new is called\n", UVM_LOW);
         dac_voltage = '0;
     endfunction
 
     virtual function void build_phase(uvm_phase phase);
         super.build_phase(phase);
-        pgm_fifo = new("pgm_fifo", this);
+        `uvm_info("dc_model", "build_phase is called\n", UVM_LOW);
         pgm_port = new("pgm_port", this);
-        ap       = new("ap", this);
-    endfunction
-
-    virtual function void connect_phase(uvm_phase phase);
-        super.connect_phase(phase);
-        pgm_port.connect(pgm_fifo.blocking_get_export);
+        trc_ap = new("trc_ap", this);
     endfunction
 
     // Predicts the beat sequence for one full run of pgm (all pgm.iters
@@ -153,15 +145,19 @@ class dc_model extends uvm_component;
         dc_eop_t eop_q[$];
         logic [DC_DAC_WIDTH-1:0] v_q[$];
 
+        super.run_phase(phase);
+        `uvm_info("dc_model", "run_phase is called\n", UVM_LOW);
+
         forever begin
             pgm_port.get(pgm);
+            `uvm_info("dc_model", "got new program\n", UVM_LOW);
 
             exp_trace = dc_trace::type_id::create("exp_trace");
             predict(pgm, eop_q, v_q);
             exp_trace.eop_trace = eop_q;
             exp_trace.v_trace   = v_q;
 
-            ap.write(exp_trace);
+            trc_ap.write(exp_trace);
         end
     endtask
 

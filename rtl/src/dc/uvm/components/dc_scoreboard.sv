@@ -2,8 +2,8 @@ class dc_scoreboard extends uvm_scoreboard;
 
     `uvm_component_utils(dc_scoreboard)
 
-    uvm_analysis_imp_exp #(dc_trace, dc_scoreboard) exp_export;
-    uvm_analysis_imp_act #(dc_trace, dc_scoreboard) act_export;
+    uvm_blocking_get_port #(dc_trace) exp_port;
+    uvm_blocking_get_port #(dc_trace) act_port;
 
     dc_trace exp_q[$];
     dc_trace act_q[$];
@@ -11,48 +11,63 @@ class dc_scoreboard extends uvm_scoreboard;
     int unsigned pass_count = 0;
     int unsigned fail_count = 0;
 
+
     function new(string name = "dc_scoreboard", uvm_component parent = null);
         super.new(name, parent);
+        `uvm_info("dc_scoreboard", "new is called\n", UVM_LOW);
     endfunction
+
 
     virtual function void build_phase(uvm_phase phase);
         super.build_phase(phase);
-        exp_export = new("exp_export", this);
-        act_export = new("act_export", this);
+        `uvm_info("dc_scoreboard", "build_phase is called\n", UVM_LOW);
+        exp_port = new("exp_port", this);
+        act_port = new("act_port", this);
     endfunction
 
-    virtual function void write_exp(dc_trace t);
-        exp_q.push_back(t);
-        compare();
-    endfunction
 
-    virtual function void write_act(dc_trace t);
-        act_q.push_back(t);
-        compare();
-    endfunction
+    virtual task run_phase(uvm_phase phase);
 
-    virtual function void compare();
-        dc_trace exp_t, act_t;
+        dc_trace get_expect, get_actual, pop_expect;
+        bit result;
 
-        if (exp_q.size() == 0 || act_q.size() == 0)
-            return;
+        super.run_phase(phase);
+        `uvm_info("dc_scoreboard", "run_phase is called\n", UVM_LOW);
 
-        exp_t = exp_q.pop_front();
-        act_t = act_q.pop_front();
+        fork
 
-        // TODO: compare exp_t.eop_trace/v_trace against act_t.eop_trace/v_trace
-        if (1) begin
-            pass_count++;
-        end else begin
-            fail_count++;
-            `uvm_error("dc_scoreboard", "trace mismatch")
-        end
-    endfunction
+            forever begin
+                exp_port.get(get_expect);
+                exp_q.push_back(get_expect);
+            end
 
-    virtual function void report_phase(uvm_phase phase);
-        `uvm_info("dc_scoreboard",
-            $sformatf("DC Scoreboard Summary: PASS=%0d FAIL=%0d", pass_count, fail_count),
-            UVM_LOW)
-    endfunction
+            forever begin
+
+                act_port.get(get_actual);
+
+                if (exp_q.size() > 0) begin
+                    pop_expect = exp_q.pop_front();
+                    result = get_actual.compare(pop_expect);
+                    if (result) begin
+                        `uvm_info("dc_scoreboard", "Compare SUCCESS\n", UVM_LOW);
+                    end
+                    else begin
+                        `uvm_error("dc_scoreboard", "Compare FAILED");
+                        $display("the expected packet is:");
+                        pop_expect.print();
+                        $display("the actual packet is:");
+                        get_actual.print();
+                        `uvm_fatal("dc_scoreboard", "Fatal due to compare failure");
+                    end
+                end
+                else begin
+                    `uvm_fatal("dc_scoreboard", "Received from DUT, while Expect Queue is empty");
+                    $display("the unexpected trace is");
+                    get_actual.print();
+                end
+            end
+
+        join
+    endtask
 
 endclass

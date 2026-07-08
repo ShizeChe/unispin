@@ -9,6 +9,7 @@ class dc_program #(
 
     constraint iters_cons {
         iters > 0;
+        iters <= 8;
     };
 
     constraint num_insns_cons {
@@ -34,6 +35,7 @@ class dc_program #(
 
     function new(string name = "dc_program");
         super.new(name);
+        `uvm_info("dc_program", "new is called\n", UVM_LOW);
     endfunction
 
     `uvm_object_utils_begin(dc_program#(MIN_HOLD_CYCLES))
