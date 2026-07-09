@@ -7,11 +7,11 @@
 // w_spi_dout is left 'x (dc_tb never drives i_miso, so it isn't predictable
 // yet); the scoreboard's compare() only checks the fields this model
 // actually predicts.
-class dc_model #(int MIN_HOLD_CYCLES) extends uvm_component;
+class dc_model #(int MIN_HOLD_CYCLES, int PROGRAM_ITERS_MAX, int HOLD_CYCLES_MAX) extends uvm_component;
 
-    `uvm_component_param_utils(dc_model #(MIN_HOLD_CYCLES))
+    `uvm_component_param_utils(dc_model #(MIN_HOLD_CYCLES, PROGRAM_ITERS_MAX, HOLD_CYCLES_MAX))
 
-    uvm_blocking_get_port #(dc_program #(MIN_HOLD_CYCLES)) pgm_port;
+    uvm_blocking_get_port #(dc_program #(MIN_HOLD_CYCLES, PROGRAM_ITERS_MAX, HOLD_CYCLES_MAX)) pgm_port;
     uvm_analysis_port #(dc_trace) trc_ap;
 
     // The DAC's committed output code. A real register that persists across
@@ -47,7 +47,7 @@ class dc_model #(int MIN_HOLD_CYCLES) extends uvm_component;
     //    hold_cycles/dvsr/delay/cs_up configuration, since draining a prior
     //    SPI transaction or hold delay always takes far longer than
     //    free-running through an idle run.
-    local function void predict(dc_program #(MIN_HOLD_CYCLES) pgm,
+    local function void predict(dc_program #(MIN_HOLD_CYCLES, PROGRAM_ITERS_MAX, HOLD_CYCLES_MAX) pgm,
                                  output dc_eop_t eop_q[$],
                                  output logic [DC_DAC_WIDTH-1:0] v_q[$]);
 
@@ -140,7 +140,7 @@ class dc_model #(int MIN_HOLD_CYCLES) extends uvm_component;
     // predicts its trace, and publishes it to whatever's connected to ap
     // (dc_scoreboard's exp_export).
     virtual task run_phase(uvm_phase phase);
-        dc_program #(MIN_HOLD_CYCLES) pgm;
+        dc_program #(MIN_HOLD_CYCLES, PROGRAM_ITERS_MAX, HOLD_CYCLES_MAX) pgm;
         dc_trace exp_trace;
         dc_eop_t eop_q[$];
         logic [DC_DAC_WIDTH-1:0] v_q[$];

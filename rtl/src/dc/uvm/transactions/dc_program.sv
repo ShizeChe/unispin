@@ -1,15 +1,15 @@
 class dc_program #(
-    int MIN_HOLD_CYCLES
+    int MIN_HOLD_CYCLES,
+    int PROGRAM_ITERS_MAX,
+    int HOLD_CYCLES_MAX
 ) extends uvm_sequence_item;
 
     rand dc_insn_t insns[];
-    rand bit has_ctrl;
-    rand dc_ctrl_t ctrl;
     rand int unsigned iters;
 
     constraint iters_cons {
         iters > 0;
-        iters <= 8;
+        iters <= PROGRAM_ITERS_MAX;
     };
 
     constraint num_insns_cons {
@@ -17,19 +17,34 @@ class dc_program #(
         insns.size() <= DC_DEPTH;
     };
 
-    constraint no_ctrl_cons {
-        (!has_ctrl) -> (ctrl == '0);
-    };
-
-    constraint delay_gt_ldac_cons {
-        has_ctrl -> (ctrl.w_delay_cycles >= ctrl.w_ldac_cycles);
-    };
-
-    constraint insn_min_hold_cycles_cons {
+    constraint idle_no_iters {
         foreach (insns[i]) {
-            has_ctrl -> (insns[i].w_hold_cycles >= 
-                ((DC_SPI_DATA_WIDTH + 4) * (ctrl.w_dvsr + 1) * 2) + 
-                ctrl.w_delay_cycles + ctrl.w_cs_up_cycles);
+            insns[i].w_idle -> (insns[i].w_iters == 0);
+        }
+    };
+
+    constraint no_sticky_arm {
+        foreach (insns[i]) {
+            !insns[i].w_sticky_arm;
+        }
+    };
+
+    constraint first_arm {
+        foreach (insns[i]) {
+            insns[i].w_arm == (i == 0);
+        }
+    };
+
+    // dc_ctrl (dvsr=3, delay=3, cs_up=3, ldac=2) is fixed and burst into the
+    // DUT once before the driver's forever loop (see dc_driver::run_phase),
+    // not carried per-program anymore -- MIN_HOLD_CYCLES is precomputed to
+    // safely cover that fixed configuration's SPI transaction time.
+    // HOLD_CYCLES_MAX caps the upper end -- hold waits are real DUT cycles,
+    // not just a delay to write, so an unbounded top end makes sims slow.
+    constraint insn_hold_cycles_cons {
+        foreach (insns[i]) {
+            insns[i].w_hold_cycles >= MIN_HOLD_CYCLES;
+            insns[i].w_hold_cycles <= HOLD_CYCLES_MAX;
         }
     };
 
@@ -38,9 +53,7 @@ class dc_program #(
         `uvm_info("dc_program", "new is called\n", UVM_LOW);
     endfunction
 
-    `uvm_object_utils_begin(dc_program#(MIN_HOLD_CYCLES))
-        `uvm_field_int(has_ctrl, UVM_ALL_ON)
-        `uvm_field_int(ctrl, UVM_ALL_ON)
+    `uvm_object_utils_begin(dc_program#(MIN_HOLD_CYCLES, PROGRAM_ITERS_MAX, HOLD_CYCLES_MAX))
         `uvm_field_array_int(insns, UVM_ALL_ON)
         `uvm_field_int(iters, UVM_ALL_ON)
     `uvm_object_utils_end

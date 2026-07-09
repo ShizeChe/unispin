@@ -1,12 +1,14 @@
 class dc_rand_sequence #(
-    int MIN_HOLD_CYCLES
+    int MIN_HOLD_CYCLES,
+    int PROGRAM_ITERS_MAX,
+    int HOLD_CYCLES_MAX
 ) extends uvm_sequence #(
-    dc_program #(MIN_HOLD_CYCLES)
+    dc_program #(MIN_HOLD_CYCLES, PROGRAM_ITERS_MAX, HOLD_CYCLES_MAX)
 );
 
-    `uvm_object_param_utils(dc_rand_sequence #(MIN_HOLD_CYCLES));
+    `uvm_object_param_utils(dc_rand_sequence #(MIN_HOLD_CYCLES, PROGRAM_ITERS_MAX, HOLD_CYCLES_MAX));
 
-    dc_program #(MIN_HOLD_CYCLES) pgm;
+    dc_program #(MIN_HOLD_CYCLES, PROGRAM_ITERS_MAX, HOLD_CYCLES_MAX) pgm;
 
     function new(string name = "dc_rand_sequence");
         super.new(name);
@@ -25,14 +27,12 @@ class dc_rand_sequence #(
         else
             `uvm_info("dc_rand_sequence", "starting phase is null\n", UVM_LOW);
 
-        repeat (3) begin
+        repeat (1) begin
             // `uvm_do macro creates a new pgm, randomizes it, and sends it to
             // sequencer
             `uvm_info("dc_rand_sequence", $sformatf("send %0dth pgm\n", i++), UVM_LOW);
             `uvm_do(pgm);
         end
-
-        #100000;
 
         if (phase != null)
             phase.drop_objection(this);

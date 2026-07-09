@@ -18,6 +18,7 @@ SRCS = ../sequencer/bram_sequencer.svh \
        uvm/components/dc_monitor.sv \
        uvm/components/dc_model.sv \
        uvm/components/dc_scoreboard.sv \
+       uvm/components/dc_coverage.sv \
        uvm/components/dc_agent.sv \
        uvm/components/dc_env.sv \
        uvm/dc_rand_sequence.sv \

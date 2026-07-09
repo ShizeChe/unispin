@@ -1,12 +1,12 @@
-class dc_agent #(int MIN_HOLD_CYCLES) extends uvm_agent;
+class dc_agent #(int MIN_HOLD_CYCLES, int PROGRAM_ITERS_MAX, int HOLD_CYCLES_MAX) extends uvm_agent;
 
-    `uvm_component_param_utils(dc_agent #(MIN_HOLD_CYCLES))
+    `uvm_component_param_utils(dc_agent #(MIN_HOLD_CYCLES, PROGRAM_ITERS_MAX, HOLD_CYCLES_MAX))
 
-    dc_sequencer #(MIN_HOLD_CYCLES) sqr;
-    dc_driver #(MIN_HOLD_CYCLES) drv;
+    dc_sequencer #(MIN_HOLD_CYCLES, PROGRAM_ITERS_MAX, HOLD_CYCLES_MAX) sqr;
+    dc_driver #(MIN_HOLD_CYCLES, PROGRAM_ITERS_MAX, HOLD_CYCLES_MAX) drv;
     dc_monitor mon;
 
-    uvm_analysis_port #(dc_program #(MIN_HOLD_CYCLES)) pgm_ap;
+    uvm_analysis_port #(dc_program #(MIN_HOLD_CYCLES, PROGRAM_ITERS_MAX, HOLD_CYCLES_MAX)) pgm_ap;
     uvm_analysis_port #(dc_trace) trc_ap;
 
 
@@ -22,8 +22,8 @@ class dc_agent #(int MIN_HOLD_CYCLES) extends uvm_agent;
 
         `uvm_info("dc_agent", "build_phase is called\n", UVM_LOW);
 
-        sqr = dc_sequencer #(MIN_HOLD_CYCLES)::type_id::create("sqr", this);
-        drv = dc_driver #(MIN_HOLD_CYCLES)::type_id::create("drv", this);
+        sqr = dc_sequencer #(MIN_HOLD_CYCLES, PROGRAM_ITERS_MAX, HOLD_CYCLES_MAX)::type_id::create("sqr", this);
+        drv = dc_driver #(MIN_HOLD_CYCLES, PROGRAM_ITERS_MAX, HOLD_CYCLES_MAX)::type_id::create("drv", this);
         mon = dc_monitor::type_id::create("mon", this);
 
     endfunction

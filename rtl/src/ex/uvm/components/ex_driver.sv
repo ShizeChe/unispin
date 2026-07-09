@@ -75,6 +75,7 @@ class ex_driver extends uvm_driver #(ex_program);
             @(vif.cb);
             vif.cb.i_seq_regs[`IST_STRB_REG(EX_REG_PER_INSN)] <= 32'h0;
             @(vif.cb);
+            @(vif.cb);
         end
 
         // write PC sequence to PCMEM
@@ -85,6 +86,7 @@ class ex_driver extends uvm_driver #(ex_program);
             vif.cb.i_seq_regs[`PCST_STRB_REG] <= 32'h1;
             @(vif.cb);
             vif.cb.i_seq_regs[`PCST_STRB_REG] <= 32'h0;
+            @(vif.cb);
             @(vif.cb);
         end
 
@@ -104,6 +106,7 @@ class ex_driver extends uvm_driver #(ex_program);
         vif.cb.i_seq_regs[`START_STRB_REG(EX_REG_PER_INSN)] <= 32'h1;
         @(vif.cb);
         vif.cb.i_seq_regs[`START_STRB_REG(EX_REG_PER_INSN)] <= 32'h0;
+        @(vif.cb);
         @(vif.cb);
 
         `uvm_info("ex_driver", "start waiting for armed\n", UVM_LOW);

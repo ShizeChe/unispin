@@ -1,13 +1,14 @@
-class dc_env #(int MIN_HOLD_CYCLES) extends uvm_env;
+class dc_env #(int MIN_HOLD_CYCLES, int PROGRAM_ITERS_MAX, int HOLD_CYCLES_MAX) extends uvm_env;
 
-    `uvm_component_param_utils(dc_env #(MIN_HOLD_CYCLES))
+    `uvm_component_param_utils(dc_env #(MIN_HOLD_CYCLES, PROGRAM_ITERS_MAX, HOLD_CYCLES_MAX))
 
-    dc_agent #(MIN_HOLD_CYCLES) agt;
-    dc_model #(MIN_HOLD_CYCLES) mdl;
+    dc_agent #(MIN_HOLD_CYCLES, PROGRAM_ITERS_MAX, HOLD_CYCLES_MAX) agt;
+    dc_model #(MIN_HOLD_CYCLES, PROGRAM_ITERS_MAX, HOLD_CYCLES_MAX) mdl;
     dc_scoreboard sbd;
+    dc_coverage #(MIN_HOLD_CYCLES, PROGRAM_ITERS_MAX, HOLD_CYCLES_MAX) cov;
 
     // agent sends the program to be executed to model
-    uvm_tlm_analysis_fifo #(dc_program #(MIN_HOLD_CYCLES)) agt2mdl_pgm_fifo;
+    uvm_tlm_analysis_fifo #(dc_program #(MIN_HOLD_CYCLES, PROGRAM_ITERS_MAX, HOLD_CYCLES_MAX)) agt2mdl_pgm_fifo;
 
     // agent sends captured trace to scoreboard
     uvm_tlm_analysis_fifo #(dc_trace) agt2sbd_trc_fifo;
@@ -29,9 +30,10 @@ class dc_env #(int MIN_HOLD_CYCLES) extends uvm_env;
 
         `uvm_info("dc_env", "build_phase is called\n", UVM_LOW);
 
-        agt = dc_agent#(MIN_HOLD_CYCLES)::type_id::create("agt", this);
-        mdl = dc_model#(MIN_HOLD_CYCLES)::type_id::create("mdl", this);
+        agt = dc_agent#(MIN_HOLD_CYCLES, PROGRAM_ITERS_MAX, HOLD_CYCLES_MAX)::type_id::create("agt", this);
+        mdl = dc_model#(MIN_HOLD_CYCLES, PROGRAM_ITERS_MAX, HOLD_CYCLES_MAX)::type_id::create("mdl", this);
         sbd = dc_scoreboard::type_id::create("sbd", this);
+        cov = dc_coverage#(MIN_HOLD_CYCLES, PROGRAM_ITERS_MAX, HOLD_CYCLES_MAX)::type_id::create("cov", this);
 
         agt2mdl_pgm_fifo = new("agt2mdl_pgm_fifo", this);
         agt2sbd_trc_fifo = new("agt2sbd_trc_fifo", this);
@@ -49,10 +51,14 @@ class dc_env #(int MIN_HOLD_CYCLES) extends uvm_env;
         agt.pgm_ap.connect(agt2mdl_pgm_fifo.analysis_export);
         mdl.pgm_port.connect(agt2mdl_pgm_fifo.blocking_get_export);
 
-        agt.trc_ap.connect(agt2sbd_trc_fifo.analysis_export);
+        // coverage collector is a second, independent subscriber on the
+        // same broadcast analysis port -- doesn't interfere with the model
+        agt.pgm_ap.connect(cov.analysis_export);
+
+        mdl.trc_ap.connect(agt2sbd_trc_fifo.analysis_export);
         sbd.exp_port.connect(agt2sbd_trc_fifo.blocking_get_export);
 
-        mdl.trc_ap.connect(mdl2sbd_trc_fifo.analysis_export);
+        agt.trc_ap.connect(mdl2sbd_trc_fifo.analysis_export);
         sbd.act_port.connect(mdl2sbd_trc_fifo.blocking_get_export);
 
     endfunction

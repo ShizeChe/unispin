@@ -2,9 +2,11 @@ class dc_base_test extends uvm_test;
 
     `uvm_component_utils(dc_base_test)
 
-    localparam int MIN_HOLD_CYCLES = 250;
+    localparam int MIN_HOLD_CYCLES = 200;
+    localparam int HOLD_CYCLES_MAX = 800;
+    localparam int PROGRAM_ITERS_MAX = 16;
 
-    dc_env #(MIN_HOLD_CYCLES) env;
+    dc_env #(MIN_HOLD_CYCLES, PROGRAM_ITERS_MAX, HOLD_CYCLES_MAX) env;
 
     function new(string name = "dc_base_test", uvm_component parent = null);
         super.new(name, parent);
@@ -14,12 +16,12 @@ class dc_base_test extends uvm_test;
     virtual function void build_phase(uvm_phase phase);
         super.build_phase(phase);
         `uvm_info("dc_base_test", "build_phase is called\n", UVM_LOW);
-        env = dc_env #(MIN_HOLD_CYCLES)::type_id::create("env", this);
+        env = dc_env #(MIN_HOLD_CYCLES, PROGRAM_ITERS_MAX, HOLD_CYCLES_MAX)::type_id::create("env", this);
         uvm_config_db#(uvm_object_wrapper)::set(
             this,
             "env.agt.sqr.main_phase",
             "default_sequence",
-            dc_rand_sequence#(MIN_HOLD_CYCLES)::type_id::get()
+            dc_rand_sequence#(MIN_HOLD_CYCLES, PROGRAM_ITERS_MAX, HOLD_CYCLES_MAX)::type_id::get()
         );
     endfunction
 

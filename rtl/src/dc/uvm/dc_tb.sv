@@ -13,9 +13,10 @@ interface dc_input_if(input i_clk, input i_rst);
     logic i_start;
     logic o_armed;
 
+    logic o_empty;
+
     clocking cb @(posedge i_clk);
-        default input #1step output #0;
-        input o_armed;
+        input o_armed, o_empty;
         output i_rst, i_seq_regs, i_ctrl_regs, i_start;
     endclocking
 endinterface
@@ -25,7 +26,6 @@ interface dc_output_if(input i_clk, input i_rst);
     dc_eop_t o_eop;
 
     clocking cb @(posedge i_clk);
-        default input #1step output #0;
         input o_empty, o_eop;
         output i_rst;
     endclocking
@@ -39,8 +39,11 @@ endinterface
 module dc_tb;
 
     // 250 MHz clock
-    logic clk = 0;
-    always #2 clk = ~clk;
+    logic clk;
+    initial begin
+        clk = 0;
+        forever #2 clk = !clk;
+    end
 
     logic rst;
 
@@ -53,6 +56,7 @@ module dc_tb;
     logic [$clog2(DC_DEPTH)-1:0]  pc_rd;
 
     logic sclk, mosi, miso, cs_n, ldac_n;
+    logic empty;
 
     dc DUT (
         .i_clk         (clk),
@@ -78,10 +82,13 @@ module dc_tb;
         .i_start       (in_if.i_start),
         .o_armed       (in_if.o_armed),
 
-        .o_empty       (out_if.o_empty),
+        .o_empty       (empty),
 
         .o_eop         (out_if.o_eop)
     );
+
+    assign in_if.o_empty = empty;
+    assign out_if.o_empty = empty;
 
     ad5791 DAC (
         .SCLK     (sclk),

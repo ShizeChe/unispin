@@ -74,6 +74,7 @@ class li_driver extends uvm_driver #(li_program);
         @(vif.cb);
         vif.cb.i_ctrl_regs[LI_CTRL_STRB_REG] <= 32'h0;
         @(vif.cb);
+        @(vif.cb);
     endtask
 
 
@@ -91,6 +92,7 @@ class li_driver extends uvm_driver #(li_program);
             @(vif.cb);
             vif.cb.i_seq_regs[`IST_STRB_REG(LI_REG_PER_INSN)] <= 32'h0;
             @(vif.cb);
+            @(vif.cb);
         end
 
         // write PC sequence to PCMEM
@@ -101,6 +103,7 @@ class li_driver extends uvm_driver #(li_program);
             vif.cb.i_seq_regs[`PCST_STRB_REG] <= 32'h1;
             @(vif.cb);
             vif.cb.i_seq_regs[`PCST_STRB_REG] <= 32'h0;
+            @(vif.cb);
             @(vif.cb);
         end
 
@@ -120,6 +123,7 @@ class li_driver extends uvm_driver #(li_program);
         vif.cb.i_seq_regs[`START_STRB_REG(LI_REG_PER_INSN)] <= 32'h1;
         @(vif.cb);
         vif.cb.i_seq_regs[`START_STRB_REG(LI_REG_PER_INSN)] <= 32'h0;
+        @(vif.cb);
         @(vif.cb);
 
         `uvm_info("li_driver", "start waiting for armed\n", UVM_LOW);

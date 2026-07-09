@@ -71,6 +71,7 @@ class rf_driver extends uvm_driver #(rf_program);
         @(vif.cb);
         vif.cb.i_ctrl_regs[RF_CTRL_STRB_REG] <= 32'h0;
         @(vif.cb);
+        @(vif.cb);
     endtask
 
 
@@ -88,6 +89,7 @@ class rf_driver extends uvm_driver #(rf_program);
             @(vif.cb);
             vif.cb.i_seq_regs[`IST_STRB_REG(RF_REG_PER_INSN)] <= 32'h0;
             @(vif.cb);
+            @(vif.cb);
         end
 
         // write PC sequence to PCMEM
@@ -98,6 +100,7 @@ class rf_driver extends uvm_driver #(rf_program);
             vif.cb.i_seq_regs[`PCST_STRB_REG] <= 32'h1;
             @(vif.cb);
             vif.cb.i_seq_regs[`PCST_STRB_REG] <= 32'h0;
+            @(vif.cb);
             @(vif.cb);
         end
 
@@ -117,6 +120,7 @@ class rf_driver extends uvm_driver #(rf_program);
         vif.cb.i_seq_regs[`START_STRB_REG(RF_REG_PER_INSN)] <= 32'h1;
         @(vif.cb);
         vif.cb.i_seq_regs[`START_STRB_REG(RF_REG_PER_INSN)] <= 32'h0;
+        @(vif.cb);
         @(vif.cb);
 
         `uvm_info("rf_driver", "start waiting for armed\n", UVM_LOW);

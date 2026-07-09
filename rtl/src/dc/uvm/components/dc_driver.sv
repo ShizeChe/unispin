@@ -1,12 +1,13 @@
-class dc_driver #(int MIN_HOLD_CYCLES) extends uvm_driver #(dc_program #(MIN_HOLD_CYCLES));
+class dc_driver #(int MIN_HOLD_CYCLES, int PROGRAM_ITERS_MAX, int HOLD_CYCLES_MAX)
+    extends uvm_driver #(dc_program #(MIN_HOLD_CYCLES, PROGRAM_ITERS_MAX, HOLD_CYCLES_MAX));
 
-    `uvm_component_param_utils(dc_driver #(MIN_HOLD_CYCLES))
+    `uvm_component_param_utils(dc_driver #(MIN_HOLD_CYCLES, PROGRAM_ITERS_MAX, HOLD_CYCLES_MAX))
 
     virtual dc_input_if vif;
 
     // Publishes each dc_program as it's pulled off the sequencer, so
     // dc_model can predict its expected trace independently of driving it.
-    uvm_analysis_port #(dc_program #(MIN_HOLD_CYCLES)) pgm_ap;
+    uvm_analysis_port #(dc_program #(MIN_HOLD_CYCLES, PROGRAM_ITERS_MAX, HOLD_CYCLES_MAX)) pgm_ap;
 
     function new(string name = "dc_driver", uvm_component parent = null);
         super.new(name, parent);
@@ -33,7 +34,7 @@ class dc_driver #(int MIN_HOLD_CYCLES) extends uvm_driver #(dc_program #(MIN_HOL
     } mem_content_t;
 
 
-    virtual function mem_content_t get_mem_content(dc_program #(MIN_HOLD_CYCLES) pgm);
+    virtual function mem_content_t get_mem_content(dc_program #(MIN_HOLD_CYCLES, PROGRAM_ITERS_MAX, HOLD_CYCLES_MAX) pgm);
 
         mem_content_t m;
         int insn2addr_map [logic [DC_INSN_WIDTH-1:0]];
@@ -62,21 +63,17 @@ class dc_driver #(int MIN_HOLD_CYCLES) extends uvm_driver #(dc_program #(MIN_HOL
 
 
     virtual task burst_ctrl(dc_ctrl_t ctrl);
-        `uvm_info("dc_driver", "start burst ctrl\n", UVM_LOW);
         vif.cb.i_ctrl_regs[DC_DVSR_REG]  <= 32'(ctrl.w_dvsr);
         vif.cb.i_ctrl_regs[DC_DELAY_REG] <= 32'(ctrl.w_delay_cycles);
         vif.cb.i_ctrl_regs[DC_CS_UP_REG] <= 32'(ctrl.w_cs_up_cycles);
         vif.cb.i_ctrl_regs[DC_LDAC_REG]  <= 32'(ctrl.w_ldac_cycles);
         vif.cb.i_ctrl_regs[DC_CTRL_STRB_REG] <= 32'h0;
-        `uvm_info("dc_driver", "burst ctrl 1\n", UVM_LOW);
         @(vif.cb);
-        `uvm_info("dc_driver", "burst ctrl 2\n", UVM_LOW);
         vif.cb.i_ctrl_regs[DC_CTRL_STRB_REG] <= 32'h1;
         @(vif.cb);
-        `uvm_info("dc_driver", "burst ctrl 3\n", UVM_LOW);
         vif.cb.i_ctrl_regs[DC_CTRL_STRB_REG] <= 32'h0;
         @(vif.cb);
-        `uvm_info("dc_driver", "burst ctrl 4\n", UVM_LOW);
+        @(vif.cb);
     endtask
 
 
@@ -94,6 +91,7 @@ class dc_driver #(int MIN_HOLD_CYCLES) extends uvm_driver #(dc_program #(MIN_HOL
             @(vif.cb);
             vif.cb.i_seq_regs[`IST_STRB_REG(DC_REG_PER_INSN)] <= 32'h0;
             @(vif.cb);
+            @(vif.cb);
         end
 
         // write PC sequence to PCMEM
@@ -104,6 +102,7 @@ class dc_driver #(int MIN_HOLD_CYCLES) extends uvm_driver #(dc_program #(MIN_HOL
             vif.cb.i_seq_regs[`PCST_STRB_REG] <= 32'h1;
             @(vif.cb);
             vif.cb.i_seq_regs[`PCST_STRB_REG] <= 32'h0;
+            @(vif.cb);
             @(vif.cb);
         end
 
@@ -124,6 +123,7 @@ class dc_driver #(int MIN_HOLD_CYCLES) extends uvm_driver #(dc_program #(MIN_HOL
         @(vif.cb);
         vif.cb.i_seq_regs[`START_STRB_REG(DC_REG_PER_INSN)] <= 32'h0;
         @(vif.cb);
+        @(vif.cb);
 
         `uvm_info("dc_driver", "start waiting for armed\n", UVM_LOW);
 
@@ -138,33 +138,49 @@ class dc_driver #(int MIN_HOLD_CYCLES) extends uvm_driver #(dc_program #(MIN_HOL
         @(vif.cb);
     endtask
 
+    virtual task wait_empty();
+        `uvm_info("dc_driver", "wait for empty\n", UVM_LOW);
+        while (!vif.cb.o_empty)
+            @(vif.cb);
+        `uvm_info("dc_driver", $sformatf("vif.cb.o_empty=%0b\n", vif.cb.o_empty), UVM_LOW);
+        `uvm_info("dc_driver", "see empty\n", UVM_LOW);
+    endtask
+
 
     virtual task run_phase(uvm_phase phase);
         mem_content_t m;
+        dc_ctrl_t fixed_ctrl;
         super.run_phase(phase);
         `uvm_info("dc_driver", "run_phase is called\n", UVM_LOW);
 
         vif.cb.i_seq_regs <= '0;
         vif.cb.i_ctrl_regs <= '0;
+        vif.cb.i_start <= 1'b0;
         while (vif.i_rst)
             @(vif.cb);
 
+        // dc_ctrl is fixed for the life of the test -- burst it in once here
+        // rather than per-program.
+        fixed_ctrl = '{
+            w_dvsr: 3,
+            w_delay_cycles: 3,
+            w_cs_up_cycles: 3,
+            w_ldac_cycles: 2
+        };
+        burst_ctrl(fixed_ctrl);
+
         forever begin
             seq_item_port.get_next_item(req);
+            phase.raise_objection(this);
             `uvm_info("dc_driver", "got new program\n", UVM_LOW);
+            req.print();
             pgm_ap.write(req);
-            `uvm_info("dc_driver", "1\n", UVM_LOW);
-            if (req.has_ctrl)
-                burst_ctrl(req.ctrl);
-            `uvm_info("dc_driver", "2\n", UVM_LOW);
             m = get_mem_content(req);
-            `uvm_info("dc_driver", "3\n", UVM_LOW);
             burst_mem(m, req.iters);
-            `uvm_info("dc_driver", "4\n", UVM_LOW);
             start_program();
-            `uvm_info("dc_driver", "5\n", UVM_LOW);
+            wait_empty();
             seq_item_port.item_done();
-            `uvm_info("dc_driver", "6\n", UVM_LOW);
+            phase.drop_objection(this);
         end
     endtask
 

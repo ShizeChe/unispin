@@ -40,8 +40,17 @@ class dc_monitor extends uvm_monitor;
         super.run_phase(phase);
         `uvm_info("dc_monitor", "run_phase is called\n", UVM_LOW);
 
+        // Exiting on i_rst via a raw @(posedge) (or even checking cb.i_rst
+        // right at the exit edge) isn't enough: the clocking block's #1step
+        // sample for the very edge reset deasserts on still reflects the
+        // pre-reset (X) value of everything else in cb, since that sample
+        // was captured just *before* this edge's NBA-committed reset values
+        // took effect. One extra @(vif.cb) is needed so cb.o_empty/cb.o_eop
+        // reflect an already-settled, post-reset cycle before we trust them.
         while (vif.i_rst)
-            @(posedge vif.i_clk);
+            @(vif.cb);
+
+        @(vif.cb);
 
         forever begin
             dc_trace act_trace;
@@ -53,6 +62,8 @@ class dc_monitor extends uvm_monitor;
             while (vif.cb.o_empty)
                 @(vif.cb);
 
+            `uvm_info("dc_monitor", "see not empty start capture\n", UVM_LOW);
+
             act_trace = dc_trace::type_id::create("act_trace");
             prev_cycles_left = 1; // sentinel: guarantees the first real 0 edge-triggers
 
@@ -61,12 +72,12 @@ class dc_monitor extends uvm_monitor;
                 dc_eop_t eop;
                 eop = vif.cb.o_eop;
 
-                if (eop.w_cycles_left == '0 && prev_cycles_left != '0) begin
+                if (eop.w_cycles_left == 0 && prev_cycles_left != 0) begin
                     dc_eop_t beat;
                     beat = eop;
-                    beat.w_spi_dout    = 'x;
-                    beat.w_ldac_cycles = '0;
-                    beat.w_cycles_left = '0;
+                    beat.w_spi_dout    = 'bx;
+                    beat.w_ldac_cycles = 0;
+                    beat.w_cycles_left = 0;
                     eop_q.push_back(beat);
                     v_q.push_back(vif_dac.vdigital);
                 end
@@ -78,6 +89,7 @@ class dc_monitor extends uvm_monitor;
 
             act_trace.eop_trace = eop_q;
             act_trace.v_trace   = v_q;
+            `uvm_info("dc_monitor", "finished capture, send to scoreboard\n", UVM_LOW);
             trc_ap.write(act_trace);
         end
     endtask

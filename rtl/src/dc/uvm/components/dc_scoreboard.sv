@@ -38,12 +38,14 @@ class dc_scoreboard extends uvm_scoreboard;
 
             forever begin
                 exp_port.get(get_expect);
+                `uvm_info("dc_scoreboard", "got new expected trace\n", UVM_LOW);
                 exp_q.push_back(get_expect);
             end
 
             forever begin
 
                 act_port.get(get_actual);
+                `uvm_info("dc_scoreboard", "got new actual trace\n", UVM_LOW);
 
                 if (exp_q.size() > 0) begin
                     pop_expect = exp_q.pop_front();
