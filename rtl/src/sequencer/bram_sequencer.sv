@@ -1,5 +1,6 @@
 // `default_nettype none
 `timescale 1ns / 1ps
+`include "bram_sequencer.svh"
 
 module bram_sequencer
    #(parameter PC_ADDR_WIDTH=12,

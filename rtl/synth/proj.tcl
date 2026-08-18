@@ -2,18 +2,43 @@ create_project pl ./pl -part xczu49dr-ffvf1760-2-e -force
 set_property board_part xilinx.com:zcu216:part0:2.0 [current_project]
 
 set_property include_dirs {../include} [get_filesets sources_1]
-add_files [glob ../include/*.svh]
-add_files [glob ../include/*.vh]
-add_files [glob ../src/*.sv]
-add_files [glob ../src/*.v]
-add_files [glob ./*.xdc]
-remove_files  ../src/dcrfli.sv
-add_files [glob ../lib/axil_slave_regs.sv]
-add_files [glob ../lib/bram.sv]
-add_files [glob ../lib/bram_fifo.sv]
-add_files [glob ../lib/debouncer.sv]
-add_files [glob ../lib/button_detector.sv]
+
+add_files [glob ../src/sequencer/bram_sequencer.svh]
+add_files [glob ../src/sequencer/bram_sequencer.sv]
+
+add_files [glob ../src/dc/*.v]
+add_files [glob ../src/dc/*.sv]
+add_files [glob ../src/dc/*.svh]
+
+add_files [glob ../src/rf/*.v]
+add_files [glob ../src/rf/*.sv]
+add_files [glob ../src/rf/*.svh]
+
+add_files [glob ../src/ex/*.v]
+add_files [glob ../src/ex/*.sv]
+add_files [glob ../src/ex/*.svh]
+
+add_files [glob ../src/li/*.v]
+add_files [glob ../src/li/*.sv]
+add_files [glob ../src/li/*.svh]
+
+add_files [glob ../src/launch/*.v]
+add_files [glob ../src/launch/*.sv]
+
+add_files [glob ../src/nco/*.v]
+add_files [glob ../src/nco/*.sv]
+
+add_files [glob ../src/processor/*.sv]
+
+add_files [glob ../lib/axil_slave_regs/axil_slave_regs.sv]
+add_files [glob ../lib/bram/bram.sv]
+add_files [glob ../lib/bram/bram_2to1.sv]
+add_files [glob ../lib/bram_fifo_2to1/bram_fifo_2to1.sv]
+
 add_files [glob ./*.sv]
+
+add_files [glob ./*.xdc]
+
 update_compile_order -fileset sources_1
 
 source ./bd.tcl

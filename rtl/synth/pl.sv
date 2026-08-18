@@ -689,15 +689,4 @@ module pl
         .*
     );
     
-    ila_0 ILA (
-        .clk(w_processor_clk),
-    
-    
-        .probe0(o_pmod00), // input wire [0:0]  probe0  
-        .probe1(o_pmod01), // input wire [0:0]  probe1 
-        .probe2(o_pmod03), // input wire [0:0]  probe2 
-        .probe3(o_pmod04) // input wire [0:0]  probe3
-    );
-
-    
 endmodule
