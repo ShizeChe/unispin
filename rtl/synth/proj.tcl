@@ -1,7 +1,7 @@
 create_project pl ./pl -part xczu49dr-ffvf1760-2-e -force
 set_property board_part xilinx.com:zcu216:part0:2.0 [current_project]
 
-set_property include_dirs {../include} [get_filesets sources_1]
+set_property include_dirs {../src/dc ../src/rf ../src/ex ../src/li ../src/launch ../src/sequencer} [get_filesets sources_1]
 
 add_files [glob ../src/sequencer/bram_sequencer.svh]
 add_files [glob ../src/sequencer/bram_sequencer.sv]
@@ -24,6 +24,7 @@ add_files [glob ../src/li/*.svh]
 
 add_files [glob ../src/launch/*.v]
 add_files [glob ../src/launch/*.sv]
+add_files [glob ../src/launch/*.svh]
 
 add_files [glob ../src/nco/*.v]
 add_files [glob ../src/nco/*.sv]
@@ -31,6 +32,7 @@ add_files [glob ../src/nco/*.sv]
 add_files [glob ../src/processor/*.sv]
 
 add_files [glob ../lib/axil_slave_regs/axil_slave_regs.sv]
+add_files [glob ../lib/misc/edge_detector.sv]
 add_files [glob ../lib/bram/bram.sv]
 add_files [glob ../lib/bram/bram_2to1.sv]
 add_files [glob ../lib/bram_fifo_2to1/bram_fifo_2to1.sv]
